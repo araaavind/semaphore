@@ -14,7 +14,7 @@ type Feed struct {
 	Description string    `json:"description"`
 	Link        string    `json:"link"`
 	FeedLink    string    `json:"feed_link,omitempty"`
-	Updated     time.Time `json:"updated,omitempty"`
+	PubUpdated  time.Time `json:"pub_updated,omitempty"`
 	PubDate     time.Time `json:"pub_date,omitempty"`
 	FeedType    string    `json:"feed_type,omitempty"`
 	FeedVersion string    `json:"feed_version,omitempty"`
