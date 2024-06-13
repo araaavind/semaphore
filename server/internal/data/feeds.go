@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"strconv"
@@ -57,7 +58,10 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.Language,
 	}
 
-	err := m.DB.QueryRow(addFeedQuery, args...).Scan(
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, addFeedQuery, args...).Scan(
 		&feed.ID,
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
@@ -81,7 +85,11 @@ const findByFeedLinkQuery = `
 
 func (m FeedModel) FindByFeedLink(feedLink string) (*Feed, error) {
 	var feed Feed
-	err := m.DB.QueryRow(findByFeedLinkQuery, feedLink).Scan(
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, findByFeedLinkQuery, feedLink).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
@@ -118,7 +126,11 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	}
 
 	var feed Feed
-	err := m.DB.QueryRow(findByIDQuery, id).Scan(
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, findByIDQuery, id).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
@@ -165,7 +177,10 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.ID,
 	}
 
-	err := m.DB.QueryRow(updateFeedQuery, args...).Scan(&feed.UpdatedAt, &feed.Version)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, updateFeedQuery, args...).Scan(&feed.UpdatedAt, &feed.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrRecordNotFound):
@@ -186,7 +201,10 @@ func (m FeedModel) DeleteByID(id int64) error {
 		return ErrRecordNotFound
 	}
 
-	result, err := m.DB.Exec(deleteFeedByIDQuery, id)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, deleteFeedByIDQuery, id)
 	if err != nil {
 		return err
 	}
