@@ -1,9 +1,18 @@
 package data
 
 import (
+	"database/sql"
+	"errors"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+var (
+	ErrDuplicateLink = errors.New("link already exists in the database")
 )
 
 type Feed struct {
@@ -13,15 +22,183 @@ type Feed struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Link        string    `json:"link"`
-	FeedLink    string    `json:"feed_link,omitempty"`
-	PubUpdated  time.Time `json:"pub_updated,omitempty"`
+	FeedLink    string    `json:"feed_link"`
 	PubDate     time.Time `json:"pub_date,omitempty"`
+	PubUpdated  time.Time `json:"pub_updated,omitempty"`
 	FeedType    string    `json:"feed_type,omitempty"`
 	FeedVersion string    `json:"feed_version,omitempty"`
 	Language    string    `json:"language,omitempty"`
 	Version     int32     `json:"version,omitempty"`
 }
 
-func ValidateLink(v *validator.Validator, link string) {
-	v.Check(validator.NotBlank(link), "link", "link must not be empty")
+func ValidateFeedLink(v *validator.Validator, feedLink string) {
+	v.Check(validator.NotBlank(feedLink), "feed_link", "must not be empty")
+}
+
+type FeedModel struct {
+	DB *sql.DB
+}
+
+const addFeedQuery = `
+	INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	RETURNING id, created_at, updated_at, version`
+
+func (m FeedModel) Insert(feed *Feed) error {
+	args := []any{
+		feed.Title,
+		feed.Description,
+		feed.Link,
+		feed.FeedLink,
+		feed.PubDate,
+		feed.PubUpdated,
+		feed.FeedType,
+		feed.FeedVersion,
+		feed.Language,
+	}
+
+	err := m.DB.QueryRow(addFeedQuery, args...).Scan(
+		&feed.ID,
+		&feed.CreatedAt,
+		&feed.UpdatedAt,
+		&feed.Version,
+	)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "feeds_feed_link_key") {
+				return ErrDuplicateLink
+			}
+		}
+		return err
+	}
+	return nil
+}
+
+const findByFeedLinkQuery = `
+	SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+	FROM feeds WHERE feed_link = $1`
+
+func (m FeedModel) FindByFeedLink(feedLink string) (*Feed, error) {
+	var feed Feed
+	err := m.DB.QueryRow(findByFeedLinkQuery, feedLink).Scan(
+		&feed.ID,
+		&feed.Title,
+		&feed.Description,
+		&feed.Link,
+		&feed.FeedLink,
+		&feed.PubDate,
+		&feed.PubUpdated,
+		&feed.FeedType,
+		&feed.FeedVersion,
+		&feed.Language,
+		&feed.CreatedAt,
+		&feed.UpdatedAt,
+		&feed.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &feed, nil
+}
+
+const findByIDQuery = `
+	SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+	FROM feeds WHERE id = $1`
+
+func (m FeedModel) FindByID(id int64) (*Feed, error) {
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
+
+	var feed Feed
+	err := m.DB.QueryRow(findByIDQuery, id).Scan(
+		&feed.ID,
+		&feed.Title,
+		&feed.Description,
+		&feed.Link,
+		&feed.FeedLink,
+		&feed.PubDate,
+		&feed.PubUpdated,
+		&feed.FeedType,
+		&feed.FeedVersion,
+		&feed.Language,
+		&feed.CreatedAt,
+		&feed.UpdatedAt,
+		&feed.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &feed, nil
+}
+
+const updateFeedQuery = `
+	UPDATE feeds
+	SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6, feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), version = version + 1
+	WHERE id = $10 AND version = $11
+	RETURNING updated_at, version`
+
+func (m FeedModel) Update(feed *Feed) error {
+	args := []any{
+		feed.Title,
+		feed.Description,
+		feed.Link,
+		feed.FeedLink,
+		feed.PubDate,
+		feed.PubUpdated,
+		feed.FeedType,
+		feed.FeedVersion,
+		feed.Language,
+		feed.ID,
+	}
+
+	err := m.DB.QueryRow(updateFeedQuery, args...).Scan(&feed.UpdatedAt, &feed.Version)
+	if err != nil {
+		switch {
+		case errors.Is(err, ErrRecordNotFound):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
+	return nil
+}
+
+const deleteFeedByIDQuery = `
+	DELETE FROM feeds
+	WHERE id = $1`
+
+func (m FeedModel) DeleteByID(id int64) error {
+	if id < 1 {
+		return ErrRecordNotFound
+	}
+
+	result, err := m.DB.Exec(deleteFeedByIDQuery, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
 }
