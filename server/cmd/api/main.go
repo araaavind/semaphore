@@ -10,7 +10,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/aravindmathradan/semaphore/internal/data"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/mmcdole/gofeed"
 )
 
 const version = "1.0.0"
@@ -29,6 +31,8 @@ type config struct {
 type application struct {
 	config config
 	logger *slog.Logger
+	models data.Models
+	parser *gofeed.Parser
 }
 
 func main() {
@@ -58,6 +62,8 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
+		models: data.NewModels(db),
+		parser: gofeed.NewParser(),
 	}
 
 	srv := &http.Server{

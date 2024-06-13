@@ -2,16 +2,24 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
+	"runtime/debug"
 )
 
 func (app *application) logError(r *http.Request, err error) {
 	var (
 		method = r.Method
 		uri    = r.URL.RequestURI()
+		trace  = string(debug.Stack())
 	)
 
-	app.logger.Error(err.Error(), "method", method, "uri", uri)
+	app.logger.Error(
+		err.Error(),
+		slog.String("method", method),
+		slog.String("uri", uri),
+		slog.String("trace", trace),
+	)
 }
 
 func (app *application) errorResponse(w http.ResponseWriter, r *http.Request, status int, message any) {
@@ -42,4 +50,9 @@ func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Reques
 
 func (app *application) failedValidationResponse(w http.ResponseWriter, r *http.Request, errors map[string]string) {
 	app.errorResponse(w, r, http.StatusUnprocessableEntity, errors)
+}
+
+func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Request) {
+	message := "Unable to update the record due to an edit conflict, please try again"
+	app.errorResponse(w, r, http.StatusConflict, message)
 }
