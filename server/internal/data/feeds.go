@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -40,12 +41,12 @@ type FeedModel struct {
 	DB *sql.DB
 }
 
-const addFeedQuery = `
-	INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-	RETURNING id, created_at, updated_at, version`
-
 func (m FeedModel) Insert(feed *Feed) error {
+	addFeedQuery := `
+		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		RETURNING id, created_at, updated_at, version`
+
 	args := []any{
 		feed.Title,
 		feed.Description,
@@ -79,11 +80,68 @@ func (m FeedModel) Insert(feed *Feed) error {
 	return nil
 }
 
-const findByFeedLinkQuery = `
-	SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
-	FROM feeds WHERE feed_link = $1`
+func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
+	query := fmt.Sprintf(`
+		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+		FROM feeds
+		WHERE (
+			to_tsvector('simple', title) @@ plainto_tsquery('simple', $1)
+			OR $1 = ''
+		)
+		AND (feed_link = $2 OR $2 = '')
+		ORDER BY %s %s, id ASC
+		LIMIT $3 OFFSET $4`, filters.sortColumn(), filters.sortDirection())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []any{title, feedLink, filters.limit(), filters.offset()}
+
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, Metadata{}, err
+	}
+	defer rows.Close()
+
+	totalRecords := 0
+	feeds := []*Feed{}
+	for rows.Next() {
+		var feed Feed
+		err := rows.Scan(
+			&totalRecords,
+			&feed.ID,
+			&feed.Title,
+			&feed.Description,
+			&feed.Link,
+			&feed.FeedLink,
+			&feed.PubDate,
+			&feed.PubUpdated,
+			&feed.FeedType,
+			&feed.FeedVersion,
+			&feed.Language,
+			&feed.CreatedAt,
+			&feed.UpdatedAt,
+			&feed.Version,
+		)
+		if err != nil {
+			return nil, Metadata{}, err
+		}
+		feeds = append(feeds, &feed)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, Metadata{}, err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return feeds, metadata, nil
+}
 
 func (m FeedModel) FindByFeedLink(feedLink string) (*Feed, error) {
+	findByFeedLinkQuery := `
+		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+		FROM feeds WHERE feed_link = $1`
+
 	var feed Feed
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -116,14 +174,14 @@ func (m FeedModel) FindByFeedLink(feedLink string) (*Feed, error) {
 	return &feed, nil
 }
 
-const findByIDQuery = `
-	SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
-	FROM feeds WHERE id = $1`
-
 func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	if id < 1 {
 		return nil, ErrRecordNotFound
 	}
+
+	findByIDQuery := `
+		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+		FROM feeds WHERE id = $1`
 
 	var feed Feed
 
@@ -157,13 +215,13 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	return &feed, nil
 }
 
-const updateFeedQuery = `
-	UPDATE feeds
-	SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6, feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), version = version + 1
-	WHERE id = $10 AND version = $11
-	RETURNING updated_at, version`
-
 func (m FeedModel) Update(feed *Feed) error {
+	updateFeedQuery := `
+		UPDATE feeds
+		SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6, feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), version = version + 1
+		WHERE id = $10 AND version = $11
+		RETURNING updated_at, version`
+
 	args := []any{
 		feed.Title,
 		feed.Description,
@@ -192,14 +250,14 @@ func (m FeedModel) Update(feed *Feed) error {
 	return nil
 }
 
-const deleteFeedByIDQuery = `
-	DELETE FROM feeds
-	WHERE id = $1`
-
 func (m FeedModel) DeleteByID(id int64) error {
 	if id < 1 {
 		return ErrRecordNotFound
 	}
+
+	deleteFeedByIDQuery := `
+		DELETE FROM feeds
+		WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
