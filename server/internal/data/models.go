@@ -11,11 +11,13 @@ var (
 )
 
 type Models struct {
-	Feeds FeedModel
+	Feeds       FeedModel
+	FeedFollows FeedFollowModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
 		FeedModel{DB: db},
+		FeedFollowModel{DB: db},
 	}
 }

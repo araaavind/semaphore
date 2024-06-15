@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS tokens (
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP TABLE IF EXISTS tokens;
 -- +goose StatementEnd
