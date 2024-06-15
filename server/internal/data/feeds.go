@@ -137,17 +137,17 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 	return feeds, metadata, nil
 }
 
-func (m FeedModel) FindByFeedLink(feedLink string) (*Feed, error) {
+func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	findByFeedLinkQuery := `
 		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
-		FROM feeds WHERE feed_link = $1`
+		FROM feeds WHERE feed_link = ANY ($1)`
 
 	var feed Feed
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, findByFeedLinkQuery, feedLink).Scan(
+	err := m.DB.QueryRowContext(ctx, findByFeedLinkQuery, feedLinks).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
