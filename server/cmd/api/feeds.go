@@ -8,8 +8,8 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/validator"
 )
 
-func (app *application) getFeedHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := app.readIDParam(r)
+func (app *application) getFeed(w http.ResponseWriter, r *http.Request) {
+	id, err := app.readIDParam(r, "feed_id")
 	if err != nil || id < 1 {
 		app.notFoundResponse(w, r)
 		return
@@ -33,7 +33,7 @@ func (app *application) getFeedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *application) listFeedsHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Title    string
 		FeedLink string

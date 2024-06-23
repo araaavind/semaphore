@@ -12,7 +12,7 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func (app *application) followFeedHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		FeedLink string `json:"feed_link"`
 	}
@@ -80,11 +80,11 @@ func (app *application) followFeedHandler(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	feedFollow := data.FeedFollow{
+	feedFollow := &data.FeedFollow{
 		FeedID: feedToFolow.ID,
 		UserID: 1,
 	}
-	err = app.models.FeedFollows.Upsert(feedFollow)
+	err = app.models.FeedFollows.Insert(feedFollow)
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateFeedFollow) {
 			v.AddError("feed_url", "user already follows the feed")
@@ -99,7 +99,42 @@ func (app *application) followFeedHandler(w http.ResponseWriter, r *http.Request
 	headers := make(http.Header)
 	headers.Set("Location", fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID))
 
-	err = app.writeJSON(w, http.StatusOK, envelope{}, headers)
+	err = app.writeJSON(w, http.StatusCreated, envelope{}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
+	feedId, err := app.readIDParam(r, "feed_id")
+	if err != nil || feedId < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	feed, err := app.models.Feeds.FindByID(feedId)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+			return
+		default:
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	feedFollow := data.FeedFollow{
+		FeedID: feed.ID,
+		UserID: 1,
+	}
+	err = app.models.FeedFollows.Upsert(feedFollow)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
