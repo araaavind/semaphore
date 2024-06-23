@@ -84,3 +84,28 @@ func (m FeedFollowModel) Upsert(feedFollow FeedFollow) error {
 
 	return nil
 }
+
+func (m FeedFollowModel) Delete(feedFollow FeedFollow) error {
+	deleteFeedFollowQuery := `
+		DELETE FROM feed_follows
+		WHERE user_id = $1 AND feed_id = $2`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.ExecContext(ctx, deleteFeedFollowQuery, feedFollow.UserID, feedFollow.FeedID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
+}

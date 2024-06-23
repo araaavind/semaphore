@@ -7,10 +7,11 @@ import (
 )
 
 /*
-POST	/feeds						add and follow a feed
-GET		/feeds						list all feeds
-GET		/feeds/:feed_id				get a feed
-PUT		/feeds/:feed_id/followers 	follow a feed
+POST	/feeds						add and follow a feed			empty response with 201
+GET		/feeds						list all feeds					json list with 200
+GET		/feeds/:feed_id				get a feed						json with 200
+PUT		/feeds/:feed_id/followers 	follow a feed					empty response with 200
+DELETE	/feeds/:feed_id/followers	unfollow a feed					empty response with 200
 */
 
 func (app *application) routes() http.Handler {
@@ -24,6 +25,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
 	router.HandlerFunc(http.MethodPut, "/v1/feeds/:feed_id/followers", app.followFeed)
+	router.HandlerFunc(http.MethodDelete, "/v1/feeds/:feed_id/followers", app.unfollowFeed)
 
 	return app.recoverPanic(router)
 }

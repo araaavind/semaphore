@@ -134,10 +134,31 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{}, nil)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
+
+func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
+	feedID, err := app.readIDParam(r, "feed_id")
+	if err != nil || feedID < 1 {
+		app.notFoundResponse(w, r)
+		return
 	}
+
+	feedFolow := data.FeedFollow{
+		FeedID: feedID,
+		UserID: 1,
+	}
+	err = app.models.FeedFollows.Delete(feedFolow)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+			return
+		default:
+		app.serverErrorResponse(w, r, err)
+			return
+	}
+}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func copyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
