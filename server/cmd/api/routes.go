@@ -7,9 +7,12 @@ import (
 )
 
 /*
+POST	/users						signup							user with 201
+
+
 POST	/feeds						add and follow a feed			empty response with 201
-GET		/feeds						list all feeds					json list with 200
-GET		/feeds/:feed_id				get a feed						json with 200
+GET		/feeds						list all feeds					feed list with 200
+GET		/feeds/:feed_id				get a feed						feed with 200
 PUT		/feeds/:feed_id/followers 	follow a feed					empty response with 200
 DELETE	/feeds/:feed_id/followers	unfollow a feed					empty response with 200
 */
@@ -21,6 +24,9 @@ func (app *application) routes() http.Handler {
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheck)
+
+	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUser)
+
 	router.HandlerFunc(http.MethodPost, "/v1/feeds", app.addAndFollowFeed)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
