@@ -11,12 +11,14 @@ var (
 )
 
 type Models struct {
+	Users       UserModel
 	Feeds       FeedModel
 	FeedFollows FeedFollowModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
+		UserModel{DB: db},
 		FeedModel{DB: db},
 		FeedFollowModel{DB: db},
 	}
