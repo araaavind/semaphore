@@ -7,10 +7,11 @@ import (
 	"unicode/utf8"
 )
 
-// A regular expression for sanity checking the format of email addresses.
-// https://html.spec.whatwg.org/#valid-e-mail-address
 var (
+	// Regex for checking sanity of email address. Source: https://html.spec.whatwg.org/#valid-e-mail-address
 	EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	// Regex for checking sanity of username. Source: https://stackoverflow.com/a/12019115
+	UsernameBasicRX = regexp.MustCompile("(?i)^[a-zA-Z0-9._]+$")
 )
 
 type Validator struct {
@@ -39,6 +40,33 @@ func (v *Validator) Check(ok bool, key, message string) {
 
 func PermittedValue[T comparable](value T, permittedValues ...T) bool {
 	return slices.Contains(permittedValues, value)
+}
+
+func SafeSubstrings(s string, forbiddenSubstrings ...string) bool {
+	for _, v := range forbiddenSubstrings {
+		if strings.Contains(s, v) {
+			return false
+		}
+	}
+	return true
+}
+
+func SafePrefix(s string, forbiddenPrefixes ...string) bool {
+	for _, v := range forbiddenPrefixes {
+		if strings.HasPrefix(s, v) {
+			return false
+		}
+	}
+	return true
+}
+
+func SafeSuffix(s string, forbiddenSuffixes ...string) bool {
+	for _, v := range forbiddenSuffixes {
+		if strings.HasSuffix(s, v) {
+			return false
+		}
+	}
+	return true
 }
 
 func Matches(value string, rx *regexp.Regexp) bool {
