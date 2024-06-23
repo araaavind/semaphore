@@ -1,0 +1,45 @@
+{{define "subject"}}Welcome to Semaphore!{{ end }}
+
+{{define "plainBody"}}
+Hi {{.Username}},
+
+Thanks for signing up for a Semaphore account. We're excited to have you on board!
+
+Here's the token to activate your account:
+
+{{.ID}}
+
+Please note that this is a one-time use token and it will expire in 3 days.
+
+Thanks,
+Team Semaphore
+{{ end }}
+
+{{define "htmlBody"}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p>Hi {{.Username}},</p>
+    <p>
+      Thanks for signing up for a Semaphore account. We're excited to have you on
+      board!
+    </p>
+    <p>
+      Here's the token to activate your account:
+    </p>
+    <pre><code>
+	{{.ID}}
+	</code></pre>
+    <p>
+      Please note that this is a one-time use token and it will expire in 3
+      days.
+    </p>
+    <p>Thanks,</p>
+    <p>Team Semaphore</p>
+  </body>
+</html>
+{{ end }}
