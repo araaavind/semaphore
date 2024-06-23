@@ -96,23 +96,18 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
-	headers := make(http.Header)
-	headers.Set("Location", fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID))
-
-	err = app.writeJSON(w, http.StatusCreated, envelope{}, headers)
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-	}
+	w.Header().Set("Location", fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID))
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
-	feedId, err := app.readIDParam(r, "feed_id")
-	if err != nil || feedId < 1 {
+	feedID, err := app.readIDParam(r, "feed_id")
+	if err != nil || feedID < 1 {
 		app.notFoundResponse(w, r)
 		return
 	}
 
-	feed, err := app.models.Feeds.FindByID(feedId)
+	feed, err := app.models.Feeds.FindByID(feedID)
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
@@ -134,6 +129,8 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
+}
 
 func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 	feedID, err := app.readIDParam(r, "feed_id")
@@ -153,10 +150,10 @@ func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 			app.notFoundResponse(w, r)
 			return
 		default:
-		app.serverErrorResponse(w, r, err)
+			app.serverErrorResponse(w, r, err)
 			return
+		}
 	}
-}
 
 	w.WriteHeader(http.StatusOK)
 }
