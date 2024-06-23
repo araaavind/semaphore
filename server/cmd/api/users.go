@@ -57,7 +57,17 @@ func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"user": user}, nil)
+	app.background(func() {
+		err = app.mailer.Send(user.Email, "user_welcome.tmpl", user)
+		if err != nil {
+			// Importantly, if there is an error sending the email then we use the
+			// app.logger.Error() helper to manage it, instead of the
+			// app.serverErrorResponse() helper.
+			app.logger.Error(err.Error())
+		}
+	})
+
+	err = app.writeJSON(w, http.StatusAccepted, envelope{"user": user}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

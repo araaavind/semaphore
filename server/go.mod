@@ -3,6 +3,7 @@ module github.com/aravindmathradan/semaphore
 go 1.22.4
 
 require (
+	github.com/go-mail/mail/v2 v2.3.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mmcdole/gofeed v1.3.0
@@ -22,4 +23,6 @@ require (
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/mail.v2 v2.3.1 // indirect
 )

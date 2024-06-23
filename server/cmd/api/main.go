@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
+	"github.com/aravindmathradan/semaphore/internal/mailer"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/mmcdole/gofeed"
 )
@@ -26,6 +27,13 @@ type config struct {
 		maxIdleConns int
 		maxIdleTime  time.Duration
 	}
+	smtp struct {
+		host     string
+		port     int
+		username string
+		password string
+		sender   string
+	}
 }
 
 type application struct {
@@ -33,6 +41,7 @@ type application struct {
 	logger *slog.Logger
 	models data.Models
 	parser *gofeed.Parser
+	mailer mailer.Mailer
 }
 
 func main() {
@@ -45,6 +54,12 @@ func main() {
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
 	flag.DurationVar(&cfg.db.maxIdleTime, "db-max-idle-time", 15*time.Minute, "PostgreSQL max connection idle time")
+
+	flag.StringVar(&cfg.smtp.host, "smtp-host", "sandbox.smtp.mailtrap.io", "SMTP host")
+	flag.IntVar(&cfg.smtp.port, "smtp-port", 2525, "SMTP port")
+	flag.StringVar(&cfg.smtp.username, "smtp-username", "", "SMTP username")
+	flag.StringVar(&cfg.smtp.password, "smtp-password", "", "SMTP password")
+	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Semaphore <no-reply@semaphore.com>", "SMTP sender")
 
 	flag.Parse()
 
@@ -64,6 +79,13 @@ func main() {
 		logger: logger,
 		models: data.NewModels(db),
 		parser: gofeed.NewParser(),
+		mailer: mailer.New(
+			cfg.smtp.host,
+			cfg.smtp.port,
+			cfg.smtp.username,
+			cfg.smtp.password,
+			cfg.smtp.sender,
+		),
 	}
 
 	srv := &http.Server{
