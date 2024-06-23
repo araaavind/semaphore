@@ -81,7 +81,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 }
 
 func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
-	query := fmt.Sprintf(`
+	findAllFeedsQuery := fmt.Sprintf(`
 		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
 		FROM feeds
 		WHERE (
@@ -97,7 +97,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 	args := []any{title, feedLink, filters.limit(), filters.offset()}
 
-	rows, err := m.DB.QueryContext(ctx, query, args...)
+	rows, err := m.DB.QueryContext(ctx, findAllFeedsQuery, args...)
 	if err != nil {
 		return nil, Metadata{}, err
 	}
