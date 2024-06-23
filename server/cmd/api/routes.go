@@ -15,7 +15,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeedsHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:id", app.getFeedHandler)
-	router.HandlerFunc(http.MethodPost, "/v1/feedfollows", app.followFeedHandler)
+	router.HandlerFunc(http.MethodPut, "/v1/me/feeds", app.followFeedHandler)
 
 	return app.recoverPanic(router)
 }
