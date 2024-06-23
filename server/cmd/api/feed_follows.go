@@ -42,34 +42,34 @@ func (app *application) followFeedHandler(w http.ResponseWriter, r *http.Request
 		linksToSearch = append(linksToSearch, parsedFeed.FeedLink)
 	}
 	// Check if the link provided by the user OR the 'self' link of parsedFeed exists in the DB.
-	feedToSubscribeTo, err := app.models.Feeds.FindByFeedLinks(linksToSearch)
+	feedToFolow, err := app.models.Feeds.FindByFeedLinks(linksToSearch)
 	if err != nil {
 		if errors.Is(err, data.ErrRecordNotFound) {
 			// If the link provided by user or the 'self' link of parsed Feed is not present in DB,
 			// check if the 'self' link of the parsed feed is same as the link provided by the user.
-			feedToSubscribeTo = &data.Feed{}
+			feedToFolow = &data.Feed{}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.
-				copyFeedFields(feedToSubscribeTo, parsedFeed, input.FeedLink)
+				copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 			} else {
 				// if they are different, parse the 'self' link of parsed Feed and check if it is valid and latest.
 				parsedSelfFeed, err := app.parser.ParseURL(parsedFeed.FeedLink)
 				if err != nil {
 					// if the 'self' link of parsed feed is invalid, insert the parsed feed of input link to DB
-					copyFeedFields(feedToSubscribeTo, parsedFeed, input.FeedLink)
+					copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 				} else {
 					if parsedSelfFeed.UpdatedParsed != nil &&
 						parsedFeed.UpdatedParsed != nil &&
 						parsedSelfFeed.UpdatedParsed.Before(*parsedFeed.UpdatedParsed) {
 						// if the 'self' link of parsed feed is valid but not latest, insert the parsed feed of input link to DB
-						copyFeedFields(feedToSubscribeTo, parsedFeed, input.FeedLink)
+						copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 					} else {
 						// if the 'self' link of parsed feed is valid and latest, insert the parsed feed of 'self' link to DB
-						copyFeedFields(feedToSubscribeTo, parsedSelfFeed, parsedSelfFeed.FeedLink)
+						copyFeedFields(feedToFolow, parsedSelfFeed, parsedSelfFeed.FeedLink)
 					}
 				}
 			}
-			err = app.models.Feeds.Insert(feedToSubscribeTo)
+			err = app.models.Feeds.Insert(feedToFolow)
 			if err != nil {
 				app.serverErrorResponse(w, r, err)
 				return
@@ -80,11 +80,11 @@ func (app *application) followFeedHandler(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	feedFollow := &data.FeedFollow{
-		FeedID: feedToSubscribeTo.ID,
+	feedFollow := data.FeedFollow{
+		FeedID: feedToFolow.ID,
 		UserID: 1,
 	}
-	err = app.models.FeedFollows.Insert(feedFollow)
+	err = app.models.FeedFollows.Upsert(feedFollow)
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateFeedFollow) {
 			v.AddError("feed_url", "user already follows the feed")
@@ -99,7 +99,7 @@ func (app *application) followFeedHandler(w http.ResponseWriter, r *http.Request
 	headers := make(http.Header)
 	headers.Set("Location", fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID))
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"feed_id": feedFollow.FeedID, "user_id": feedFollow.UserID}, headers)
+	err = app.writeJSON(w, http.StatusOK, envelope{}, headers)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
