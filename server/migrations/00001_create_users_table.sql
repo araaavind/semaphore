@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS users (
 	id bigserial PRIMARY KEY,
     full_name text NOT NULL,
-	username text NOT NULL,
+	username citext UNIQUE NOT NULL,
 	email citext UNIQUE NOT NULL,
 	password_hash bytea NOT NULL,
     activated bool NOT NULL,

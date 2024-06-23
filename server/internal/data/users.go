@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	ErrDuplicateEmail = errors.New("duplicate email")
+	ErrDuplicateEmail    = errors.New("duplicate email")
+	ErrDuplicateUsername = errors.New("duplicate username")
 )
 
 type User struct {
@@ -61,21 +62,50 @@ func (p *password) Matches(plaintextPassword string) (bool, error) {
 	return true, err
 }
 
+func ValidateUsername(v *validator.Validator, username string) {
+	v.Check(validator.NotBlank(username), "username", "must be provided")
+	v.Check(validator.MinChars(username, 8), "username", "must be atleast 8 characters long")
+	v.Check(validator.MaxChars(username, 16), "username", "must not be more than 16 characters long")
+	v.Check(validator.Matches(username, validator.UsernameBasicRX), "username", `username must contain only alphanumeric characters, "." and "_"`)
+
+	forbiddenPrefixes := []string{".", "_"}
+	v.Check(
+		validator.SafePrefix(username, forbiddenPrefixes...),
+		"username",
+		`must not start with "." or "_"`,
+	)
+
+	forbiddenSuffixes := []string{".", "_"}
+	v.Check(
+		validator.SafeSuffix(username, forbiddenSuffixes...),
+		"username",
+		`must not end with "." or "_"`,
+	)
+
+	forbiddenSubstrings := []string{"..", "__", "._", "_."}
+	v.Check(
+		validator.SafeSubstrings(username, forbiddenSubstrings...),
+		"username",
+		`must not contain consecutive "." or "_" or a combination of those`,
+	)
+}
+
 func ValidateEmail(v *validator.Validator, email string) {
-	v.Check(email != "", "email", "must be provided")
+	v.Check(validator.NotBlank(email), "email", "must be provided")
 	v.Check(validator.Matches(email, validator.EmailRX), "email", "must be a valid email address")
 }
 
 func ValidatePasswordPlaintext(v *validator.Validator, password string) {
-	v.Check(password != "", "password", "must be provided")
-	v.Check(len(password) >= 8, "password", "must be at least 8 bytes long")
-	v.Check(len(password) <= 72, "password", "must not be more than 72 bytes long")
+	v.Check(validator.NotBlank(password), "password", "must be provided")
+	v.Check(validator.MinChars(password, 8), "password", "must be at least 8 bytes long")
+	v.Check(validator.MaxChars(password, 72), "password", "must not be more than 72 bytes long")
 }
 
 func ValidateUser(v *validator.Validator, user *User) {
-	v.Check(user.FullName != "", "full_name", "must be provided")
-	v.Check(len(user.FullName) <= 500, "full_name", "must not be more than 500 bytes long")
+	v.Check(validator.NotBlank(user.FullName), "full_name", "must be provided")
+	v.Check(validator.MaxChars(user.FullName, 100), "full_name", "must not be more than 100 characters long")
 
+	ValidateUsername(v, user.Username)
 	ValidateEmail(v, user.Email)
 
 	if user.Password.plaintext != nil {
@@ -99,7 +129,7 @@ type UserModel struct {
 func (m UserModel) Insert(user *User) error {
 	insertUserQuery := `
 		INSERT INTO users (full_name, username, email, password_hash, activated) 
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, created_at, updated_at, version`
 
 	args := []any{user.FullName, user.Username, user.Email, user.Password.hash, user.Activated}
@@ -113,6 +143,8 @@ func (m UserModel) Insert(user *User) error {
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "users_email_key") {
 				return ErrDuplicateEmail
+			} else if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "users_username_key") {
+				return ErrDuplicateUsername
 			}
 		}
 		return err
@@ -215,6 +247,8 @@ func (m UserModel) Update(user *User) error {
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "users_email_key") {
 				return ErrDuplicateEmail
+			} else if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "users_username_key") {
+				return ErrDuplicateUsername
 			}
 		} else if errors.Is(err, sql.ErrNoRows) {
 			return ErrEditConflict
