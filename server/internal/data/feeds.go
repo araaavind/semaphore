@@ -31,6 +31,7 @@ type Feed struct {
 	FeedVersion string    `json:"feed_version,omitempty"`
 	Language    string    `json:"language,omitempty"`
 	Version     int32     `json:"version,omitempty"`
+	AddedBy     int64     `json:"added_by"`
 }
 
 func ValidateFeedLink(v *validator.Validator, feedLink string) {
@@ -43,8 +44,8 @@ type FeedModel struct {
 
 func (m FeedModel) Insert(feed *Feed) error {
 	addFeedQuery := `
-		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id, created_at, updated_at, version`
 
 	args := []any{
@@ -57,6 +58,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.FeedType,
 		feed.FeedVersion,
 		feed.Language,
+		feed.AddedBy,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -82,7 +84,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 
 func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
 	findAllFeedsQuery := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
 		FROM feeds
 		WHERE (
 			to_tsvector('simple', title) @@ plainto_tsquery('simple', $1)
@@ -119,6 +121,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.FeedType,
 			&feed.FeedVersion,
 			&feed.Language,
+			&feed.AddedBy,
 			&feed.CreatedAt,
 			&feed.UpdatedAt,
 			&feed.Version,
@@ -139,7 +142,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	findByFeedLinkQuery := `
-		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
 		FROM feeds WHERE feed_link = ANY ($1)`
 
 	var feed Feed
@@ -158,6 +161,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 		&feed.FeedType,
 		&feed.FeedVersion,
 		&feed.Language,
+		&feed.AddedBy,
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
 		&feed.Version,
@@ -180,7 +184,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	}
 
 	findByIDQuery := `
-		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, created_at, updated_at, version
+		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
 		FROM feeds WHERE id = $1`
 
 	var feed Feed
@@ -199,6 +203,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		&feed.FeedType,
 		&feed.FeedVersion,
 		&feed.Language,
+		&feed.AddedBy,
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
 		&feed.Version,
