@@ -1,13 +1,13 @@
 {{define "subject"}}Welcome to Semaphore!{{ end }}
 
 {{define "plainBody"}}
-Hi {{.Username}},
+Hi {{.username}},
 
 Thanks for signing up for a Semaphore account. We're excited to have you on board!
 
 Here's the token to activate your account:
 
-{{.ID}}
+{{.activationToken}}
 
 Please note that this is a one-time use token and it will expire in 3 days.
 
@@ -23,7 +23,7 @@ Team Semaphore
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   </head>
   <body>
-    <p>Hi {{.Username}},</p>
+    <p>Hi {{.username}},</p>
     <p>
       Thanks for signing up for a Semaphore account. We're excited to have you on
       board!
@@ -32,7 +32,7 @@ Team Semaphore
       Here's the token to activate your account:
     </p>
     <pre><code>
-	{{.ID}}
+	{{.activationToken}}
 	</code></pre>
     <p>
       Please note that this is a one-time use token and it will expire in 3

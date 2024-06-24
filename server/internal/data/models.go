@@ -12,6 +12,7 @@ var (
 
 type Models struct {
 	Users       UserModel
+	Tokens      TokenModel
 	Feeds       FeedModel
 	FeedFollows FeedFollowModel
 }
@@ -19,6 +20,7 @@ type Models struct {
 func NewModels(db *sql.DB) Models {
 	return Models{
 		UserModel{DB: db},
+		TokenModel{DB: db},
 		FeedModel{DB: db},
 		FeedFollowModel{DB: db},
 	}

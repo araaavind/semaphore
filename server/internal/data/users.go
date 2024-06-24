@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"errors"
 	"strconv"
@@ -186,7 +187,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 }
 
 func (m UserModel) GetByEmail(email string) (*User, error) {
-	query := `
+	getUserByEmailQuery := `
         SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, version
         FROM users
         WHERE email = $1`
@@ -196,7 +197,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, email).Scan(
+	err := m.DB.QueryRowContext(ctx, getUserByEmailQuery, email).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -220,8 +221,47 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
+func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
+	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
+
+	getUserForTokenQuery := `
+		SELECT users.id, users.created_at, users.updated_at, users.full_name, users.username, users.email, users.password_hash, users.activated, users.version
+		FROM users
+		INNER JOIN tokens ON users.id = tokens.user_id
+		WHERE tokens.hash = $1
+		AND tokens.scope = $2
+		AND tokens.expiry > $3`
+
+	var user User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, getUserForTokenQuery, tokenHash[:], scope, time.Now()).Scan(
+		&user.ID,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.FullName,
+		&user.Username,
+		&user.Email,
+		&user.Password.hash,
+		&user.Activated,
+		&user.Version,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &user, nil
+}
+
 func (m UserModel) Update(user *User) error {
-	query := `
+	updateUserQuery := `
         UPDATE users 
         SET full_name = $1, username = $2, email = $3, password_hash = $4, activated = $5, updated_at = $6, version = version + 1
         WHERE id = $7 AND version = $8
@@ -241,7 +281,7 @@ func (m UserModel) Update(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.Version)
+	err := m.DB.QueryRowContext(ctx, updateUserQuery, args...).Scan(&user.Version)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
