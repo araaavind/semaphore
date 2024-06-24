@@ -58,6 +58,12 @@ func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = app.models.Permissions.AddForUser(user.ID, "feeds:follow")
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 	token, err := app.models.Tokens.New(user.ID, 3*24*time.Hour, data.ScopeActivation)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
@@ -126,6 +132,8 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+
+	err = app.models.Permissions.AddForUser(user.ID, "feeds:write")
 
 	err = app.models.Tokens.DeleteAllForUser(data.ScopeActivation, user.ID)
 	if err != nil {
