@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -24,6 +25,53 @@ type FeedFollow struct {
 
 type FeedFollowModel struct {
 	DB *sql.DB
+}
+
+func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*User, Metadata, error) {
+	getFollowersForFeedQuery := fmt.Sprintf(`
+		SELECT count(*) OVER(), users.id, users.full_name, users.username
+		FROM users
+		INNER JOIN feed_follows ON feed_follows.user_id = users.id
+		INNER JOIN feeds ON feeds.id = feed_follows.feed_id
+		WHERE feeds.id = $1
+		ORDER BY %s %s, id ASC
+		LIMIT $2 OFFSET $3`, filters.sortColumn(), filters.sortDirection())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []any{feedID, filters.limit(), filters.offset()}
+
+	rows, err := m.DB.QueryContext(ctx, getFollowersForFeedQuery, args...)
+	if err != nil {
+		return nil, Metadata{}, err
+	}
+	defer rows.Close()
+
+	totalRecords := 0
+	users := []*User{}
+
+	for rows.Next() {
+		var user User
+		err = rows.Scan(
+			&totalRecords,
+			&user.ID,
+			&user.FullName,
+			&user.Username,
+		)
+		if err != nil {
+			return nil, Metadata{}, err
+		}
+		users = append(users, &user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, Metadata{}, err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return users, metadata, nil
 }
 
 func (m FeedFollowModel) Insert(feedFollow *FeedFollow) error {

@@ -138,6 +138,42 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func (app *application) listFollowersForFeed(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		data.Filters
+	}
+
+	feedID, err := app.readIDParam(r, "feed_id")
+	if err != nil || feedID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+	input.Page = app.readInt(qs, "page", 1, v)
+	input.PageSize = app.readInt(qs, "page_size", 16, v)
+	input.Sort = app.readString(qs, "sort", "full_name")
+	input.SortSafeList = []string{"id", "full_name", "username", "-id", "-full_name", "-username"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	users, metadata, err := app.models.FeedFollows.GetFollowersForFeed(feedID, input.Filters)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"users": users, "metadata": metadata}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
 func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 	feedID, err := app.readIDParam(r, "feed_id")
 	if err != nil || feedID < 1 {
