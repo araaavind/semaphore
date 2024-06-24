@@ -134,6 +134,10 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = app.models.Permissions.AddForUser(user.ID, "feeds:write")
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
 
 	err = app.models.Tokens.DeleteAllForUser(data.ScopeActivation, user.ID)
 	if err != nil {
@@ -142,4 +146,13 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func (app *application) getCurrentUser(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetUser(r)
+
+	err := app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
