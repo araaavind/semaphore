@@ -123,6 +123,12 @@ func ValidateUser(v *validator.Validator, user *User) {
 	}
 }
 
+var AnonymousUser = &User{}
+
+func (u *User) IsAnonymous() bool {
+	return u == AnonymousUser
+}
+
 type UserModel struct {
 	DB *sql.DB
 }
@@ -198,6 +204,41 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	defer cancel()
 
 	err := m.DB.QueryRowContext(ctx, getUserByEmailQuery, email).Scan(
+		&user.ID,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.FullName,
+		&user.Username,
+		&user.Email,
+		&user.Password.hash,
+		&user.Activated,
+		&user.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &user, nil
+}
+
+func (m UserModel) GetByUsername(username string) (*User, error) {
+	getUserByEmailQuery := `
+        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, version
+        FROM users
+        WHERE username = $1`
+
+	var user User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, getUserByEmailQuery, username).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,

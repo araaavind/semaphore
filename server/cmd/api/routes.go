@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/justinas/alice"
 )
 
 /*
@@ -28,11 +29,14 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUser)
 	router.HandlerFunc(http.MethodPut, "/v1/users/activate", app.activateUser)
 
-	router.HandlerFunc(http.MethodPost, "/v1/feeds", app.addAndFollowFeed)
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationToken)
+
+	router.HandlerFunc(http.MethodPost, "/v1/feeds", app.requireAuthenticatedUser(app.addAndFollowFeed))
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
-	router.HandlerFunc(http.MethodPut, "/v1/feeds/:feed_id/followers", app.followFeed)
-	router.HandlerFunc(http.MethodDelete, "/v1/feeds/:feed_id/followers", app.unfollowFeed)
+	router.HandlerFunc(http.MethodPut, "/v1/feeds/:feed_id/followers", app.requireAuthenticatedUser(app.followFeed))
+	router.HandlerFunc(http.MethodDelete, "/v1/feeds/:feed_id/followers", app.requireAuthenticatedUser(app.unfollowFeed))
 
-	return app.recoverPanic(router)
+	standard := alice.New(app.recoverPanic, app.authenticate)
+	return standard.Then(router)
 }
