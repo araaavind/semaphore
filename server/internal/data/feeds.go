@@ -18,20 +18,20 @@ var (
 )
 
 type Feed struct {
-	ID          int64     `json:"id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Link        string    `json:"link"`
-	FeedLink    string    `json:"feed_link"`
-	PubDate     time.Time `json:"pub_date,omitempty"`
-	PubUpdated  time.Time `json:"pub_updated,omitempty"`
-	FeedType    string    `json:"feed_type,omitempty"`
-	FeedVersion string    `json:"feed_version,omitempty"`
-	Language    string    `json:"language,omitempty"`
-	Version     int32     `json:"version,omitempty"`
-	AddedBy     int64     `json:"added_by"`
+	ID          int64      `json:"id"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Link        string     `json:"link"`
+	FeedLink    string     `json:"feed_link"`
+	PubDate     time.Time  `json:"pub_date,omitempty"`
+	PubUpdated  time.Time  `json:"pub_updated,omitempty"`
+	FeedType    string     `json:"feed_type,omitempty"`
+	FeedVersion string     `json:"feed_version,omitempty"`
+	Language    string     `json:"language,omitempty"`
+	Version     int32      `json:"version,omitempty"`
+	AddedBy     int64      `json:"added_by,omitempty"`
+	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
 
 func ValidateFeedLink(v *validator.Validator, feedLink string) {
