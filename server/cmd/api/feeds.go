@@ -49,7 +49,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 	input.Page = app.readInt(qs, "page", 1, v)
 	input.PageSize = app.readInt(qs, "page_size", 16, v)
 	input.Sort = app.readString(qs, "sort", "pub_date")
-	input.SortSafeList = []string{"id", "title", "pub_date", "pub_updated", "created_at", "updated_at", "-id", "-title", "-pub_date", "-pub_updated", "-created_at", "-updated_at"}
+	input.SortSafeList = []string{"id", "title", "pub_date", "pub_updated", "-id", "-title", "-pub_date", "-pub_updated"}
 
 	if data.ValidateFilters(v, input.Filters); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
