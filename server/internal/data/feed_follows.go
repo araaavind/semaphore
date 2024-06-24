@@ -74,6 +74,59 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 	return users, metadata, nil
 }
 
+func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed, Metadata, error) {
+	getFeedsForUserQuery := fmt.Sprintf(`
+		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
+		FROM feeds
+		INNER JOIN feed_follows ON feed_follows.feed_id = feeds.id
+		INNER JOIN users ON users.id = feed_follows.user_id
+		WHERE users.id = $1
+		ORDER BY %s %s, id ASC
+		LIMIT $2 OFFSET $3`, filters.sortColumn(), filters.sortDirection())
+
+	args := []any{userID, filters.limit(), filters.offset()}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, getFeedsForUserQuery, args...)
+	if err != nil {
+		return nil, Metadata{}, err
+	}
+	defer rows.Close()
+
+	totalRecords := 0
+	feeds := []*Feed{}
+	for rows.Next() {
+		var feed Feed
+		err := rows.Scan(
+			&totalRecords,
+			&feed.ID,
+			&feed.Title,
+			&feed.Description,
+			&feed.Link,
+			&feed.FeedLink,
+			&feed.PubDate,
+			&feed.PubUpdated,
+			&feed.FeedType,
+			&feed.FeedVersion,
+			&feed.Language,
+		)
+		if err != nil {
+			return nil, Metadata{}, err
+		}
+		feeds = append(feeds, &feed)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, Metadata{}, err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return feeds, metadata, nil
+}
+
 func (m FeedFollowModel) Insert(feedFollow *FeedFollow) error {
 	insertFeedFollowQuery := `
 		INSERT INTO feed_follows (user_id, feed_id)
