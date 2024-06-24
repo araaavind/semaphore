@@ -20,15 +20,15 @@ var (
 )
 
 type User struct {
-	ID        int64     `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	FullName  string    `json:"full_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	Password  password  `json:"-"`
-	Activated bool      `json:"activated"`
-	Version   int       `json:"-"`
+	ID        int64      `json:"id"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	FullName  string     `json:"full_name"`
+	Username  string     `json:"username"`
+	Email     string     `json:"email,omitempty"`
+	Password  password   `json:"-"`
+	Activated bool       `json:"activated,omitempty"`
+	Version   int        `json:"-"`
 }
 
 type password struct {
