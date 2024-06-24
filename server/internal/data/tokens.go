@@ -22,6 +22,7 @@ type Token struct {
 	UserID    int64     `json:"-"`
 	Expiry    time.Time `json:"expiry"`
 	Scope     string    `json:"-"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func generateToken(userID int64, ttl time.Duration, scope string) (*Token, error) {
@@ -85,14 +86,15 @@ func (m TokenModel) New(userID int64, ttl time.Duration, scope string) (*Token, 
 func (m TokenModel) Insert(token *Token) error {
 	insertQuery := `
         INSERT INTO tokens (hash, user_id, expiry, scope) 
-        VALUES ($1, $2, $3, $4)`
+        VALUES ($1, $2, $3, $4)
+		RETURNING created_at`
 
 	args := []any{token.Hash, token.UserID, token.Expiry, token.Scope}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, insertQuery, args...)
+	err := m.DB.QueryRowContext(ctx, insertQuery, args...).Scan(&token.CreatedAt)
 	return err
 }
 
