@@ -80,9 +80,11 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
+	user := app.contextGetUser(r)
+
 	feedFollow := &data.FeedFollow{
 		FeedID: feedToFolow.ID,
-		UserID: 1,
+		UserID: user.ID,
 	}
 	err = app.models.FeedFollows.Insert(feedFollow)
 	if err != nil {
@@ -119,9 +121,11 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	user := app.contextGetUser(r)
+
 	feedFollow := data.FeedFollow{
 		FeedID: feed.ID,
-		UserID: 1,
+		UserID: user.ID,
 	}
 	err = app.models.FeedFollows.Upsert(feedFollow)
 	if err != nil {
@@ -139,9 +143,11 @@ func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := app.contextGetUser(r)
+
 	feedFolow := data.FeedFollow{
 		FeedID: feedID,
-		UserID: 1,
+		UserID: user.ID,
 	}
 	err = app.models.FeedFollows.Delete(feedFolow)
 	if err != nil {
