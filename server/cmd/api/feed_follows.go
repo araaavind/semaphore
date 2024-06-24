@@ -13,6 +13,8 @@ import (
 )
 
 func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetUser(r)
+
 	var input struct {
 		FeedLink string `json:"feed_link"`
 	}
@@ -47,7 +49,9 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		if errors.Is(err, data.ErrRecordNotFound) {
 			// If the link provided by user or the 'self' link of parsed Feed is not present in DB,
 			// check if the 'self' link of the parsed feed is same as the link provided by the user.
-			feedToFolow = &data.Feed{}
+			feedToFolow = &data.Feed{
+				AddedBy: user.ID,
+			}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.
 				copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
@@ -79,8 +83,6 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	}
-
-	user := app.contextGetUser(r)
 
 	feedFollow := &data.FeedFollow{
 		FeedID: feedToFolow.ID,

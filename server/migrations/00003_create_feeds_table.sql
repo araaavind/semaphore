@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS feeds (
     feed_version text NOT NULL DEFAULT '2.0',
     language text NOT NULL DEFAULT 'en-us',
     version integer NOT NULL DEFAULT 1,
+    added_by bigint NOT NULL REFERENCES users ON DELETE CASCADE,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
 );
