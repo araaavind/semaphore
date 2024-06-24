@@ -37,6 +37,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPut, "/v1/users/activate", app.activateUser)
 
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationToken)
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationToken)
 
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
