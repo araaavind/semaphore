@@ -6,6 +6,7 @@ require (
 	github.com/go-mail/mail/v2 v2.3.0
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/julienschmidt/httprouter v1.3.0
+	github.com/justinas/alice v1.2.0
 	github.com/mmcdole/gofeed v1.3.0
 	golang.org/x/crypto v0.24.0
 )
