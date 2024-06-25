@@ -135,5 +135,70 @@ func (app *application) createActivationToken(w http.ResponseWriter, r *http.Req
 		}
 	})
 
-	w.WriteHeader(http.StatusAccepted)
+	env := envelope{"message": "an email will be sent you containing the activation token"}
+
+	err = app.writeJSON(w, http.StatusAccepted, env, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) createPasswordResetToken(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Email string `json:"email"`
+	}
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+
+	if data.ValidateEmail(v, input.Email); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	user, err := app.models.Users.GetByEmail(input.Email)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			v.AddError("email", "no matching account found")
+			app.failedValidationResponse(w, r, v.Errors)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	if !user.Activated {
+		v.AddError("email", "user must be activated to reset password")
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	token, err := app.models.Tokens.New(user.ID, 45*time.Minute, data.ScopePasswordReset)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	app.background(func() {
+		data := map[string]any{
+			"passwordResetToken": token.Plaintext,
+		}
+
+		err = app.mailer.Send(user.Email, "password_reset_token.tmpl", data)
+		if err != nil {
+			app.logger.Error(err.Error())
+		}
+	})
+
+	env := envelope{"message": "an email will be sent you containing the password reset token"}
+
+	err = app.writeJSON(w, http.StatusAccepted, env, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
