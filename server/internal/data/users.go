@@ -100,6 +100,10 @@ func ValidatePasswordPlaintext(v *validator.Validator, password string) {
 	v.Check(validator.NotBlank(password), "password", "must be provided")
 	v.Check(validator.MinChars(password, 8), "password", "must be at least 8 bytes long")
 	v.Check(validator.MaxChars(password, 72), "password", "must not be more than 72 bytes long")
+	v.Check(validator.Matches(password, validator.HasLowerRX), "password", "must have atleast 1 lower-case character")
+	v.Check(validator.Matches(password, validator.HasUpperRX), "password", "must have atleast 1 upper-case character")
+	v.Check(validator.Matches(password, validator.HasSpecialRX), "password", "must have atleast 1 special character (! @ # $ & *)")
+	v.Check(validator.Matches(password, validator.HasDigitRX), "password", "must have atleast 1 numeric character")
 }
 
 func ValidateUser(v *validator.Validator, user *User) {

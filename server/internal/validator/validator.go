@@ -11,7 +11,11 @@ var (
 	// Regex for checking sanity of email address. Source: https://html.spec.whatwg.org/#valid-e-mail-address
 	EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 	// Regex for checking sanity of username. Source: https://stackoverflow.com/a/12019115
-	UsernameBasicRX = regexp.MustCompile("(?i)^[a-zA-Z0-9._]+$")
+	UsernameBasicRX = regexp.MustCompile(`(?i)^[a-zA-Z0-9._]+$`)
+	HasLowerRX      = regexp.MustCompile(`[a-z]`)
+	HasUpperRX      = regexp.MustCompile(`[A-Z]`)
+	HasDigitRX      = regexp.MustCompile(`\d`)
+	HasSpecialRX    = regexp.MustCompile(`[!@#$&*]`)
 )
 
 type Validator struct {
