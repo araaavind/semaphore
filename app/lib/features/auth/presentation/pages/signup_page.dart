@@ -12,7 +12,9 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Semaphore'),
+        title: const Text(
+          'Semaphore',
+        ),
       ),
     );
   }

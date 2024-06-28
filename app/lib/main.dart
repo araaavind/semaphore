@@ -2,6 +2,8 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:flutter/material.dart';
 
+import 'core/theme/theme.dart';
+
 void main() {
   runApp(const SemaphoreApp());
 }
@@ -12,11 +14,8 @@ class SemaphoreApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
-      light: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      dark: ThemeData.dark(),
+      light: AppTheme.light,
+      dark: AppTheme.dark,
       initial: AdaptiveThemeMode.system,
       builder: (theme, darkTheme) => MaterialApp(
         debugShowCheckedModeBanner: false,
