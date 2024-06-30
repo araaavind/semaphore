@@ -11,18 +11,12 @@ class AppTheme {
     useMaterial3: true,
   ).copyWith(
     colorScheme: lightColorScheme,
-    appBarTheme: AppBarTheme(
-      backgroundColor: lightColorScheme.surface,
-    ),
     scaffoldBackgroundColor: lightColorScheme.surface,
   );
   static final dark = ThemeData.dark(
     useMaterial3: true,
   ).copyWith(
     colorScheme: darkColorScheme,
-    appBarTheme: AppBarTheme(
-      backgroundColor: darkColorScheme.surface,
-    ),
     scaffoldBackgroundColor: darkColorScheme.surface,
   );
 
@@ -36,6 +30,11 @@ class AppTheme {
     onError: AppPalette.onError,
     surface: AppPalette.surface,
     onSurface: AppPalette.onSurface,
+    surfaceContainer: AppPalette.surfaceContainer,
+    surfaceContainerLow: AppPalette.surfaceContainerLow,
+    surfaceContainerLowest: AppPalette.surfaceContainerLowest,
+    surfaceContainerHigh: AppPalette.surfaceContainerHigh,
+    surfaceContainerHighest: AppPalette.surfaceContainerHighest,
   );
 
   static ColorScheme darkColorScheme = const ColorScheme(
@@ -48,5 +47,10 @@ class AppTheme {
     onError: AppPalette.onErrorDark,
     surface: AppPalette.surfaceDark,
     onSurface: AppPalette.onSurfaceDark,
+    surfaceContainer: AppPalette.surfaceContainerDark,
+    surfaceContainerLow: AppPalette.surfaceContainerLowDark,
+    surfaceContainerLowest: AppPalette.surfaceContainerLowestDark,
+    surfaceContainerHigh: AppPalette.surfaceContainerHighDark,
+    surfaceContainerHighest: AppPalette.surfaceContainerHighestDark,
   );
 }
