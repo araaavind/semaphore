@@ -18,6 +18,16 @@ abstract class AppPalette {
   static const surfaceDark = Color(0xFF080808);
   static const onSurface = Colors.black;
   static const onSurfaceDark = Colors.white;
+  static const surfaceContainerLowest = Color(0xFFE6FDFF);
+  static const surfaceContainerLowestDark = Color(0xFF25364C);
+  static const surfaceContainerLow = Color(0xFFDAFDFF);
+  static const surfaceContainerLowDark = Color(0xFF2F445E);
+  static const surfaceContainer = Color(0xFFCCFBFE);
+  static const surfaceContainerDark = Color(0xFF3A5372);
+  static const surfaceContainerHigh = Color(0xFFC1F9FD);
+  static const surfaceContainerHighDark = Color(0xFF446083);
+  static const surfaceContainerHighest = Color(0xFFAFFAFF);
+  static const surfaceContainerHighestDark = Color(0xFF5275A0);
   static const error = Color(0xFFFF0035);
   static const errorDark = Color(0xFFFF0035);
   static const onError = Colors.white;
