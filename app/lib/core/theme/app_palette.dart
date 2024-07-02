@@ -10,8 +10,8 @@ abstract class AppPalette {
   static const secondaryDark = Color(0xFFC092C9);
   static const onSecondary = Colors.black;
   static const onSecondaryDark = Colors.black;
-  static const tertiary = Color(0xFFE4FF6B);
-  static const tertiaryDark = Color(0xFFC9DF68);
+  static const tertiary = Color(0xFFCBF416);
+  static const tertiaryDark = Color(0xFFE4FF6B);
   static const onTertiary = Colors.black;
   static const onTertiaryDark = Colors.black;
   static const surface = Color(0xFFFAFAFF);
@@ -32,9 +32,13 @@ abstract class AppPalette {
   static const errorDark = Color(0xFFFF0035);
   static const onError = Colors.white;
   static const onErrorDark = Colors.white;
+  static const outline = Color(0xFFABABAB);
+  static const outlineDark = Color(0xFF3D3D3D);
 
   // Grey
   static const grey = _GreyColors();
+
+  static const transparent = Colors.transparent;
 }
 
 /// Alternative way to group colors in the palette.
