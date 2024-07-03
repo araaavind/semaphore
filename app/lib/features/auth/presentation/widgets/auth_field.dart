@@ -1,13 +1,13 @@
 import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class InputField extends StatelessWidget {
+class AuthField<T> extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool isPassword;
   final TextStyle? style;
 
-  const InputField({
+  const AuthField({
     super.key,
     required this.controller,
     required this.hintText,

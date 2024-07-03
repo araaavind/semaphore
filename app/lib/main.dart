@@ -1,5 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:app/features/auth/presentation/pages/signup_page.dart';
+import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
 import 'core/theme/theme.dart';
@@ -22,7 +22,7 @@ class SemaphoreApp extends StatelessWidget {
         title: 'Semaphore',
         theme: theme,
         darkTheme: darkTheme,
-        home: const SignupPage(),
+        home: const LoginPage(),
       ),
     );
   }
