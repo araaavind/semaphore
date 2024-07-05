@@ -38,9 +38,10 @@ class Semaphore {
     String baseUrl,
     Dio? dioClient,
   ) {
+    final dio = dioClient ?? Dio();
+    dio.options.baseUrl = baseUrl;
     client = SemaphoreClient(
-      dioClient ?? Dio(),
-      baseUrl: baseUrl,
+      dio,
     );
     _initialized = true;
   }
