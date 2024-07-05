@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:semaphore_dart_connect/src/auth_client.dart';
 
 class SemaphoreClient {
-  final Dio dio;
-  final String baseUrl;
+  late final AuthClient auth;
 
-  SemaphoreClient(
-    this.dio, {
-    required this.baseUrl,
-  });
+  SemaphoreClient(Dio dio) {
+    auth = AuthClient(dio);
+  }
 }
