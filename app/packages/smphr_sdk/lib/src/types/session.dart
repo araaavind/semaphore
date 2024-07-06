@@ -7,13 +7,13 @@ class Session {
   /// Returned when a login is confirmed.
   final DateTime? expiry;
 
-  final String tokenType;
+  final String? tokenType;
   final User user;
 
   Session({
     required this.token,
     this.expiry,
-    required this.tokenType,
+    this.tokenType,
     required this.user,
   });
 
