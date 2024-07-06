@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
@@ -12,8 +13,9 @@ import 'core/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final semaphore =
-      await Semaphore.initialize(baseUrl: 'http://192.168.1.5:5000/v1');
+  final semaphore = await Semaphore.initialize(
+    baseUrl: ServerConstants.baseUrl,
+  );
   runApp(
     MultiBlocProvider(
       providers: [
