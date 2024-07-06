@@ -15,13 +15,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailUsernameController = TextEditingController();
+  final usernameOrEmailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    emailUsernameController.dispose();
+    usernameOrEmailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
@@ -54,8 +54,8 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 20),
               AuthField(
-                hintText: 'Email or Username',
-                controller: emailUsernameController,
+                hintText: 'Username or Email',
+                controller: usernameOrEmailController,
               ),
               const SizedBox(height: 10),
               AuthField(
