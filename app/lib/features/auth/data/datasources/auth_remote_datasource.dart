@@ -1,7 +1,7 @@
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/auth/data/models/user_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:semaphore_dart_connect/semaphore_dart_connect.dart';
+import 'package:smphr_sdk/smphr_sdk.dart';
 
 abstract interface class AuthRemoteDatasource {
   Future<UserModel> signupWithPassword({

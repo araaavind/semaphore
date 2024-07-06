@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:semaphore_dart_connect/src/auth_client.dart';
+
+import 'auth_client.dart';
+// import 'package:smphr_sdk/src/auth_client.dart';
 
 class SemaphoreClient {
   late final AuthClient auth;

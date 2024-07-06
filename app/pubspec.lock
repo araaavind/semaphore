@@ -272,13 +272,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
-  semaphore_dart_connect:
-    dependency: "direct main"
-    description:
-      path: "../semaphore_dart_connect"
-      relative: true
-    source: path
-    version: "1.0.0"
   shared_preferences:
     dependency: transitive
     description:
@@ -340,6 +333,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  smphr_sdk:
+    dependency: "direct main"
+    description:
+      path: "packages/smphr_sdk"
+      relative: true
+    source: path
+    version: "1.0.0"
   source_span:
     dependency: transitive
     description:

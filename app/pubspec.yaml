@@ -38,8 +38,8 @@ dependencies:
   fpdart: ^1.1.0
   dio: ^5.5.0
   flutter_bloc: ^8.1.6
-  semaphore_dart_connect:
-    path: ../semaphore_dart_connect
+  smphr_sdk:
+    path: packages/smphr_sdk
 
 dev_dependencies:
   flutter_test:
