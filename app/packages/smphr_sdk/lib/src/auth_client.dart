@@ -1,9 +1,15 @@
 import 'package:dio/dio.dart';
-import 'package:semaphore_dart_connect/src/constants.dart';
-import 'package:semaphore_dart_connect/src/types/auth_exception.dart';
-import 'package:semaphore_dart_connect/src/types/auth_response.dart';
-import 'package:semaphore_dart_connect/src/types/error_response.dart';
-import 'package:semaphore_dart_connect/src/types/semaphore_exception.dart';
+
+import 'constants.dart';
+import 'types/auth_exception.dart';
+import 'types/auth_response.dart';
+import 'types/error_response.dart';
+import 'types/semaphore_exception.dart';
+// import 'package:smphr_sdk/src/constants.dart';
+// import 'package:smphr_sdk/src/types/auth_exception.dart';
+// import 'package:smphr_sdk/src/types/auth_response.dart';
+// import 'package:smphr_sdk/src/types/error_response.dart';
+// import 'package:smphr_sdk/src/types/semaphore_exception.dart';
 
 class AuthClient {
   final Dio _dio;
