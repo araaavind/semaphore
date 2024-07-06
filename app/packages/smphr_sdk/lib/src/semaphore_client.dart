@@ -5,14 +5,14 @@ import 'auth_interceptor.dart';
 import 'local_storage.dart';
 
 class SemaphoreClient {
-  late final AuthClient _auth;
+  late final AuthClient auth;
   final Dio _dio;
   final LocalStorage _sharedLocalStorage;
 
   SemaphoreClient(Dio dio, LocalStorage sharedLocalStorage)
       : _dio = dio,
         _sharedLocalStorage = sharedLocalStorage {
-    _auth = AuthClient(dio);
+    auth = AuthClient(dio);
   }
 
   Future<void> initialize() async {
@@ -21,9 +21,9 @@ class SemaphoreClient {
       final session = await _sharedLocalStorage.getSession();
       if (session != null) {
         // use try catch when signout is implemented in setInitialSession when session does not exist
-        _auth.setInitialSession(session);
+        auth.setInitialSession(session);
       }
     }
-    _dio.interceptors.add(AuthInterceptor(auth: _auth));
+    _dio.interceptors.add(AuthInterceptor(auth: auth));
   }
 }
