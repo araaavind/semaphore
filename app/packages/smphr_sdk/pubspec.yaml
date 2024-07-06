@@ -9,6 +9,9 @@ environment:
 # Add regular dependencies here.
 dependencies:
   dio: ^5.5.0+1
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.2.3
   # path: ^1.8.0
 
 dev_dependencies:
