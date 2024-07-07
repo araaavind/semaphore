@@ -10,9 +10,8 @@ class ErrorResponse {
 
   factory ErrorResponse.fromMap(Map<String, dynamic> map) {
     if (map['error'] != null) {
-      if (map['error'] is Map<String, String> &&
-          map['error']['message'] != null) {
-        return ErrorResponse(map['error']['message']);
+      if (map['error'] is String) {
+        return ErrorResponse(map['error']);
       } else if (map['error'] is Map<String, dynamic>) {
         Map<String, String> fieldErrors = {};
         (map['error'] as Map<String, dynamic>).forEach((k, v) {
