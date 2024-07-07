@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
+import 'constants.dart';
 import 'local_storage.dart';
+import 'interceptors/error_interceptor.dart';
 import 'semaphore_client.dart';
 
 class Semaphore {
@@ -50,9 +52,16 @@ class Semaphore {
     Dio? dioClient,
     LocalStorage sharedLocalStorage,
   ) async {
-    final dio = dioClient ?? Dio();
-    dio.options.baseUrl = baseUrl;
+    final dio = dioClient ??
+        Dio(
+          BaseOptions(
+            baseUrl: baseUrl,
+            connectTimeout: Constants.defaultConnectTimeout,
+            receiveTimeout: Constants.defaultReceiveTimeout,
+          ),
+        );
 
+    dio.interceptors.add(ErrorInterceptor());
     client = SemaphoreClient(
       dio,
       sharedLocalStorage,

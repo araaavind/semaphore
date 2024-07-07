@@ -1,8 +1,23 @@
 class Constants {
-  static const String defaultBaseUrl = 'http://localhost:5000/';
-  static const String internalServerErrorMessage = 'Something went wrong.';
+  // HTTP Constants
+  static const String defaultBaseUrl = 'http://127.0.0.1:5000/';
+  static const Duration defaultConnectTimeout = Duration(seconds: 8);
+  static const Duration defaultReceiveTimeout = Duration(seconds: 5);
+
   static const int httpInternalServerErrorCode = 500;
 
-  /// The margin to use when checking if a token is expired.
+  // Error messages
+  static const String internalServerErrorMessage =
+      'An unexpected error occured. Please try again later';
+  static const String sessionExpiredErrorMessage =
+      'Session Expired! Please login again';
+  static const String connectionTimeoutErrorMessage =
+      'Could not connect to the server. Check your internet or try again later';
+  static const String receiveTimeoutErrorMessage =
+      'Took too long to get response. Please try again later';
+  static const String connectionErrorMessage =
+      'Cannot connect to server. We will look into this issue';
+
+  // The margin to use when checking if a token is expired.
   static const expiryMargin = Duration(seconds: 30);
 }
