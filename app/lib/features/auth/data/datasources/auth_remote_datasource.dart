@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
 
 abstract interface class AuthRemoteDatasource {
+  Session? get currentSession;
+
   Future<UserModel> signupWithPassword({
     required String fullName,
     required String email,
@@ -11,7 +13,7 @@ abstract interface class AuthRemoteDatasource {
     required String password,
   });
 
-  Future<String> loginWithPassword({
+  Future<UserModel> loginWithPassword({
     required String usernameOrEmail,
     required String password,
   });
@@ -21,6 +23,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   SemaphoreClient semaphoreClient;
 
   AuthRemoteDatasourceImpl(this.semaphoreClient);
+
+  @override
+  Session? get currentSession => semaphoreClient.auth.currentSession;
 
   @override
   Future<UserModel> signupWithPassword({
@@ -41,14 +46,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         throw const ServerException('User is null!');
       }
 
-      final user = UserModel(
-        id: response.user!.id,
+      return UserModel(
         email: response.user!.email,
-        username: response.user!.username,
         fullName: response.user!.fullName,
+        id: response.user!.id,
+        username: response.user!.username,
       );
-
-      return user;
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } on SemaphoreException catch (e) {
@@ -62,11 +65,35 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<String> loginWithPassword({
+  Future<UserModel> loginWithPassword({
     required String usernameOrEmail,
     required String password,
-  }) {
-    // TODO: implement loginWithPassword
-    throw UnimplementedError();
+  }) async {
+    try {
+      final response = await semaphoreClient.auth.signInWithPassword(
+        usernameOrEmail: usernameOrEmail,
+        password: password,
+      );
+
+      if (response.user == null) {
+        throw const ServerException('User is null!');
+      }
+
+      return UserModel(
+        email: response.user!.email,
+        fullName: response.user!.fullName,
+        id: response.user!.id,
+        username: response.user!.username,
+      );
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } on SemaphoreException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint(e.toString());
+      }
+      throw ServerException(e.toString());
+    }
   }
 }
