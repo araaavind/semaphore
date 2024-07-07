@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import 'constants.dart';
 import 'types/auth_exception.dart';
 import 'types/auth_response.dart';
 import 'types/error_response.dart';
+import 'types/network_exception.dart';
 import 'types/semaphore_exception.dart';
 import 'types/session.dart';
 import 'types/user.dart';
@@ -16,8 +18,19 @@ class AuthClient {
   User? _currentUser;
   Session? _currentSession;
 
-  AuthClient(Dio dio) : _dio = dio;
+  AuthClient(
+    Dio dio,
+  ) : _dio = dio;
 
+  /// Creates a new user.
+  ///
+  /// Returns the created user
+  ///
+  /// [email] is the user's email address
+  ///
+  /// [username] is a unique username that user choses
+  ///
+  /// [password] is the password of the user
   Future<AuthResponse> signupWithPassword({
     required String fullName,
     required String email,
@@ -34,9 +47,14 @@ class AuthClient {
           'password': password,
         },
       );
-      final user = AuthResponse.fromMap(response.data);
-      return user;
+      return AuthResponse.fromMap(response.data);
+    } on NetworkException catch (e) {
+      throw SemaphoreException(e.message!);
     } on DioException catch (e) {
+      if (kDebugMode) {
+        print(e.message);
+        print(e.stackTrace);
+      }
       if (e.response?.statusCode == 422) {
         final errRes = ErrorResponse.fromMap(e.response?.data);
         if (errRes.fieldErrors != null) {
@@ -60,13 +78,81 @@ class AuthClient {
           statusCode: e.response?.statusCode,
         );
       }
-      print(e.message);
+      throw SemaphoreException(
+        Constants.internalServerErrorMessage,
+        statusCode: Constants.httpInternalServerErrorCode,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      throw SemaphoreException(
+        Constants.internalServerErrorMessage,
+        statusCode: Constants.httpInternalServerErrorCode,
+      );
+    }
+  }
+
+  Future<AuthResponse> signInWithPassword({
+    required String usernameOrEmail,
+    required String password,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/tokens/authentication',
+        data: {
+          'username_or_email': usernameOrEmail,
+          'password': password,
+        },
+      );
+
+      final authResponse = AuthResponse.fromMap(response.data);
+
+      if (authResponse.session?.token != null) {
+        _saveSession(authResponse.session!);
+      }
+
+      return authResponse;
+    } on NetworkException catch (e) {
+      if (kDebugMode) {
+        print(e.message);
+      }
+      throw SemaphoreException(e.message!);
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print(e.message);
+        print(e.stackTrace);
+      }
+      if (e.response?.statusCode == 422) {
+        final errRes = ErrorResponse.fromMap(e.response?.data);
+        if (errRes.fieldErrors != null) {
+          errRes.fieldErrors!.forEach((field, message) {
+            switch (field) {
+              case 'username_or_email':
+                throw AuthException('Username or Email $message');
+              case 'password':
+                throw AuthException('Password $message');
+              default:
+                throw AuthException('Something went wrong. Check the inputs.');
+            }
+          });
+        }
+        throw AuthException(
+          errRes.message,
+          statusCode: e.response?.statusCode,
+        );
+      } else if (e.response?.statusCode == 401) {
+        final errRes = ErrorResponse.fromMap(e.response?.data);
+        throw AuthException(errRes.message);
+      }
       throw SemaphoreException(
         Constants.internalServerErrorMessage,
         statusCode: e.response?.statusCode,
       );
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       throw SemaphoreException(
         Constants.internalServerErrorMessage,
         statusCode: Constants.httpInternalServerErrorCode,
