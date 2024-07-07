@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../constants.dart';
 import 'user.dart';
 
@@ -5,38 +7,42 @@ class Session {
   final String token;
 
   /// Returned when a login is confirmed.
-  final DateTime? expiry;
+  final DateTime expiry;
 
   final String? tokenType;
-  final User user;
+  final User? user;
 
   Session({
     required this.token,
-    this.expiry,
+    required this.expiry,
     this.tokenType,
-    required this.user,
+    this.user,
   });
 
   /// Returns a `Session` object from a map of json
   /// returns `null` if there is no `token` present
-  static Session? fromJson(Map<String, dynamic> json) {
+  static Session? fromMap(Map<String, dynamic> json) {
     if (json['token'] == null) {
       return null;
     }
     return Session(
       token: json['token'] as String,
-      expiry: json['expiry'] as DateTime?,
-      tokenType: json['token_type'] as String,
-      user: User.fromJson(json['user'] as String),
+      expiry: DateTime.parse(json['expiry'] as String),
+      tokenType:
+          json['token_type'] != null ? json['token_type'] as String : null,
+      user: json['user'] != null ? User.fromJson(json['user'] as String) : null,
     );
   }
+
+  static Session? fromJson(String source) =>
+      Session.fromMap(json.decode(source) as Map<String, dynamic>);
 
   Map<String, dynamic> toJson() {
     return {
       'token': token,
-      'expiry': expiry,
+      'expiry': expiry.toLocal(),
       'token_type': tokenType,
-      'user': user.toJson(),
+      'user': user?.toJson(),
     };
   }
 
@@ -44,8 +50,7 @@ class Session {
   ///
   /// The 10 second buffer is to account for latency issues.
   bool get isExpired {
-    if (expiry == null) return false;
-    return DateTime.now().add(Constants.expiryMargin).isAfter(expiry!);
+    return DateTime.now().add(Constants.expiryMargin).isAfter(expiry);
   }
 
   Session copyWith({
