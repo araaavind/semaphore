@@ -21,7 +21,7 @@ class Semaphore {
   static Future<Semaphore> initialize({
     required String baseUrl,
     Dio? dioClient,
-    LocalStorage? sessionLocalStorage,
+    LocalStorage? sharedLocalStorage,
   }) async {
     assert(
       !_instance._initialized,
@@ -29,17 +29,17 @@ class Semaphore {
     );
 
     // if sessionLocalStorage == null => create new using SharedPreferencesLocalStorage
-    sessionLocalStorage ??= SharedPreferencesLocalStorage(
+    sharedLocalStorage ??= SharedPreferencesLocalStorage(
       persistSessionKey:
-          'sb-${Uri.parse(baseUrl).host.split(".").first}-auth-token',
+          'sm-${Uri.parse(baseUrl).host.split(".").first}-auth-token',
     );
 
-    await sessionLocalStorage.initialize();
+    await sharedLocalStorage.initialize();
 
     _instance._init(
       baseUrl,
       dioClient,
-      sessionLocalStorage,
+      sharedLocalStorage,
     );
 
     return _instance;
@@ -48,14 +48,14 @@ class Semaphore {
   void _init(
     String baseUrl,
     Dio? dioClient,
-    LocalStorage sessionLocalStorage,
+    LocalStorage sharedLocalStorage,
   ) async {
     final dio = dioClient ?? Dio();
     dio.options.baseUrl = baseUrl;
 
     client = SemaphoreClient(
       dio,
-      sessionLocalStorage,
+      sharedLocalStorage,
     );
     await client.initialize();
     _initialized = true;
