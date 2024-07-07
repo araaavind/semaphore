@@ -20,7 +20,7 @@ class AuthResponse {
         ? Session.fromMap(map['authentication_token'] as Map<String, dynamic>)
         : null;
     return AuthResponse(
-      session: session!.copyWith(user: user),
+      session: session?.copyWith(user: user),
       user: user,
     );
   }

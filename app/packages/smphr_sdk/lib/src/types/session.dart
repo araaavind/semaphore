@@ -40,7 +40,7 @@ class Session {
   Map<String, dynamic> toJson() {
     return {
       'token': token,
-      'expiry': expiry.toLocal(),
+      'expiry': expiry.toLocal().toIso8601String(),
       'token_type': tokenType,
       'user': user?.toJson(),
     };
