@@ -1,32 +1,20 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:app/core/constants/constants.dart';
-import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:app/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:app/features/auth/domain/usecases/user_signup.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
+import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smphr_sdk/smphr_sdk.dart';
 
 import 'core/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final semaphore = await Semaphore.initialize(
-    baseUrl: ServerConstants.baseUrl,
-  );
+  await initDependencies();
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => AuthBloc(
-            userSignup: UserSignup(
-              AuthRepositoryImpl(
-                AuthRemoteDatasourceImpl(semaphore.client),
-              ),
-            ),
-          ),
+          create: (_) => serviceLocator<AuthBloc>(),
         ),
       ],
       child: const SemaphoreApp(),
