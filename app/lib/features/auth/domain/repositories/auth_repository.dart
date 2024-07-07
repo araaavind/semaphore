@@ -3,6 +3,8 @@ import 'package:app/core/errors/failures.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class AuthRepository {
+  Either<Failure, User> get currentUser;
+
   Future<Either<Failure, User>> signupWithPassword({
     required String fullName,
     required String email,

@@ -50,4 +50,10 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Either<Failure, UserModel> get currentUser =>
+      remoteDatasource.currentUser == null
+          ? left(Failure('User not logged in'))
+          : right(remoteDatasource.currentUser!);
 }
