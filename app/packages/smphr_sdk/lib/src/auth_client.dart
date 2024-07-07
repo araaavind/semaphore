@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import 'constants.dart';
+import 'local_storage.dart';
 import 'types/auth_exception.dart';
 import 'types/auth_response.dart';
 import 'types/error_response.dart';
@@ -14,13 +15,16 @@ import 'types/user.dart';
 
 class AuthClient {
   final Dio _dio;
+  final LocalStorage _sharedLocalStorage;
 
   User? _currentUser;
   Session? _currentSession;
 
-  AuthClient(
-    Dio dio,
-  ) : _dio = dio;
+  AuthClient({
+    required Dio dio,
+    required LocalStorage sharedLocalStorage,
+  })  : _dio = dio,
+        _sharedLocalStorage = sharedLocalStorage;
 
   /// Creates a new user.
   ///
@@ -49,10 +53,13 @@ class AuthClient {
       );
       return AuthResponse.fromMap(response.data);
     } on NetworkException catch (e) {
+      if (kDebugMode) {
+        print('NetworkException $e.message');
+      }
       throw SemaphoreException(e.message!);
     } on DioException catch (e) {
       if (kDebugMode) {
-        print(e.message);
+        print('Dio exception $e.message');
         print(e.stackTrace);
       }
       if (e.response?.statusCode == 422) {
@@ -84,7 +91,7 @@ class AuthClient {
       );
     } catch (e) {
       if (kDebugMode) {
-        print(e.toString());
+        print('Unknown exception $e.toString()');
       }
       throw SemaphoreException(
         Constants.internalServerErrorMessage,
@@ -109,18 +116,20 @@ class AuthClient {
       final authResponse = AuthResponse.fromMap(response.data);
 
       if (authResponse.session?.token != null) {
+        await _sharedLocalStorage
+            .persistSession(jsonEncode(authResponse.session!.toJson()));
         _saveSession(authResponse.session!);
       }
 
       return authResponse;
     } on NetworkException catch (e) {
       if (kDebugMode) {
-        print(e.message);
+        print('NetworkException $e.message');
       }
       throw SemaphoreException(e.message!);
     } on DioException catch (e) {
       if (kDebugMode) {
-        print(e.message);
+        print('Dio exception $e.message');
         print(e.stackTrace);
       }
       if (e.response?.statusCode == 422) {
@@ -151,7 +160,7 @@ class AuthClient {
       );
     } catch (e) {
       if (kDebugMode) {
-        print(e.toString());
+        print('Unknown exception $e.toString()');
       }
       throw SemaphoreException(
         Constants.internalServerErrorMessage,
@@ -162,10 +171,11 @@ class AuthClient {
 
   /// Set the initial session to the session obtained from local storage
   Future<void> setInitialSession(String jsonStr) async {
-    final session = Session.fromJson(json.decode(jsonStr));
+    final session = Session.fromMap(json.decode(jsonStr));
     if (session == null) {
       // sign out to delete the local storage from supabase_flutter
       UnimplementedError('Implement signout if session does not exist');
+      return;
     }
 
     _saveSession(session!);

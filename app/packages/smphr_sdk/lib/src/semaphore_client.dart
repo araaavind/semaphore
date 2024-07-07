@@ -12,7 +12,10 @@ class SemaphoreClient {
   SemaphoreClient(Dio dio, LocalStorage sharedLocalStorage)
       : _dio = dio,
         _sharedLocalStorage = sharedLocalStorage {
-    auth = AuthClient(dio);
+    auth = AuthClient(
+      dio: _dio,
+      sharedLocalStorage: _sharedLocalStorage,
+    );
   }
 
   Future<void> initialize() async {

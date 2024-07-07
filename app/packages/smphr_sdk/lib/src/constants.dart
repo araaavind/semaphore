@@ -18,6 +18,9 @@ class Constants {
   static const String connectionErrorMessage =
       'Cannot connect to server. We will look into this issue';
 
+  //
+  static const defaultPersistSessionKey = 'sm-session';
+
   // The margin to use when checking if a token is expired.
   static const expiryMargin = Duration(seconds: 30);
 }
