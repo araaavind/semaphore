@@ -2,6 +2,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
+import 'package:app/features/wall/presentation/wall_page.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,8 +27,19 @@ void main() async {
   );
 }
 
-class SemaphoreApp extends StatelessWidget {
+class SemaphoreApp extends StatefulWidget {
   const SemaphoreApp({super.key});
+
+  @override
+  State<SemaphoreApp> createState() => _SemaphoreAppState();
+}
+
+class _SemaphoreAppState extends State<SemaphoreApp> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthBloc>().add(AuthCurrentUserEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +52,17 @@ class SemaphoreApp extends StatelessWidget {
         title: 'Semaphore',
         theme: theme,
         darkTheme: darkTheme,
-        home: const LoginPage(),
+        home: BlocSelector<AppUserCubit, AppUserState, bool>(
+          selector: (state) {
+            return state is AppUserLoggedIn;
+          },
+          builder: (context, isLoggedIn) {
+            if (isLoggedIn) {
+              return const WallPage();
+            }
+            return const LoginPage();
+          },
+        ),
       ),
     );
   }

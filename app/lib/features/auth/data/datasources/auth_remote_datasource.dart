@@ -17,6 +17,8 @@ abstract interface class AuthRemoteDatasource {
     required String usernameOrEmail,
     required String password,
   });
+
+  UserModel? get currentUser;
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -25,7 +27,10 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   AuthRemoteDatasourceImpl(this.semaphoreClient);
 
   @override
-  Session? get currentSession => semaphoreClient.auth.currentSession;
+  Session? get currentSession {
+    final session = semaphoreClient.auth.currentSession;
+    return session;
+  }
 
   @override
   Future<UserModel> signupWithPassword({
@@ -96,4 +101,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       throw ServerException(e.toString());
     }
   }
+
+  @override
+  UserModel? get currentUser => currentSession?.user != null
+      ? UserModel.fromJson(currentSession!.user!.toJson())
+      : null;
 }
