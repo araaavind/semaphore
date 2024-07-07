@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 import 'auth_client.dart';
-import 'auth_interceptor.dart';
+import 'interceptors/auth_interceptor.dart';
 import 'local_storage.dart';
 
 class SemaphoreClient {
