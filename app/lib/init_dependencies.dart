@@ -1,3 +1,4 @@
+import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/features/auth/data/repositories/auth_repository_impl.dart';
@@ -24,6 +25,9 @@ Future<void> initDependencies() async {
     sharedLocalStorage: serviceLocator(),
   );
   serviceLocator.registerLazySingleton(() => semaphore.client);
+
+  // Core
+  serviceLocator.registerLazySingleton(() => AppUserCubit());
 }
 
 void _initAuth() {
@@ -55,6 +59,7 @@ void _initAuth() {
     () => AuthBloc(
       userSignup: serviceLocator(),
       userLogin: serviceLocator(),
+      appUserCubit: serviceLocator(),
     ),
   );
 }
