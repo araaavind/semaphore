@@ -27,7 +27,7 @@ class Button extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor ?? context.theme.colorScheme.primary,
-        borderRadius: BorderRadius.circular(UIConstants.buttonRadius),
+        borderRadius: BorderRadius.circular(UIConstants.buttonBorderRadius),
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(

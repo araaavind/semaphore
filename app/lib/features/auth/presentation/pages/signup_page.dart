@@ -61,13 +61,13 @@ class _SignupPageState extends State<SignupPage> {
                 children: [
                   RichText(
                     text: TextSpan(
-                      text: 'Join ',
+                      text: 'join ',
                       style: context.theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w100,
                       ),
                       children: [
                         TextSpan(
-                          text: 'semaphore',
+                          text: 'Semaphore',
                           style: context.theme.textTheme.displaySmall?.copyWith(
                             fontWeight: FontWeight.w700,
                           ),
@@ -131,7 +131,7 @@ class _SignupPageState extends State<SignupPage> {
                             text: 'Log in',
                             style: context.theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: context.theme.colorScheme.primary,
+                              color: context.theme.colorScheme.secondary,
                             ),
                           ),
                         ],
