@@ -1,4 +1,6 @@
 import 'package:app/core/constants/ui_constants.dart';
+import 'package:app/core/theme/app_color_scheme.dart';
+import 'package:app/core/theme/app_text_theme.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -8,78 +10,47 @@ extension ThemeGetter on BuildContext {
 }
 
 class AppTheme {
-  static _border([Color color = AppPalette.outline]) => OutlineInputBorder(
+  static _border({Color color = AppPalette.outline, double width = 1}) =>
+      OutlineInputBorder(
         borderSide: BorderSide(
           color: color,
-          width: 1,
+          width: width,
         ),
-        borderRadius: BorderRadius.circular(UIConstants.borderRadius),
+        borderRadius: BorderRadius.circular(UIConstants.inputBorderRadius),
       );
 
   static final light = ThemeData.light(
     useMaterial3: true,
   ).copyWith(
-    colorScheme: lightColorScheme,
-    scaffoldBackgroundColor: lightColorScheme.surface,
+    colorScheme: AppColorScheme.lightColorScheme,
+    scaffoldBackgroundColor: AppColorScheme.lightColorScheme.surface,
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
-      border: _border(lightColorScheme.outline),
-      enabledBorder: _border(lightColorScheme.outline),
-      focusedBorder: _border(lightColorScheme.primary),
-      errorBorder: _border(lightColorScheme.error),
+      border: _border(color: AppColorScheme.lightColorScheme.outline),
+      enabledBorder: _border(color: AppColorScheme.lightColorScheme.outline),
+      focusedBorder: _border(
+        color: AppColorScheme.lightColorScheme.secondary,
+        width: 2,
+      ),
+      errorBorder: _border(color: AppColorScheme.lightColorScheme.error),
     ),
+    textTheme: AppTextTheme.lightTextTheme,
   );
   static final dark = ThemeData.dark(
     useMaterial3: true,
   ).copyWith(
-    colorScheme: darkColorScheme,
-    scaffoldBackgroundColor: darkColorScheme.surface,
+    colorScheme: AppColorScheme.darkColorScheme,
+    scaffoldBackgroundColor: AppColorScheme.darkColorScheme.surface,
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
-      border: _border(darkColorScheme.outline),
-      enabledBorder: _border(darkColorScheme.outline),
-      focusedBorder: _border(darkColorScheme.primary),
-      errorBorder: _border(darkColorScheme.error),
+      border: _border(color: AppColorScheme.darkColorScheme.outline),
+      enabledBorder: _border(color: AppColorScheme.darkColorScheme.outline),
+      focusedBorder: _border(
+        color: AppColorScheme.darkColorScheme.secondary,
+        width: 2,
+      ),
+      errorBorder: _border(color: AppColorScheme.darkColorScheme.error),
     ),
-  );
-
-  static ColorScheme lightColorScheme = const ColorScheme(
-    brightness: Brightness.light,
-    primary: AppPalette.primary,
-    onPrimary: AppPalette.onPrimary,
-    secondary: AppPalette.secondary,
-    onSecondary: AppPalette.onSecondary,
-    tertiary: AppPalette.tertiary,
-    onTertiary: AppPalette.onTertiary,
-    error: AppPalette.error,
-    onError: AppPalette.onError,
-    surface: AppPalette.surface,
-    onSurface: AppPalette.onSurface,
-    surfaceContainer: AppPalette.surfaceContainer,
-    surfaceContainerLow: AppPalette.surfaceContainerLow,
-    surfaceContainerLowest: AppPalette.surfaceContainerLowest,
-    surfaceContainerHigh: AppPalette.surfaceContainerHigh,
-    surfaceContainerHighest: AppPalette.surfaceContainerHighest,
-    outline: AppPalette.outline,
-  );
-
-  static ColorScheme darkColorScheme = const ColorScheme(
-    brightness: Brightness.dark,
-    primary: AppPalette.primaryDark,
-    onPrimary: AppPalette.onPrimaryDark,
-    secondary: AppPalette.secondaryDark,
-    onSecondary: AppPalette.onSecondaryDark,
-    tertiary: AppPalette.tertiaryDark,
-    onTertiary: AppPalette.onTertiaryDark,
-    error: AppPalette.errorDark,
-    onError: AppPalette.onErrorDark,
-    surface: AppPalette.surfaceDark,
-    onSurface: AppPalette.onSurfaceDark,
-    surfaceContainer: AppPalette.surfaceContainerDark,
-    surfaceContainerLow: AppPalette.surfaceContainerLowDark,
-    surfaceContainerLowest: AppPalette.surfaceContainerLowestDark,
-    surfaceContainerHigh: AppPalette.surfaceContainerHighDark,
-    surfaceContainerHighest: AppPalette.surfaceContainerHighestDark,
-    outline: AppPalette.outlineDark,
+    textTheme: AppTextTheme.darkTextTheme,
   );
 }

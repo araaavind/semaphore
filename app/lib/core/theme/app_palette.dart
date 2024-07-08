@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 
 abstract class AppPalette {
-  // Red
-  static const primary = Color(0xFF7F5A83);
-  static const primaryDark = Color(0xFF644467);
-  static const onPrimary = Colors.white;
-  static const onPrimaryDark = Colors.white;
-  static const secondary = Color(0xFFE6C3ED);
-  static const secondaryDark = Color(0xFFC092C9);
-  static const onSecondary = Colors.black;
-  static const onSecondaryDark = Colors.black;
-  static const tertiary = Color(0xFFCBF416);
-  static const tertiaryDark = Color(0xFFE4FF6B);
-  static const onTertiary = Colors.black;
-  static const onTertiaryDark = Colors.black;
-  static const surface = Color(0xFFFAFAFF);
-  static const surfaceDark = Color(0xFF080808);
-  static const onSurface = Colors.black;
-  static const onSurfaceDark = Colors.white;
+  static const primary = Color.fromARGB(255, 75, 2, 40);
+  static const primaryDark = Color.fromARGB(255, 248, 180, 175);
+  static const onPrimary = Color.fromARGB(255, 255, 251, 245);
+  static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
+  static const secondary = Color.fromARGB(255, 154, 63, 33);
+  static const secondaryDark = Color.fromARGB(255, 248, 216, 175);
+  static const onSecondary = Color.fromARGB(255, 255, 247, 238);
+  static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
+  static const tertiary = Color.fromARGB(255, 40, 75, 2);
+  static const tertiaryDark = Color.fromARGB(255, 243, 248, 175);
+  static const onTertiary = Color.fromARGB(255, 254, 255, 239);
+  static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
+  static const surface = Color.fromARGB(255, 253, 253, 253);
+  static const surfaceDark = Color.fromARGB(255, 8, 8, 8);
+  static const onSurface = Color.fromARGB(255, 41, 20, 23);
+  static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
+  static const error = Color.fromARGB(255, 255, 0, 53);
+  static const errorDark = Color.fromARGB(255, 153, 34, 58);
+  static const onError = Colors.white;
+  static const onErrorDark = Colors.white;
+  // Need to finalize colors for properties below
   static const surfaceContainerLowest = Color(0xFFE6FDFF);
   static const surfaceContainerLowestDark = Color(0xFF25364C);
   static const surfaceContainerLow = Color(0xFFDAFDFF);
@@ -28,10 +32,6 @@ abstract class AppPalette {
   static const surfaceContainerHighDark = Color(0xFF446083);
   static const surfaceContainerHighest = Color(0xFFAFFAFF);
   static const surfaceContainerHighestDark = Color(0xFF5275A0);
-  static const error = Color(0xFFFF0035);
-  static const errorDark = Color(0xFFFF0035);
-  static const onError = Colors.white;
-  static const onErrorDark = Colors.white;
   static const outline = Color(0xFFABABAB);
   static const outlineDark = Color(0xFF3D3D3D);
 
