@@ -178,7 +178,7 @@ class AuthClient {
       return;
     }
 
-    _saveSession(session!);
+    _saveSession(session);
   }
 
   /// Returns the current logged in user, if any;
