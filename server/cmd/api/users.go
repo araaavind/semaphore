@@ -7,6 +7,7 @@ import (
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/julienschmidt/httprouter"
 )
 
 func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
@@ -155,6 +156,29 @@ func (app *application) getCurrentUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+}
+
+func (app *application) checkUsername(w http.ResponseWriter, r *http.Request) {
+	username := httprouter.ParamsFromContext(r.Context()).ByName("username")
+
+	v := validator.New()
+
+	if data.ValidateUsername(v, username); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	count, err := app.models.Users.CountByUsername(username)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if count > 0 {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	w.WriteHeader(http.StatusNotFound)
 }
 
 func (app *application) updateUserPassword(w http.ResponseWriter, r *http.Request) {
