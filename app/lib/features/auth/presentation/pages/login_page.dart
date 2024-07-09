@@ -82,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: 'Password',
                     controller: passwordController,
                     isPassword: true,
+                    autovalidateMode: AutovalidateMode.disabled,
                   ),
                   const SizedBox(height: 20),
                   Button(

@@ -6,6 +6,7 @@ class AuthField<T> extends StatefulWidget {
   final String hintText;
   final bool isPassword;
   final TextStyle? style;
+  final AutovalidateMode? autovalidateMode;
 
   const AuthField({
     super.key,
@@ -13,6 +14,7 @@ class AuthField<T> extends StatefulWidget {
     required this.hintText,
     this.isPassword = false,
     this.style,
+    this.autovalidateMode,
   });
 
   @override
@@ -61,7 +63,7 @@ class _AuthFieldState<T> extends State<AuthField<T>> {
         return null;
       },
       obscureText: widget.isPassword && !_passwordVisible,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: widget.autovalidateMode,
     );
   }
 }
