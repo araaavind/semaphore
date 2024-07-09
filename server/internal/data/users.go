@@ -305,6 +305,25 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 	return &user, nil
 }
 
+func (m UserModel) CountByUsername(username string) (int, error) {
+	query := `
+        SELECT count(1)
+        FROM users
+        WHERE username = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	count := 0
+	err := m.DB.QueryRowContext(ctx, query, username).Scan(&count)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return count, nil
+}
+
 func (m UserModel) Update(user *User) error {
 	updateUserQuery := `
         UPDATE users 
