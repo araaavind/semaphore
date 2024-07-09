@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract class AppPalette {
-  static const primary = Color.fromARGB(255, 75, 2, 40);
+  static const primary = Color.fromARGB(255, 75, 2, 52);
   static const primaryDark = Color.fromARGB(255, 248, 180, 175);
   static const onPrimary = Color.fromARGB(255, 255, 251, 245);
   static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
@@ -17,7 +17,7 @@ abstract class AppPalette {
   static const surfaceDark = Color.fromARGB(255, 8, 8, 8);
   static const onSurface = Color.fromARGB(255, 41, 20, 23);
   static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
-  static const error = Color.fromARGB(255, 255, 0, 53);
+  static const error = Color.fromARGB(255, 214, 22, 60);
   static const errorDark = Color.fromARGB(255, 153, 34, 58);
   static const onError = Colors.white;
   static const onErrorDark = Colors.white;
