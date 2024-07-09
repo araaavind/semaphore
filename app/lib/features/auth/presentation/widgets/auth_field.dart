@@ -1,7 +1,7 @@
 import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class AuthField<T> extends StatelessWidget {
+class AuthField<T> extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool isPassword;
@@ -16,21 +16,52 @@ class AuthField<T> extends StatelessWidget {
   });
 
   @override
+  State<AuthField<T>> createState() => _AuthFieldState<T>();
+}
+
+class _AuthFieldState<T> extends State<AuthField<T>> {
+  bool _passwordVisible = false;
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _passwordVisible = !_passwordVisible;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      controller: widget.controller,
       decoration: InputDecoration(
-        hintText: hintText,
+        hintText: widget.hintText,
         hintStyle: context.theme.textTheme.bodyMedium,
+        suffixIcon: widget.isPassword
+            ? IconButton(
+                icon: _passwordVisible
+                    ? Icon(
+                        Icons.visibility_outlined,
+                        color: context.theme.colorScheme.outline,
+                      )
+                    : Icon(
+                        Icons.visibility_off_outlined,
+                        color: context.theme.colorScheme.outline,
+                      ),
+                onPressed: _togglePasswordVisibility,
+              )
+            : null,
       ),
-      style: style ?? context.theme.textTheme.bodyMedium,
+      style: widget.style ?? context.theme.textTheme.bodyMedium,
       validator: (value) {
         if (value!.isEmpty) {
-          return '$hintText is missing';
+          return '${widget.hintText} is missing';
+        }
+        if (widget.isPassword && value.length < 8) {
+          return 'Password must be atleast 8 characters long';
         }
         return null;
       },
-      obscureText: isPassword,
+      obscureText: widget.isPassword && !_passwordVisible,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 }
