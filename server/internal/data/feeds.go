@@ -43,7 +43,7 @@ type FeedModel struct {
 }
 
 func (m FeedModel) Insert(feed *Feed) error {
-	addFeedQuery := `
+	query := `
 		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id, created_at, updated_at, version`
@@ -64,7 +64,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, addFeedQuery, args...).Scan(
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(
 		&feed.ID,
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
@@ -83,7 +83,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 }
 
 func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
-	findAllFeedsQuery := fmt.Sprintf(`
+	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
 		FROM feeds
 		WHERE (
@@ -99,7 +99,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 	args := []any{title, feedLink, filters.limit(), filters.offset()}
 
-	rows, err := m.DB.QueryContext(ctx, findAllFeedsQuery, args...)
+	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, Metadata{}, err
 	}
@@ -141,7 +141,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 }
 
 func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
-	findByFeedLinkQuery := `
+	query := `
 		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
 		FROM feeds WHERE feed_link = ANY ($1)`
 
@@ -150,7 +150,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, findByFeedLinkQuery, feedLinks).Scan(
+	err := m.DB.QueryRowContext(ctx, query, feedLinks).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
@@ -183,7 +183,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		return nil, ErrRecordNotFound
 	}
 
-	findByIDQuery := `
+	query := `
 		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
 		FROM feeds WHERE id = $1`
 
@@ -192,7 +192,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, findByIDQuery, id).Scan(
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
@@ -221,7 +221,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 }
 
 func (m FeedModel) Update(feed *Feed) error {
-	updateFeedQuery := `
+	query := `
 		UPDATE feeds
 		SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6, feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), version = version + 1
 		WHERE id = $10 AND version = $11
@@ -243,7 +243,7 @@ func (m FeedModel) Update(feed *Feed) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, updateFeedQuery, args...).Scan(&feed.UpdatedAt, &feed.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&feed.UpdatedAt, &feed.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrRecordNotFound):
@@ -260,14 +260,14 @@ func (m FeedModel) DeleteByID(id int64) error {
 		return ErrRecordNotFound
 	}
 
-	deleteFeedByIDQuery := `
+	query := `
 		DELETE FROM feeds
 		WHERE id = $1`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := m.DB.ExecContext(ctx, deleteFeedByIDQuery, id)
+	result, err := m.DB.ExecContext(ctx, query, id)
 	if err != nil {
 		return err
 	}

@@ -28,7 +28,7 @@ type FeedFollowModel struct {
 }
 
 func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*User, Metadata, error) {
-	getFollowersForFeedQuery := fmt.Sprintf(`
+	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), users.id, users.full_name, users.username
 		FROM users
 		INNER JOIN feed_follows ON feed_follows.user_id = users.id
@@ -42,7 +42,7 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 
 	args := []any{feedID, filters.limit(), filters.offset()}
 
-	rows, err := m.DB.QueryContext(ctx, getFollowersForFeedQuery, args...)
+	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, Metadata{}, err
 	}
@@ -75,7 +75,7 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 }
 
 func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed, Metadata, error) {
-	getFeedsForUserQuery := fmt.Sprintf(`
+	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
 		FROM feeds
 		INNER JOIN feed_follows ON feed_follows.feed_id = feeds.id
@@ -89,7 +89,7 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, getFeedsForUserQuery, args...)
+	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, Metadata{}, err
 	}
@@ -128,7 +128,7 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 }
 
 func (m FeedFollowModel) Insert(feedFollow *FeedFollow) error {
-	insertFeedFollowQuery := `
+	query := `
 		INSERT INTO feed_follows (user_id, feed_id)
 		VALUES ($1, $2)
 		RETURNING created_at, updated_at`
@@ -136,7 +136,7 @@ func (m FeedFollowModel) Insert(feedFollow *FeedFollow) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, insertFeedFollowQuery, feedFollow.UserID, feedFollow.FeedID).Scan(
+	err := m.DB.QueryRowContext(ctx, query, feedFollow.UserID, feedFollow.FeedID).Scan(
 		&feedFollow.CreatedAt,
 		&feedFollow.UpdatedAt,
 	)
@@ -174,11 +174,11 @@ func (m FeedFollowModel) Upsert(feedFollow FeedFollow) error {
 		return nil
 	}
 
-	insertFeedFollowQuery := `
+	insertQuery := `
 		INSERT INTO feed_follows (user_id, feed_id)
 		VALUES ($1, $2)`
 
-	_, err = m.DB.ExecContext(ctx, insertFeedFollowQuery, feedFollow.UserID, feedFollow.FeedID)
+	_, err = m.DB.ExecContext(ctx, insertQuery, feedFollow.UserID, feedFollow.FeedID)
 	if err != nil {
 		return err
 	}
@@ -187,14 +187,14 @@ func (m FeedFollowModel) Upsert(feedFollow FeedFollow) error {
 }
 
 func (m FeedFollowModel) Delete(feedFollow FeedFollow) error {
-	deleteFeedFollowQuery := `
+	query := `
 		DELETE FROM feed_follows
 		WHERE user_id = $1 AND feed_id = $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := m.DB.ExecContext(ctx, deleteFeedFollowQuery, feedFollow.UserID, feedFollow.FeedID)
+	result, err := m.DB.ExecContext(ctx, query, feedFollow.UserID, feedFollow.FeedID)
 	if err != nil {
 		return err
 	}

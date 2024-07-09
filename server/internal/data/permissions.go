@@ -22,19 +22,19 @@ type PermissionModel struct {
 }
 
 func (m PermissionModel) AddForUser(userID int64, codes ...string) error {
-	addPermissionForUserQuery := `
+	query := `
 		INSERT INTO user_permissions
 		select $1, permissions.id FROM permissions WHERE permissions.code = ANY($2)`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, addPermissionForUserQuery, userID, codes)
+	_, err := m.DB.ExecContext(ctx, query, userID, codes)
 	return err
 }
 
 func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
-	getAllPermissionsForUserQuery := `
+	query := `
 		SELECT permissions.code
 		FROM permissions
 		INNER JOIN user_permissions ON user_permissions.permission_id = permissions.id
@@ -44,7 +44,7 @@ func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, getAllPermissionsForUserQuery, userID)
+	rows, err := m.DB.QueryContext(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}

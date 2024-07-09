@@ -138,7 +138,7 @@ type UserModel struct {
 }
 
 func (m UserModel) Insert(user *User) error {
-	insertUserQuery := `
+	query := `
 		INSERT INTO users (full_name, username, email, password_hash, activated) 
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, created_at, updated_at, version`
@@ -148,7 +148,7 @@ func (m UserModel) Insert(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, insertUserQuery, args...).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.Version)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -164,7 +164,7 @@ func (m UserModel) Insert(user *User) error {
 }
 
 func (m UserModel) GetByID(id int64) (*User, error) {
-	getUserByIDQuery := `
+	query := `
 		SELECT id, created_at, updated_at, full_name, username, email, activated, version
 		FROM users
 		WHERE id = $1`
@@ -174,7 +174,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, getUserByIDQuery, id).Scan(
+	err := m.DB.QueryRowContext(ctx, query, id).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -197,7 +197,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 }
 
 func (m UserModel) GetByEmail(email string) (*User, error) {
-	getUserByEmailQuery := `
+	query := `
         SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, version
         FROM users
         WHERE email = $1`
@@ -207,7 +207,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, getUserByEmailQuery, email).Scan(
+	err := m.DB.QueryRowContext(ctx, query, email).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -232,7 +232,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 }
 
 func (m UserModel) GetByUsername(username string) (*User, error) {
-	getUserByEmailQuery := `
+	query := `
         SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, version
         FROM users
         WHERE username = $1`
@@ -242,7 +242,7 @@ func (m UserModel) GetByUsername(username string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, getUserByEmailQuery, username).Scan(
+	err := m.DB.QueryRowContext(ctx, query, username).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -269,7 +269,7 @@ func (m UserModel) GetByUsername(username string) (*User, error) {
 func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
 
-	getUserForTokenQuery := `
+	query := `
 		SELECT users.id, users.created_at, users.updated_at, users.full_name, users.username, users.email, users.password_hash, users.activated, users.version
 		FROM users
 		INNER JOIN tokens ON users.id = tokens.user_id
@@ -282,7 +282,7 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, getUserForTokenQuery, tokenHash[:], scope, time.Now()).Scan(
+	err := m.DB.QueryRowContext(ctx, query, tokenHash[:], scope, time.Now()).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -325,7 +325,7 @@ func (m UserModel) CountByUsername(username string) (int, error) {
 }
 
 func (m UserModel) Update(user *User) error {
-	updateUserQuery := `
+	query := `
         UPDATE users 
         SET full_name = $1, username = $2, email = $3, password_hash = $4, activated = $5, updated_at = $6, version = version + 1
         WHERE id = $7 AND version = $8
@@ -345,7 +345,7 @@ func (m UserModel) Update(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, updateUserQuery, args...).Scan(&user.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.Version)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {

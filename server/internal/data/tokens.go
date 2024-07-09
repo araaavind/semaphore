@@ -85,7 +85,7 @@ func (m TokenModel) New(userID int64, ttl time.Duration, scope string) (*Token, 
 }
 
 func (m TokenModel) Insert(token *Token) error {
-	insertQuery := `
+	query := `
         INSERT INTO tokens (hash, user_id, expiry, scope) 
         VALUES ($1, $2, $3, $4)
 		RETURNING created_at`
@@ -95,18 +95,18 @@ func (m TokenModel) Insert(token *Token) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, insertQuery, args...).Scan(&token.CreatedAt)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&token.CreatedAt)
 	return err
 }
 
 func (m TokenModel) DeleteAllForUser(scope string, userID int64) error {
-	deleteAllForUserQuery := `
+	query := `
         DELETE FROM tokens 
         WHERE scope = $1 AND user_id = $2`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, deleteAllForUserQuery, scope, userID)
+	_, err := m.DB.ExecContext(ctx, query, scope, userID)
 	return err
 }
