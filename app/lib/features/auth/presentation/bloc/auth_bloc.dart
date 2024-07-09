@@ -39,8 +39,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final res = await _currentUser(NoParams());
     switch (res) {
-      case Left(value: final l):
-        emit(AuthFailure(l.message));
+      case Left(value: _):
+        emit(AuthInitial());
         break;
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
