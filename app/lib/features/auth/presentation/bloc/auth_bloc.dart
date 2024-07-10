@@ -1,6 +1,7 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/usecase/usecase.dart';
+import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/current_user.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
@@ -13,21 +14,25 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CurrentUser _currentUser;
+  final CheckUsername _checkUsername;
   final UserSignup _userSignup;
   final UserLogin _userLogin;
   final AppUserCubit _appUserCubit;
 
   AuthBloc({
     required CurrentUser currentUser,
+    required CheckUsername checkUsername,
     required UserSignup userSignup,
     required UserLogin userLogin,
     required AppUserCubit appUserCubit,
   })  : _currentUser = currentUser,
+        _checkUsername = checkUsername,
         _userSignup = userSignup,
         _userLogin = userLogin,
         _appUserCubit = appUserCubit,
         super(AuthInitial()) {
     on<AuthCurrentUserEvent>(_onAuthCurrentUser);
+    on<AuthCheckUsernameEvent>(_onAuthCheckUsername);
     on<AuthSignupEvent>(_onAuthSignup);
     on<AuthLoginEvent>(_onAuthLogin);
   }
@@ -44,6 +49,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         break;
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
+        break;
+    }
+  }
+
+  void _onAuthCheckUsername(
+    AuthCheckUsernameEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    final res = await _checkUsername(CheckUsernameParams(event.username));
+    switch (res) {
+      case Left(value: final l):
+        emit(AuthFailure(l.message));
+        break;
+      case Right(value: final r):
+        if (r) {
+          emit(AuthUsernameFailure('Username is already taken'));
+        } else {
+          emit(AuthUsernameSuccess());
+        }
         break;
     }
   }

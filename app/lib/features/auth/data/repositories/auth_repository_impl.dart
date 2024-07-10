@@ -11,6 +11,25 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this.remoteDatasource);
 
   @override
+  Either<Failure, UserModel> get currentUser =>
+      remoteDatasource.currentUser == null
+          ? left(Failure('User not logged in'))
+          : right(remoteDatasource.currentUser!);
+
+  @override
+  Future<Either<Failure, bool>> checkUsername({
+    required String username,
+  }) async {
+    try {
+      final usernameTaken =
+          await remoteDatasource.checkUsername(username: username);
+      return right(usernameTaken);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, UserModel>> signupWithPassword({
     required String fullName,
     required String email,
@@ -50,10 +69,4 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(Failure(e.message));
     }
   }
-
-  @override
-  Either<Failure, UserModel> get currentUser =>
-      remoteDatasource.currentUser == null
-          ? left(Failure('User not logged in'))
-          : right(remoteDatasource.currentUser!);
 }

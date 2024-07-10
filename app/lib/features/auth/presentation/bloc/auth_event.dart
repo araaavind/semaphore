@@ -28,3 +28,9 @@ final class AuthLoginEvent extends AuthEvent {
 }
 
 final class AuthCurrentUserEvent extends AuthEvent {}
+
+final class AuthCheckUsernameEvent extends AuthEvent {
+  final String username;
+
+  AuthCheckUsernameEvent(this.username);
+}
