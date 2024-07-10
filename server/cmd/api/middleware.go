@@ -75,7 +75,6 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session := app.contextGetSession(r)
-		fmt.Print(session.User.IsAnonymous())
 		if session.User.IsAnonymous() {
 			app.authenticationRequiredResponse(w, r)
 			return
