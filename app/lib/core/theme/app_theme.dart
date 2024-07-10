@@ -23,6 +23,7 @@ class AppTheme {
     useMaterial3: true,
   ).copyWith(
     colorScheme: AppColorScheme.lightColorScheme,
+    disabledColor: AppPalette.disabledPrimary,
     scaffoldBackgroundColor: AppColorScheme.lightColorScheme.surface,
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
@@ -40,6 +41,7 @@ class AppTheme {
     useMaterial3: true,
   ).copyWith(
     colorScheme: AppColorScheme.darkColorScheme,
+    disabledColor: AppPalette.disabledPrimaryDark,
     scaffoldBackgroundColor: AppColorScheme.darkColorScheme.surface,
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
