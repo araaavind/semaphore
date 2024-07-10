@@ -10,6 +10,8 @@ class AuthField<T> extends StatefulWidget {
   final String? Function(String?)? validator;
   final AutovalidateMode? autovalidateMode;
   final Widget? suffixIcon;
+  final int? errorMaxLines;
+  final Color? validBorderColor;
 
   const AuthField({
     super.key,
@@ -21,6 +23,8 @@ class AuthField<T> extends StatefulWidget {
     this.validator,
     this.autovalidateMode,
     this.suffixIcon,
+    this.errorMaxLines,
+    this.validBorderColor,
   });
 
   @override
@@ -41,8 +45,17 @@ class _AuthFieldState<T> extends State<AuthField<T>> {
     return TextFormField(
       controller: widget.controller,
       decoration: InputDecoration(
+        errorMaxLines: widget.errorMaxLines,
         hintText: widget.hintText,
         hintStyle: context.theme.textTheme.bodyMedium,
+        focusedBorder: widget.validBorderColor != null
+            ? context.theme.inputDecorationTheme.focusedBorder!.copyWith(
+                borderSide: BorderSide(
+                  color: widget.validBorderColor!,
+                  width: 2,
+                ),
+              )
+            : null,
         suffixIcon: widget.suffixIcon ??
             (widget.isPassword
                 ? IconButton(

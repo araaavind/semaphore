@@ -3,7 +3,7 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:app/features/auth/presentation/pages/signup_page.dart';
+import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:app/features/wall/presentation/wall_page.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                       text: 'dive in to ',
                       style: context.theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w100,
+                        color: context.theme.colorScheme.secondary,
                       ),
                       children: [
                         TextSpan(
@@ -103,10 +104,9 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil(
+                      Navigator.push(
                         context,
-                        SignupPage.route(),
-                        (route) => false,
+                        ChooseUsernamePage.route(),
                       );
                     },
                     child: RichText(

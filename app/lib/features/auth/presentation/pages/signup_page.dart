@@ -9,9 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const SignupPage());
+  static route(String username) => MaterialPageRoute(
+        builder: (context) => SignupPage(
+          username: username,
+        ),
+      );
+  final String username;
 
-  const SignupPage({super.key});
+  const SignupPage({super.key, required this.username});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -19,7 +24,6 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final nameController = TextEditingController();
-  final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -27,7 +31,6 @@ class _SignupPageState extends State<SignupPage> {
   @override
   void dispose() {
     nameController.dispose();
-    usernameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -64,6 +67,7 @@ class _SignupPageState extends State<SignupPage> {
                       text: 'join ',
                       style: context.theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w100,
+                        color: context.theme.colorScheme.secondary,
                       ),
                       children: [
                         TextSpan(
@@ -79,11 +83,6 @@ class _SignupPageState extends State<SignupPage> {
                   AuthField(
                     hintText: 'Full name',
                     controller: nameController,
-                  ),
-                  const SizedBox(height: 10),
-                  AuthField(
-                    hintText: 'Username',
-                    controller: usernameController,
                   ),
                   const SizedBox(height: 10),
                   AuthField(
@@ -106,7 +105,7 @@ class _SignupPageState extends State<SignupPage> {
                               AuthSignupEvent(
                                 fullName: nameController.text.trim(),
                                 email: emailController.text.trim(),
-                                username: usernameController.text.trim(),
+                                username: widget.username,
                                 password: passwordController.text.trim(),
                               ),
                             );
