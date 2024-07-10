@@ -169,6 +169,47 @@ class AuthClient {
     }
   }
 
+  Future<bool> isUsernameTaken({
+    required String username,
+  }) async {
+    try {
+      final response = await _dio.head('/users/$username');
+
+      return response.statusCode == 200;
+    } on NetworkException catch (e) {
+      if (kDebugMode) {
+        print('NetworkException $e.message');
+      }
+      throw SemaphoreException(e.message!);
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('Dio exception $e.message');
+        print(e.stackTrace);
+      }
+      if (e.response?.statusCode == 404) {
+        // Username is not taken
+        return false;
+      } else if (e.response?.statusCode == 422) {
+        throw AuthException(
+          'Username is invalid',
+          statusCode: e.response!.statusCode,
+        );
+      }
+      throw SemaphoreException(
+        Constants.internalServerErrorMessage,
+        statusCode: e.response?.statusCode,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw SemaphoreException(
+        Constants.internalServerErrorMessage,
+        statusCode: Constants.httpInternalServerErrorCode,
+      );
+    }
+  }
+
   /// Set the initial session to the session obtained from local storage
   Future<void> setInitialSession(String jsonStr) async {
     final session = Session.fromMap(json.decode(jsonStr));
