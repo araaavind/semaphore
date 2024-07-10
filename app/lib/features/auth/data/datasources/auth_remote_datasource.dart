@@ -5,6 +5,9 @@ import 'package:smphr_sdk/smphr_sdk.dart';
 
 abstract interface class AuthRemoteDatasource {
   Session? get currentSession;
+  UserModel? get currentUser;
+
+  Future<bool> checkUsername({required String username});
 
   Future<UserModel> signupWithPassword({
     required String fullName,
@@ -17,8 +20,6 @@ abstract interface class AuthRemoteDatasource {
     required String usernameOrEmail,
     required String password,
   });
-
-  UserModel? get currentUser;
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -27,9 +28,27 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   AuthRemoteDatasourceImpl(this.semaphoreClient);
 
   @override
-  Session? get currentSession {
-    final session = semaphoreClient.auth.currentSession;
-    return session;
+  Session? get currentSession => semaphoreClient.auth.currentSession;
+
+  @override
+  UserModel? get currentUser => currentSession?.user != null
+      ? UserModel.fromJson(currentSession!.user!.toJson())
+      : null;
+
+  @override
+  Future<bool> checkUsername({required String username}) async {
+    try {
+      return await semaphoreClient.auth.isUsernameTaken(username: username);
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } on SemaphoreException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint(e.toString());
+      }
+      throw ServerException(e.toString());
+    }
   }
 
   @override
@@ -46,7 +65,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         username: username,
         password: password,
       ),
-      );
+    );
   }
 
   @override
@@ -59,7 +78,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         usernameOrEmail: usernameOrEmail,
         password: password,
       ),
-      );
+    );
   }
 
   Future<UserModel> _tryAuthRequest(Future<AuthResponse> Function() fn) async {
