@@ -5,7 +5,7 @@ import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
-  final VoidCallback onPressed;
+  final void Function()? onPressed;
   final String text;
   final Color? textColor;
   final Color? backgroundColor;
@@ -18,7 +18,7 @@ class Button extends StatelessWidget {
     this.textColor,
     this.backgroundColor,
     this.fixedSize,
-    required this.onPressed,
+    this.onPressed,
     this.isLoading = false,
   });
 
@@ -26,7 +26,9 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor ?? context.theme.colorScheme.primary,
+        color: onPressed != null
+            ? (backgroundColor ?? context.theme.colorScheme.primary)
+            : context.theme.disabledColor,
         borderRadius: BorderRadius.circular(UIConstants.buttonBorderRadius),
       ),
       child: ElevatedButton(
