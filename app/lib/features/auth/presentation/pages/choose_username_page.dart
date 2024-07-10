@@ -104,19 +104,20 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                   const SizedBox(height: 20),
                   Center(
                     child: Button(
-                      text: 'Continue',
-                      fixedSize: const Size(120, 50),
-                      onPressed: state is AuthUsernameSuccess &&
+                        text: 'Continue',
+                        fixedSize: const Size(120, 50),
+                        onPressed: () {
+                          if (state is AuthUsernameSuccess &&
                               formState != null &&
-                              formState.validate()
-                          ? () => Navigator.push(
-                                context,
-                                SignupPage.route(
-                                  usernameController.text.trim(),
-                                ),
-                              )
-                          : null,
-                    ),
+                              formState.validate()) {
+                            Navigator.push(
+                              context,
+                              SignupPage.route(
+                                usernameController.text.trim(),
+                              ),
+                            );
+                          }
+                        }),
                   ),
                 ],
               ),
