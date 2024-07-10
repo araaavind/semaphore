@@ -21,7 +21,11 @@ abstract class AppPalette {
   static const errorDark = Color.fromARGB(255, 153, 34, 58);
   static const onError = Colors.white;
   static const onErrorDark = Colors.white;
-  // Need to finalize colors for properties below
+  static const disabledPrimary = Color.fromARGB(255, 108, 103, 106);
+  static const disabledPrimaryDark = Color.fromARGB(255, 190, 190, 190);
+  static const outline = Color(0xFFABABAB);
+  static const outlineDark = Color(0xFF3D3D3D);
+  // color roles below are yet to be finalized
   static const surfaceContainerLowest = Color(0xFFE6FDFF);
   static const surfaceContainerLowestDark = Color(0xFF25364C);
   static const surfaceContainerLow = Color(0xFFDAFDFF);
@@ -32,8 +36,9 @@ abstract class AppPalette {
   static const surfaceContainerHighDark = Color(0xFF446083);
   static const surfaceContainerHighest = Color(0xFFAFFAFF);
   static const surfaceContainerHighestDark = Color(0xFF5275A0);
-  static const outline = Color(0xFFABABAB);
-  static const outlineDark = Color(0xFF3D3D3D);
+
+  // Green
+  static const green = Color.fromARGB(255, 140, 181, 94);
 
   // Grey
   static const grey = _GreyColors();
