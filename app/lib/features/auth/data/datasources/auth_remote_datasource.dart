@@ -39,34 +39,14 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     required String username,
     required String password,
   }) async {
-    try {
-      final response = await semaphoreClient.auth.signupWithPassword(
+    return _tryAuthRequest(
+      () async => await semaphoreClient.auth.signupWithPassword(
         fullName: fullName,
         email: email,
         username: username,
         password: password,
+      ),
       );
-
-      if (response.user == null) {
-        throw const ServerException('User is null!');
-      }
-
-      return UserModel(
-        email: response.user!.email,
-        fullName: response.user!.fullName,
-        id: response.user!.id,
-        username: response.user!.username,
-      );
-    } on AuthException catch (e) {
-      throw ServerException(e.message);
-    } on SemaphoreException catch (e) {
-      throw ServerException(e.message);
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint(e.toString());
-      }
-      throw ServerException(e.toString());
-    }
   }
 
   @override
@@ -74,16 +54,20 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     required String usernameOrEmail,
     required String password,
   }) async {
-    try {
-      final response = await semaphoreClient.auth.signInWithPassword(
+    return _tryAuthRequest(
+      () async => await semaphoreClient.auth.signInWithPassword(
         usernameOrEmail: usernameOrEmail,
         password: password,
+      ),
       );
+  }
 
+  Future<UserModel> _tryAuthRequest(Future<AuthResponse> Function() fn) async {
+    try {
+      final response = await fn();
       if (response.user == null) {
-        throw const ServerException('User is null!');
+        throw const ServerException('User is null');
       }
-
       return UserModel(
         email: response.user!.email,
         fullName: response.user!.fullName,
@@ -101,9 +85,4 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       throw ServerException(e.toString());
     }
   }
-
-  @override
-  UserModel? get currentUser => currentSession?.user != null
-      ? UserModel.fromJson(currentSession!.user!.toJson())
-      : null;
 }
