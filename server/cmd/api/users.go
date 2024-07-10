@@ -150,7 +150,7 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getCurrentUser(w http.ResponseWriter, r *http.Request) {
-	user := app.contextGetUser(r)
+	user := app.contextGetSession(r).User
 
 	err := app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
 	if err != nil {

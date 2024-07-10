@@ -9,6 +9,12 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/validator"
 )
 
+const (
+	deleteGlobalSessionScope = "global"
+	deleteLocalSessionScope  = "local"
+	deleteOthersSessionScope = "others"
+)
+
 func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		UsernameOrEmail string `json:"username_or_email"`
@@ -76,6 +82,34 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+}
+
+func (app *application) deleteAuthenticationToken(w http.ResponseWriter, r *http.Request) {
+	session := app.contextGetSession(r)
+	qs := r.URL.Query()
+
+	deleteSessionScope := app.readString(qs, "scope", deleteLocalSessionScope)
+	var err error
+	switch deleteSessionScope {
+	case deleteLocalSessionScope:
+		err = app.models.Tokens.DeleteByHash(session.Token.Hash)
+		break
+	case deleteGlobalSessionScope:
+		err = app.models.Tokens.DeleteAllForUser(data.ScopeAuthentication, session.User.ID)
+		break
+	case deleteOthersSessionScope:
+		err = app.models.Tokens.DeleteAllForUserExcept(data.ScopeAuthentication, session.User.ID, session.Token.Hash)
+		break
+	default:
+		app.failedValidationResponse(w, r, map[string]string{"scope": "invalid scope"})
+		return
+	}
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (app *application) createActivationToken(w http.ResponseWriter, r *http.Request) {

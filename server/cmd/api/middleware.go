@@ -34,7 +34,9 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 		authorizationHeader := r.Header.Get("Authorization")
 
 		if authorizationHeader == "" {
-			r = app.contextSetUser(r, data.AnonymousUser)
+			r = app.contextSetSession(r, &data.Session{
+				User: data.AnonymousUser,
+			})
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -54,7 +56,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		user, err := app.models.Users.GetForToken(data.ScopeAuthentication, token)
+		session, err := app.models.Sessions.GetForToken(token)
 		if err != nil {
 			switch {
 			case errors.Is(err, data.ErrRecordNotFound):
@@ -65,16 +67,16 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		r = app.contextSetUser(r, user)
+		r = app.contextSetSession(r, session)
 		next.ServeHTTP(w, r)
 	})
 }
 
 func (app *application) requireAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := app.contextGetUser(r)
-
-		if user.IsAnonymous() {
+		session := app.contextGetSession(r)
+		fmt.Print(session.User.IsAnonymous())
+		if session.User.IsAnonymous() {
 			app.authenticationRequiredResponse(w, r)
 			return
 		}
@@ -85,9 +87,9 @@ func (app *application) requireAuthentication(next http.Handler) http.Handler {
 
 func (app *application) requireActivation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := app.contextGetUser(r)
+		session := app.contextGetSession(r)
 
-		if !user.Activated {
+		if !session.User.Activated {
 			app.inactiveAccountResponse(w, r)
 			return
 		}
@@ -98,9 +100,9 @@ func (app *application) requireActivation(next http.Handler) http.Handler {
 
 func (app *application) requirePermission(code string, next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user := app.contextGetUser(r)
+		session := app.contextGetSession(r)
 
-		permissions, err := app.models.Permissions.GetAllForUser(user.ID)
+		permissions, err := app.models.Permissions.GetAllForUser(session.User.ID)
 		if err != nil {
 			app.serverErrorResponse(w, r, err)
 			return

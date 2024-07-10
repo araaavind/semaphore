@@ -9,21 +9,21 @@ import (
 
 type contextKey string
 
-const userContextKey = contextKey("user")
+const sessionContextKey = contextKey("sesssion")
 
-func (app *application) contextSetUser(r *http.Request, user *data.User) *http.Request {
-	ctx := context.WithValue(r.Context(), userContextKey, user)
+func (app *application) contextSetSession(r *http.Request, session *data.Session) *http.Request {
+	ctx := context.WithValue(r.Context(), sessionContextKey, session)
 	return r.WithContext(ctx)
 }
 
-func (app *application) contextGetUser(r *http.Request) *data.User {
-	user, ok := r.Context().Value(userContextKey).(*data.User)
+func (app *application) contextGetSession(r *http.Request) *data.Session {
+	session, ok := r.Context().Value(sessionContextKey).(*data.Session)
 	if !ok {
 		// The only time that we'll use this helper is when we logically expect there to be User struct
 		// value in the context, and if it doesn't exist it will firmly be an 'unexpected' error.
 		// It's OK to panic in this case
-		panic("missing user value in request context")
+		panic("missing session value in request context")
 	}
 
-	return user
+	return session
 }
