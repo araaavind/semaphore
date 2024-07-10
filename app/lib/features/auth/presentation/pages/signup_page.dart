@@ -48,7 +48,7 @@ class _SignupPageState extends State<SignupPage> {
             } else if (state is AuthSuccess) {
               Navigator.pushAndRemoveUntil(
                 context,
-                LoginPage.route(),
+                LoginPage.route(isOnboarding: true),
                 (_) => false,
               );
             }
