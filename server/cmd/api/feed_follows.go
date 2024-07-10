@@ -65,7 +65,7 @@ func (app *application) listFeedsForUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	user := app.contextGetUser(r)
+	user := app.contextGetSession(r).User
 
 	feeds, metadata, err := app.models.FeedFollows.GetFeedsForUser(user.ID, input.Filters)
 	if err != nil {
@@ -80,7 +80,7 @@ func (app *application) listFeedsForUser(w http.ResponseWriter, r *http.Request)
 }
 
 func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request) {
-	user := app.contextGetUser(r)
+	user := app.contextGetSession(r).User
 
 	var input struct {
 		FeedLink string `json:"feed_link"`
@@ -190,7 +190,7 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	user := app.contextGetUser(r)
+	user := app.contextGetSession(r).User
 
 	feedFollow := data.FeedFollow{
 		FeedID: feed.ID,
@@ -212,7 +212,7 @@ func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := app.contextGetUser(r)
+	user := app.contextGetSession(r).User
 
 	feedFolow := data.FeedFollow{
 		FeedID: feedID,

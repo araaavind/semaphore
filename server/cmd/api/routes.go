@@ -50,8 +50,10 @@ func (app *application) routes() http.Handler {
 
 	authenticated := alice.New(app.requireAuthentication)
 
-	router.HandlerFunc(http.MethodGet, "/v1/me", app.getCurrentUser)
-	router.HandlerFunc(http.MethodGet, "/v1/me/feeds", app.listFeedsForUser)
+	router.Handler(http.MethodDelete, "/v1/tokens/authentication", authenticated.ThenFunc(app.deleteAuthenticationToken))
+
+	router.Handler(http.MethodGet, "/v1/me", authenticated.ThenFunc(app.getCurrentUser))
+	router.Handler(http.MethodGet, "/v1/me/feeds", authenticated.ThenFunc(app.listFeedsForUser))
 
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
@@ -59,7 +61,7 @@ func (app *application) routes() http.Handler {
 
 	activated := authenticated.Append(app.requireActivation)
 
-	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetToken)
+	router.Handler(http.MethodPost, "/v1/tokens/password-reset", activated.ThenFunc(app.createPasswordResetToken))
 
 	router.Handler(http.MethodPost, "/v1/feeds", activated.ThenFunc(app.requirePermission("feeds:write", app.addAndFollowFeed)))
 
