@@ -7,7 +7,7 @@ import 'package:app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
