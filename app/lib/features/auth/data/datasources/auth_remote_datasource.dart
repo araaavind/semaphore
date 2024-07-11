@@ -2,10 +2,10 @@ import 'package:app/core/constants/server_constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/auth/data/models/user_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:smphr_sdk/smphr_sdk.dart';
+import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
 abstract interface class AuthRemoteDatasource {
-  Session? get currentSession;
+  sp.Session? get currentSession;
   Future<UserModel?> getCurrentUser();
 
   Future<bool> checkUsername({required String username});
@@ -26,12 +26,12 @@ abstract interface class AuthRemoteDatasource {
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
-  SemaphoreClient semaphoreClient;
+  sp.SemaphoreClient semaphoreClient;
 
   AuthRemoteDatasourceImpl(this.semaphoreClient);
 
   @override
-  Session? get currentSession => semaphoreClient.auth.currentSession;
+  sp.Session? get currentSession => semaphoreClient.auth.currentSession;
 
   @override
   Future<UserModel?> getCurrentUser() async {
@@ -47,9 +47,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<bool> checkUsername({required String username}) async {
     try {
       return await semaphoreClient.auth.isUsernameTaken(username: username);
-    } on AuthException catch (e) {
+    } on sp.AuthException catch (e) {
       throw ServerException(e.message);
-    } on SemaphoreException catch (e) {
+    } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
@@ -89,7 +89,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     );
   }
 
-  Future<UserModel> _tryAuthRequest(Future<AuthResponse> Function() fn) async {
+  Future<UserModel> _tryAuthRequest(
+      Future<sp.AuthResponse> Function() fn) async {
     try {
       final response = await fn();
       if (response.user == null) {
@@ -101,9 +102,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         id: response.user!.id,
         username: response.user!.username,
       );
-    } on AuthException catch (e) {
+    } on sp.AuthException catch (e) {
       throw ServerException(e.message);
-    } on SemaphoreException catch (e) {
+    } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
@@ -117,9 +118,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<void> logout({LogoutScope scope = LogoutScope.local}) async {
     try {
       await semaphoreClient.auth.signout(
-        scope: SignOutScope.fromString(scope.name),
+        scope: sp.SignOutScope.fromString(scope.name),
       );
-    } on SemaphoreException catch (e) {
+    } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
