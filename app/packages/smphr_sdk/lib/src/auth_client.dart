@@ -210,6 +210,61 @@ class AuthClient {
     }
   }
 
+  /// Signs out the current user, if there is a logged in user.
+  ///
+  /// [scope] determines which sessions should be logged out.
+  ///
+  /// [SignOutScope.local], only the current session is logged out.
+  ///
+  /// [SignOutScope.global], all sessions including the current one are logged out.
+  ///
+  /// [SignOutScope.others], every session except the current one will be logged out.
+  Future<void> signout({SignOutScope scope = SignOutScope.local}) async {
+    final accessToken = currentSession?.token;
+
+    if (accessToken != null) {
+      try {
+        await _dio.delete(
+          '/tokens/authentication',
+          queryParameters: {'scope': scope.name},
+        );
+      } on NetworkException catch (e) {
+        if (kDebugMode) {
+          print('NetworkException $e.message');
+        }
+        throw SemaphoreException(e.message!);
+      } on DioException catch (e) {
+        if (kDebugMode) {
+          print('Dio exception $e.message');
+          print(e.stackTrace);
+        }
+        if (e.response?.statusCode == 401) {
+          throw AuthException(
+            Constants.authenticationRequiredErrorMessage,
+            statusCode: e.response!.statusCode,
+          );
+        }
+        throw SemaphoreException(
+          Constants.internalServerErrorMessage,
+          statusCode: e.response?.statusCode,
+        );
+      } catch (e) {
+        if (kDebugMode) {
+          print('Unknown exception $e.toString()');
+        }
+        throw SemaphoreException(
+          Constants.internalServerErrorMessage,
+          statusCode: Constants.httpInternalServerErrorCode,
+        );
+      }
+    }
+
+    if (scope != SignOutScope.others) {
+      await _sharedLocalStorage.removeSession();
+      _removeSession();
+    }
+  }
+
   /// Set the initial session to the session obtained from local storage
   Future<void> setInitialSession(String jsonStr) async {
     final session = Session.fromMap(json.decode(jsonStr));

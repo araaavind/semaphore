@@ -17,10 +17,32 @@ class Constants {
       'Took too long to get response. Please try again later';
   static const String connectionErrorMessage =
       'Cannot connect to server. We will look into this issue';
+  static const String authenticationRequiredErrorMessage =
+      'You are not authenticated to perform this action';
+  static const String activationRequiredErrorMessage =
+      'You must activate your account to perform this action';
 
   //
   static const defaultPersistSessionKey = 'sm-session';
 
   // The margin to use when checking if a token is expired.
   static const expiryMargin = Duration(seconds: 30);
+}
+
+enum SignOutScope {
+  /// All sessions by this account will be signed out.
+  global,
+
+  /// Only this session will be signed out.
+  local,
+
+  /// All other sessions except the current one will be signed out. When using others, there is no [AuthChangeEvent.signedOut] event fired on the current session!
+  others;
+
+  static SignOutScope fromString(String s) => switch (s) {
+        'global' => global,
+        'local' => local,
+        'others' => others,
+        _ => local
+      };
 }
