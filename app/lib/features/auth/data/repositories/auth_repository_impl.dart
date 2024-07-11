@@ -12,10 +12,21 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this.remoteDatasource);
 
   @override
-  Either<Failure, UserModel> get currentUser =>
-      remoteDatasource.currentUser == null
-          ? left(Failure('User not logged in'))
-          : right(remoteDatasource.currentUser!);
+  Future<Either<Failure, UserModel>> getCurrentUser() async {
+    try {
+      final session = remoteDatasource.currentSession;
+      if (session == null) {
+        return left(Failure('User not logged in'));
+      }
+      final user = await remoteDatasource.getCurrentUser();
+      if (user == null) {
+        return left(Failure('User not logged in'));
+      }
+      return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 
   @override
   Future<Either<Failure, bool>> checkUsername({

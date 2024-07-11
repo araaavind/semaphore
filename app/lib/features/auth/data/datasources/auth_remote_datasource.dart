@@ -6,7 +6,7 @@ import 'package:smphr_sdk/smphr_sdk.dart';
 
 abstract interface class AuthRemoteDatasource {
   Session? get currentSession;
-  UserModel? get currentUser;
+  Future<UserModel?> getCurrentUser();
 
   Future<bool> checkUsername({required String username});
 
@@ -34,9 +34,14 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Session? get currentSession => semaphoreClient.auth.currentSession;
 
   @override
-  UserModel? get currentUser => currentSession?.user != null
-      ? UserModel.fromJson(currentSession!.user!.toJson())
-      : null;
+  Future<UserModel?> getCurrentUser() async {
+    if (currentSession != null) {
+      return _tryAuthRequest(
+        () async => await semaphoreClient.auth.getCurrentUser(),
+      );
+    }
+    return null;
+  }
 
   @override
   Future<bool> checkUsername({required String username}) async {

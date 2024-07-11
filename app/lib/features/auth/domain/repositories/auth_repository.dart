@@ -4,7 +4,7 @@ import 'package:app/core/errors/failures.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class AuthRepository {
-  Either<Failure, User> get currentUser;
+  Future<Either<Failure, User>> getCurrentUser();
 
   Future<Either<Failure, bool>> checkUsername({required String username});
 
