@@ -7,14 +7,13 @@ import 'local_storage.dart';
 
 class SemaphoreClient {
   late final AuthClient auth;
-  final Dio _dio;
+  final Dio dio;
   final LocalStorage _sharedLocalStorage;
 
-  SemaphoreClient(Dio dio, LocalStorage sharedLocalStorage)
-      : _dio = dio,
-        _sharedLocalStorage = sharedLocalStorage {
+  SemaphoreClient(this.dio, LocalStorage sharedLocalStorage)
+      : _sharedLocalStorage = sharedLocalStorage {
     auth = AuthClient(
-      dio: _dio,
+      dio: dio,
       sharedLocalStorage: _sharedLocalStorage,
     );
   }
@@ -28,7 +27,7 @@ class SemaphoreClient {
         auth.setInitialSession(session);
       }
     }
-    _dio.interceptors.add(AuthInterceptor(auth: auth));
-    _dio.interceptors.add(ErrorInterceptor(auth: auth));
+    dio.interceptors.add(AuthInterceptor(auth: auth));
+    dio.interceptors.add(ErrorInterceptor(auth: auth));
   }
 }

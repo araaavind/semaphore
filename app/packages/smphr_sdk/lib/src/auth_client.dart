@@ -30,11 +30,13 @@ class AuthClient {
   ///
   /// Returns the created user
   ///
-  /// [email] is the user's email address
+  /// [fullName], is the user's full name
   ///
-  /// [username] is a unique username that user choses
+  /// [email], is the user's email address
   ///
-  /// [password] is the password of the user
+  /// [username], is a unique username that user choses
+  ///
+  /// [password], is the password of the user
   Future<AuthResponse> signupWithPassword({
     required String fullName,
     required String email,
@@ -100,6 +102,13 @@ class AuthClient {
     }
   }
 
+  /// Sign the user in
+  ///
+  /// Returns the user and session
+  ///
+  /// [usernameOrEmail], is the username or email of the user
+  ///
+  /// [password], is the password of the user
   Future<AuthResponse> signInWithPassword({
     required String usernameOrEmail,
     required String password,
@@ -169,6 +178,9 @@ class AuthClient {
     }
   }
 
+  /// Get the current signed in user after checking the session in server
+  ///
+  /// Returns the current user
   Future<AuthResponse> getCurrentUser() async {
     try {
       final response = await _dio.get('/me');
@@ -205,6 +217,11 @@ class AuthClient {
     }
   }
 
+  /// Check if username is already taken
+  ///
+  /// Returns true if username is already taken. Else, false
+  ///
+  /// [username], is the username of the user
   Future<bool> isUsernameTaken({
     required String username,
   }) async {
