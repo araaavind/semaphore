@@ -169,6 +169,42 @@ class AuthClient {
     }
   }
 
+  Future<AuthResponse> getCurrentUser() async {
+    try {
+      final response = await _dio.get('/me');
+
+      final authResponse = AuthResponse.fromMap(response.data);
+
+      return authResponse;
+    } on NetworkException catch (e) {
+      if (kDebugMode) {
+        print('NetworkException $e.message');
+      }
+      throw SemaphoreException(e.message!);
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        print('Dio exception $e.message');
+        print(e.stackTrace);
+      }
+      if (e.response?.statusCode == 401) {
+        final errRes = ErrorResponse.fromMap(e.response?.data);
+        throw AuthException(errRes.message);
+      }
+      throw SemaphoreException(
+        Constants.internalServerErrorMessage,
+        statusCode: e.response?.statusCode,
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw SemaphoreException(
+        Constants.internalServerErrorMessage,
+        statusCode: Constants.httpInternalServerErrorCode,
+      );
+    }
+  }
+
   Future<bool> isUsernameTaken({
     required String username,
   }) async {
@@ -239,6 +275,8 @@ class AuthClient {
           print(e.stackTrace);
         }
         if (e.response?.statusCode == 401) {
+          await _sharedLocalStorage.removeSession();
+          _removeSession();
           throw AuthException(
             Constants.authenticationRequiredErrorMessage,
             statusCode: e.response!.statusCode,
@@ -269,8 +307,7 @@ class AuthClient {
   Future<void> setInitialSession(String jsonStr) async {
     final session = Session.fromMap(json.decode(jsonStr));
     if (session == null) {
-      // sign out to delete the local storage from supabase_flutter
-      UnimplementedError('Implement signout if session does not exist');
+      await signout();
       return;
     }
 

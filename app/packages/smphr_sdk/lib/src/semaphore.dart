@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 
 import 'constants.dart';
 import 'local_storage.dart';
-import 'interceptors/error_interceptor.dart';
 import 'semaphore_client.dart';
 
 class Semaphore {
@@ -61,7 +60,6 @@ class Semaphore {
           ),
         );
 
-    dio.interceptors.add(ErrorInterceptor());
     client = SemaphoreClient(
       dio,
       sharedLocalStorage,
