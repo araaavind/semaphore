@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:smphr_sdk/src/interceptors/error_interceptor.dart';
 
 import 'auth_client.dart';
 import 'interceptors/auth_interceptor.dart';
@@ -28,5 +29,6 @@ class SemaphoreClient {
       }
     }
     _dio.interceptors.add(AuthInterceptor(auth: auth));
+    _dio.interceptors.add(ErrorInterceptor(auth: auth));
   }
 }

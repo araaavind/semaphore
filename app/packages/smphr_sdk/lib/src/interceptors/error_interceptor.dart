@@ -1,9 +1,14 @@
 import 'package:dio/dio.dart';
 
+import '../auth_client.dart';
 import '../constants.dart';
 import '../types/network_exception.dart';
 
 class ErrorInterceptor extends Interceptor {
+  final AuthClient _auth;
+
+  ErrorInterceptor({required AuthClient auth}) : _auth = auth;
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     switch (err.type) {
@@ -32,7 +37,9 @@ class ErrorInterceptor extends Interceptor {
         );
         break;
       case DioExceptionType.badResponse:
-        // do nothing
+        if (err.response != null && err.response!.statusCode == 401) {
+          _auth.signout();
+        }
         break;
       default:
         err = NetworkException(

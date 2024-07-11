@@ -18,7 +18,7 @@ class Constants {
   static const String connectionErrorMessage =
       'Cannot connect to server. We will look into this issue';
   static const String authenticationRequiredErrorMessage =
-      'You are not authenticated to perform this action';
+      'You are not logged in';
   static const String activationRequiredErrorMessage =
       'You must activate your account to perform this action';
 
