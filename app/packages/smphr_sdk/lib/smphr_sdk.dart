@@ -1,6 +1,3 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library semaphore;
 
 export 'src/semaphore.dart';
@@ -9,6 +6,8 @@ export 'src/local_storage.dart';
 export 'src/types/semaphore_exception.dart';
 export 'src/types/auth_exception.dart';
 export 'src/types/auth_response.dart';
+export 'src/types/network_exception.dart';
+export 'src/types/error_response.dart';
 export 'src/types/session.dart';
 export 'src/constants.dart' show SignOutScope;
 
