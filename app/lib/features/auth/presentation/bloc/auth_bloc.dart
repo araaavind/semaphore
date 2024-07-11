@@ -3,7 +3,7 @@ import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
-import 'package:app/features/auth/domain/usecases/current_user.dart';
+import 'package:app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
@@ -15,7 +15,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final CurrentUser _currentUser;
+  final GetCurrentUser _getCurrentUser;
   final CheckUsername _checkUsername;
   final UserSignup _userSignup;
   final UserLogin _userLogin;
@@ -23,13 +23,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AppUserCubit _appUserCubit;
 
   AuthBloc({
-    required CurrentUser currentUser,
+    required GetCurrentUser getCurrentUser,
     required CheckUsername checkUsername,
     required UserSignup userSignup,
     required UserLogin userLogin,
     required UserLogout userLogout,
     required AppUserCubit appUserCubit,
-  })  : _currentUser = currentUser,
+  })  : _getCurrentUser = getCurrentUser,
         _checkUsername = checkUsername,
         _userSignup = userSignup,
         _userLogin = userLogin,
@@ -48,7 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    final res = await _currentUser(NoParams());
+    final res = await _getCurrentUser(NoParams());
     switch (res) {
       case Left(value: _):
         emit(AuthInitial());
