@@ -34,3 +34,13 @@ final class AuthCheckUsernameEvent extends AuthEvent {
 
   AuthCheckUsernameEvent(this.username);
 }
+
+final class AuthLogoutEvent extends AuthEvent {
+  final LogoutScope scope;
+  final User user;
+
+  AuthLogoutEvent({
+    required this.user,
+    this.scope = LogoutScope.local,
+  });
+}

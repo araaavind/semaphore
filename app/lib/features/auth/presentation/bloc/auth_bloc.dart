@@ -1,9 +1,11 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/user.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/current_user.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
+import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CheckUsername _checkUsername;
   final UserSignup _userSignup;
   final UserLogin _userLogin;
+  final UserLogout _userLogout;
   final AppUserCubit _appUserCubit;
 
   AuthBloc({
@@ -24,17 +27,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required CheckUsername checkUsername,
     required UserSignup userSignup,
     required UserLogin userLogin,
+    required UserLogout userLogout,
     required AppUserCubit appUserCubit,
   })  : _currentUser = currentUser,
         _checkUsername = checkUsername,
         _userSignup = userSignup,
         _userLogin = userLogin,
+        _userLogout = userLogout,
         _appUserCubit = appUserCubit,
         super(AuthInitial()) {
     on<AuthCurrentUserEvent>(_onAuthCurrentUser);
     on<AuthCheckUsernameEvent>(_onAuthCheckUsername);
     on<AuthSignupEvent>(_onAuthSignup);
     on<AuthLoginEvent>(_onAuthLogin);
+    on<AuthLogoutEvent>(_onAuthLogout);
   }
 
   void _onAuthCurrentUser(
@@ -107,6 +113,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         break;
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
+        break;
+    }
+  }
+
+  void _onAuthLogout(AuthLogoutEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final res = await _userLogout(UserLogoutParams(scope: event.scope));
+
+    switch (res) {
+      case Left(value: final l):
+        emit(AuthFailure(l.message));
+        break;
+      case Right(value: final _):
+        if (event.scope != LogoutScope.others) {
+          _appUserCubit.updateUser(null);
+          emit(AuthInitial());
+        } else {
+          emit(AuthSuccess(event.user));
+        }
         break;
     }
   }

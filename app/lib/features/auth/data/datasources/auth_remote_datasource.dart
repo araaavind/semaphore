@@ -1,3 +1,4 @@
+import 'package:app/core/constants/server_constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/auth/data/models/user_model.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +21,8 @@ abstract interface class AuthRemoteDatasource {
     required String usernameOrEmail,
     required String password,
   });
+
+  Future<void> logout({LogoutScope scope = LogoutScope.local});
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -102,6 +105,22 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         debugPrint(e.toString());
       }
       throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> logout({LogoutScope scope = LogoutScope.local}) async {
+    try {
+      await semaphoreClient.auth.signout(
+        scope: SignOutScope.fromString(scope.name),
+      );
+    } on SemaphoreException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint(e.toString());
+        throw ServerException(e.toString());
+      }
     }
   }
 }

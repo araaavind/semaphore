@@ -1,3 +1,4 @@
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -65,6 +66,17 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final user = await fn();
       return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> logout({
+    LogoutScope scope = LogoutScope.local,
+  }) async {
+    try {
+      return right(await remoteDatasource.logout(scope: scope));
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }
