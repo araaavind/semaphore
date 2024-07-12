@@ -38,7 +38,7 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 	} else {
 		v.AddError("username_or_email", "invalid username or email")
 	}
-	data.ValidatePasswordPlaintext(v, input.Password)
+	v.Check(validator.NotBlank(input.Password), "password", "must be provided")
 
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
