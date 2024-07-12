@@ -44,7 +44,7 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, Metadata{}, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 	defer rows.Close()
 
@@ -60,13 +60,13 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 			&user.Username,
 		)
 		if err != nil {
-			return nil, Metadata{}, err
+			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 		}
 		users = append(users, &user)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, Metadata{}, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
@@ -91,7 +91,7 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, Metadata{}, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 	defer rows.Close()
 
@@ -113,13 +113,13 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 			&feed.Language,
 		)
 		if err != nil {
-			return nil, Metadata{}, err
+			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 		}
 		feeds = append(feeds, &feed)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, Metadata{}, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
