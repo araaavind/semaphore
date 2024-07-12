@@ -1,0 +1,35 @@
+import 'package:app/core/constants/server_constants.dart';
+import 'package:app/core/errors/exceptions.dart';
+import 'package:app/core/errors/failures.dart';
+import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
+import 'package:app/features/feed/domain/entities/feed_list.dart';
+import 'package:app/features/feed/domain/repositories/feed_repository.dart';
+import 'package:fpdart/fpdart.dart';
+
+class FeedRepositoryImpl implements FeedRepository {
+  FeedRemoteDatasource feedRemoteDatasource;
+
+  FeedRepositoryImpl(this.feedRemoteDatasource);
+
+  @override
+  Future<Either<Failure, FeedList>> listAllFeeds({
+    String? searchKey,
+    String? searchValue,
+    int page = ServerConstants.defaultPaginationPage,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? sortKey,
+  }) async {
+    try {
+      final feedsList = await feedRemoteDatasource.listAllFeeds(
+        searchKey: searchKey,
+        searchValue: searchValue,
+        page: page,
+        pageSize: pageSize,
+        sortKey: sortKey,
+      );
+      return right(feedsList);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+}
