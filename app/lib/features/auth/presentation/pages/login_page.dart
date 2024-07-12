@@ -5,7 +5,7 @@ import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
-import 'package:app/features/wall/presentation/wall_page.dart';
+import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             } else if (state is AuthSuccess) {
               Navigator.pushAndRemoveUntil(
                 context,
-                WallPage.route(),
+                SearchFeedsPage.route(),
                 (_) => false,
               );
             }
