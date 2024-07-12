@@ -9,6 +9,11 @@ import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
+import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
+import 'package:app/features/feed/domain/repositories/feed_repository.dart';
+import 'package:app/features/feed/domain/usecases/list_feeds.dart';
+import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
 
@@ -16,6 +21,7 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initAuth();
+  _initFeed();
   // Register shared preferences for storing session
   serviceLocator.registerLazySingleton<LocalStorage>(
     () => SharedPreferencesLocalStorage(
@@ -82,6 +88,33 @@ void _initAuth() {
       userLogin: serviceLocator(),
       userLogout: serviceLocator(),
       appUserCubit: serviceLocator(),
+    ),
+  );
+}
+
+void _initFeed() {
+  // Register datasources
+  serviceLocator.registerFactory<FeedRemoteDatasource>(
+    () => FeedRemoteDatasourceImpl(
+      serviceLocator(),
+    ),
+  );
+  // Register repository
+  serviceLocator.registerFactory<FeedRepository>(
+    () => FeedRepositoryImpl(
+      serviceLocator(),
+    ),
+  );
+  // Register usecases
+  serviceLocator.registerFactory(
+    () => ListFeeds(
+      serviceLocator(),
+    ),
+  );
+  // Register blocs
+  serviceLocator.registerLazySingleton(
+    () => FeedBloc(
+      listFeeds: serviceLocator(),
     ),
   );
 }
