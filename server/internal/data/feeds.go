@@ -101,7 +101,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
 	if err != nil {
-		return nil, Metadata{}, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 	defer rows.Close()
 
@@ -127,12 +127,12 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.Version,
 		)
 		if err != nil {
-			return nil, Metadata{}, err
+			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 		}
 		feeds = append(feeds, &feed)
 	}
 	if err = rows.Err(); err != nil {
-		return nil, Metadata{}, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
 	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)

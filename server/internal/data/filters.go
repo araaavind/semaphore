@@ -15,11 +15,11 @@ type Filters struct {
 }
 
 type Metadata struct {
-	CurrentPage  int `json:"current_page,omitempty"`
-	PageSize     int `json:"page_size,omitempty"`
-	FirstPage    int `json:"first_page,omitempty"`
-	LastPage     int `json:"last_page,omitempty"`
-	TotalRecords int `json:"total_records,omitempty"`
+	CurrentPage  int `json:"current_page"`
+	PageSize     int `json:"page_size"`
+	FirstPage    int `json:"first_page"`
+	LastPage     int `json:"last_page"`
+	TotalRecords int `json:"total_records"`
 }
 
 func ValidateFilters(v *validator.Validator, f Filters) {
@@ -30,9 +30,19 @@ func ValidateFilters(v *validator.Validator, f Filters) {
 	v.Check(validator.PermittedValue(f.Sort, f.SortSafeList...), "sort", fmt.Sprintf("available sort parameters: %s", strings.Join(f.SortSafeList, ", ")))
 }
 
+func getEmptyMetadata(page, pageSize int) Metadata {
+	return Metadata{
+		CurrentPage:  page,
+		PageSize:     pageSize,
+		FirstPage:    1,
+		LastPage:     1,
+		TotalRecords: 0,
+	}
+}
+
 func calculateMetadata(totalRecords, page, pageSize int) Metadata {
 	if totalRecords == 0 {
-		return Metadata{}
+		return getEmptyMetadata(page, pageSize)
 	}
 
 	return Metadata{
