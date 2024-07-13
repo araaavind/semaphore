@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:smphr_sdk/smphr_sdk.dart';
+import 'package:app/core/common/entities/error_response.dart';
 
 class ErrorResponseModel extends ErrorResponse {
-  ErrorResponseModel(super.message, {super.fieldErrors});
+  const ErrorResponseModel(super.message, {super.fieldErrors});
 
   ErrorResponseModel copyWith({
     String? message,
@@ -37,8 +37,4 @@ class ErrorResponseModel extends ErrorResponse {
 
   factory ErrorResponseModel.fromJson(String source) =>
       ErrorResponseModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() =>
-      'ErrorResponseModel(message: $message, fieldErrors: $fieldErrors)';
 }

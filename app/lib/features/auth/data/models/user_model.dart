@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:app/core/common/entities/user.dart';
 
 class UserModel extends User {
-  UserModel({
+  const UserModel({
     required super.id,
     required super.email,
     required super.username,
@@ -46,24 +46,4 @@ class UserModel extends User {
 
   factory UserModel.fromJson(String source) =>
       UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'UserModel(id: $id, email: $email, username: $username, fullName: $fullName)';
-  }
-
-  @override
-  bool operator ==(covariant UserModel other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.email == email &&
-        other.username == username &&
-        other.fullName == fullName;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^ email.hashCode ^ username.hashCode ^ fullName.hashCode;
-  }
 }

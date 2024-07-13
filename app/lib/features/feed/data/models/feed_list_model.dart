@@ -5,7 +5,7 @@ import 'package:app/features/feed/data/models/feed_model.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 
 class FeedListModel extends FeedList {
-  FeedListModel({
+  const FeedListModel({
     required List<FeedModel> feeds,
     required PaginationMetadataModel metadata,
   }) : super(
@@ -36,17 +36,4 @@ class FeedListModel extends FeedList {
 
   factory FeedListModel.fromJson(String source) =>
       FeedListModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() => 'FeedList(feeds: $feeds)';
-
-  @override
-  bool operator ==(covariant FeedList other) {
-    if (identical(this, other)) return true;
-
-    return other.feeds == feeds;
-  }
-
-  @override
-  int get hashCode => feeds.hashCode;
 }

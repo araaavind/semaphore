@@ -1,9 +1,14 @@
+import 'package:equatable/equatable.dart';
+
 import 'pagination_metadata.dart';
 
-class PaginatedList {
+class PaginatedList extends Equatable {
   final PaginationMetadata metadata;
 
-  PaginatedList({
+  const PaginatedList({
     required this.metadata,
   });
+
+  @override
+  List<Object> get props => [metadata];
 }

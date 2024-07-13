@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:app/core/common/entities/pagination_metadata.dart';
 
 class PaginationMetadataModel extends PaginationMetadata {
-  PaginationMetadataModel({
+  const PaginationMetadataModel({
     required super.currentPage,
     required super.pageSize,
     required super.firstPage,
@@ -40,9 +40,4 @@ class PaginationMetadataModel extends PaginationMetadata {
   factory PaginationMetadataModel.fromJson(String source) =>
       PaginationMetadataModel.fromMap(
           json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'PaginationMetadataModel(currentPage: $currentPage, pageSize: $pageSize, firstPage: $firstPage, lastPage: $lastPage, totalRecords: $totalRecords)';
-  }
 }
