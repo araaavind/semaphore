@@ -36,7 +36,12 @@ Future<void> initDependencies() async {
     baseUrl: ServerConstants.baseUrl,
     sharedLocalStorage: serviceLocator(),
   );
-  serviceLocator.registerLazySingleton(() => semaphore.client);
+  serviceLocator.registerLazySingleton(
+    () => semaphore.client,
+    dispose: (param) {
+      param.auth.dispose();
+    },
+  );
 
   // Core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
@@ -95,6 +100,7 @@ void _initAuth() {
       userLogin: serviceLocator(),
       userLogout: serviceLocator(),
       appUserCubit: serviceLocator(),
+      client: serviceLocator(),
     ),
   );
 }

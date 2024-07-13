@@ -44,3 +44,9 @@ final class AuthLogoutEvent extends AuthEvent {
     this.scope = LogoutScope.local,
   });
 }
+
+final class AuthStatusChangeEvent extends AuthEvent {
+  final AuthStatus status;
+
+  AuthStatusChangeEvent({required this.status});
+}
