@@ -23,7 +23,6 @@ class SemaphoreClient {
     if (hasSession) {
       final session = await _sharedLocalStorage.getSession();
       if (session != null) {
-        // use try catch when signout is implemented in setInitialSession when session does not exist
         auth.setInitialSession(session);
       }
     }

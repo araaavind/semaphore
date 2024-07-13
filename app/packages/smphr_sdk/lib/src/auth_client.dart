@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
@@ -13,12 +14,22 @@ import 'types/semaphore_exception.dart';
 import 'types/session.dart';
 import 'types/user.dart';
 
+enum AuthStatus { unkown, authenticated, unauthenticated }
+
 class AuthClient {
   final Dio _dio;
   final LocalStorage _sharedLocalStorage;
 
   User? _currentUser;
   Session? _currentSession;
+
+  final _controller = StreamController<AuthStatus>();
+  Stream<AuthStatus> get status async* {
+    yield AuthStatus.unauthenticated;
+    yield* _controller.stream;
+  }
+
+  void dispose() => _controller.close();
 
   AuthClient({
     required Dio dio,
@@ -129,7 +140,7 @@ class AuthClient {
             .persistSession(jsonEncode(authResponse.session!.toJson()));
         _saveSession(authResponse.session!);
       }
-
+      _controller.add(AuthStatus.authenticated);
       return authResponse;
     } on NetworkException catch (e) {
       if (kDebugMode) {
@@ -273,14 +284,23 @@ class AuthClient {
   ///
   /// [SignOutScope.others], every session except the current one will be logged out.
   Future<void> signout({SignOutScope scope = SignOutScope.local}) async {
-    final accessToken = currentSession?.token;
+    final session = currentSession;
 
-    if (accessToken != null) {
+    if (scope != SignOutScope.others) {
+      await _sharedLocalStorage.removeSession();
+      _removeSession();
+      _controller.add(AuthStatus.unauthenticated);
+    }
+
+    if (session != null && !session.isExpired) {
       try {
+        _dio.options.headers
+            .putIfAbsent('Authorization', () => 'Bearer ${session.token}');
         await _dio.delete(
           '/tokens/authentication',
           queryParameters: {'scope': scope.name},
         );
+        _dio.options.headers.remove('Authorization');
       } on NetworkException catch (e) {
         if (kDebugMode) {
           print('NetworkException $e.message');
@@ -290,14 +310,6 @@ class AuthClient {
         if (kDebugMode) {
           print('Dio exception $e.message');
           print(e.stackTrace);
-        }
-        if (e.response?.statusCode == 401) {
-          await _sharedLocalStorage.removeSession();
-          _removeSession();
-          throw AuthException(
-            Constants.authenticationRequiredErrorMessage,
-            statusCode: e.response!.statusCode,
-          );
         }
         throw SemaphoreException(
           Constants.internalServerErrorMessage,
@@ -312,11 +324,6 @@ class AuthClient {
           statusCode: Constants.httpInternalServerErrorCode,
         );
       }
-    }
-
-    if (scope != SignOutScope.others) {
-      await _sharedLocalStorage.removeSession();
-      _removeSession();
     }
   }
 

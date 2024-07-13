@@ -7,3 +7,7 @@ class AuthException extends SemaphoreException {
   String toString() =>
       'AuthException(message: $message, statusCode: $statusCode)';
 }
+
+class SessionExpiredException extends SemaphoreException {
+  SessionExpiredException(super.message);
+}

@@ -10,5 +10,6 @@ export 'src/types/network_exception.dart';
 export 'src/types/error_response.dart';
 export 'src/types/session.dart';
 export 'src/constants.dart' show SignOutScope;
+export 'src/auth_client.dart' show AuthStatus;
 
 // TODO: Export any libraries intended for clients of this package.
