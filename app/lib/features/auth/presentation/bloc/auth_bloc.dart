@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/constants/constants.dart';
@@ -11,6 +13,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:smphr_sdk/smphr_sdk.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -22,6 +25,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserLogin _userLogin;
   final UserLogout _userLogout;
   final AppUserCubit _appUserCubit;
+  final SemaphoreClient _client;
+
+  late StreamSubscription<AuthStatus> _authenticationStatusSubscription;
 
   AuthBloc({
     required GetCurrentUser getCurrentUser,
@@ -30,18 +36,36 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required UserLogin userLogin,
     required UserLogout userLogout,
     required AppUserCubit appUserCubit,
+    required SemaphoreClient client,
   })  : _getCurrentUser = getCurrentUser,
         _checkUsername = checkUsername,
         _userSignup = userSignup,
         _userLogin = userLogin,
         _userLogout = userLogout,
         _appUserCubit = appUserCubit,
+        _client = client,
         super(AuthInitial()) {
     on<AuthCurrentUserEvent>(_onAuthCurrentUser);
     on<AuthCheckUsernameEvent>(_onAuthCheckUsername);
     on<AuthSignupEvent>(_onAuthSignup);
     on<AuthLoginEvent>(_onAuthLogin);
     on<AuthLogoutEvent>(_onAuthLogout);
+    on<AuthStatusChangeEvent>(_onAuthStatusChange);
+    _authenticationStatusSubscription = _client.auth.status
+        .listen((status) => add(AuthStatusChangeEvent(status: status)));
+  }
+
+  @override
+  Future<void> close() {
+    _authenticationStatusSubscription.cancel();
+    return super.close();
+  }
+
+  void _onAuthStatusChange(
+      AuthStatusChangeEvent event, Emitter<AuthState> emit) {
+    if (event.status == AuthStatus.unauthenticated) {
+      emit(AuthInitial());
+    }
   }
 
   void _onAuthCurrentUser(

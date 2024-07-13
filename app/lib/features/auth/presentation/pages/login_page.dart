@@ -5,7 +5,6 @@ import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
-import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,12 +41,6 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackbar(context, state.message);
-            } else if (state is AuthSuccess) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                SearchFeedsPage.route(),
-                (_) => false,
-              );
             }
           },
           builder: (context, state) {
