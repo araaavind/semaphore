@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:app/features/feed/domain/entities/feed.dart';
 
 class FeedModel extends Feed {
-  FeedModel({
+  const FeedModel({
     required super.id,
     required super.title,
     required super.link,
@@ -11,7 +11,7 @@ class FeedModel extends Feed {
     super.description,
     super.pubDate,
     super.pubUpdated,
-    super.feedtype,
+    super.feedType,
     super.language,
   });
 
@@ -23,7 +23,7 @@ class FeedModel extends Feed {
     String? feedLink,
     DateTime? pubDate,
     DateTime? pubUpdated,
-    FeedType? feedtype,
+    FeedType? feedType,
     String? language,
   }) {
     return FeedModel(
@@ -34,7 +34,7 @@ class FeedModel extends Feed {
       feedLink: feedLink ?? this.feedLink,
       pubDate: pubDate ?? this.pubDate,
       pubUpdated: pubUpdated ?? this.pubUpdated,
-      feedtype: feedtype ?? this.feedtype,
+      feedType: feedType ?? this.feedType,
       language: language ?? this.language,
     );
   }
@@ -48,7 +48,7 @@ class FeedModel extends Feed {
       'feed_link': feedLink,
       'pub_date': pubDate?.toIso8601String(),
       'pub_updated': pubUpdated?.toIso8601String(),
-      'feed_type': feedtype?.name,
+      'feed_type': feedType?.name,
       'language': language,
     };
   }
@@ -67,7 +67,7 @@ class FeedModel extends Feed {
       pubUpdated: map['pub_updated'] != null
           ? DateTime.parse(map['pub_updated'] as String)
           : null,
-      feedtype: map['feed_type'] != null
+      feedType: map['feed_type'] != null
           ? FeedType.fromString(map['feed_type'] as String)
           : null,
       language: map['language'] != null ? map['language'] as String : null,
@@ -78,37 +78,4 @@ class FeedModel extends Feed {
 
   factory FeedModel.fromJson(String source) =>
       FeedModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() {
-    return 'FeedModel(id: $id, title: $title, description: $description, link: $link, feedLink: $feedLink, pubDate: $pubDate, pubUpdated: $pubUpdated, feedtype: $feedtype, language: $language)';
-  }
-
-  @override
-  bool operator ==(covariant FeedModel other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.title == title &&
-        other.description == description &&
-        other.link == link &&
-        other.feedLink == feedLink &&
-        other.pubDate == pubDate &&
-        other.pubUpdated == pubUpdated &&
-        other.feedtype == feedtype &&
-        other.language == language;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        title.hashCode ^
-        description.hashCode ^
-        link.hashCode ^
-        feedLink.hashCode ^
-        pubDate.hashCode ^
-        pubUpdated.hashCode ^
-        feedtype.hashCode ^
-        language.hashCode;
-  }
 }

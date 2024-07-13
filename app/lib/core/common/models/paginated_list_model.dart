@@ -1,12 +1,12 @@
 import 'dart:convert';
 
+import 'package:app/core/common/entities/paginated_list.dart';
+
 import 'pagination_metadata_model.dart';
 
-class PaginatedListModel {
-  final PaginationMetadataModel metadata;
-
-  PaginatedListModel({
-    required this.metadata,
+class PaginatedListModel extends PaginatedList {
+  const PaginatedListModel({
+    required super.metadata,
   });
 
   PaginatedListModel copyWith({

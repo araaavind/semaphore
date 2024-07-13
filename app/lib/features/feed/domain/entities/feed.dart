@@ -1,4 +1,6 @@
-class Feed {
+import 'package:equatable/equatable.dart';
+
+class Feed extends Equatable {
   final int id;
   final String title;
   final String? description;
@@ -6,10 +8,10 @@ class Feed {
   final String feedLink;
   final DateTime? pubDate;
   final DateTime? pubUpdated;
-  final FeedType? feedtype;
+  final FeedType? feedType;
   final String? language;
 
-  Feed({
+  const Feed({
     required this.id,
     required this.title,
     this.description,
@@ -17,9 +19,22 @@ class Feed {
     required this.feedLink,
     this.pubDate,
     this.pubUpdated,
-    this.feedtype,
+    this.feedType,
     this.language,
   });
+
+  @override
+  List<Object?> get props => [
+        id,
+        title,
+        description,
+        link,
+        feedLink,
+        pubDate,
+        pubUpdated,
+        feedType,
+        language,
+      ];
 }
 
 enum FeedType {

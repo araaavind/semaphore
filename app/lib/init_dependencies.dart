@@ -14,12 +14,15 @@ import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
 
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
+  _setConfig();
+
   _initAuth();
   _initFeed();
   // Register shared preferences for storing session
@@ -37,6 +40,10 @@ Future<void> initDependencies() async {
 
   // Core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+}
+
+void _setConfig() {
+  EquatableConfig.stringify = true;
 }
 
 void _initAuth() {

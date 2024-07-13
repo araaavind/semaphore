@@ -1,6 +1,7 @@
 import 'package:app/core/constants/server_constants.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';

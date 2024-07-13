@@ -1,8 +1,13 @@
-class ErrorResponse {
+import 'package:equatable/equatable.dart';
+
+class ErrorResponse extends Equatable {
   final String message;
   final Map<String, String>? fieldErrors;
-  ErrorResponse(
+  const ErrorResponse(
     this.message, {
     this.fieldErrors,
   });
+
+  @override
+  List<Object?> get props => [message, fieldErrors];
 }
