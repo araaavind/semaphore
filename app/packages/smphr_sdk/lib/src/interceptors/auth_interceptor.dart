@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:smphr_sdk/src/auth_client.dart';
-import 'package:smphr_sdk/src/constants.dart';
+
+import '../auth_client.dart';
+import '../constants.dart';
+import '../types/auth_exception.dart';
 
 class AuthInterceptor extends Interceptor {
   final AuthClient _auth;
@@ -8,19 +10,21 @@ class AuthInterceptor extends Interceptor {
   AuthInterceptor({required AuthClient auth}) : _auth = auth;
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     if (_auth.currentSession != null) {
       final session = _auth.currentSession!;
       if (session.isExpired) {
-        // implement try refresh session
+        // TODO: implement try refresh session
+        await _auth.signout();
         throw DioException.requestCancelled(
           requestOptions: options,
-          reason: Constants.sessionExpiredErrorMessage,
+          reason: SessionExpiredException(Constants.sessionExpiredErrorMessage),
         );
       }
 
       final bearerToken = session.token;
-      options.headers.putIfAbsent("Authorization", () => 'Bearer $bearerToken');
+      options.headers.putIfAbsent('Authorization', () => 'Bearer $bearerToken');
     }
 
     super.onRequest(options, handler);

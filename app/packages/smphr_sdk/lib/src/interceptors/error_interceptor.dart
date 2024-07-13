@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../auth_client.dart';
 import '../constants.dart';
+import '../types/auth_exception.dart';
 import '../types/network_exception.dart';
 
 class ErrorInterceptor extends Interceptor {
@@ -11,6 +13,10 @@ class ErrorInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    if (kDebugMode) {
+      print('Error Interceptor:\n$err\n${err.response}');
+      print(err.requestOptions.headers);
+    }
     switch (err.type) {
       case DioExceptionType.connectionError:
         err = NetworkException(
@@ -39,6 +45,14 @@ class ErrorInterceptor extends Interceptor {
       case DioExceptionType.badResponse:
         if (err.response != null && err.response!.statusCode == 401) {
           _auth.signout();
+        }
+        break;
+      case DioExceptionType.cancel:
+        if (err.error != null && err.error is SessionExpiredException) {
+          err = NetworkException(
+            message: Constants.sessionExpiredErrorMessage,
+            requestOptions: err.requestOptions,
+          );
         }
         break;
       default:
