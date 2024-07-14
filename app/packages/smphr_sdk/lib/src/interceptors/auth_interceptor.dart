@@ -23,7 +23,7 @@ class AuthInterceptor extends Interceptor {
         );
       }
 
-      final bearerToken = session.token;
+      final bearerToken = _auth.currentSession!.token;
       options.headers.putIfAbsent('Authorization', () => 'Bearer $bearerToken');
     }
 
