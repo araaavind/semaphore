@@ -22,10 +22,14 @@ class SemaphoreClient {
     final hasSession = await _sharedLocalStorage.hasSession();
     if (hasSession) {
       final session = await _sharedLocalStorage.getSession();
+      // Check if session is not null as having a key does not guarantee that
+      // there is a non null value
       if (session != null) {
         auth.setInitialSession(session);
       }
     }
+
+    // Register the interceptors
     dio.interceptors.add(AuthInterceptor(auth: auth));
     dio.interceptors.add(ErrorInterceptor(auth: auth));
   }

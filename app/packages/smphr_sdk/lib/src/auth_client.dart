@@ -139,8 +139,8 @@ class AuthClient {
         await _sharedLocalStorage
             .persistSession(jsonEncode(authResponse.session!.toJson()));
         _saveSession(authResponse.session!);
+        _controller.add(AuthStatus.authenticated);
       }
-      _controller.add(AuthStatus.authenticated);
       return authResponse;
     } on NetworkException catch (e) {
       if (kDebugMode) {
@@ -284,23 +284,12 @@ class AuthClient {
   ///
   /// [SignOutScope.others], every session except the current one will be logged out.
   Future<void> signout({SignOutScope scope = SignOutScope.local}) async {
-    final session = currentSession;
-
-    if (scope != SignOutScope.others) {
-      await _sharedLocalStorage.removeSession();
-      _removeSession();
-      _controller.add(AuthStatus.unauthenticated);
-    }
-
-    if (session != null && !session.isExpired) {
+    if (currentSession != null && !currentSession!.isExpired) {
       try {
-        _dio.options.headers
-            .putIfAbsent('Authorization', () => 'Bearer ${session.token}');
         await _dio.delete(
           '/tokens/authentication',
           queryParameters: {'scope': scope.name},
         );
-        _dio.options.headers.remove('Authorization');
       } on NetworkException catch (e) {
         if (kDebugMode) {
           print('NetworkException $e.message');
@@ -325,16 +314,27 @@ class AuthClient {
         );
       }
     }
+    if (scope != SignOutScope.others) {
+      await _sharedLocalStorage.removeSession();
+      _removeSession();
+      _controller.add(AuthStatus.unauthenticated);
+    }
   }
 
   /// Set the initial session to the session obtained from local storage
+  ///
+  /// This function does not check if the session is expired or not.
   Future<void> setInitialSession(String jsonStr) async {
     final session = Session.fromMap(json.decode(jsonStr));
-    if (session == null) {
+    // Even though the json session string received may be non-null, fromMap
+    // function returns a null session if the token is missing from json string
+    if (session == null || session.isExpired) {
+      // signout to delete the session from local storage
       await signout();
       return;
     }
 
+    _controller.add(AuthStatus.authenticated);
     _saveSession(session);
   }
 
