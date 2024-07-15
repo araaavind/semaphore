@@ -3,10 +3,10 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupPage extends StatefulWidget {
   static route(String username) => MaterialPageRoute(
@@ -45,11 +45,10 @@ class _SignupPageState extends State<SignupPage> {
           listener: (context, state) {
             if (state is AuthFailure) {
               showSnackbar(context, state.message);
-            } else if (state is AuthSuccess) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                LoginPage.route(isOnboarding: true),
-                (_) => false,
+            } else if (state is AuthSignupSuccess) {
+              context.goNamed(
+                'login',
+                queryParameters: {'isOnboarding': 'true'},
               );
             }
           },
@@ -115,11 +114,7 @@ class _SignupPageState extends State<SignupPage> {
                   const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        LoginPage.route(),
-                        (route) => false,
-                      );
+                      context.goNamed('login');
                     },
                     child: RichText(
                       text: TextSpan(
