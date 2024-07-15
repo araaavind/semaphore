@@ -4,10 +4,9 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:app/features/auth/presentation/pages/login_page.dart';
-import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class WallPage extends StatelessWidget {
   static route() => MaterialPageRoute(builder: (context) => const WallPage());
@@ -16,61 +15,54 @@ class WallPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Semaphore'),
         actions: [
           IconButton(
-            onPressed: () => Navigator.push(context, SearchFeedsPage.route()),
+            onPressed: () => context.goNamed('feeds'),
             icon: const Icon(Icons.search),
           ),
-          BlocConsumer<AuthBloc, AuthState>(
+          IconButton(
+            onPressed: () {
+              context.read<AuthBloc>().add(
+                    AuthLogoutEvent(
+                      user: user,
+                      scope: LogoutScope.local,
+                    ),
+                  );
+            },
+            icon: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthFailure) {
                 showSnackbar(context, state.message);
               }
             },
             builder: (context, state) {
-              return state is AuthLoading
-                  ? const Padding(
-                      padding: EdgeInsets.only(right: 16),
-                      child: SizedBox(
+                if (state is AuthLoading) {
+                  return const SizedBox(
                         height: 14,
                         width: 14,
                         child: Loader(
                           strokeWidth: 2,
                         ),
-                      ),
-                    )
-                  : IconButton(
-                      onPressed: () {
-                        if (state is AuthSuccess) {
-                          LogoutScope scope = LogoutScope.local;
-                          context.read<AuthBloc>().add(
-                                AuthLogoutEvent(
-                                  user: state.user,
-                                  scope: scope,
-                                ),
                               );
                         }
+                return const Icon(Icons.logout);
                       },
-                      icon: const Icon(Icons.logout),
-                    );
-            },
+            ),
           ),
         ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          BlocBuilder<AppUserCubit, AppUserState>(
-            builder: (context, state) {
-              return Text(
-                'Hi ${(state as AppUserLoggedIn).user.fullName}',
+          Text(
+            'Hi ${user.fullName}',
                 style: context.theme.textTheme.displayLarge,
-              );
-            },
-          ),
+          )
         ],
       ),
     );

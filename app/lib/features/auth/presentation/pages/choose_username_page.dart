@@ -3,11 +3,11 @@ import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 
 class ChooseUsernamePage extends StatefulWidget {
   static route() =>
@@ -110,11 +110,11 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                           if (state is AuthUsernameSuccess &&
                               formState != null &&
                               formState.validate()) {
-                            Navigator.push(
-                              context,
-                              SignupPage.route(
-                                usernameController.text.trim(),
-                              ),
+                            context.goNamed(
+                              'signup',
+                              pathParameters: {
+                                'username': usernameController.text.trim(),
+                              },
                             );
                           }
                         }),
