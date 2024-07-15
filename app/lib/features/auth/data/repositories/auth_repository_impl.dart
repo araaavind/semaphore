@@ -16,11 +16,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final session = remoteDatasource.currentSession;
       if (session == null) {
-        return left(Failure('User not logged in'));
+        return left(const Failure('User not logged in'));
       }
       final user = await remoteDatasource.getCurrentUser();
       if (user == null) {
-        return left(Failure('User not logged in'));
+        return left(const Failure('User not logged in'));
       }
       return right(user);
     } on ServerException catch (e) {

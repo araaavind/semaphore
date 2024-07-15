@@ -35,23 +35,23 @@ class WallPage extends StatelessWidget {
                   );
             },
             icon: BlocConsumer<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthFailure) {
-                showSnackbar(context, state.message);
-              }
-            },
-            builder: (context, state) {
+              listener: (context, state) {
+                if (state is AuthFailure) {
+                  showSnackbar(context, state.message);
+                }
+              },
+              builder: (context, state) {
                 if (state is AuthLoading) {
                   return const SizedBox(
-                        height: 14,
-                        width: 14,
-                        child: Loader(
-                          strokeWidth: 2,
-                        ),
-                              );
-                        }
+                    height: 14,
+                    width: 14,
+                    child: Loader(
+                      strokeWidth: 2,
+                    ),
+                  );
+                }
                 return const Icon(Icons.logout);
-                      },
+              },
             ),
           ),
         ],
@@ -61,7 +61,7 @@ class WallPage extends StatelessWidget {
         children: [
           Text(
             'Hi ${user.fullName}',
-                style: context.theme.textTheme.displayLarge,
+            style: context.theme.textTheme.displayLarge,
           )
         ],
       ),

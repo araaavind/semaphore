@@ -65,6 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthStatusChangeEvent event, Emitter<AuthState> emit) {
     if (event.status == AuthStatus.unauthenticated) {
       emit(AuthInitial());
+      _appUserCubit.updateUser(null);
     }
   }
 
@@ -155,7 +156,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           _appUserCubit.updateUser(null);
           emit(AuthInitial());
         } else {
-          emit(AuthSuccess(event.user));
+          _emitAuthSuccess(event.user, emit);
         }
         break;
     }
