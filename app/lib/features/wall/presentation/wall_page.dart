@@ -6,7 +6,6 @@ import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class WallPage extends StatelessWidget {
   static route() => MaterialPageRoute(builder: (context) => const WallPage());
@@ -21,10 +20,6 @@ class WallPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Semaphore'),
         actions: [
-          IconButton(
-            onPressed: () => context.goNamed('feeds'),
-            icon: const Icon(Icons.search),
-          ),
           IconButton(
             onPressed: () {
               context.read<AuthBloc>().add(
