@@ -35,10 +35,8 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     switch (res) {
       case Left(value: final l):
         emit(FeedFailed(l.message));
-        break;
       case Right(value: final r):
         emit(FeedListFetched(r));
-        break;
     }
   }
 }

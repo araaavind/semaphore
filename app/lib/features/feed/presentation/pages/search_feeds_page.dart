@@ -1,4 +1,5 @@
 import 'package:app/core/common/widgets/widgets.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:flutter/material.dart';
@@ -30,15 +31,16 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         listener: (context, state) {
           if (state is FeedFailed) {
             showSnackbar(context, state.message);
-            return;
           }
         },
         builder: (context, state) {
           if (state is FeedLoading) {
             return const Loader();
           }
-          if (state is FeedFailed || state is FeedInitial) {
-            return const Scaffold();
+          if (state is FeedInitial) {
+            return const Center(
+              child: Text(ServerConstants.internalServerErrorMessage),
+            );
           }
           return ListView.builder(
             itemCount: (state as FeedListFetched).feedList.feeds.length,

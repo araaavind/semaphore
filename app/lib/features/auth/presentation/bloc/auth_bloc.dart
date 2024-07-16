@@ -78,10 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     switch (res) {
       case Left(value: _):
         emit(AuthInitial());
-        break;
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
-        break;
     }
   }
 
@@ -94,14 +92,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     switch (res) {
       case Left(value: final l):
         emit(AuthFailure(l.message));
-        break;
       case Right(value: final r):
         if (r) {
           emit(AuthUsernameFailure('Username is already taken'));
         } else {
           emit(AuthUsernameSuccess());
         }
-        break;
     }
   }
 
@@ -117,10 +113,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     switch (res) {
       case Left(value: final l):
         emit(AuthFailure(l.message));
-        break;
       case Right(value: final _):
         emit(AuthSignupSuccess());
-        break;
     }
   }
 
@@ -136,10 +130,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     switch (res) {
       case Left(value: final l):
         emit(AuthFailure(l.message));
-        break;
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
-        break;
     }
   }
 
@@ -150,7 +142,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     switch (res) {
       case Left(value: final l):
         emit(AuthFailure(l.message));
-        break;
       case Right(value: final _):
         if (event.scope != LogoutScope.others) {
           _appUserCubit.updateUser(null);
@@ -158,7 +149,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           _emitAuthSuccess(event.user, emit);
         }
-        break;
     }
   }
 
