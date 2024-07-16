@@ -3,6 +3,7 @@ import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
+import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/wall/presentation/wall_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,17 +28,23 @@ GoRouter router = GoRouter(
     return null;
   },
   routes: [
-    GoRoute(
-        path: '/',
-        name: 'wall',
-        builder: (context, state) => const WallPage(),
-        routes: [
-          GoRoute(
-            path: 'feeds',
-            name: 'feeds',
-            builder: (context, state) => const SearchFeedsPage(),
-          ),
-        ]),
+    ShellRoute(
+      builder: (context, state, child) {
+        return const HomePage();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          name: 'wall',
+          builder: (context, state) => const WallPage(),
+        ),
+        GoRoute(
+          path: '/feeds',
+          name: 'feeds',
+          builder: (context, state) => const SearchFeedsPage(),
+        ),
+      ],
+    ),
     GoRoute(
       path: '/login',
       name: 'login',

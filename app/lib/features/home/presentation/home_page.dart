@@ -1,0 +1,56 @@
+import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
+import 'package:app/features/wall/presentation/wall_page.dart';
+import 'package:flutter/material.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final PageController _pageController = PageController();
+
+  int _currentIndex = 0;
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    _pageController.jumpToPage(index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: const [
+          WallPage(),
+          SearchFeedsPage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            label: 'Home',
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home_filled),
+          ),
+          BottomNavigationBarItem(
+            label: 'Search',
+            icon: Icon(Icons.search),
+            activeIcon: Icon(Icons.search),
+          ),
+        ],
+      ),
+    );
+  }
+}
