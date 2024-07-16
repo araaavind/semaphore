@@ -300,6 +300,13 @@ class AuthClient {
           print('Dio exception $e.message');
           print(e.stackTrace);
         }
+        if (e.response != null && e.response!.statusCode == 401) {
+          // Session is already logged out by other device. Clear session
+          await _sharedLocalStorage.removeSession();
+          _removeSession();
+          _controller.add(AuthStatus.unauthenticated);
+          throw SemaphoreException(Constants.sessionExpiredErrorMessage);
+        }
         throw SemaphoreException(
           Constants.internalServerErrorMessage,
           statusCode: e.response?.statusCode,

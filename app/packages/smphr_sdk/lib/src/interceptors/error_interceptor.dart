@@ -12,10 +12,9 @@ class ErrorInterceptor extends Interceptor {
   ErrorInterceptor({required AuthClient auth}) : _auth = auth;
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (kDebugMode) {
-      print('Error Interceptor:\n$err\n${err.response}');
-      print(err.requestOptions.headers);
+      print('Error Interceptor:\n$err\n${err.response}}');
     }
     switch (err.type) {
       case DioExceptionType.connectionError:
@@ -44,7 +43,10 @@ class ErrorInterceptor extends Interceptor {
         break;
       case DioExceptionType.badResponse:
         if (err.response != null && err.response!.statusCode == 401) {
-          _auth.signout();
+          if (err.requestOptions.path != '/tokens/authentication' ||
+              err.requestOptions.method != 'DELETE') {
+            await _auth.signout();
+          }
         }
         break;
       case DioExceptionType.cancel:
