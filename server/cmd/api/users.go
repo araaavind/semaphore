@@ -48,10 +48,10 @@ func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrDuplicateEmail):
-			v.AddError("email", "a user with this email already exists")
+			v.AddError("email", "A user with this email already exists")
 			app.failedValidationResponse(w, r, v.Errors)
 		case errors.Is(err, data.ErrDuplicateUsername):
-			v.AddError("username", "a user with this username already exists")
+			v.AddError("username", "A user with this username already exists")
 			app.failedValidationResponse(w, r, v.Errors)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -113,7 +113,7 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
-			v.AddError("token", "invalid or expired activation token")
+			v.AddError("token", "Invalid or expired activation token")
 			app.failedValidationResponse(w, r, v.Errors)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -207,7 +207,7 @@ func (app *application) updateUserPassword(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
-			v.AddError("token", "invalid or expired password reset token")
+			v.AddError("token", "Invalid or expired password reset token")
 			app.failedValidationResponse(w, r, v.Errors)
 		default:
 			app.serverErrorResponse(w, r, err)

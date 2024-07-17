@@ -35,7 +35,7 @@ type Feed struct {
 }
 
 func ValidateFeedLink(v *validator.Validator, feedLink string) {
-	v.Check(validator.NotBlank(feedLink), "feed_link", "must not be empty")
+	v.Check(validator.NotBlank(feedLink), "feed_link", "Feed link must not be empty")
 }
 
 type FeedModel struct {

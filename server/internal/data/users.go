@@ -64,51 +64,51 @@ func (p *password) Matches(plaintextPassword string) (bool, error) {
 }
 
 func ValidateUsername(v *validator.Validator, username string) {
-	v.Check(validator.NotBlank(username), "username", "must be provided")
-	v.Check(validator.MinChars(username, 8), "username", "must be atleast 8 characters long")
-	v.Check(validator.MaxChars(username, 16), "username", "must not be more than 16 characters long")
-	v.Check(validator.Matches(username, validator.UsernameBasicRX), "username", `username must contain only alphanumeric characters, "." and "_"`)
+	v.Check(validator.NotBlank(username), "username", "Username must be provided")
+	v.Check(validator.MinChars(username, 8), "username", "Username must be atleast 8 characters long")
+	v.Check(validator.MaxChars(username, 16), "username", "Username must not be more than 16 characters long")
+	v.Check(validator.Matches(username, validator.UsernameBasicRX), "username", `Username must contain only alphanumeric characters, dots and dashes`)
 
 	forbiddenPrefixes := []string{".", "_"}
 	v.Check(
 		validator.SafePrefix(username, forbiddenPrefixes...),
 		"username",
-		`must not start with "." or "_"`,
+		`Username must not start with "." or "_"`,
 	)
 
 	forbiddenSuffixes := []string{".", "_"}
 	v.Check(
 		validator.SafeSuffix(username, forbiddenSuffixes...),
 		"username",
-		`must not end with "." or "_"`,
+		`Username must not end with "." or "_"`,
 	)
 
 	forbiddenSubstrings := []string{"..", "__", "._", "_."}
 	v.Check(
 		validator.SafeSubstrings(username, forbiddenSubstrings...),
 		"username",
-		`must not contain consecutive "." or "_" or a combination of those`,
+		`Username must not contain consecutive "." or "_" or a combination of those`,
 	)
 }
 
 func ValidateEmail(v *validator.Validator, email string) {
-	v.Check(validator.NotBlank(email), "email", "must be provided")
-	v.Check(validator.Matches(email, validator.EmailRX), "email", "must be a valid email address")
+	v.Check(validator.NotBlank(email), "email", "Email must be provided")
+	v.Check(validator.Matches(email, validator.EmailRX), "email", "Email must be a valid email address")
 }
 
 func ValidatePasswordPlaintext(v *validator.Validator, password string) {
-	v.Check(validator.NotBlank(password), "password", "must be provided")
-	v.Check(validator.MinChars(password, 8), "password", "must be at least 8 bytes long")
-	v.Check(validator.MaxChars(password, 72), "password", "must not be more than 72 bytes long")
-	v.Check(validator.Matches(password, validator.HasLowerRX), "password", "must have atleast 1 lower-case character")
-	v.Check(validator.Matches(password, validator.HasUpperRX), "password", "must have atleast 1 upper-case character")
-	v.Check(validator.Matches(password, validator.HasSpecialRX), "password", "must have atleast 1 special character (! @ # $ & *)")
-	v.Check(validator.Matches(password, validator.HasDigitRX), "password", "must have atleast 1 numeric character")
+	v.Check(validator.NotBlank(password), "password", "Password must be provided")
+	v.Check(validator.MinChars(password, 8), "password", "Password must be at least 8 characters long")
+	v.Check(validator.MaxChars(password, 72), "password", "Password must not be more than 72 characters long")
+	v.Check(validator.Matches(password, validator.HasLowerRX), "password", "Password must have atleast 1 lower-case character")
+	v.Check(validator.Matches(password, validator.HasUpperRX), "password", "Password must have atleast 1 upper-case character")
+	v.Check(validator.Matches(password, validator.HasSpecialRX), "password", "Password must have atleast 1 special character (! @ # $ & *)")
+	v.Check(validator.Matches(password, validator.HasDigitRX), "password", "Password must have atleast 1 numeric character")
 }
 
 func ValidateUser(v *validator.Validator, user *User) {
-	v.Check(validator.NotBlank(user.FullName), "full_name", "must be provided")
-	v.Check(validator.MaxChars(user.FullName, 100), "full_name", "must not be more than 100 characters long")
+	v.Check(validator.NotBlank(user.FullName), "full_name", "Full name must be provided")
+	v.Check(validator.MaxChars(user.FullName, 100), "full_name", "Full name must not be more than 100 characters long")
 
 	ValidateUsername(v, user.Username)
 	ValidateEmail(v, user.Email)

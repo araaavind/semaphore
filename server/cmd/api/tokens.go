@@ -36,9 +36,9 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 		data.ValidateUsername(v, input.UsernameOrEmail)
 		isInputEmail = false
 	} else {
-		v.AddError("username_or_email", "invalid username or email")
+		v.AddError("username_or_email", "Invalid username or email")
 	}
-	v.Check(validator.NotBlank(input.Password), "password", "must be provided")
+	v.Check(validator.NotBlank(input.Password), "password", "Password must be provided")
 
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
@@ -93,13 +93,10 @@ func (app *application) deleteAuthenticationToken(w http.ResponseWriter, r *http
 	switch deleteSessionScope {
 	case deleteLocalSessionScope:
 		err = app.models.Tokens.DeleteByHash(session.Token.Hash)
-		break
 	case deleteGlobalSessionScope:
 		err = app.models.Tokens.DeleteAllForUser(data.ScopeAuthentication, session.User.ID)
-		break
 	case deleteOthersSessionScope:
 		err = app.models.Tokens.DeleteAllForUserExcept(data.ScopeAuthentication, session.User.ID, session.Token.Hash)
-		break
 	default:
 		app.failedValidationResponse(w, r, map[string]string{"scope": "invalid scope"})
 		return
@@ -134,7 +131,7 @@ func (app *application) createActivationToken(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
-			v.AddError("email", "no matching email address found")
+			v.AddError("email", "No matching email address found")
 			app.failedValidationResponse(w, r, v.Errors)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -143,7 +140,7 @@ func (app *application) createActivationToken(w http.ResponseWriter, r *http.Req
 	}
 
 	if user.Activated {
-		v.AddError("email", "user has already been activated")
+		v.AddError("email", "Your account has already been activated")
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
@@ -198,7 +195,7 @@ func (app *application) createPasswordResetToken(w http.ResponseWriter, r *http.
 	if err != nil {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
-			v.AddError("email", "no matching account found")
+			v.AddError("email", "No matching account found")
 			app.failedValidationResponse(w, r, v.Errors)
 		default:
 			app.serverErrorResponse(w, r, err)
@@ -207,7 +204,7 @@ func (app *application) createPasswordResetToken(w http.ResponseWriter, r *http.
 	}
 
 	if !user.Activated {
-		v.AddError("email", "user must be activated to reset password")
+		v.AddError("email", "Your account must be activated to reset password")
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
