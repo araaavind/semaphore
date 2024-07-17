@@ -57,7 +57,7 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		v.AddError(key, "must be an integer value")
+		v.AddError(key, "Must be an integer value")
 		return defaultValue
 	}
 

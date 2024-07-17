@@ -23,11 +23,11 @@ type Metadata struct {
 }
 
 func ValidateFilters(v *validator.Validator, f Filters) {
-	v.Check(f.Page > 0, "page", "must be greater than zero")
-	v.Check(f.Page < 10_000_000, "page", "must be a maximum of 1000000")
-	v.Check(f.PageSize > 0, "page_size", "must be greater than zero")
-	v.Check(f.PageSize <= 100, "page_size", "must be a maximum of 100")
-	v.Check(validator.PermittedValue(f.Sort, f.SortSafeList...), "sort", fmt.Sprintf("available sort parameters: %s", strings.Join(f.SortSafeList, ", ")))
+	v.Check(f.Page > 0, "page", "Page must be greater than zero")
+	v.Check(f.Page < 10_000_000, "page", "Page must be a maximum of 1000000")
+	v.Check(f.PageSize > 0, "page_size", "Page size must be greater than zero")
+	v.Check(f.PageSize <= 100, "page_size", "Page size must be a maximum of 100")
+	v.Check(validator.PermittedValue(f.Sort, f.SortSafeList...), "sort", fmt.Sprintf("Available sort parameters: %s", strings.Join(f.SortSafeList, ", ")))
 }
 
 func getEmptyMetadata(page, pageSize int) Metadata {
