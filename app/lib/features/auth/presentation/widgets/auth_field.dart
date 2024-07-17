@@ -73,16 +73,7 @@ class _AuthFieldState<T> extends State<AuthField<T>> {
                 : null),
       ),
       style: widget.style ?? context.theme.textTheme.bodyMedium,
-      validator: widget.validator ??
-          (value) {
-            if (value!.isEmpty) {
-              return '${widget.hintText} is missing';
-            }
-            if (widget.isPassword && value.length < 8) {
-              return 'Password must be atleast 8 characters long';
-            }
-            return null;
-          },
+      validator: widget.validator,
       onChanged: widget.onChanged,
       obscureText: widget.isPassword && !_passwordVisible,
       autovalidateMode: widget.autovalidateMode,
