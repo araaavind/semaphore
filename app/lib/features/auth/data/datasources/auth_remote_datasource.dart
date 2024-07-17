@@ -1,4 +1,5 @@
 import 'package:app/core/common/entities/logout_scope.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/auth/data/models/user_model.dart';
 import 'package:flutter/foundation.dart';
@@ -47,15 +48,20 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<bool> checkUsername({required String username}) async {
     try {
       return await semaphoreClient.auth.isUsernameTaken(username: username);
-    } on sp.AuthException catch (e) {
-      throw ServerException(e.message);
     } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
         debugPrint(e.toString());
       }
-      throw ServerException(e.toString());
+      throw const ServerException(TextConstants.internalServerErrorMessage);
     }
   }
 
@@ -102,15 +108,20 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         id: response.user!.id,
         username: response.user!.username,
       );
-    } on sp.AuthException catch (e) {
-      throw ServerException(e.message);
     } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
         debugPrint(e.toString());
       }
-      throw ServerException(e.toString());
+      throw const ServerException(TextConstants.internalServerErrorMessage);
     }
   }
 
@@ -121,11 +132,13 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         scope: sp.SignOutScope.fromString(scope.name),
       );
     } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
         debugPrint(e.toString());
-        throw ServerException(e.toString());
+        throw const ServerException(TextConstants.internalServerErrorMessage);
       }
     }
   }

@@ -1,7 +1,6 @@
-import 'package:app/core/constants/server_constants.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
@@ -41,22 +40,15 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
         queryParameters: queryParams,
       );
       return FeedListModel.fromMap(response.data);
-    } on sp.NetworkException catch (e) {
-      if (kDebugMode) {
-        print('NetworkException $e.message');
-      }
+    } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Dio exception $e.message');
-        print(e.stackTrace);
-      }
-      throw const ServerException(ServerConstants.internalServerErrorMessage);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       if (kDebugMode) {
         print('Unknown exception $e.toString()');
       }
-      throw const ServerException(ServerConstants.internalServerErrorMessage);
+      throw const ServerException(TextConstants.internalServerErrorMessage);
     }
   }
 }

@@ -13,5 +13,8 @@ class TextConstants {
   static const String usernameInvalidPrefixSuffixErrorMessage =
       'Username should not start or end with a dot or an underscore';
   static const String usernameInvalidContentsErrorMessage =
-      'Username should not contain consecutive dots, underscores, or their combination.';
+      'Username should not contain consecutive dots, underscores, or their combination';
+
+  static const String feedListFetchErrorMessage =
+      'Unable to load feeds. Try again later or report the issue';
 }

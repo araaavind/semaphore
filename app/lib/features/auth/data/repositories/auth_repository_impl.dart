@@ -16,15 +16,15 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final session = remoteDatasource.currentSession;
       if (session == null) {
-        return left(const Failure('User not logged in'));
+        return left(const Failure(message: 'User not logged in'));
       }
       final user = await remoteDatasource.getCurrentUser();
       if (user == null) {
-        return left(const Failure('User not logged in'));
+        return left(const Failure(message: 'User not logged in'));
       }
       return right(user);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(Failure(message: e.message));
     }
   }
 
@@ -37,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
           await remoteDatasource.checkUsername(username: username);
       return right(usernameTaken);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(Failure(message: e.message, fieldErrors: e.fieldErrors));
     }
   }
 
@@ -78,7 +78,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await fn();
       return right(user);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(Failure(message: e.message, fieldErrors: e.fieldErrors));
     }
   }
 
@@ -89,7 +89,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       return right(await remoteDatasource.logout(scope: scope));
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(Failure(message: e.message));
     }
   }
 }

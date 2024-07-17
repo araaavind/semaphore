@@ -97,10 +97,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _checkUsername(CheckUsernameParams(event.username));
     switch (res) {
       case Left(value: final l):
-        emit(AuthFailure(l.message));
+        emit(AuthUsernameFailure(l.message));
       case Right(value: final r):
         if (r) {
-          emit(AuthUsernameFailure(TextConstants.usernameTakenErrorMessage));
+          emit(
+            AuthUsernameFailure(
+              TextConstants.usernameTakenErrorMessage,
+              fieldErrors: const {
+                'username': TextConstants.usernameTakenErrorMessage
+              },
+            ),
+          );
         } else {
           emit(AuthUsernameSuccess());
         }
@@ -123,7 +130,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     switch (res) {
       case Left(value: final l):
-        emit(AuthFailure(l.message));
+        emit(AuthSignupFailure(l.message, fieldErrors: l.fieldErrors));
       case Right(value: final _):
         emit(AuthSignupSuccess());
     }
@@ -141,7 +148,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     switch (res) {
       case Left(value: final l):
-        emit(AuthFailure(l.message));
+        emit(AuthFailure(l.message, fieldErrors: l.fieldErrors));
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
     }

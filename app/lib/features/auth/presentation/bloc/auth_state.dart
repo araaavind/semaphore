@@ -19,22 +19,23 @@ final class AuthSuccess extends AuthState {
   List<Object?> get props => [user];
 }
 
-final class AuthSignupSuccess extends AuthState {}
-
 final class AuthFailure extends AuthState {
   final String message;
-  AuthFailure(this.message);
+  final Map<String, String>? fieldErrors;
+  AuthFailure(this.message, {this.fieldErrors});
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, fieldErrors];
+}
+
+final class AuthSignupSuccess extends AuthState {}
+
+final class AuthSignupFailure extends AuthFailure {
+  AuthSignupFailure(super.message, {super.fieldErrors});
 }
 
 final class AuthUsernameSuccess extends AuthState {}
 
-final class AuthUsernameFailure extends AuthState {
-  final String message;
-  AuthUsernameFailure(this.message);
-
-  @override
-  List<Object?> get props => super.props..add(message);
+final class AuthUsernameFailure extends AuthFailure {
+  AuthUsernameFailure(super.message, {super.fieldErrors});
 }

@@ -1,6 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
+import 'package:app/core/utils/create_field_validator.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
@@ -27,6 +28,13 @@ class _SignupPageState extends State<SignupPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  Map<String, String>? fieldErrors;
+
+  void updateFieldErrors([Map<String, String>? fe]) {
+    setState(() {
+      fieldErrors = fe;
+    });
+  }
 
   @override
   void dispose() {
@@ -67,23 +75,46 @@ class _SignupPageState extends State<SignupPage> {
               AuthField(
                 hintText: 'Full name',
                 controller: nameController,
+                onChanged: (_) => updateFieldErrors(),
+                validator: (_) => validateFields(
+                  jsonKey: 'full_name',
+                  fieldErrors: fieldErrors,
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 10),
               AuthField(
                 hintText: 'Email',
                 controller: emailController,
+                onChanged: (_) => updateFieldErrors(),
+                validator: (_) => validateFields(
+                  jsonKey: 'email',
+                  fieldErrors: fieldErrors,
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 10),
               AuthField(
                 hintText: 'Password',
                 controller: passwordController,
+                onChanged: (_) => updateFieldErrors(),
                 isPassword: true,
+                validator: (_) => validateFields(
+                  jsonKey: 'password',
+                  fieldErrors: fieldErrors,
+                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               const SizedBox(height: 20),
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
-                  if (state is AuthFailure) {
-                    showSnackbar(context, state.message);
+                  if (state is AuthSignupFailure) {
+                    if (state.fieldErrors != null) {
+                      updateFieldErrors(state.fieldErrors);
+                      formKey.currentState!.validate();
+                    } else {
+                      showSnackbar(context, state.message);
+                    }
                   } else if (state is AuthSignupSuccess) {
                     context.goNamed(
                       'login',
