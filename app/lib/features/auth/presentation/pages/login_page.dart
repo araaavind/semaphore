@@ -56,10 +56,25 @@ class _LoginPageState extends State<LoginPage> {
                     onChanged: (_) => setState(() {
                       fieldErrors = null;
                     }),
-                    validator: (_) => validateFields(
-                      jsonKey: 'username_or_email',
-                      fieldErrors: fieldErrors,
-                    ),
+                    validator: (_) {
+                      if (fieldErrors != null &&
+                          fieldErrors!.keys.contains('username')) {
+                        return validateFields(
+                          jsonKey: 'username',
+                          fieldErrors: fieldErrors,
+                        );
+                      } else if (fieldErrors != null &&
+                          fieldErrors!.keys.contains('email')) {
+                        return validateFields(
+                          jsonKey: 'email',
+                          fieldErrors: fieldErrors,
+                        );
+                      }
+                      return validateFields(
+                        jsonKey: 'username_or_email',
+                        fieldErrors: fieldErrors,
+                      );
+                    },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   const SizedBox(height: 10),
@@ -67,7 +82,14 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: 'Password',
                     controller: passwordController,
                     isPassword: true,
-                    autovalidateMode: AutovalidateMode.disabled,
+                    onChanged: (_) => setState(() {
+                      fieldErrors = null;
+                    }),
+                    validator: (_) => validateFields(
+                      jsonKey: 'password',
+                      fieldErrors: fieldErrors,
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   const SizedBox(height: 20),
                   BlocConsumer<AuthBloc, AuthState>(
