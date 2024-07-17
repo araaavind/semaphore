@@ -1,4 +1,4 @@
-import 'package:app/core/constants/server_constants.dart';
+import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/auth/data/models/user_model.dart';
 import 'package:flutter/foundation.dart';

@@ -1,4 +1,4 @@
-import 'package:app/core/constants/server_constants.dart';
+import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/auth/domain/repositories/auth_repository.dart';
