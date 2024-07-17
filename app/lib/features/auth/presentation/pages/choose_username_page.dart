@@ -40,17 +40,19 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthUsernameFailure) {
-              setState(() {
-                _isUsernameTaken = true;
+              if (state.fieldErrors != null) {
+                setState(() {
+                  _isUsernameTaken = true;
+                });
                 formState!.validate();
-              });
+              } else {
+                showSnackbar(context, state.message);
+              }
             } else if (state is AuthUsernameSuccess) {
               setState(() {
                 _isUsernameTaken = false;
-                formState!.validate();
               });
-            } else if (state is AuthFailure) {
-              showSnackbar(context, state.message);
+              formState!.validate();
             }
           },
           builder: (context, state) {
@@ -70,7 +72,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                       setState(() {
                         _isUsernameTaken = false;
                       });
-                      if (formState!.validate()) {
+                      if (formState != null && formState.validate()) {
                         context.read<AuthBloc>().add(
                               AuthCheckUsernameRequested(
                                 usernameController.text.trim(),

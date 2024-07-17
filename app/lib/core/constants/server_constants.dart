@@ -5,7 +5,4 @@ class ServerConstants {
 
   static const int defaultPaginationPage = 1;
   static const int defaultPaginationPageSize = 8;
-
-  static const String internalServerErrorMessage =
-      'Something went wrong. Try again later or report the issue';
 }

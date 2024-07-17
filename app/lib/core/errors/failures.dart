@@ -2,8 +2,12 @@ import 'package:equatable/equatable.dart';
 
 class Failure extends Equatable {
   final String message;
-  const Failure([this.message = 'An unexpected error occured']);
+  final Map<String, String>? fieldErrors;
+  const Failure({
+    this.message = 'An unexpected error occured',
+    this.fieldErrors,
+  });
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message, fieldErrors];
 }

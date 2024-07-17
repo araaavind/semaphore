@@ -1,6 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
+import 'package:app/core/utils/create_field_validator.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
@@ -24,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   final usernameOrEmailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  Map<String, String>? fieldErrors;
 
   @override
   void dispose() {
@@ -51,6 +53,14 @@ class _LoginPageState extends State<LoginPage> {
                   AuthField(
                     hintText: 'Username or Email',
                     controller: usernameOrEmailController,
+                    onChanged: (_) => setState(() {
+                      fieldErrors = null;
+                    }),
+                    validator: (_) => validateFields(
+                      jsonKey: 'username_or_email',
+                      fieldErrors: fieldErrors,
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                   const SizedBox(height: 10),
                   AuthField(
@@ -63,7 +73,16 @@ class _LoginPageState extends State<LoginPage> {
                   BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
                       if (state is AuthFailure) {
-                        showSnackbar(context, state.message);
+                        if (state.fieldErrors != null) {
+                          setState(() {
+                            fieldErrors = state.fieldErrors;
+                          });
+                          if (formKey.currentState != null) {
+                            formKey.currentState!.validate();
+                          }
+                        } else {
+                          showSnackbar(context, state.message);
+                        }
                       }
                     },
                     builder: (context, state) {

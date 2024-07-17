@@ -37,9 +37,9 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           if (state is FeedLoading) {
             return const Loader();
           }
-          if (state is FeedInitial) {
+          if (state is FeedFailed || state is FeedInitial) {
             return const Center(
-              child: Text(ServerConstants.internalServerErrorMessage),
+              child: Text(TextConstants.feedListFetchErrorMessage),
             );
           }
           return ListView.builder(

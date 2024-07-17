@@ -29,7 +29,7 @@ class FeedRepositoryImpl implements FeedRepository {
       );
       return right(feedsList);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      return left(Failure(message: e.message));
     }
   }
 }
