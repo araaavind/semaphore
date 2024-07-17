@@ -6,11 +6,9 @@ import 'package:flutter/foundation.dart';
 
 import 'constants.dart';
 import 'local_storage.dart';
-import 'types/auth_exception.dart';
 import 'types/auth_response.dart';
-import 'types/error_response.dart';
-import 'types/network_exception.dart';
 import 'types/semaphore_exception.dart';
+import 'types/internal_exception.dart';
 import 'types/session.dart';
 import 'types/user.dart';
 
@@ -65,48 +63,16 @@ class AuthClient {
         },
       );
       return AuthResponse.fromMap(response.data);
-    } on NetworkException catch (e) {
+    } on SemaphoreException catch (e) {
       if (kDebugMode) {
-        print('NetworkException $e.message');
+        print('SemaphoreException $e.message');
       }
-      throw SemaphoreException(e.message!);
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Dio exception $e.message');
-        print(e.stackTrace);
-      }
-      if (e.response?.statusCode == 422) {
-        final errRes = ErrorResponse.fromMap(e.response?.data);
-        if (errRes.fieldErrors != null) {
-          errRes.fieldErrors!.forEach((field, message) {
-            switch (field) {
-              case 'full_name':
-                throw AuthException('Full name $message');
-              case 'email':
-                throw AuthException('Email $message');
-              case 'username':
-                throw AuthException('Username $message');
-              case 'password':
-                throw AuthException('Password $message');
-              default:
-                throw AuthException('Something went wrong. Check the inputs.');
-            }
-          });
-        }
-        throw AuthException(
-          errRes.message,
-          statusCode: e.response?.statusCode,
-        );
-      }
-      throw SemaphoreException(
-        Constants.internalServerErrorMessage,
-        statusCode: Constants.httpInternalServerErrorCode,
-      );
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         print('Unknown exception $e.toString()');
       }
-      throw SemaphoreException(
+      throw InternalException(
         Constants.internalServerErrorMessage,
         statusCode: Constants.httpInternalServerErrorCode,
       );
@@ -142,47 +108,16 @@ class AuthClient {
         _controller.add(AuthStatus.authenticated);
       }
       return authResponse;
-    } on NetworkException catch (e) {
+    } on SemaphoreException catch (e) {
       if (kDebugMode) {
-        print('NetworkException $e.message');
+        print('SemaphoreException $e.message');
       }
-      throw SemaphoreException(e.message!);
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Dio exception $e.message');
-        print(e.stackTrace);
-      }
-      if (e.response?.statusCode == 422) {
-        final errRes = ErrorResponse.fromMap(e.response?.data);
-        if (errRes.fieldErrors != null) {
-          errRes.fieldErrors!.forEach((field, message) {
-            switch (field) {
-              case 'username_or_email':
-                throw AuthException('Username or Email $message');
-              case 'password':
-                throw AuthException('Password $message');
-              default:
-                throw AuthException('Something went wrong. Check the inputs.');
-            }
-          });
-        }
-        throw AuthException(
-          errRes.message,
-          statusCode: e.response?.statusCode,
-        );
-      } else if (e.response?.statusCode == 401) {
-        final errRes = ErrorResponse.fromMap(e.response?.data);
-        throw AuthException(errRes.message);
-      }
-      throw SemaphoreException(
-        Constants.internalServerErrorMessage,
-        statusCode: e.response?.statusCode,
-      );
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         print('Unknown exception $e.toString()');
       }
-      throw SemaphoreException(
+      throw InternalException(
         Constants.internalServerErrorMessage,
         statusCode: Constants.httpInternalServerErrorCode,
       );
@@ -199,29 +134,16 @@ class AuthClient {
       final authResponse = AuthResponse.fromMap(response.data);
 
       return authResponse;
-    } on NetworkException catch (e) {
+    } on SemaphoreException catch (e) {
       if (kDebugMode) {
-        print('NetworkException $e.message');
+        print('SemaphoreException $e.message');
       }
-      throw SemaphoreException(e.message!);
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Dio exception $e.message');
-        print(e.stackTrace);
-      }
-      if (e.response?.statusCode == 401) {
-        final errRes = ErrorResponse.fromMap(e.response?.data);
-        throw AuthException(errRes.message);
-      }
-      throw SemaphoreException(
-        Constants.internalServerErrorMessage,
-        statusCode: e.response?.statusCode,
-      );
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         print('Unknown exception $e.toString()');
       }
-      throw SemaphoreException(
+      throw InternalException(
         Constants.internalServerErrorMessage,
         statusCode: Constants.httpInternalServerErrorCode,
       );
@@ -240,34 +162,21 @@ class AuthClient {
       final response = await _dio.head('/users/$username');
 
       return response.statusCode == 200;
-    } on NetworkException catch (e) {
+    } on SemaphoreException catch (e) {
       if (kDebugMode) {
-        print('NetworkException $e.message');
+        print('SemaphoreException $e.message');
       }
-      throw SemaphoreException(e.message!);
-    } on DioException catch (e) {
-      if (kDebugMode) {
-        print('Dio exception $e.message');
-        print(e.stackTrace);
-      }
-      if (e.response?.statusCode == 404) {
-        // Username is not taken
+      if (e.type == DioExceptionType.badResponse &&
+          e.subType == SemaphoreExceptionSubType.notFound) {
+        // Username is not taken if response is 404
         return false;
-      } else if (e.response?.statusCode == 422) {
-        throw AuthException(
-          'Username is invalid',
-          statusCode: e.response!.statusCode,
-        );
       }
-      throw SemaphoreException(
-        Constants.internalServerErrorMessage,
-        statusCode: e.response?.statusCode,
-      );
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         print('Unknown exception $e.toString()');
       }
-      throw SemaphoreException(
+      throw InternalException(
         Constants.internalServerErrorMessage,
         statusCode: Constants.httpInternalServerErrorCode,
       );
@@ -290,32 +199,30 @@ class AuthClient {
           '/tokens/authentication',
           queryParameters: {'scope': scope.name},
         );
-      } on NetworkException catch (e) {
+      } on SemaphoreException catch (e) {
         if (kDebugMode) {
-          print('NetworkException $e.message');
+          print('SemaphoreException $e.message');
         }
-        throw SemaphoreException(e.message!);
-      } on DioException catch (e) {
-        if (kDebugMode) {
-          print('Dio exception $e.message');
-          print(e.stackTrace);
-        }
-        if (e.response != null && e.response!.statusCode == 401) {
+        if (e.type == DioExceptionType.badResponse &&
+            e.subType == SemaphoreExceptionSubType.unauthorized) {
           // Session is already logged out by other device. Clear session
           await _sharedLocalStorage.removeSession();
           _removeSession();
           _controller.add(AuthStatus.unauthenticated);
-          throw SemaphoreException(Constants.sessionExpiredErrorMessage);
+          throw SemaphoreException(
+            message: Constants.sessionExpiredErrorMessage,
+            subType: SemaphoreExceptionSubType.sessionExpired,
+            type: e.type,
+            requestOptions: e.requestOptions,
+            responseStatusCode: 401,
+          );
         }
-        throw SemaphoreException(
-          Constants.internalServerErrorMessage,
-          statusCode: e.response?.statusCode,
-        );
+        rethrow;
       } catch (e) {
         if (kDebugMode) {
           print('Unknown exception $e.toString()');
         }
-        throw SemaphoreException(
+        throw InternalException(
           Constants.internalServerErrorMessage,
           statusCode: Constants.httpInternalServerErrorCode,
         );

@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 import '../auth_client.dart';
 import '../constants.dart';
-import '../types/auth_exception.dart';
-import '../types/network_exception.dart';
+import '../types/error_response.dart';
+import '../types/semaphore_exception.dart';
 
 class ErrorInterceptor extends Interceptor {
   final AuthClient _auth;
@@ -13,54 +12,101 @@ class ErrorInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (kDebugMode) {
-      print('Error Interceptor:\n$err\n${err.response}}');
+    if (err is SemaphoreException) {
+      super.onError(err, handler);
+      return;
     }
     switch (err.type) {
       case DioExceptionType.connectionError:
-        err = NetworkException(
+        err = SemaphoreException(
           message: Constants.connectionErrorMessage,
           requestOptions: err.requestOptions,
+          type: err.type,
+          subType: SemaphoreExceptionSubType.none,
         );
         break;
       case DioExceptionType.connectionTimeout:
-        err = NetworkException(
+        err = SemaphoreException(
           message: Constants.connectionTimeoutErrorMessage,
           requestOptions: err.requestOptions,
+          type: err.type,
+          subType: SemaphoreExceptionSubType.none,
         );
         break;
       case DioExceptionType.receiveTimeout:
-        err = NetworkException(
+        err = SemaphoreException(
           message: Constants.receiveTimeoutErrorMessage,
           requestOptions: err.requestOptions,
-        );
-        break;
-      case DioExceptionType.unknown:
-        err = NetworkException(
-          message: Constants.internalServerErrorMessage,
-          requestOptions: err.requestOptions,
+          type: err.type,
+          subType: SemaphoreExceptionSubType.none,
         );
         break;
       case DioExceptionType.badResponse:
-        if (err.response != null && err.response!.statusCode == 401) {
+        if (err.response != null && err.response!.statusCode == 404) {
+          err = SemaphoreException(
+            subType: SemaphoreExceptionSubType.notFound,
+            message: Constants.notFoundErrorMessage,
+            type: err.type,
+            requestOptions: err.requestOptions,
+            responseStatusCode: 404,
+          );
+        } else if (err.response != null && err.response!.statusCode == 401) {
+          final errRes = ErrorResponse.fromMap(err.response?.data);
           if (err.requestOptions.path != '/tokens/authentication' ||
               err.requestOptions.method != 'DELETE') {
-            await _auth.signout();
+            try {
+              await _auth.signout();
+            } catch (e) {
+              if (e is SemaphoreException) {
+                err = e;
+              } else {
+                err = SemaphoreException(
+                  subType: SemaphoreExceptionSubType.none,
+                  message: Constants.internalServerErrorMessage,
+                  type: DioExceptionType.unknown,
+                  requestOptions: err.requestOptions,
+                );
+              }
+            }
           }
-        }
-        break;
-      case DioExceptionType.cancel:
-        if (err.error != null && err.error is SessionExpiredException) {
-          err = NetworkException(
-            message: Constants.sessionExpiredErrorMessage,
+          err = SemaphoreException(
+            subType: SemaphoreExceptionSubType.unauthorized,
+            type: err.type,
+            requestOptions: err.requestOptions,
+            responseStatusCode: 401,
+            message: errRes.message,
+          );
+        } else if (err.response != null && err.response!.statusCode == 422) {
+          final errRes = ErrorResponse.fromMap(err.response?.data);
+          err = SemaphoreException(
+            message: Constants.invalidInputErrorMessage,
+            subType: SemaphoreExceptionSubType.invalidField,
+            type: err.type,
+            requestOptions: err.requestOptions,
+            fieldErrors: errRes.fieldErrors,
+            responseStatusCode: 422,
+          );
+        } else {
+          err = SemaphoreException(
+            message: Constants.internalServerErrorMessage,
+            responseStatusCode: err.response?.statusCode,
+            subType: SemaphoreExceptionSubType.none,
+            type: err.type,
             requestOptions: err.requestOptions,
           );
         }
         break;
+      case DioExceptionType.cancel:
+        if (err.error != null && err.error is SemaphoreException) {
+          err = err.error as SemaphoreException;
+        }
+        break;
       default:
-        err = NetworkException(
+        err = SemaphoreException(
           message: Constants.internalServerErrorMessage,
           requestOptions: err.requestOptions,
+          type: DioExceptionType.unknown,
+          subType: SemaphoreExceptionSubType.unknown,
         );
         break;
     }

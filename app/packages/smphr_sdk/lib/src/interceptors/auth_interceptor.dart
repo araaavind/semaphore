@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:smphr_sdk/src/types/semaphore_exception.dart';
 
 import '../auth_client.dart';
 import '../constants.dart';
-import '../types/auth_exception.dart';
 
 class AuthInterceptor extends Interceptor {
   final AuthClient _auth;
@@ -17,9 +17,13 @@ class AuthInterceptor extends Interceptor {
       if (session.isExpired) {
         // TODO: implement try refresh session
         await _auth.signout();
-        throw DioException.requestCancelled(
-          requestOptions: options,
-          reason: SessionExpiredException(Constants.sessionExpiredErrorMessage),
+        return handler.reject(
+          SemaphoreException(
+            message: Constants.sessionExpiredErrorMessage,
+            type: DioExceptionType.cancel,
+            subType: SemaphoreExceptionSubType.sessionExpired,
+            requestOptions: options,
+          ),
         );
       }
 
