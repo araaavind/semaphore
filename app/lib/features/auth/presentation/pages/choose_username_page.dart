@@ -1,4 +1,5 @@
 import 'package:app/core/common/widgets/widgets.dart';
+import 'package:app/core/constants/text_constants.dart';
 import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
@@ -33,6 +34,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
   Widget build(BuildContext context) {
     FormState? formState = formKey.currentState;
     return Scaffold(
+      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.pagePadding),
         child: BlocConsumer<AuthBloc, AuthState>(
@@ -70,7 +72,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                       });
                       if (formState!.validate()) {
                         context.read<AuthBloc>().add(
-                              AuthCheckUsernameEvent(
+                              AuthCheckUsernameRequested(
                                 usernameController.text.trim(),
                               ),
                             );
@@ -86,10 +88,11 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                         ? SizedBox(
                             height: 10,
                             width: 10,
-                            child: SpinKitFadingCircle(
+                            child: SpinKitRing(
                               color: context.theme.colorScheme.secondary
                                   .withAlpha(127),
-                              size: 24.0,
+                              lineWidth: 2.5,
+                              size: 22.0,
                             ),
                           )
                         : (state is AuthUsernameSuccess &&
@@ -131,25 +134,25 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
   String? _usernameValidator(value) {
     final RegExp validCharsRegex = RegExp(r'^[a-zA-Z0-9._]+$');
     if (value!.isEmpty) {
-      return 'Username should not be blank';
+      return TextConstants.usernameBlankErrorMessage;
     } else if (value.length < 8) {
-      return 'Username should be atleast 8 characters long';
+      return TextConstants.usernameMinCharsErrorMessage;
     } else if (value.length > 16) {
-      return 'Username should be less than 16 characters long';
+      return TextConstants.usernameMaxCharsErrorMessage;
     } else if (!validCharsRegex.hasMatch(value)) {
-      return 'Username can only contain letters, numbers, dots, and underscores';
+      return TextConstants.usernameInvalidCharsErrorMessage;
     } else if (value.startsWith('.') ||
         value.endsWith('.') ||
         value.startsWith('_') ||
         value.endsWith('_')) {
-      return 'Username should not start or end with a dot or an underscore';
+      return TextConstants.usernameInvalidPrefixSuffixErrorMessage;
     } else if (value.contains('..') ||
         value.contains('__') ||
         value.contains('._') ||
         value.contains('_.')) {
-      return 'Username should not contain consecutive dots, underscores, or their combination.';
+      return TextConstants.usernameInvalidContentsErrorMessage;
     } else if (_isUsernameTaken) {
-      return 'Username is already taken';
+      return TextConstants.usernameTakenErrorMessage;
     }
     return null;
   }

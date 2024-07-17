@@ -1,4 +1,4 @@
-import 'package:app/core/constants/constants.dart';
+import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';

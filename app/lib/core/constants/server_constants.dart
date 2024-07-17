@@ -9,14 +9,3 @@ class ServerConstants {
   static const String internalServerErrorMessage =
       'Something went wrong. Try again later or report the issue';
 }
-
-enum LogoutScope {
-  /// All sessions by this account will be signed out.
-  global,
-
-  /// Only this session will be signed out.
-  local,
-
-  /// All other sessions except the current one will be signed out. When using others, there is no [AuthChangeEvent.signedOut] event fired on the current session!
-  others,
-}

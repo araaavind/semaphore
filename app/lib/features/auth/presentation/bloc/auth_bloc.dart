@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/entities/user.dart';
-import 'package:app/core/constants/constants.dart';
+import 'package:app/core/constants/text_constants.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
@@ -45,14 +46,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _appUserCubit = appUserCubit,
         _client = client,
         super(AuthInitial()) {
-    on<AuthCurrentUserEvent>(_onAuthCurrentUser);
-    on<AuthCheckUsernameEvent>(_onAuthCheckUsername);
-    on<AuthSignupEvent>(_onAuthSignup);
-    on<AuthLoginEvent>(_onAuthLogin);
-    on<AuthLogoutEvent>(_onAuthLogout);
-    on<AuthStatusChangeEvent>(_onAuthStatusChange);
+    on<AuthCurrentUserRequested>(_onAuthCurrentUserRequested);
+    on<AuthCheckUsernameRequested>(_onAuthCheckUsernameRequested);
+    on<AuthSignupRequested>(_onAuthSignupRequested);
+    on<AuthLoginRequested>(_onAuthLoginRequested);
+    on<AuthLogoutRequested>(_onAuthLogoutRequested);
+    on<AuthStatusChanged>(_onAuthStatusChanged);
+
+    // Listen to auth status change events from sdk
     _authenticationStatusSubscription = _client.auth.status
-        .listen((status) => add(AuthStatusChangeEvent(status: status)));
+        .listen((status) => add(AuthStatusChanged(status: status)));
   }
 
   @override
@@ -61,30 +64,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return super.close();
   }
 
-  void _onAuthStatusChange(
-      AuthStatusChangeEvent event, Emitter<AuthState> emit) {
+  void _onAuthStatusChanged(
+    AuthStatusChanged event,
+    Emitter<AuthState> emit,
+  ) {
     if (event.status == AuthStatus.unauthenticated) {
       emit(AuthInitial());
-      _appUserCubit.updateUser(null);
+      _appUserCubit.clearUser();
     }
   }
 
-  void _onAuthCurrentUser(
-    AuthCurrentUserEvent event,
+  Future<void> _onAuthCurrentUserRequested(
+    AuthCurrentUserRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
     final res = await _getCurrentUser(NoParams());
     switch (res) {
       case Left(value: _):
+        _appUserCubit.clearUser();
         emit(AuthInitial());
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
     }
   }
 
-  void _onAuthCheckUsername(
-    AuthCheckUsernameEvent event,
+  Future<void> _onAuthCheckUsernameRequested(
+    AuthCheckUsernameRequested event,
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
@@ -94,21 +100,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(l.message));
       case Right(value: final r):
         if (r) {
-          emit(AuthUsernameFailure('Username is already taken'));
+          emit(AuthUsernameFailure(TextConstants.usernameTakenErrorMessage));
         } else {
           emit(AuthUsernameSuccess());
         }
     }
   }
 
-  void _onAuthSignup(AuthSignupEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthSignupRequested(
+    AuthSignupRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
-    final res = await _userSignup(UserSignupParams(
-      fullName: event.fullName,
-      email: event.email,
-      username: event.username,
-      password: event.password,
-    ));
+    final res = await _userSignup(
+      UserSignupParams(
+        fullName: event.fullName,
+        email: event.email,
+        username: event.username,
+        password: event.password,
+      ),
+    );
 
     switch (res) {
       case Left(value: final l):
@@ -118,14 +129,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _onAuthLogin(AuthLoginEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthLoginRequested(
+    AuthLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
-    final res = await _userLogin(
-      UserLoginParams(
-        usernameOrEmail: event.usernameOrEmail,
-        password: event.password,
-      ),
-    );
+    final res = await _userLogin(UserLoginParams(
+      usernameOrEmail: event.usernameOrEmail,
+      password: event.password,
+    ));
 
     switch (res) {
       case Left(value: final l):
@@ -135,7 +147,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  void _onAuthLogout(AuthLogoutEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onAuthLogoutRequested(
+    AuthLogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
     final res = await _userLogout(UserLogoutParams(scope: event.scope));
 
@@ -144,7 +159,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(l.message));
       case Right(value: final _):
         if (event.scope != LogoutScope.others) {
-          _appUserCubit.updateUser(null);
+          _appUserCubit.clearUser();
           emit(AuthInitial());
         } else {
           _emitAuthSuccess(event.user, emit);
@@ -153,7 +168,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
-    _appUserCubit.updateUser(user);
+    _appUserCubit.setUser(user);
     emit(AuthSuccess(user));
   }
 }

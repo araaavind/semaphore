@@ -1,52 +1,70 @@
 part of 'auth_bloc.dart';
 
 @immutable
-sealed class AuthEvent {}
+sealed class AuthEvent extends Equatable {}
 
-final class AuthSignupEvent extends AuthEvent {
+final class AuthSignupRequested extends AuthEvent {
   final String fullName;
   final String email;
   final String username;
   final String password;
 
-  AuthSignupEvent({
+  AuthSignupRequested({
     required this.fullName,
     required this.email,
     required this.username,
     required this.password,
   });
+
+  @override
+  List<Object?> get props => [fullName, email, username, password];
 }
 
-final class AuthLoginEvent extends AuthEvent {
+final class AuthLoginRequested extends AuthEvent {
   final String usernameOrEmail;
   final String password;
 
-  AuthLoginEvent({
+  AuthLoginRequested({
     required this.usernameOrEmail,
     required this.password,
   });
+
+  @override
+  List<Object?> get props => [usernameOrEmail, password];
 }
 
-final class AuthCurrentUserEvent extends AuthEvent {}
+final class AuthCurrentUserRequested extends AuthEvent {
+  @override
+  List<Object?> get props => [];
+}
 
-final class AuthCheckUsernameEvent extends AuthEvent {
+final class AuthCheckUsernameRequested extends AuthEvent {
   final String username;
 
-  AuthCheckUsernameEvent(this.username);
+  AuthCheckUsernameRequested(this.username);
+
+  @override
+  List<Object?> get props => [];
 }
 
-final class AuthLogoutEvent extends AuthEvent {
+final class AuthLogoutRequested extends AuthEvent {
   final LogoutScope scope;
   final User user;
 
-  AuthLogoutEvent({
+  AuthLogoutRequested({
     required this.user,
     this.scope = LogoutScope.local,
   });
+
+  @override
+  List<Object?> get props => [user, scope];
 }
 
-final class AuthStatusChangeEvent extends AuthEvent {
+final class AuthStatusChanged extends AuthEvent {
   final AuthStatus status;
 
-  AuthStatusChangeEvent({required this.status});
+  AuthStatusChanged({required this.status});
+
+  @override
+  List<Object?> get props => [status];
 }

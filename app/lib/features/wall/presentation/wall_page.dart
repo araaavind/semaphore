@@ -1,6 +1,6 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/widgets/loader.dart';
-import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -23,7 +23,7 @@ class WallPage extends StatelessWidget {
           IconButton(
             onPressed: () {
               context.read<AuthBloc>().add(
-                    AuthLogoutEvent(
+                    AuthLogoutRequested(
                       user: user,
                       scope: LogoutScope.local,
                     ),

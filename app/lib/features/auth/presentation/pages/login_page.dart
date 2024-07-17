@@ -37,46 +37,44 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.pagePadding),
-        child: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthFailure) {
-              showSnackbar(context, state.message);
-            }
-          },
-          builder: (context, state) {
-            if (state is AuthLoading) {
-              return const Loader();
-            }
-            return Form(
-              key: formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TitleTextSpan(widget: widget),
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TitleTextSpan(widget: widget),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 20),
-                      AuthField(
-                        hintText: 'Username or Email',
-                        controller: usernameOrEmailController,
-                      ),
-                      const SizedBox(height: 10),
-                      AuthField(
-                        hintText: 'Password',
-                        controller: passwordController,
-                        isPassword: true,
-                        autovalidateMode: AutovalidateMode.disabled,
-                      ),
-                      const SizedBox(height: 20),
-                      Button(
+                  const SizedBox(height: 20),
+                  AuthField(
+                    hintText: 'Username or Email',
+                    controller: usernameOrEmailController,
+                  ),
+                  const SizedBox(height: 10),
+                  AuthField(
+                    hintText: 'Password',
+                    controller: passwordController,
+                    isPassword: true,
+                    autovalidateMode: AutovalidateMode.disabled,
+                  ),
+                  const SizedBox(height: 20),
+                  BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthFailure) {
+                        showSnackbar(context, state.message);
+                      }
+                    },
+                    builder: (context, state) {
+                      return Button(
                         text: 'Log in',
                         fixedSize: const Size(160, 50),
+                        isLoading: state is AuthLoading,
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
-                                  AuthLoginEvent(
+                                  AuthLoginRequested(
                                     usernameOrEmail:
                                         usernameOrEmailController.text.trim(),
                                     password: passwordController.text.trim(),
@@ -84,35 +82,34 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                           }
                         },
-                      ),
-                      const SizedBox(height: 20),
-                      GestureDetector(
-                        onTap: () {
-                          context.goNamed('username');
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Don\'t have an account? ',
-                            style: context.theme.textTheme.bodyMedium,
-                            children: [
-                              TextSpan(
-                                text: 'Create one',
-                                style: context.theme.textTheme.bodyMedium
-                                    ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: context.theme.colorScheme.secondary,
-                                ),
-                              ),
-                            ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      context.goNamed('username');
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Don\'t have an account? ',
+                        style: context.theme.textTheme.bodyMedium,
+                        children: [
+                          TextSpan(
+                            text: 'Create one',
+                            style: context.theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.theme.colorScheme.secondary,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );

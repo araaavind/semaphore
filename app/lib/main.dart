@@ -41,7 +41,7 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(AuthCurrentUserEvent());
+    context.read<AuthBloc>().add(AuthCurrentUserRequested());
   }
 
   @override
