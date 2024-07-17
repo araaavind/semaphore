@@ -16,11 +16,15 @@ class Constants {
   static const String receiveTimeoutErrorMessage =
       'Took too long to get response. Please try again later';
   static const String connectionErrorMessage =
-      'Cannot connect to server. We will look into this issue';
+      'Cannot connect to server. Check your internet or try again later';
   static const String authenticationRequiredErrorMessage =
       'You are not logged in';
   static const String activationRequiredErrorMessage =
       'You must activate your account to perform this action';
+  static const String invalidInputErrorMessage =
+      'Something went wrong. Check your inputs';
+  static const String notFoundErrorMessage =
+      'Could not find what you\'re looking for';
 
   //
   static const defaultPersistSessionKey = 'sm-session';
