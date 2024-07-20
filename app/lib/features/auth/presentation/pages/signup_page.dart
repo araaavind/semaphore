@@ -1,7 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
-import 'package:app/core/utils/create_field_validator.dart';
+import 'package:app/core/utils/validate_fields.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
