@@ -25,6 +25,25 @@ class AppTheme {
     colorScheme: AppColorScheme.lightColorScheme,
     disabledColor: AppPalette.disabledPrimary,
     scaffoldBackgroundColor: AppColorScheme.lightColorScheme.surface,
+    appBarTheme: AppBarTheme(
+      elevation: 0.5,
+      backgroundColor: AppColorScheme.lightColorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.grey.shade50,
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: AppColorScheme.lightColorScheme.surface,
+      elevation: 6.0,
+      selectedItemColor: AppColorScheme.lightColorScheme.primary,
+      unselectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12,
+      ),
+      selectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 12,
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
       border: _border(color: AppColorScheme.lightColorScheme.outline),
@@ -43,6 +62,25 @@ class AppTheme {
     colorScheme: AppColorScheme.darkColorScheme,
     disabledColor: AppPalette.disabledPrimaryDark,
     scaffoldBackgroundColor: AppColorScheme.darkColorScheme.surface,
+    appBarTheme: AppBarTheme(
+      elevation: 0.5,
+      backgroundColor: AppColorScheme.darkColorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.grey.shade700,
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: AppColorScheme.darkColorScheme.surface,
+      elevation: 6.0,
+      unselectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12,
+      ),
+      selectedItemColor: AppColorScheme.darkColorScheme.primary,
+      selectedLabelStyle: const TextStyle(
+        fontWeight: FontWeight.w300,
+        fontSize: 12,
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
       border: _border(color: AppColorScheme.darkColorScheme.outline),

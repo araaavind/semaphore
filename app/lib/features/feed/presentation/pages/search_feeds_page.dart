@@ -47,7 +47,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Find feeds to follow')),
       body: BlocBuilder<FeedBloc, FeedState>(
         builder: (context, state) {
           switch (state.status) {
