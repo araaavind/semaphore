@@ -1,41 +1,42 @@
 import 'package:flutter/material.dart';
 
 abstract class AppPalette {
+  // Lights
   static const primary = Color.fromARGB(255, 75, 2, 52);
-  static const primaryDark = Color.fromARGB(255, 248, 180, 175);
   static const onPrimary = Color.fromARGB(255, 255, 251, 245);
-  static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
   static const secondary = Color.fromARGB(255, 154, 63, 33);
-  static const secondaryDark = Color.fromARGB(255, 248, 216, 175);
   static const onSecondary = Color.fromARGB(255, 255, 247, 238);
-  static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
   static const tertiary = Color.fromARGB(255, 40, 75, 2);
-  static const tertiaryDark = Color.fromARGB(255, 243, 248, 175);
   static const onTertiary = Color.fromARGB(255, 254, 255, 239);
-  static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
   static const surface = Color.fromARGB(255, 253, 253, 253);
-  static const surfaceDark = Color.fromARGB(255, 8, 8, 8);
   static const onSurface = Color.fromARGB(255, 41, 20, 23);
-  static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
   static const error = Color.fromARGB(255, 214, 22, 60);
-  static const errorDark = Color.fromARGB(255, 153, 34, 58);
   static const onError = Colors.white;
-  static const onErrorDark = Colors.white;
   static const disabledPrimary = Color.fromARGB(255, 108, 103, 106);
-  static const disabledPrimaryDark = Color.fromARGB(255, 190, 190, 190);
   static const outline = Color(0xFFABABAB);
+  static const surfaceContainerLowest = Color.fromARGB(255, 247, 242, 244);
+  static const surfaceContainerLow = Color.fromARGB(255, 247, 237, 242);
+  static const surfaceContainer = Color.fromARGB(255, 241, 228, 235);
+  static const surfaceContainerHigh = Color.fromARGB(255, 234, 222, 228);
+  static const surfaceContainerHighest = Color.fromARGB(255, 224, 212, 218);
+  // Darks
+  static const primaryDark = Color.fromARGB(255, 248, 180, 175);
+  static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
+  static const secondaryDark = Color.fromARGB(255, 248, 216, 175);
+  static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
+  static const tertiaryDark = Color.fromARGB(255, 243, 248, 175);
+  static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
+  static const surfaceDark = Color.fromARGB(255, 0, 0, 0);
+  static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
+  static const errorDark = Color.fromARGB(255, 153, 34, 58);
+  static const onErrorDark = Colors.white;
+  static const disabledPrimaryDark = Color.fromARGB(255, 190, 190, 190);
   static const outlineDark = Color(0xFF3D3D3D);
-  // color roles below are yet to be finalized
-  static const surfaceContainerLowest = Color(0xFFE6FDFF);
-  static const surfaceContainerLowestDark = Color(0xFF25364C);
-  static const surfaceContainerLow = Color(0xFFDAFDFF);
-  static const surfaceContainerLowDark = Color(0xFF2F445E);
-  static const surfaceContainer = Color(0xFFCCFBFE);
-  static const surfaceContainerDark = Color(0xFF3A5372);
-  static const surfaceContainerHigh = Color(0xFFC1F9FD);
-  static const surfaceContainerHighDark = Color(0xFF446083);
-  static const surfaceContainerHighest = Color(0xFFAFFAFF);
-  static const surfaceContainerHighestDark = Color(0xFF5275A0);
+  static const surfaceContainerLowestDark = Color.fromARGB(255, 23, 18, 17);
+  static const surfaceContainerLowDark = Color.fromARGB(255, 32, 25, 24);
+  static const surfaceContainerDark = Color.fromARGB(255, 36, 28, 27);
+  static const surfaceContainerHighDark = Color.fromARGB(255, 44, 33, 31);
+  static const surfaceContainerHighestDark = Color.fromARGB(255, 49, 36, 35);
 
   // Green
   static const green = Color.fromARGB(255, 140, 181, 94);
