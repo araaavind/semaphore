@@ -8,6 +8,12 @@ abstract class AppPalette {
   static const onSecondary = Color.fromARGB(255, 255, 247, 238);
   static const tertiary = Color.fromARGB(255, 40, 75, 2);
   static const onTertiary = Color.fromARGB(255, 254, 255, 239);
+  static const primaryContainer = Color.fromARGB(255, 250, 210, 221);
+  static const onPrimaryContainer = Color.fromARGB(255, 75, 2, 52);
+  static const secondaryContainer = Color.fromARGB(255, 241, 191, 175);
+  static const onSecondaryContainer = Color.fromARGB(255, 154, 63, 33);
+  static const tertiaryContainer = Color.fromARGB(255, 213, 237, 186);
+  static const onTertiaryContainer = Color.fromARGB(255, 40, 75, 2);
   static const surface = Color.fromARGB(255, 253, 253, 253);
   static const onSurface = Color.fromARGB(255, 41, 20, 23);
   static const error = Color.fromARGB(255, 214, 22, 60);
@@ -26,6 +32,12 @@ abstract class AppPalette {
   static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
   static const tertiaryDark = Color.fromARGB(255, 243, 248, 175);
   static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
+  static const primaryContainerDark = Color.fromARGB(255, 39, 4, 16);
+  static const onPrimaryContainerDark = Color.fromARGB(255, 248, 180, 175);
+  static const secondaryContainerDark = Color.fromARGB(255, 100, 61, 11);
+  static const onSecondaryContainerDark = Color.fromARGB(255, 248, 216, 175);
+  static const tertiaryContainerDark = Color.fromARGB(255, 59, 63, 4);
+  static const onTertiaryContainerDark = Color.fromARGB(255, 243, 248, 175);
   static const surfaceDark = Color.fromARGB(255, 0, 0, 0);
   static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
   static const errorDark = Color.fromARGB(255, 153, 34, 58);
