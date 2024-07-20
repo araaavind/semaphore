@@ -1,29 +1,31 @@
 part of 'feed_bloc.dart';
 
+enum FeedStatus { initial, success, failure }
+
 @immutable
-sealed class FeedState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-final class FeedInitial extends FeedState {}
-
-final class FeedLoading extends FeedState {}
-
-final class FeedListFetched extends FeedState {
+class FeedState extends Equatable {
+  final FeedStatus status;
   final FeedList feedList;
+  final bool hasReachedMax;
 
-  FeedListFetched(this.feedList);
+  const FeedState({
+    this.status = FeedStatus.initial,
+    this.feedList = const FeedList(),
+    this.hasReachedMax = false,
+  });
+
+  FeedState copyWith({
+    FeedStatus? status,
+    FeedList? feedList,
+    bool? hasReachedMax,
+  }) {
+    return FeedState(
+      status: status ?? this.status,
+      feedList: feedList ?? this.feedList,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
 
   @override
-  List<Object?> get props => super.props..add(feedList);
-}
-
-final class FeedFailed extends FeedState {
-  final String message;
-
-  FeedFailed(this.message);
-
-  @override
-  List<Object?> get props => super.props..add(message);
+  List<Object?> get props => [status, feedList, hasReachedMax];
 }

@@ -17,4 +17,6 @@ class TextConstants {
 
   static const String feedListFetchErrorMessage =
       'Unable to load feeds. Try again later or report the issue';
+  static const String feedListEmptyMessage =
+      'Nothing to see here. Come back when there are more feeds or add one yourself';
 }
