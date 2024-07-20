@@ -1,6 +1,5 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,42 +15,70 @@ class SearchFeedsPage extends StatefulWidget {
 }
 
 class _SearchFeedsPageState extends State<SearchFeedsPage> {
+  final _scrollController = ScrollController();
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+
   @override
   void initState() {
-    context.read<FeedBloc>().add(FeedListFeedsEvent(
-        pageSize: 12, searchKey: 'title', searchValue: '', sortKey: 'title'));
     super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_isBottom) {
+      context.read<FeedBloc>().add(FeedSearchRequested(pageSize: 6));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Find feeds to follow')),
-      body: BlocConsumer<FeedBloc, FeedState>(
-        listener: (context, state) {
-          if (state is FeedFailed) {
-            showSnackbar(context, state.message);
-          }
-        },
+      body: BlocBuilder<FeedBloc, FeedState>(
         builder: (context, state) {
-          if (state is FeedLoading) {
-            return const Loader();
-          }
-          if (state is FeedFailed || state is FeedInitial) {
-            return const Center(
-              child: Text(TextConstants.feedListFetchErrorMessage),
-            );
-          }
-          return ListView.builder(
-            itemCount: (state as FeedListFetched).feedList.feeds.length,
-            itemBuilder: (context, index) {
-              final feed = state.feedList.feeds[index];
-              return ListTile(
-                title: Text(feed.title),
-                subtitle: Text(feed.description ?? ''),
+          switch (state.status) {
+            case FeedStatus.failure:
+              return const Center(
+                child: Text(TextConstants.feedListFetchErrorMessage),
               );
-            },
-          );
+            case FeedStatus.success:
+              if (state.feedList.feeds.isEmpty) {
+                return const Center(
+                  child: Text(TextConstants.feedListEmptyMessage),
+                );
+              }
+              return ListView.builder(
+                itemCount: state.hasReachedMax
+                    ? state.feedList.feeds.length
+                    : state.feedList.feeds.length + 1,
+                itemBuilder: (context, index) {
+                  return index >= state.feedList.feeds.length
+                      ? const SizedBox(height: 100, child: Loader())
+                      : ListTile(
+                          title: Text(state.feedList.feeds[index].title),
+                          subtitle: Text(
+                              state.feedList.feeds[index].description ?? ''),
+                        );
+                },
+                controller: _scrollController,
+              );
+            case FeedStatus.initial:
+              return const Loader();
+          }
         },
       ),
     );

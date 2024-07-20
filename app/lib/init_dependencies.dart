@@ -125,7 +125,7 @@ void _initFeed() {
     ),
   );
   // Register blocs
-  serviceLocator.registerLazySingleton(
+  serviceLocator.registerFactory(
     () => FeedBloc(
       listFeeds: serviceLocator(),
     ),

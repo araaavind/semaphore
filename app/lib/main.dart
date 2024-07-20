@@ -5,7 +5,6 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 
 import 'core/theme/theme.dart';
 
@@ -20,9 +19,6 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<FeedBloc>(),
         ),
       ],
       child: const SemaphoreApp(),
