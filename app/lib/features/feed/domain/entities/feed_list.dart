@@ -5,8 +5,8 @@ import 'feed.dart';
 class FeedList extends PaginatedList {
   final List<Feed> feeds;
   const FeedList({
-    required this.feeds,
-    required super.metadata,
+    this.feeds = const <Feed>[],
+    super.metadata,
   });
 
   @override
