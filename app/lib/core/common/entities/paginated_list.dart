@@ -8,7 +8,7 @@ class PaginatedList extends Equatable {
 
   const PaginatedList({
     this.metadata = const PaginationMetadata(
-      currentPage: ServerConstants.defaultPaginationPage,
+      currentPage: 1,
       pageSize: ServerConstants.defaultPaginationPageSize,
       firstPage: 1,
       lastPage: 1,

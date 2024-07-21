@@ -1,8 +1,10 @@
-import 'package:app/core/common/widgets/widgets.dart';
-import 'package:app/core/constants/constants.dart';
+import 'package:app/core/common/widgets/first_page_error_indicator.dart';
+import 'package:app/core/common/widgets/new_page_error_indicator.dart';
+import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class SearchFeedsPage extends StatefulWidget {
   static route() =>
@@ -15,70 +17,68 @@ class SearchFeedsPage extends StatefulWidget {
 }
 
 class _SearchFeedsPageState extends State<SearchFeedsPage> {
-  final _scrollController = ScrollController();
-
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
-  }
+  final PagingController<int, Feed> _pagingController =
+      PagingController(firstPageKey: 1);
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
+    _pagingController.addPageRequestListener(
+      (pageKey) => context.read<FeedBloc>().add(
+            FeedSearchRequested(page: pageKey),
+          ),
+    );
   }
 
   @override
   void dispose() {
-    _scrollController
-      ..removeListener(_onScroll)
-      ..dispose();
+    _pagingController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (_isBottom) {
-      context.read<FeedBloc>().add(FeedSearchRequested(pageSize: 6));
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<FeedBloc, FeedState>(
-        builder: (context, state) {
-          switch (state.status) {
-            case FeedStatus.failure:
-              return const Center(
-                child: Text(TextConstants.feedListFetchErrorMessage),
-              );
-            case FeedStatus.success:
-              if (state.feedList.feeds.isEmpty) {
-                return const Center(
-                  child: Text(TextConstants.feedListEmptyMessage),
-                );
-              }
-              return ListView.builder(
-                itemCount: state.hasReachedMax
-                    ? state.feedList.feeds.length
-                    : state.feedList.feeds.length + 1,
-                itemBuilder: (context, index) {
-                  return index >= state.feedList.feeds.length
-                      ? const SizedBox(height: 100, child: Loader())
-                      : ListTile(
-                          title: Text(state.feedList.feeds[index].title),
-                          subtitle: Text(
-                              state.feedList.feeds[index].description ?? ''),
-                        );
-                },
-                controller: _scrollController,
-              );
-            case FeedStatus.initial:
-              return const Loader();
+      body: BlocListener<FeedBloc, FeedState>(
+        listener: (context, state) {
+          if (state.status == FeedStatus.success) {
+            if (state.feedList.metadata.currentPage ==
+                state.feedList.metadata.lastPage) {
+              _pagingController.appendLastPage(state.feedList.feeds);
+            } else {
+              final nextPage = state.feedList.metadata.currentPage + 1;
+              _pagingController.appendPage(state.feedList.feeds, nextPage);
+            }
+          } else if (state.status == FeedStatus.failure) {
+            _pagingController.error = state.message;
           }
         },
+        child: RefreshIndicator(
+          onRefresh: () => Future.sync(
+            () => _pagingController.refresh(),
+          ),
+          child: PagedListView<int, Feed>(
+            pagingController: _pagingController,
+            builderDelegate: PagedChildBuilderDelegate<Feed>(
+              itemBuilder: (context, item, index) => ListTile(
+                title: Text(item.title),
+                subtitle: Text(item.description ?? ''),
+              ),
+              firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
+                title: 'Failed to load feeds',
+                message: _pagingController.error,
+                onTryAgain: () {
+                  _pagingController.refresh();
+                },
+              ),
+              newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
+                title: 'Failed to load feeds',
+                message: _pagingController.error,
+                onTap: _pagingController.retryLastFailedRequest,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

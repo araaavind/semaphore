@@ -3,7 +3,6 @@ class ServerConstants {
   static String persistSessionKey =
       'sm-${Uri.parse(baseUrl).host.split(".").first}-session';
 
-  static const int defaultPaginationPage = 1;
   static const int defaultPaginationPageSize = 12;
 
   static const throttleDuration = Duration(milliseconds: 100);

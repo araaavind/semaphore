@@ -16,7 +16,7 @@ class FeedSearchRequested extends FeedEvent {
   FeedSearchRequested({
     this.searchKey,
     this.searchValue,
-    this.page = ServerConstants.defaultPaginationPage,
+    this.page = 1,
     this.pageSize = ServerConstants.defaultPaginationPageSize,
     this.sortKey,
   });

@@ -27,55 +27,28 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     FeedSearchRequested event,
     Emitter<FeedState> emit,
   ) async {
-    if (state.hasReachedMax) return;
-    if (state.status == FeedStatus.initial) {
-      final res = await _listFeeds(
-        ListFeedParams(
-          searchKey: event.searchKey,
-          searchValue: event.searchValue,
-          sortKey: event.sortKey,
-          page: event.page,
-          pageSize: event.pageSize,
-        ),
-      );
-
-      switch (res) {
-        case Left(value: _):
-          emit(state.copyWith(status: FeedStatus.failure));
-        case Right(value: final r):
-          emit(state.copyWith(
-            status: FeedStatus.success,
-            feedList: r,
-            hasReachedMax: false,
-          ));
-      }
-      return;
-    }
+    emit(state.copyWith(status: FeedStatus.loading));
     final res = await _listFeeds(
       ListFeedParams(
         searchKey: event.searchKey,
         searchValue: event.searchValue,
         sortKey: event.sortKey,
-        page: state.feedList.metadata.currentPage + 1,
+        page: event.page,
         pageSize: event.pageSize,
       ),
     );
 
     switch (res) {
-      case Left(value: _):
-        emit(state.copyWith(status: FeedStatus.failure));
+      case Left(value: final l):
+        emit(state.copyWith(
+          status: FeedStatus.failure,
+          message: l.message,
+        ));
       case Right(value: final r):
-        if (r.feeds.isEmpty) {
-          emit(state.copyWith(hasReachedMax: true));
-        } else {
-          emit(state.copyWith(
-            status: FeedStatus.success,
-            feedList: FeedList(
-              feeds: state.feedList.feeds..addAll(r.feeds),
-              metadata: r.metadata,
-            ),
-          ));
-        }
+        emit(state.copyWith(
+          status: FeedStatus.success,
+          feedList: r,
+        ));
     }
   }
 }
