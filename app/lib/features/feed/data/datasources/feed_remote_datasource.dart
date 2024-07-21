@@ -23,7 +23,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   Future<FeedListModel> listAllFeeds({
     String? searchKey,
     String? searchValue,
-    int page = ServerConstants.defaultPaginationPage,
+    int page = 1,
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortKey,
   }) async {

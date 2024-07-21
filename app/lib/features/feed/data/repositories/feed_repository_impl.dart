@@ -15,7 +15,7 @@ class FeedRepositoryImpl implements FeedRepository {
   Future<Either<Failure, FeedList>> listAllFeeds({
     String? searchKey,
     String? searchValue,
-    int page = ServerConstants.defaultPaginationPage,
+    int page = 1,
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortKey,
   }) async {

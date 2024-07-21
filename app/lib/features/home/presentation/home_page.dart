@@ -37,8 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
     return BlocProvider(
-      create: (_) => serviceLocator<FeedBloc>()..add(FeedSearchRequested()),
-      lazy: false,
+      create: (_) => serviceLocator<FeedBloc>(),
       child: Scaffold(
         appBar: AppBar(
           title: Text(
