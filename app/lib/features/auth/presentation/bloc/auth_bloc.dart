@@ -148,7 +148,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     switch (res) {
       case Left(value: final l):
-        emit(AuthFailure(l.message, fieldErrors: l.fieldErrors));
+        emit(AuthLoginFailure(l.message, fieldErrors: l.fieldErrors));
       case Right(value: final r):
         _emitAuthSuccess(r, emit);
     }

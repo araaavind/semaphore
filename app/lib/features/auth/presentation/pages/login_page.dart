@@ -94,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
-                      if (state is AuthFailure) {
+                      if (state is AuthLoginFailure) {
                         if (state.fieldErrors != null) {
                           setState(() {
                             fieldErrors = state.fieldErrors;
