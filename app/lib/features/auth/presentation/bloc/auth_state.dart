@@ -28,6 +28,10 @@ final class AuthFailure extends AuthState {
   List<Object?> get props => [message, fieldErrors];
 }
 
+final class AuthLoginFailure extends AuthFailure {
+  AuthLoginFailure(super.message, {super.fieldErrors});
+}
+
 final class AuthSignupSuccess extends AuthState {}
 
 final class AuthSignupFailure extends AuthFailure {
