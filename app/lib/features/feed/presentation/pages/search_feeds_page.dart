@@ -1,6 +1,4 @@
-import 'package:app/core/common/widgets/first_page_error_indicator.dart';
-import 'package:app/core/common/widgets/new_page_error_indicator.dart';
-import 'package:app/core/common/widgets/shimmer_loader.dart';
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
@@ -93,21 +91,23 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 ),
               ),
               firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
-                title: 'Failed to load feeds',
+                title: TextConstants.feedListFetchErrorTitle,
                 message: _pagingController.error,
                 onTryAgain: () {
                   _pagingController.refresh();
                 },
               ),
               newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
-                title: 'Failed to load feeds',
+                title: TextConstants.feedListFetchErrorTitle,
                 message: _pagingController.error,
                 onTap: _pagingController.retryLastFailedRequest,
               ),
               newPageProgressIndicatorBuilder: (_) =>
                   const ShimmerLoader(pageSize: 1),
-              firstPageProgressIndicatorBuilder: (_) =>
-                  const ShimmerLoader(pageSize: 12),
+              firstPageProgressIndicatorBuilder: (_) => const ShimmerLoader(
+                  pageSize: ServerConstants.defaultPaginationPageSize),
+              noMoreItemsIndicatorBuilder: (_) => const NoMoreItemsIndicator(),
+              noItemsFoundIndicatorBuilder: (_) => const NoMoreItemsIndicator(),
             ),
           ),
         ),

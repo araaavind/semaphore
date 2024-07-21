@@ -1,3 +1,4 @@
+import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class NewPageErrorIndicator extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 24.0),
+          padding: const EdgeInsets.all(UIConstants.pagePadding),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -53,6 +54,7 @@ class NewPageErrorIndicator extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 8.0),
               ],
             ),
           ),

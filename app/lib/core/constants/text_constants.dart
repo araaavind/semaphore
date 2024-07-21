@@ -15,8 +15,10 @@ class TextConstants {
   static const String usernameInvalidContentsErrorMessage =
       'Username should not contain consecutive dots, underscores, or their combination';
 
+  static const String feedListFetchErrorTitle = 'Failed to load feeds';
   static const String feedListFetchErrorMessage =
-      'Unable to load feeds. Try again later or report the issue';
-  static const String feedListEmptyMessage =
-      'Nothing to see here. Come back when there are more feeds or add one yourself';
+      'Try again later or report the issue';
+  static const String feedListEmptyMessageTitle = 'Nothing to see here';
+  static const String feedListEmptyMessageMessage =
+      'Come back when there are more feeds or add one yourself!';
 }
