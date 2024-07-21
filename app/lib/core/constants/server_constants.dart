@@ -4,6 +4,7 @@ class ServerConstants {
       'sm-${Uri.parse(baseUrl).host.split(".").first}-session';
 
   static const int defaultPaginationPageSize = 12;
+  static const int defaultPaginationNextPageSize = 8;
 
   static const throttleDuration = Duration(milliseconds: 100);
 }

@@ -1,5 +1,8 @@
 import 'package:app/core/common/widgets/first_page_error_indicator.dart';
 import 'package:app/core/common/widgets/new_page_error_indicator.dart';
+import 'package:app/core/common/widgets/shimmer_loader.dart';
+import 'package:app/core/constants/constants.dart';
+import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +20,31 @@ class SearchFeedsPage extends StatefulWidget {
 }
 
 class _SearchFeedsPageState extends State<SearchFeedsPage> {
-  final PagingController<int, Feed> _pagingController =
-      PagingController(firstPageKey: 1);
+  final PagingController<int, Feed> _pagingController = PagingController(
+    firstPageKey: 1,
+    // invisibleItemsThreshold will determine how many items should be loaded
+    // after the first page is loaded (if the first page does not fill the
+    // screen, items enough to fill the page will be loaded anyway unless
+    // invisibleItemsThreshold is set to 0).
+    invisibleItemsThreshold: 1,
+  );
 
   @override
   void initState() {
     super.initState();
     _pagingController.addPageRequestListener(
-      (pageKey) => context.read<FeedBloc>().add(
-            FeedSearchRequested(page: pageKey),
-          ),
+      (pageKey) {
+        var nextPageSize = ServerConstants.defaultPaginationPageSize;
+        if (pageKey != _pagingController.firstPageKey) {
+          nextPageSize = ServerConstants.defaultPaginationNextPageSize;
+        }
+        context.read<FeedBloc>().add(
+              FeedSearchRequested(
+                page: pageKey,
+                pageSize: nextPageSize,
+              ),
+            );
+      },
     );
   }
 
@@ -61,8 +79,18 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<Feed>(
               itemBuilder: (context, item, index) => ListTile(
-                title: Text(item.title),
-                subtitle: Text(item.description ?? ''),
+                title: Text(
+                  item.title,
+                  style: context.theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                subtitle: Text(
+                  item.description ?? '',
+                  style: context.theme.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
               ),
               firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
                 title: 'Failed to load feeds',
@@ -76,6 +104,10 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 message: _pagingController.error,
                 onTap: _pagingController.retryLastFailedRequest,
               ),
+              newPageProgressIndicatorBuilder: (_) =>
+                  const ShimmerLoader(pageSize: 1),
+              firstPageProgressIndicatorBuilder: (_) =>
+                  const ShimmerLoader(pageSize: 12),
             ),
           ),
         ),

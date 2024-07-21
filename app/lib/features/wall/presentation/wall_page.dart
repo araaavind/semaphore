@@ -21,7 +21,7 @@ class WallPage extends StatelessWidget {
           children: [
             Text(
               'Hi ${user.fullName}',
-              style: context.theme.textTheme.displayLarge,
+              style: context.theme.textTheme.displayMedium,
             )
           ],
         ),
