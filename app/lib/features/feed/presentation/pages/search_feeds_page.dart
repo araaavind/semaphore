@@ -6,6 +6,7 @@ import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SearchFeedsPage extends StatefulWidget {
   static route() =>
@@ -25,6 +26,10 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     // screen, items enough to fill the page will be loaded anyway unless
     // invisibleItemsThreshold is set to 0).
     invisibleItemsThreshold: 1,
+  );
+
+  final RefreshController _refreshController = RefreshController(
+    initialRefresh: false,
   );
 
   @override
@@ -57,6 +62,9 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     return Scaffold(
       body: BlocListener<FeedBloc, FeedState>(
         listener: (context, state) {
+          if (state.status != FeedStatus.loading) {
+            _refreshController.refreshCompleted();
+          }
           if (state.status == FeedStatus.success) {
             if (state.feedList.metadata.currentPage ==
                 state.feedList.metadata.lastPage) {
@@ -69,10 +77,15 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             _pagingController.error = state.message;
           }
         },
-        child: RefreshIndicator(
-          onRefresh: () => Future.sync(
-            () => _pagingController.refresh(),
+        child: SmartRefresher(
+          controller: _refreshController,
+          header: WaterDropMaterialHeader(
+            backgroundColor: context.theme.colorScheme.secondary,
+            color: context.theme.colorScheme.onSecondary,
           ),
+          onRefresh: () async {
+            _pagingController.refresh();
+          },
           child: PagedListView<int, Feed>(
             pagingController: _pagingController,
             builderDelegate: PagedChildBuilderDelegate<Feed>(
