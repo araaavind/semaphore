@@ -21,13 +21,15 @@ class AuthClient {
   User? _currentUser;
   Session? _currentSession;
 
-  final _controller = StreamController<AuthStatus>();
+  final _authStreamController = StreamController<AuthStatus>();
   Stream<AuthStatus> get status async* {
     yield AuthStatus.unauthenticated;
-    yield* _controller.stream;
+    yield* _authStreamController.stream;
   }
 
-  void dispose() => _controller.close();
+  void dispose() {
+    _authStreamController.close();
+  }
 
   AuthClient({
     required Dio dio,
@@ -105,7 +107,7 @@ class AuthClient {
         await _sharedLocalStorage
             .persistSession(jsonEncode(authResponse.session!.toJson()));
         _saveSession(authResponse.session!);
-        _controller.add(AuthStatus.authenticated);
+        _authStreamController.add(AuthStatus.authenticated);
       }
       return authResponse;
     } on SemaphoreException catch (e) {
@@ -208,7 +210,7 @@ class AuthClient {
           // Session is already logged out by other device. Clear session
           await _sharedLocalStorage.removeSession();
           _removeSession();
-          _controller.add(AuthStatus.unauthenticated);
+          _authStreamController.add(AuthStatus.unauthenticated);
           throw SemaphoreException(
             message: Constants.sessionExpiredErrorMessage,
             subType: SemaphoreExceptionSubType.sessionExpired,
@@ -231,7 +233,7 @@ class AuthClient {
     if (scope != SignOutScope.others) {
       await _sharedLocalStorage.removeSession();
       _removeSession();
-      _controller.add(AuthStatus.unauthenticated);
+      _authStreamController.add(AuthStatus.unauthenticated);
     }
   }
 
@@ -248,7 +250,7 @@ class AuthClient {
       return;
     }
 
-    _controller.add(AuthStatus.authenticated);
+    _authStreamController.add(AuthStatus.authenticated);
     _saveSession(session);
   }
 
