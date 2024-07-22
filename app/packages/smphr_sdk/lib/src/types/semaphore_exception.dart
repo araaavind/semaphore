@@ -7,6 +7,7 @@ enum SemaphoreExceptionSubType {
   notFound,
   unauthorized,
   sessionExpired,
+  connectionFailed,
 }
 
 class SemaphoreException extends DioException {

@@ -22,7 +22,7 @@ class ErrorInterceptor extends Interceptor {
           message: Constants.connectionErrorMessage,
           requestOptions: err.requestOptions,
           type: err.type,
-          subType: SemaphoreExceptionSubType.none,
+          subType: SemaphoreExceptionSubType.connectionFailed,
         );
         break;
       case DioExceptionType.connectionTimeout:
@@ -30,7 +30,7 @@ class ErrorInterceptor extends Interceptor {
           message: Constants.connectionTimeoutErrorMessage,
           requestOptions: err.requestOptions,
           type: err.type,
-          subType: SemaphoreExceptionSubType.none,
+          subType: SemaphoreExceptionSubType.connectionFailed,
         );
         break;
       case DioExceptionType.receiveTimeout:
