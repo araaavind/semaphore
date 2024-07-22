@@ -14,7 +14,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:smphr_sdk/smphr_sdk.dart';
+import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -26,9 +26,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserLogin _userLogin;
   final UserLogout _userLogout;
   final AppUserCubit _appUserCubit;
-  final SemaphoreClient _client;
+  final sp.SemaphoreClient _client;
 
-  late StreamSubscription<AuthStatus> _authenticationStatusSubscription;
+  late StreamSubscription<sp.AuthStatus> _authenticationStatusSubscription;
 
   AuthBloc({
     required GetCurrentUser getCurrentUser,
@@ -37,7 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required UserLogin userLogin,
     required UserLogout userLogout,
     required AppUserCubit appUserCubit,
-    required SemaphoreClient client,
+    required sp.SemaphoreClient client,
   })  : _getCurrentUser = getCurrentUser,
         _checkUsername = checkUsername,
         _userSignup = userSignup,
@@ -68,7 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthStatusChanged event,
     Emitter<AuthState> emit,
   ) {
-    if (event.status == AuthStatus.unauthenticated) {
+    if (event.status == sp.AuthStatus.unauthenticated) {
       emit(AuthInitial());
       _appUserCubit.clearUser();
     }

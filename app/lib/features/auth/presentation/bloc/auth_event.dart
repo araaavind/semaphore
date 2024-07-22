@@ -61,7 +61,7 @@ final class AuthLogoutRequested extends AuthEvent {
 }
 
 final class AuthStatusChanged extends AuthEvent {
-  final AuthStatus status;
+  final sp.AuthStatus status;
 
   AuthStatusChanged({required this.status});
 

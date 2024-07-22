@@ -1,3 +1,4 @@
+import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
@@ -37,119 +38,139 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(UIConstants.pagePadding),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TitleTextSpan(widget: widget),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                  AuthField(
-                    hintText: 'Username or Email',
-                    controller: usernameOrEmailController,
-                    onChanged: (_) => setState(() {
-                      fieldErrors = null;
-                    }),
-                    validator: (_) {
-                      if (fieldErrors != null &&
-                          fieldErrors!.keys.contains('username')) {
-                        return validateFields(
-                          jsonKey: 'username',
-                          fieldErrors: fieldErrors,
-                        );
-                      } else if (fieldErrors != null &&
-                          fieldErrors!.keys.contains('email')) {
-                        return validateFields(
-                          jsonKey: 'email',
-                          fieldErrors: fieldErrors,
-                        );
-                      }
-                      return validateFields(
-                        jsonKey: 'username_or_email',
-                        fieldErrors: fieldErrors,
-                      );
-                    },
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                  const SizedBox(height: 10),
-                  AuthField(
-                    hintText: 'Password',
-                    controller: passwordController,
-                    isPassword: true,
-                    onChanged: (_) => setState(() {
-                      fieldErrors = null;
-                    }),
-                    validator: (_) => validateFields(
-                      jsonKey: 'password',
-                      fieldErrors: fieldErrors,
-                    ),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                  const SizedBox(height: 20),
-                  BlocConsumer<AuthBloc, AuthState>(
-                    listener: (context, state) {
-                      if (state is AuthLoginFailure) {
-                        if (state.fieldErrors != null) {
-                          setState(() {
-                            fieldErrors = state.fieldErrors;
-                          });
-                          if (formKey.currentState != null) {
-                            formKey.currentState!.validate();
-                          }
-                        } else {
-                          showSnackbar(context, state.message);
+      body: BlocListener<NetworkCubit, NetworkState>(
+        listenWhen: (previous, current) => previous.status != current.status,
+        listener: (context, state) {
+          switch (state.status) {
+            case NetworkStatus.connected:
+              showSnackbar(
+                context,
+                TextConstants.networkConnectedMessage,
+                textColor: const Color.fromARGB(255, 74, 147, 67),
+              );
+            case NetworkStatus.disconnected:
+              showSnackbar(
+                context,
+                TextConstants.networkDisconnectedMessage,
+                textColor: AppPalette.networkOfflineOnSnackbar,
+              );
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(UIConstants.pagePadding),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TitleTextSpan(widget: widget),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    AuthField(
+                      hintText: 'Username or Email',
+                      controller: usernameOrEmailController,
+                      onChanged: (_) => setState(() {
+                        fieldErrors = null;
+                      }),
+                      validator: (_) {
+                        if (fieldErrors != null &&
+                            fieldErrors!.keys.contains('username')) {
+                          return validateFields(
+                            jsonKey: 'username',
+                            fieldErrors: fieldErrors,
+                          );
+                        } else if (fieldErrors != null &&
+                            fieldErrors!.keys.contains('email')) {
+                          return validateFields(
+                            jsonKey: 'email',
+                            fieldErrors: fieldErrors,
+                          );
                         }
-                      }
-                    },
-                    builder: (context, state) {
-                      return Button(
-                        text: 'Log in',
-                        fixedSize: const Size(160, 50),
-                        isLoading: state is AuthLoading,
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            context.read<AuthBloc>().add(
-                                  AuthLoginRequested(
-                                    usernameOrEmail:
-                                        usernameOrEmailController.text.trim(),
-                                    password: passwordController.text.trim(),
-                                  ),
-                                );
+                        return validateFields(
+                          jsonKey: 'username_or_email',
+                          fieldErrors: fieldErrors,
+                        );
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    ),
+                    const SizedBox(height: 10),
+                    AuthField(
+                      hintText: 'Password',
+                      controller: passwordController,
+                      isPassword: true,
+                      onChanged: (_) => setState(() {
+                        fieldErrors = null;
+                      }),
+                      validator: (_) => validateFields(
+                        jsonKey: 'password',
+                        fieldErrors: fieldErrors,
+                      ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    ),
+                    const SizedBox(height: 20),
+                    BlocConsumer<AuthBloc, AuthState>(
+                      listener: (context, state) {
+                        if (state is AuthLoginFailure) {
+                          if (state.fieldErrors != null) {
+                            setState(() {
+                              fieldErrors = state.fieldErrors;
+                            });
+                            if (formKey.currentState != null) {
+                              formKey.currentState!.validate();
+                            }
+                          } else {
+                            showSnackbar(context, state.message);
                           }
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () {
-                      context.goNamed('username');
-                    },
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Don\'t have an account? ',
-                        style: context.theme.textTheme.bodyMedium,
-                        children: [
-                          TextSpan(
-                            text: 'Create one',
-                            style: context.theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: context.theme.colorScheme.secondary,
+                        }
+                      },
+                      builder: (context, state) {
+                        return Button(
+                          text: 'Log in',
+                          fixedSize: const Size(160, 50),
+                          isLoading: state is AuthLoading,
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              context.read<AuthBloc>().add(
+                                    AuthLoginRequested(
+                                      usernameOrEmail:
+                                          usernameOrEmailController.text.trim(),
+                                      password: passwordController.text.trim(),
+                                    ),
+                                  );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    GestureDetector(
+                      onTap: () {
+                        context.goNamed('username');
+                      },
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Don\'t have an account? ',
+                          style: context.theme.textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: 'Create one',
+                              style:
+                                  context.theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.theme.colorScheme.secondary,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

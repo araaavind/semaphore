@@ -1,4 +1,7 @@
 class TextConstants {
+  static const String networkConnectedMessage = 'You are now online!';
+  static const String networkDisconnectedMessage = 'You are offline';
+
   static const String internalServerErrorMessage =
       'Something went wrong. Try again later or report the issue';
   static const String usernameTakenErrorMessage = 'This one\'s already taken!';
