@@ -1,13 +1,13 @@
-import 'package:app/core/common/widgets/refresher.dart';
-import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/debouncer.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import '../widgets/search_paged_list.dart';
 
 class SearchFeedsPage extends StatefulWidget {
   static route() =>
@@ -29,6 +29,12 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     invisibleItemsThreshold: 1,
   );
 
+  final TextEditingController _searchController = TextEditingController();
+  final Debouncer _debouncer = Debouncer(
+    duration: ServerConstants.debounceDuration,
+  );
+  String _searchQuery = '';
+
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -44,83 +50,95 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         }
         context.read<FeedBloc>().add(
               FeedSearchRequested(
+                searchKey: 'title',
+                searchValue: _searchQuery,
                 page: pageKey,
                 pageSize: nextPageSize,
               ),
             );
       },
     );
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    _debouncer.run(
+      () {
+        if (_searchQuery != _searchController.text) {
+          setState(() {
+            _searchQuery = _searchController.text;
+          });
+          _pagingController.refresh();
+        }
+      },
+    );
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    _onSearchChanged();
   }
 
   @override
   void dispose() {
+    _debouncer.dispose();
+    _refreshController.dispose();
     _pagingController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<FeedBloc, FeedState>(
-        listener: (context, state) {
-          if (state.status != FeedStatus.loading) {
-            _refreshController.refreshCompleted();
-          }
-          if (state.status == FeedStatus.success) {
-            if (state.feedList.metadata.currentPage ==
-                state.feedList.metadata.lastPage) {
-              _pagingController.appendLastPage(state.feedList.feeds);
-            } else {
-              final nextPage = state.feedList.metadata.currentPage + 1;
-              _pagingController.appendPage(state.feedList.feeds, nextPage);
-            }
-          } else if (state.status == FeedStatus.failure) {
-            _pagingController.error = state.message;
-          }
-        },
-        child: Refresher(
-          controller: _refreshController,
-          onRefresh: () async {
-            _pagingController.refresh();
-          },
-          child: PagedListView<int, Feed>(
-            pagingController: _pagingController,
-            builderDelegate: PagedChildBuilderDelegate<Feed>(
-              itemBuilder: (context, item, index) => ListTile(
-                title: Text(
-                  item.title,
-                  style: context.theme.textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                subtitle: Text(
-                  item.description ?? '',
-                  style: context.theme.textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.w300,
-                  ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(UIConstants.pagePadding),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: _clearSearch,
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.inputBorderRadius),
                 ),
               ),
-              firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
-                title: TextConstants.feedListFetchErrorTitle,
-                message: _pagingController.error,
-                onTryAgain: () {
-                  _pagingController.refresh();
-                },
-              ),
-              newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
-                title: TextConstants.feedListFetchErrorTitle,
-                message: _pagingController.error,
-                onTap: _pagingController.retryLastFailedRequest,
-              ),
-              newPageProgressIndicatorBuilder: (_) =>
-                  const ShimmerLoader(pageSize: 1),
-              firstPageProgressIndicatorBuilder: (_) => const ShimmerLoader(
-                  pageSize: ServerConstants.defaultPaginationPageSize),
-              noMoreItemsIndicatorBuilder: (_) => const NoMoreItemsIndicator(),
-              noItemsFoundIndicatorBuilder: (_) => const NoMoreItemsIndicator(),
             ),
           ),
-        ),
+          Expanded(
+            child: BlocListener<FeedBloc, FeedState>(
+              listener: (context, state) {
+                if (state.status != FeedStatus.loading) {
+                  _refreshController.refreshCompleted();
+                }
+                if (state.status == FeedStatus.success) {
+                  if (state.feedList.metadata.currentPage ==
+                      state.feedList.metadata.lastPage) {
+                    _pagingController.appendLastPage(state.feedList.feeds);
+                  } else {
+                    final nextPage = state.feedList.metadata.currentPage + 1;
+                    _pagingController.appendPage(
+                        state.feedList.feeds, nextPage);
+                  }
+                } else if (state.status == FeedStatus.failure) {
+                  _pagingController.error = state.message;
+                }
+              },
+              child: SearchPagedList(
+                pagingController: _pagingController,
+                refreshController: _refreshController,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
