@@ -1,4 +1,5 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/features/auth/data/repositories/auth_repository_impl.dart';
@@ -39,12 +40,13 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(
     () => semaphore.client,
     dispose: (param) {
-      param.auth.dispose();
+      param.dispose();
     },
   );
 
   // Core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerLazySingleton(() => NetworkCubit());
 }
 
 void _setConfig() {

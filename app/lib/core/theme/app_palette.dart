@@ -53,6 +53,10 @@ abstract class AppPalette {
   // Green
   static const green = Color.fromARGB(255, 140, 181, 94);
 
+  // Orange
+  static const networkOnlineOnSnackbar = Color.fromARGB(255, 88, 157, 72);
+  static const networkOfflineOnSnackbar = Color.fromARGB(255, 173, 96, 81);
+
   // Grey
   static const grey = _GreyColors();
 

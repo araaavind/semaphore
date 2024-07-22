@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/config/router.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
@@ -5,6 +8,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
 import 'core/theme/theme.dart';
 
@@ -16,6 +20,9 @@ void main() async {
       providers: [
         BlocProvider(
           create: (_) => serviceLocator<AppUserCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<NetworkCubit>(),
         ),
         BlocProvider(
           create: (_) => serviceLocator<AuthBloc>(),
@@ -34,10 +41,27 @@ class SemaphoreApp extends StatefulWidget {
 }
 
 class _SemaphoreAppState extends State<SemaphoreApp> {
+  late StreamSubscription<sp.NetworkStatus> _networkStatusSubscription;
+
   @override
   void initState() {
     super.initState();
+    _networkStatusSubscription =
+        serviceLocator<sp.SemaphoreClient>().networkStatus.listen(
+      (status) {
+        context.read<NetworkCubit>().updateNetworkStatus(
+              status == sp.NetworkStatus.connected,
+            );
+      },
+    );
+
     context.read<AuthBloc>().add(AuthCurrentUserRequested());
+  }
+
+  @override
+  void dispose() {
+    _networkStatusSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -47,9 +71,7 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
       dark: AppTheme.dark,
       initial: AdaptiveThemeMode.system,
       builder: (theme, darkTheme) => BlocListener<AppUserCubit, AppUserState>(
-        listener: (context, state) {
-          router.refresh();
-        },
+        listener: (context, state) => router.refresh(),
         child: MaterialApp.router(
           routerConfig: router,
           title: 'Semaphore',
