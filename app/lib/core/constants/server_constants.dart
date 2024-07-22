@@ -7,4 +7,5 @@ class ServerConstants {
   static const int defaultPaginationNextPageSize = 8;
 
   static const throttleDuration = Duration(milliseconds: 100);
+  static const debounceDuration = Duration(milliseconds: 300);
 }

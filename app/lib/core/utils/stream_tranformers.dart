@@ -7,3 +7,9 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
     return droppable<E>().call(events.throttle(duration), mapper);
   };
 }
+
+EventTransformer<E> debounceDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return events.debounce(duration).switchMap(mapper);
+  };
+}

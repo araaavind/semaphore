@@ -1,5 +1,5 @@
 import 'package:app/core/constants/server_constants.dart';
-import 'package:app/core/utils/throttle_droppable.dart';
+import 'package:app/core/utils/stream_tranformers.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:equatable/equatable.dart';
