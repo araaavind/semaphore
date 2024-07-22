@@ -1,3 +1,4 @@
+import 'package:app/core/common/widgets/refresher.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
@@ -77,12 +78,8 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             _pagingController.error = state.message;
           }
         },
-        child: SmartRefresher(
+        child: Refresher(
           controller: _refreshController,
-          header: WaterDropMaterialHeader(
-            backgroundColor: context.theme.colorScheme.secondary,
-            color: context.theme.colorScheme.onSecondary,
-          ),
           onRefresh: () async {
             _pagingController.refresh();
           },

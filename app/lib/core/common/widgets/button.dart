@@ -11,6 +11,7 @@ class Button extends StatelessWidget {
   final Color? backgroundColor;
   final Size? fixedSize;
   final bool isLoading;
+  final Widget? suffixIcon;
 
   const Button({
     super.key,
@@ -20,6 +21,7 @@ class Button extends StatelessWidget {
     this.fixedSize,
     this.onPressed,
     this.isLoading = false,
+    this.suffixIcon,
   });
 
   @override
@@ -31,38 +33,33 @@ class Button extends StatelessWidget {
             : context.theme.disabledColor,
         borderRadius: BorderRadius.circular(UIConstants.buttonBorderRadius),
       ),
-      child: ElevatedButton(
+      child: ElevatedButton.icon(
+        iconAlignment: IconAlignment.end,
         style: ElevatedButton.styleFrom(
           fixedSize: fixedSize ?? const Size(64, 36),
           backgroundColor: AppPalette.transparent,
           shadowColor: AppPalette.transparent,
         ),
-        onPressed: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              text,
-              style: context.theme.textTheme.labelLarge?.copyWith(
-                color: textColor ?? context.theme.colorScheme.onPrimary,
-              ),
-            ),
-            isLoading
-                ? Padding(
-                    padding:
-                        const EdgeInsets.only(left: UIConstants.elementPadding),
-                    child: SizedBox(
-                      height: 14,
-                      width: 14,
-                      child: Loader(
-                        color: context.theme.colorScheme.onPrimary,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ],
+        label: Text(
+          text,
+          style: context.theme.textTheme.labelLarge?.copyWith(
+            color: textColor ?? context.theme.colorScheme.onPrimary,
+          ),
         ),
+        icon: Padding(
+          padding: const EdgeInsets.only(left: 4.0),
+          child: isLoading
+              ? SizedBox(
+                  height: 14,
+                  width: 14,
+                  child: Loader(
+                    color: context.theme.colorScheme.onPrimary,
+                    strokeWidth: 2,
+                  ),
+                )
+              : suffixIcon,
+        ),
+        onPressed: onPressed,
       ),
     );
   }
