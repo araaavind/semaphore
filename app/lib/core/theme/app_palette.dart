@@ -30,7 +30,7 @@ abstract class AppPalette {
   static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
   static const secondaryDark = Color.fromARGB(255, 248, 216, 175);
   static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
-  static const tertiaryDark = Color.fromARGB(255, 243, 248, 175);
+  static const tertiaryDark = Color.fromARGB(255, 225, 248, 175);
   static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
   static const primaryContainerDark = Color.fromARGB(255, 39, 4, 16);
   static const onPrimaryContainerDark = Color.fromARGB(255, 248, 180, 175);
@@ -54,8 +54,21 @@ abstract class AppPalette {
   static const green = Color.fromARGB(255, 140, 181, 94);
 
   // Orange
-  static const networkOnlineOnSnackbar = Color.fromARGB(255, 88, 157, 72);
-  static const networkOfflineOnSnackbar = Color.fromARGB(255, 173, 96, 81);
+  static const networkOnlineSnackbarContainer = Color.fromARGB(255, 9, 45, 15);
+  static const networkOnlineSnackbarOnContainer =
+      Color.fromARGB(255, 233, 255, 228);
+  static const networkOfflineSnackbarContainer =
+      Color.fromARGB(255, 61, 18, 18);
+  static const networkOfflineSnackbarOnContainer =
+      Color.fromARGB(255, 252, 204, 192);
+  static const networkOnlineSnackbarContainerDark =
+      Color.fromARGB(255, 233, 255, 228);
+  static const networkOnlineSnackbarOnContainerDark =
+      Color.fromARGB(255, 9, 45, 15);
+  static const networkOfflineSnackbarContainerDark =
+      Color.fromARGB(255, 252, 204, 192);
+  static const networkOfflineSnackbarOnContainerDark =
+      Color.fromARGB(255, 61, 18, 18);
 
   // Grey
   static const grey = _GreyColors();

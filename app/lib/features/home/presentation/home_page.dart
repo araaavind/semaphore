@@ -3,8 +3,8 @@ import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/widgets/loader.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/theme/extensions/app_snackbar_color_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
@@ -48,13 +48,23 @@ class _HomePageState extends State<HomePage> {
               showSnackbar(
                 context,
                 TextConstants.networkConnectedMessage,
-                textColor: const Color.fromARGB(255, 74, 147, 67),
+                backgroundColor: context.theme
+                    .extension<AppSnackbarColorTheme>()!
+                    .networkOnlineContainer,
+                textColor: context.theme
+                    .extension<AppSnackbarColorTheme>()!
+                    .networkOnlineOnContainer,
               );
             case NetworkStatus.disconnected:
               showSnackbar(
                 context,
                 TextConstants.networkDisconnectedMessage,
-                textColor: AppPalette.networkOfflineOnSnackbar,
+                backgroundColor: context.theme
+                    .extension<AppSnackbarColorTheme>()!
+                    .networkOfflineContainer,
+                textColor: context.theme
+                    .extension<AppSnackbarColorTheme>()!
+                    .networkOfflineOnContainer,
               );
           }
         },

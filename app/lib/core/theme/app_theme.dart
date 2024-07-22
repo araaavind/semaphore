@@ -1,6 +1,7 @@
 import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/app_color_scheme.dart';
 import 'package:app/core/theme/app_text_theme.dart';
+import 'package:app/core/theme/extensions/app_snackbar_color_theme.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -55,6 +56,14 @@ class AppTheme {
       errorBorder: _border(color: AppColorScheme.lightColorScheme.error),
     ),
     textTheme: AppTextTheme.lightTextTheme,
+    extensions: [
+      AppSnackbarColorTheme(
+        networkOfflineContainer: AppPalette.networkOfflineSnackbarContainer,
+        networkOfflineOnContainer: AppPalette.networkOfflineSnackbarOnContainer,
+        networkOnlineContainer: AppPalette.networkOnlineSnackbarContainer,
+        networkOnlineOnContainer: AppPalette.networkOnlineSnackbarOnContainer,
+      ),
+    ],
   );
   static final dark = ThemeData.dark(
     useMaterial3: true,
@@ -92,5 +101,15 @@ class AppTheme {
       errorBorder: _border(color: AppColorScheme.darkColorScheme.error),
     ),
     textTheme: AppTextTheme.darkTextTheme,
+    extensions: [
+      AppSnackbarColorTheme(
+        networkOfflineContainer: AppPalette.networkOfflineSnackbarContainerDark,
+        networkOfflineOnContainer:
+            AppPalette.networkOfflineSnackbarOnContainerDark,
+        networkOnlineContainer: AppPalette.networkOnlineSnackbarContainerDark,
+        networkOnlineOnContainer:
+            AppPalette.networkOnlineSnackbarOnContainerDark,
+      ),
+    ],
   );
 }
