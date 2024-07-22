@@ -57,6 +57,7 @@ class FirstPageErrorIndicator extends StatelessWidget {
                     backgroundColor: context.theme.colorScheme.primaryContainer,
                     textColor: context.theme.colorScheme.onPrimaryContainer,
                     onPressed: onTryAgain,
+                    suffixIcon: const Icon(Icons.refresh),
                   )),
           ],
         ),
