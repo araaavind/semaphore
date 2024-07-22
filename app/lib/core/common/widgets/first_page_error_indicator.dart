@@ -46,19 +46,17 @@ class FirstPageErrorIndicator extends StatelessWidget {
               ),
             if (onTryAgain != null)
               const SizedBox(
-                height: 48,
+                height: 24.0,
               ),
             if (onTryAgain != null)
-              SizedBox(
-                  height: 50,
-                  width: double.infinity,
-                  child: Button(
-                    text: 'Try again',
-                    backgroundColor: context.theme.colorScheme.primaryContainer,
-                    textColor: context.theme.colorScheme.onPrimaryContainer,
-                    onPressed: onTryAgain,
-                    suffixIcon: const Icon(Icons.refresh),
-                  )),
+              Button(
+                fixedSize: const Size(200, 50),
+                text: 'Try again',
+                backgroundColor: context.theme.colorScheme.primaryContainer,
+                textColor: context.theme.colorScheme.onPrimaryContainer,
+                onPressed: onTryAgain,
+                suffixIcon: const Icon(Icons.refresh),
+              ),
           ],
         ),
       ),
