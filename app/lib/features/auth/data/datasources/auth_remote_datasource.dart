@@ -109,6 +109,19 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         username: response.user!.username,
       );
     } on sp.SemaphoreException catch (e) {
+      // Return local session and keep user logged if connection fails
+      if (e.subType == sp.SemaphoreExceptionSubType.connectionFailed) {
+        if (currentSession != null &&
+            !currentSession!.isExpired &&
+            currentSession!.user != null) {
+          return UserModel(
+            email: currentSession!.user!.email,
+            fullName: currentSession!.user!.fullName,
+            id: currentSession!.user!.id,
+            username: currentSession!.user!.username,
+          );
+        }
+      }
       if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
           e.fieldErrors != null &&
           e.fieldErrors!.isNotEmpty) {
