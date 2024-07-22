@@ -46,19 +46,19 @@ class Button extends StatelessWidget {
             color: textColor ?? context.theme.colorScheme.onPrimary,
           ),
         ),
-        icon: Padding(
-          padding: const EdgeInsets.only(left: 4.0),
-          child: isLoading
-              ? SizedBox(
+        icon: isLoading
+            ? Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: SizedBox(
                   height: 14,
                   width: 14,
                   child: Loader(
                     color: context.theme.colorScheme.onPrimary,
                     strokeWidth: 2,
                   ),
-                )
-              : suffixIcon,
-        ),
+                ),
+              )
+            : suffixIcon,
         onPressed: onPressed,
       ),
     );

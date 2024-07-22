@@ -68,7 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthStatusChanged event,
     Emitter<AuthState> emit,
   ) {
-    if (event.status == sp.AuthStatus.unauthenticated) {
+    if (event.status == sp.AuthStatus.unauthenticated && state is AuthSuccess) {
       emit(AuthInitial());
       _appUserCubit.clearUser();
     }

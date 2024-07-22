@@ -67,81 +67,83 @@ class _LoginPageState extends State<LoginPage> {
               );
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.all(UIConstants.pagePadding),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TitleTextSpan(widget: widget),
-                Column(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthLoginFailure) {
+              if (state.fieldErrors != null) {
+                setState(() {
+                  fieldErrors = state.fieldErrors;
+                });
+                if (formKey.currentState != null) {
+                  formKey.currentState!.validate();
+                }
+              } else {
+                showSnackbar(context, state.message);
+              }
+            }
+          },
+          builder: (context, state) {
+            if (state is AuthLoading || state is AuthSuccess) {
+              return const Loader();
+            }
+            return Padding(
+              padding: const EdgeInsets.all(UIConstants.pagePadding),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 20),
-                    AuthField(
-                      hintText: 'Username or Email',
-                      controller: usernameOrEmailController,
-                      onChanged: (_) => setState(() {
-                        fieldErrors = null;
-                      }),
-                      validator: (_) {
-                        if (fieldErrors != null &&
-                            fieldErrors!.keys.contains('username')) {
-                          return validateFields(
-                            jsonKey: 'username',
-                            fieldErrors: fieldErrors,
-                          );
-                        } else if (fieldErrors != null &&
-                            fieldErrors!.keys.contains('email')) {
-                          return validateFields(
-                            jsonKey: 'email',
-                            fieldErrors: fieldErrors,
-                          );
-                        }
-                        return validateFields(
-                          jsonKey: 'username_or_email',
-                          fieldErrors: fieldErrors,
-                        );
-                      },
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                    ),
-                    const SizedBox(height: 10),
-                    AuthField(
-                      hintText: 'Password',
-                      controller: passwordController,
-                      isPassword: true,
-                      onChanged: (_) => setState(() {
-                        fieldErrors = null;
-                      }),
-                      validator: (_) => validateFields(
-                        jsonKey: 'password',
-                        fieldErrors: fieldErrors,
-                      ),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                    ),
-                    const SizedBox(height: 20),
-                    BlocConsumer<AuthBloc, AuthState>(
-                      listener: (context, state) {
-                        if (state is AuthLoginFailure) {
-                          if (state.fieldErrors != null) {
-                            setState(() {
-                              fieldErrors = state.fieldErrors;
-                            });
-                            if (formKey.currentState != null) {
-                              formKey.currentState!.validate();
+                    TitleTextSpan(widget: widget),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        AuthField(
+                          hintText: 'Username or Email',
+                          controller: usernameOrEmailController,
+                          onChanged: (_) => setState(() {
+                            fieldErrors = null;
+                          }),
+                          validator: (_) {
+                            if (fieldErrors != null &&
+                                fieldErrors!.keys.contains('username')) {
+                              return validateFields(
+                                jsonKey: 'username',
+                                fieldErrors: fieldErrors,
+                              );
+                            } else if (fieldErrors != null &&
+                                fieldErrors!.keys.contains('email')) {
+                              return validateFields(
+                                jsonKey: 'email',
+                                fieldErrors: fieldErrors,
+                              );
                             }
-                          } else {
-                            showSnackbar(context, state.message);
-                          }
-                        }
-                      },
-                      builder: (context, state) {
-                        return Button(
+                            return validateFields(
+                              jsonKey: 'username_or_email',
+                              fieldErrors: fieldErrors,
+                            );
+                          },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        ),
+                        const SizedBox(height: 10),
+                        AuthField(
+                          hintText: 'Password',
+                          controller: passwordController,
+                          isPassword: true,
+                          onChanged: (_) => setState(() {
+                            fieldErrors = null;
+                          }),
+                          validator: (_) => validateFields(
+                            jsonKey: 'password',
+                            fieldErrors: fieldErrors,
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        ),
+                        const SizedBox(height: 20),
+                        Button(
                           text: 'Log in',
                           fixedSize: const Size(160, 50),
-                          isLoading: state is AuthLoading,
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               context.read<AuthBloc>().add(
@@ -153,36 +155,36 @@ class _LoginPageState extends State<LoginPage> {
                                   );
                             }
                           },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () {
-                        context.goNamed('username');
-                      },
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Don\'t have an account? ',
-                          style: context.theme.textTheme.bodyMedium,
-                          children: [
-                            TextSpan(
-                              text: 'Create one',
-                              style:
-                                  context.theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.theme.colorScheme.secondary,
-                              ),
-                            ),
-                          ],
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            context.goNamed('username');
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Don\'t have an account? ',
+                              style: context.theme.textTheme.bodyMedium,
+                              children: [
+                                TextSpan(
+                                  text: 'Create one',
+                                  style: context.theme.textTheme.bodyMedium
+                                      ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: context.theme.colorScheme.secondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
