@@ -11,6 +11,7 @@ import (
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,15 +21,16 @@ var (
 )
 
 type User struct {
-	ID        int64      `json:"id"`
-	CreatedAt *time.Time `json:"created_at,omitempty"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	FullName  string     `json:"full_name"`
-	Username  string     `json:"username"`
-	Email     string     `json:"email,omitempty"`
-	Password  password   `json:"-"`
-	Activated bool       `json:"activated,omitempty"`
-	Version   int        `json:"-"`
+	ID          int64              `json:"id"`
+	CreatedAt   *time.Time         `json:"created_at,omitempty"`
+	UpdatedAt   *time.Time         `json:"updated_at,omitempty"`
+	FullName    string             `json:"full_name"`
+	Username    string             `json:"username"`
+	Email       string             `json:"email,omitempty"`
+	Password    password           `json:"-"`
+	Activated   bool               `json:"activated,omitempty"`
+	Version     int                `json:"-"`
+	LastLoginAt pgtype.Timestamptz `json:"last_login_at,omitempty"`
 }
 
 type password struct {
@@ -67,7 +69,11 @@ func ValidateUsername(v *validator.Validator, username string) {
 	v.Check(validator.NotBlank(username), "username", "Username must be provided")
 	v.Check(validator.MinChars(username, 8), "username", "Username must be atleast 8 characters long")
 	v.Check(validator.MaxChars(username, 16), "username", "Username must not be more than 16 characters long")
-	v.Check(validator.Matches(username, validator.UsernameBasicRX), "username", `Username must contain only alphanumeric characters, dots and dashes`)
+	v.Check(
+		validator.Matches(username, validator.UsernameBasicRX),
+		"username",
+		`Username must contain only alphanumeric characters, dots and dashes`,
+	)
 
 	forbiddenPrefixes := []string{".", "_"}
 	v.Check(
@@ -141,14 +147,14 @@ func (m UserModel) Insert(user *User) error {
 	query := `
 		INSERT INTO users (full_name, username, email, password_hash, activated) 
 		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, created_at, updated_at, version`
+		RETURNING id, last_login_at, created_at, updated_at, version`
 
 	args := []any{user.FullName, user.Username, user.Email, user.Password.hash, user.Activated}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.CreatedAt, &user.UpdatedAt, &user.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.LastLoginAt, &user.CreatedAt, &user.UpdatedAt, &user.Version)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -165,7 +171,7 @@ func (m UserModel) Insert(user *User) error {
 
 func (m UserModel) GetByID(id int64) (*User, error) {
 	query := `
-		SELECT id, created_at, updated_at, full_name, username, email, activated, version
+		SELECT id, created_at, updated_at, full_name, username, email, activated, last_login_at, version
 		FROM users
 		WHERE id = $1`
 
@@ -182,6 +188,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 		&user.Username,
 		&user.Email,
 		&user.Activated,
+		&user.LastLoginAt,
 		&user.Version,
 	)
 	if err != nil {
@@ -198,7 +205,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 
 func (m UserModel) GetByEmail(email string) (*User, error) {
 	query := `
-        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, version
+        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, last_login_at, version
         FROM users
         WHERE email = $1`
 
@@ -216,6 +223,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 		&user.Email,
 		&user.Password.hash,
 		&user.Activated,
+		&user.LastLoginAt,
 		&user.Version,
 	)
 
@@ -233,7 +241,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 
 func (m UserModel) GetByUsername(username string) (*User, error) {
 	query := `
-        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, version
+        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, last_login_at, version
         FROM users
         WHERE username = $1`
 
@@ -251,6 +259,7 @@ func (m UserModel) GetByUsername(username string) (*User, error) {
 		&user.Email,
 		&user.Password.hash,
 		&user.Activated,
+		&user.LastLoginAt,
 		&user.Version,
 	)
 
@@ -270,7 +279,8 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
 
 	query := `
-		SELECT users.id, users.created_at, users.updated_at, users.full_name, users.username, users.email, users.password_hash, users.activated, users.version
+		SELECT users.id, users.created_at, users.updated_at, users.full_name, users.username,
+		users.email, users.password_hash, users.activated, users.last_login_at, users.version
 		FROM users
 		INNER JOIN tokens ON users.id = tokens.user_id
 		WHERE tokens.hash = $1
@@ -291,6 +301,7 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 		&user.Email,
 		&user.Password.hash,
 		&user.Activated,
+		&user.LastLoginAt,
 		&user.Version,
 	)
 	if err != nil {
@@ -327,8 +338,9 @@ func (m UserModel) CountByUsername(username string) (int, error) {
 func (m UserModel) Update(user *User) error {
 	query := `
         UPDATE users 
-        SET full_name = $1, username = $2, email = $3, password_hash = $4, activated = $5, updated_at = $6, version = version + 1
-        WHERE id = $7 AND version = $8
+        SET full_name = $1, username = $2, email = $3, password_hash = $4, activated = $5, updated_at = $6,
+		last_login_at = $7, version = version + 1
+        WHERE id = $8 AND version = $9
         RETURNING version`
 
 	args := []any{
@@ -338,6 +350,7 @@ func (m UserModel) Update(user *User) error {
 		user.Password.hash,
 		user.Activated,
 		time.Now(),
+		user.LastLoginAt,
 		user.ID,
 		user.Version,
 	}
