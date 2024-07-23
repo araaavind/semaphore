@@ -107,6 +107,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         fullName: response.user!.fullName,
         id: response.user!.id,
         username: response.user!.username,
+        lastLoginAt: response.user!.lastLoginAt,
       );
     } on sp.SemaphoreException catch (e) {
       // Return local session and keep user logged if connection fails
@@ -119,6 +120,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
             fullName: currentSession!.user!.fullName,
             id: currentSession!.user!.id,
             username: currentSession!.user!.username,
+            lastLoginAt: currentSession!.user!.lastLoginAt,
           );
         }
       }

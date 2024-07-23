@@ -7,7 +7,8 @@ class UserModel extends User {
     required super.id,
     required super.email,
     required super.username,
-    required super.fullName,
+    super.fullName,
+    super.lastLoginAt,
   });
 
   UserModel copyWith({
@@ -15,12 +16,14 @@ class UserModel extends User {
     String? email,
     String? username,
     String? fullName,
+    DateTime? lastLoginAt,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       username: username ?? this.username,
       fullName: fullName ?? this.fullName,
+      lastLoginAt: lastLoginAt ?? this.lastLoginAt,
     );
   }
 
@@ -30,6 +33,7 @@ class UserModel extends User {
       'email': email,
       'username': username,
       'full_name': fullName,
+      'last_login_at': lastLoginAt?.toIso8601String(),
     };
   }
 
@@ -39,6 +43,9 @@ class UserModel extends User {
       email: map['email'] as String,
       username: map['username'] as String,
       fullName: map['full_name'] ?? '',
+      lastLoginAt: map['last_login_at'] != null
+          ? DateTime.parse(map['last_login_at'] as String)
+          : null,
     );
   }
 
