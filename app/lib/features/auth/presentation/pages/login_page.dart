@@ -12,9 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
-  static route({bool isOnboarding = false}) => MaterialPageRoute(
-        builder: (context) => LoginPage(isOnboarding: isOnboarding),
-      );
   final bool isOnboarding;
 
   const LoginPage({super.key, this.isOnboarding = false});
