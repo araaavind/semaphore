@@ -5,12 +5,14 @@ class User {
   final String email;
   final String username;
   final String? fullName;
+  final DateTime? lastLoginAt;
 
   User({
     required this.id,
     required this.email,
     required this.username,
     this.fullName,
+    this.lastLoginAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class User {
       'email': email,
       'username': username,
       'full_name': fullName,
+      'last_login_at': lastLoginAt?.toIso8601String(),
     };
   }
 
@@ -28,6 +31,9 @@ class User {
       email: map['email'] as String,
       username: map['username'] as String,
       fullName: map['full_name'] != null ? map['full_name'] as String : null,
+      lastLoginAt: map['last_login_at'] != null
+          ? DateTime.parse(map['last_login_at'] as String)
+          : null,
     );
   }
 
