@@ -22,7 +22,7 @@ func (m SessionModel) GetForToken(tokenPlaintext string) (*Session, error) {
 
 	query := `
 		SELECT users.id, users.created_at, users.updated_at, users.full_name, users.username,
-		users.email, users.password_hash, users.activated, users.version, tokens.hash, tokens.scope,
+		users.email, users.password_hash, users.activated, users.last_login_at, users.version, tokens.hash, tokens.scope,
 		tokens.expiry, tokens.created_at
 		FROM users
 		INNER JOIN tokens ON users.id = tokens.user_id
@@ -46,6 +46,7 @@ func (m SessionModel) GetForToken(tokenPlaintext string) (*Session, error) {
 		&user.Email,
 		&user.Password.hash,
 		&user.Activated,
+		&user.LastLoginAt,
 		&user.Version,
 		&token.Hash,
 		&token.Scope,
