@@ -10,11 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SignupPage extends StatefulWidget {
-  static route(String username) => MaterialPageRoute(
-        builder: (context) => SignupPage(
-          username: username,
-        ),
-      );
   final String username;
 
   const SignupPage({super.key, required this.username});
@@ -104,6 +99,7 @@ class _SignupPageState extends State<SignupPage> {
                   fieldErrors: fieldErrors,
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                errorMaxLines: 2,
               ),
               const SizedBox(height: 20),
               BlocConsumer<AuthBloc, AuthState>(

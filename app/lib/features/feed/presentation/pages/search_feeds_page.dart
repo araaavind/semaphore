@@ -1,4 +1,5 @@
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/debouncer.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
@@ -10,9 +11,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../widgets/search_paged_list.dart';
 
 class SearchFeedsPage extends StatefulWidget {
-  static route() =>
-      MaterialPageRoute(builder: (context) => const SearchFeedsPage());
-
   const SearchFeedsPage({super.key});
 
   @override
@@ -28,16 +26,15 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     // invisibleItemsThreshold is set to 0).
     invisibleItemsThreshold: 1,
   );
-
   final TextEditingController _searchController = TextEditingController();
-  final Debouncer _debouncer = Debouncer(
-    duration: ServerConstants.debounceDuration,
-  );
-  String _searchQuery = '';
-
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
+  final Debouncer _debouncer = Debouncer(
+    duration: ServerConstants.debounceDuration,
+  );
+
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -61,6 +58,15 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     _searchController.addListener(_onSearchChanged);
   }
 
+  @override
+  void dispose() {
+    _debouncer.dispose();
+    _refreshController.dispose();
+    _pagingController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
   void _onSearchChanged() {
     _debouncer.run(
       () {
@@ -80,15 +86,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   }
 
   @override
-  void dispose() {
-    _debouncer.dispose();
-    _refreshController.dispose();
-    _pagingController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -99,6 +96,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search...',
+                hintStyle: context.theme.textTheme.bodyMedium,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -106,10 +104,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                         onPressed: _clearSearch,
                       )
                     : null,
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(UIConstants.inputBorderRadius),
-                ),
               ),
             ),
           ),

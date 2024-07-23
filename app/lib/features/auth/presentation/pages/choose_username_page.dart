@@ -1,7 +1,9 @@
 import 'package:app/core/common/widgets/widgets.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/constants/text_constants.dart';
 import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/theme.dart';
+import 'package:app/core/utils/debouncer.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/auth/presentation/widgets/auth_field.dart';
@@ -11,8 +13,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class ChooseUsernamePage extends StatefulWidget {
-  static route() =>
-      MaterialPageRoute(builder: (context) => const ChooseUsernamePage());
   const ChooseUsernamePage({super.key});
 
   @override
@@ -23,6 +23,9 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
   final usernameController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool _isUsernameTaken = false;
+  final Debouncer _debouncer = Debouncer(
+    duration: ServerConstants.debounceDuration,
+  );
 
   @override
   void dispose() {
@@ -69,16 +72,20 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                     controller: usernameController,
                     errorMaxLines: 2,
                     onChanged: (value) {
-                      setState(() {
-                        _isUsernameTaken = false;
-                      });
-                      if (formState != null && formState.validate()) {
-                        context.read<AuthBloc>().add(
-                              AuthCheckUsernameRequested(
-                                usernameController.text.trim(),
-                              ),
-                            );
-                      }
+                      _debouncer.run(
+                        () {
+                          setState(() {
+                            _isUsernameTaken = false;
+                          });
+                          if (formState != null && formState.validate()) {
+                            context.read<AuthBloc>().add(
+                                  AuthCheckUsernameRequested(
+                                    usernameController.text.trim(),
+                                  ),
+                                );
+                          }
+                        },
+                      );
                     },
                     validator: _usernameValidator,
                     validBorderColor: state is AuthUsernameSuccess &&
