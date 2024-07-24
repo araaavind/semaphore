@@ -4,6 +4,10 @@ class TextConstants {
 
   static const String internalServerErrorMessage =
       'Something went wrong. Try again later or report the issue';
+
+  static const onboardingLoginPageMessage1 = "Your account has been created";
+  static const onboardingLoginPageMessage2 = "Log in to continue...";
+
   static const String usernameTakenErrorMessage = 'This one\'s already taken!';
   static const String usernameBlankErrorMessage =
       'Username should not be blank';
@@ -18,6 +22,8 @@ class TextConstants {
   static const String usernameInvalidContentsErrorMessage =
       'Username should not contain consecutive dots, underscores, or their combination';
 
+  static const String feedListOnboardingMessage =
+      'Follow the feeds that interest you';
   static const String feedListFetchErrorTitle = 'Failed to load feeds';
   static const String feedListFetchErrorMessage =
       'Try again later or report the issue';
