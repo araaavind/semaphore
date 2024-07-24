@@ -8,37 +8,39 @@ import 'package:app/core/theme/extensions/app_snackbar_color_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
-import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
-import 'package:app/features/wall/presentation/wall_page.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage extends StatelessWidget {
+  final Widget child;
+  const HomePage({required this.child, super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController();
-
-  int _currentIndex = 0;
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        context.goNamed(RouteConstants.wallPageName);
+        break;
+      case 1:
+        context.goNamed(RouteConstants.searchFeedsPageName);
+        break;
+    }
   }
 
-  void _onItemTapped(int index) {
-    _pageController.jumpToPage(index);
+  int _calculateSelectedIndex(BuildContext context) {
+    final String routeName = GoRouterState.of(context).topRoute!.name!;
+    if (routeName == RouteConstants.wallPageName) {
+      return 0;
+    }
+    if (routeName == RouteConstants.searchFeedsPageName) {
+      return 1;
+    }
+    return 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
     return BlocProvider(
       create: (_) => serviceLocator<FeedBloc>(),
       child: BlocListener<NetworkCubit, NetworkState>(
@@ -80,6 +82,9 @@ class _HomePageState extends State<HomePage> {
             actions: [
               IconButton(
                 onPressed: () {
+                  final user =
+                      (context.read<AppUserCubit>().state as AppUserLoggedIn)
+                          .user;
                   context.read<AuthBloc>().add(
                         AuthLogoutRequested(
                           user: user,
@@ -109,14 +114,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          body: PageView(
-            controller: _pageController,
-            onPageChanged: _onPageChanged,
-            children: const [
-              WallPage(),
-              SearchFeedsPage(),
-            ],
-          ),
+          body: child,
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
               border: Border(
@@ -127,8 +125,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             child: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: _onItemTapped,
+              currentIndex: _calculateSelectedIndex(context),
+              onTap: (value) => _onItemTapped(value, context),
               iconSize: 30.0,
               items: const [
                 BottomNavigationBarItem(
