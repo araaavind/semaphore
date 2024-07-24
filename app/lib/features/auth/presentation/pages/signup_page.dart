@@ -113,7 +113,7 @@ class _SignupPageState extends State<SignupPage> {
                     }
                   } else if (state is AuthSignupSuccess) {
                     context.goNamed(
-                      'login',
+                      RouteConstants.loginPageName,
                       queryParameters: {'isOnboarding': 'true'},
                     );
                   }
@@ -141,7 +141,7 @@ class _SignupPageState extends State<SignupPage> {
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
-                  context.goNamed('login');
+                  context.goNamed(RouteConstants.loginPageName);
                 },
                 child: RichText(
                   text: TextSpan(

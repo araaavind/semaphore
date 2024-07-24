@@ -123,7 +123,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                               formState != null &&
                               formState.validate()) {
                             context.goNamed(
-                              'signup',
+                              RouteConstants.signupPageName,
                               pathParameters: {
                                 'username': usernameController.text.trim(),
                               },

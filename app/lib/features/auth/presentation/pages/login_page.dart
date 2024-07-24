@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TitleTextSpan(widget: widget),
+                    TitleTextSpan(isOnboarding: widget.isOnboarding),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 20),
                         GestureDetector(
                           onTap: () {
-                            context.goNamed('username');
+                            context.goNamed(RouteConstants.usernamePageName);
                           },
                           child: RichText(
                             text: TextSpan(
@@ -191,14 +191,14 @@ class _LoginPageState extends State<LoginPage> {
 class TitleTextSpan extends StatelessWidget {
   const TitleTextSpan({
     super.key,
-    required this.widget,
+    this.isOnboarding = false,
   });
 
-  final LoginPage widget;
+  final bool isOnboarding;
 
   @override
   Widget build(BuildContext context) {
-    return !widget.isOnboarding
+    return !isOnboarding
         ? RichText(
             text: TextSpan(
               text: 'dive in to ',

@@ -1,4 +1,5 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
@@ -9,21 +10,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: RouteConstants.wallPagePath,
   redirect: (context, state) {
     final appUserState = context.read<AppUserCubit>().state;
-    final onLoginRoute = state.topRoute!.name == 'login';
-    final onUsernameRoute = state.topRoute!.name == 'username';
-    final onSignupRoute = state.topRoute!.name == 'signup';
+    final onLoginRoute = state.topRoute!.name == RouteConstants.loginPageName;
+    final onUsernameRoute =
+        state.topRoute!.name == RouteConstants.usernamePageName;
+    final onSignupRoute = state.topRoute!.name == RouteConstants.signupPageName;
 
     if (appUserState is AppUserInitial &&
         !onLoginRoute &&
         !onUsernameRoute &&
         !onSignupRoute) {
-      return '/login';
+      return RouteConstants.loginPagePath;
     }
     if (appUserState is AppUserLoggedIn && onLoginRoute) {
-      return '/';
+      return RouteConstants.wallPagePath;
     }
     return null;
   },
@@ -34,20 +36,25 @@ GoRouter router = GoRouter(
       },
       routes: <RouteBase>[
         GoRoute(
-          path: '/',
-          name: 'wall',
+          path: RouteConstants.wallPagePath,
+          name: RouteConstants.wallPageName,
           builder: (context, state) => const WallPage(),
         ),
         GoRoute(
-          path: '/feeds',
-          name: 'feeds',
-          builder: (context, state) => const SearchFeedsPage(),
+          path: RouteConstants.searchFeedsPagePath,
+          name: RouteConstants.searchFeedsPageName,
+          builder: (context, state) {
+            final isOnboarding =
+                state.uri.queryParameters['isOnboarding'] != null &&
+                    state.uri.queryParameters['isOnboarding'] == 'true';
+            return SearchFeedsPage(isOnboarding: isOnboarding);
+          },
         ),
       ],
     ),
     GoRoute(
-      path: '/login',
-      name: 'login',
+      path: RouteConstants.loginPagePath,
+      name: RouteConstants.loginPageName,
       builder: (context, state) {
         final isOnboarding =
             state.uri.queryParameters['isOnboarding'] != null &&
@@ -56,13 +63,13 @@ GoRouter router = GoRouter(
       },
       routes: [
         GoRoute(
-          path: 'create-username',
-          name: 'username',
+          path: RouteConstants.usernamePagePath,
+          name: RouteConstants.usernamePageName,
           builder: (context, state) => const ChooseUsernamePage(),
           routes: [
             GoRoute(
-              path: 'signup/:username',
-              name: 'signup',
+              path: RouteConstants.signupPagePath,
+              name: RouteConstants.signupPageName,
               builder: (context, state) => SignupPage(
                 username: state.pathParameters['username']!,
               ),
