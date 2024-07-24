@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:app/core/common/cubits/network/network_cubit.dart';
-import 'package:app/core/config/router.dart';
+import 'package:app/core/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';

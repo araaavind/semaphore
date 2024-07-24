@@ -1,12 +1,14 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/router/transitions/fade_transition_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/wall/presentation/wall_page.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,22 +36,28 @@ GoRouter router = GoRouter(
   routes: [
     ShellRoute(
       builder: (context, state, child) {
-        return const HomePage();
+        return HomePage(child: child);
       },
       routes: <RouteBase>[
         GoRoute(
           path: RouteConstants.wallPagePath,
           name: RouteConstants.wallPageName,
-          builder: (context, state) => const WallPage(),
+          pageBuilder: (context, state) => FadeTransitionPage(
+            key: const ValueKey('wall'),
+            child: const WallPage(),
+          ),
         ),
         GoRoute(
           path: RouteConstants.searchFeedsPagePath,
           name: RouteConstants.searchFeedsPageName,
-          builder: (context, state) {
+          pageBuilder: (context, state) {
             final isOnboarding =
                 state.uri.queryParameters['isOnboarding'] != null &&
                     state.uri.queryParameters['isOnboarding'] == 'true';
-            return SearchFeedsPage(isOnboarding: isOnboarding);
+            return FadeTransitionPage(
+              key: const ValueKey('feeds'),
+              child: SearchFeedsPage(isOnboarding: isOnboarding),
+            );
           },
         ),
       ],
