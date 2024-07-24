@@ -13,27 +13,68 @@ import 'package:app/features/wall/presentation/wall_page.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String initialRouteName;
+  const HomePage({
+    this.initialRouteName = RouteConstants.wallPageName,
+    super.key,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController();
+  late final PageController _pageController;
 
-  int _currentIndex = 0;
-
-  void _onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  int _calculateSelectedIndex() {
+    final String routeName = GoRouterState.of(context).topRoute!.name!;
+    if (routeName == RouteConstants.wallPageName) {
+      return 0;
+    }
+    if (routeName == RouteConstants.searchFeedsPageName) {
+      return 1;
+    }
+    return 0;
   }
 
-  void _onItemTapped(int index) {
-    _pageController.jumpToPage(index);
+  void _onPageChanged(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    switch (index) {
+      case 0:
+        context.goNamed(RouteConstants.wallPageName);
+        break;
+      case 1:
+        context.goNamed(RouteConstants.searchFeedsPageName);
+        break;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    var initialPage = 0;
+    switch (widget.initialRouteName) {
+      case RouteConstants.wallPageName:
+        initialPage = 0;
+        break;
+      case RouteConstants.searchFeedsPageName:
+        initialPage = 1;
+        break;
+    }
+    _pageController = PageController(initialPage: initialPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -127,8 +168,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             child: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: _onItemTapped,
+              currentIndex: _calculateSelectedIndex(),
+              onTap: _onPageChanged,
               iconSize: 30.0,
               items: const [
                 BottomNavigationBarItem(
