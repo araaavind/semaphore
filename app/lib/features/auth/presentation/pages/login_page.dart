@@ -220,14 +220,14 @@ class TitleTextSpan extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                UIConstants.onboardingLoginPageMessage1,
+                TextConstants.onboardingLoginPageMessage1,
                 style: context.theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w100,
                   color: context.theme.colorScheme.secondary,
                 ),
               ),
               Text(
-                UIConstants.onboardingLoginPageMessage2,
+                TextConstants.onboardingLoginPageMessage2,
                 style: context.theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
