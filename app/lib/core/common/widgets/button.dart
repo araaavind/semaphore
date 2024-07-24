@@ -36,7 +36,7 @@ class Button extends StatelessWidget {
       child: ElevatedButton.icon(
         iconAlignment: IconAlignment.end,
         style: ElevatedButton.styleFrom(
-          fixedSize: fixedSize ?? const Size(64, 36),
+          fixedSize: fixedSize ?? UIConstants.defaultButtonFixedSize,
           backgroundColor: AppPalette.transparent,
           shadowColor: AppPalette.transparent,
         ),
