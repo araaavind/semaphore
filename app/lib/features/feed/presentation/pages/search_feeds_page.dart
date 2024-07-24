@@ -11,7 +11,9 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../widgets/search_paged_list.dart';
 
 class SearchFeedsPage extends StatefulWidget {
-  const SearchFeedsPage({super.key});
+  final bool isOnboarding;
+
+  const SearchFeedsPage({super.key, this.isOnboarding = false});
 
   @override
   State<SearchFeedsPage> createState() => _SearchFeedsPageState();
@@ -90,6 +92,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     return Scaffold(
       body: Column(
         children: [
+          if (widget.isOnboarding) const TitleTextSpan(),
           Padding(
             padding: const EdgeInsets.all(UIConstants.pagePadding),
             child: TextField(
@@ -134,6 +137,28 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class TitleTextSpan extends StatelessWidget {
+  const TitleTextSpan({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Follow the feeds that interest you',
+          style: context.theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w100,
+            color: context.theme.colorScheme.secondary,
+          ),
+        ),
+      ],
     );
   }
 }
