@@ -1,4 +1,5 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
@@ -11,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
   initialLocation: RouteConstants.wallPagePath,
+  errorBuilder: (context, state) => const ErrorPage(),
   redirect: (context, state) {
     final appUserState = context.read<AppUserCubit>().state;
     final onLoginRoute = state.topRoute!.name == RouteConstants.loginPageName;
