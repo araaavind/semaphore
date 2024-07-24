@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
-  initialLocation: RouteConstants.wallPagePath,
+  initialLocation: RouteConstants.loginPagePath,
   errorBuilder: (context, state) => const ErrorPage(),
   redirect: (context, state) {
     final appUserState = context.read<AppUserCubit>().state;
