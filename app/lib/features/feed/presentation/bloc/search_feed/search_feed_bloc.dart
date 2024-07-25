@@ -7,16 +7,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
-part 'feed_event.dart';
-part 'feed_state.dart';
+part 'search_feed_event.dart';
+part 'search_feed_state.dart';
 
-class FeedBloc extends Bloc<FeedEvent, FeedState> {
+class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
   final ListFeeds _listFeeds;
 
-  FeedBloc({
+  SearchFeedBloc({
     required ListFeeds listFeeds,
   })  : _listFeeds = listFeeds,
-        super(const FeedState()) {
+        super(const SearchFeedState()) {
     on<FeedSearchRequested>(
       _onFeedListFeeds,
       transformer: throttleDroppable(ServerConstants.throttleDuration),
@@ -25,9 +25,9 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
 
   void _onFeedListFeeds(
     FeedSearchRequested event,
-    Emitter<FeedState> emit,
+    Emitter<SearchFeedState> emit,
   ) async {
-    emit(state.copyWith(status: FeedStatus.loading));
+    emit(state.copyWith(status: SearchFeedStatus.loading));
     final res = await _listFeeds(
       ListFeedParams(
         searchKey: event.searchKey,
@@ -41,12 +41,12 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     switch (res) {
       case Left(value: final l):
         emit(state.copyWith(
-          status: FeedStatus.failure,
+          status: SearchFeedStatus.failure,
           message: l.message,
         ));
       case Right(value: final r):
         emit(state.copyWith(
-          status: FeedStatus.success,
+          status: SearchFeedStatus.success,
           feedList: r,
         ));
     }
