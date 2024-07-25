@@ -1,4 +1,5 @@
 import 'package:app/core/constants/server_constants.dart';
+import 'package:app/core/usecase/usecase.dart';
 import 'package:app/core/utils/stream_tranformers.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
@@ -29,7 +30,7 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
   ) async {
     emit(state.copyWith(status: SearchFeedStatus.loading));
     final res = await _listFeeds(
-      ListFeedParams(
+      PaginationParams(
         searchKey: event.searchKey,
         searchValue: event.searchValue,
         sortKey: event.sortKey,

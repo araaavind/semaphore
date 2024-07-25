@@ -1,32 +1,15 @@
-import 'package:app/core/constants/server_constants.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class ListFeedParams {
-  final String? searchKey;
-  final String? searchValue;
-  final int page;
-  final int pageSize;
-  final String? sortKey;
-
-  ListFeedParams({
-    this.searchKey,
-    this.searchValue,
-    this.page = 1,
-    this.pageSize = ServerConstants.defaultPaginationPageSize,
-    this.sortKey,
-  });
-}
-
-class ListFeeds implements Usecase<FeedList, ListFeedParams> {
+class ListFeeds implements Usecase<FeedList, PaginationParams> {
   FeedRepository feedRepository;
   ListFeeds(this.feedRepository);
 
   @override
-  Future<Either<Failure, FeedList>> call(ListFeedParams params) async {
+  Future<Either<Failure, FeedList>> call(PaginationParams params) async {
     return await feedRepository.listAllFeeds(
       searchKey: params.searchKey,
       searchValue: params.searchValue,
