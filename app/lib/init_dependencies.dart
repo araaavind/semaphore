@@ -14,6 +14,7 @@ import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
+import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
@@ -123,6 +124,11 @@ void _initFeed() {
   // Register usecases
   serviceLocator.registerFactory(
     () => ListFeeds(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => ListFeedsForCurrentUser(
       serviceLocator(),
     ),
   );

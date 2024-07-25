@@ -14,6 +14,14 @@ abstract interface class FeedRemoteDatasource {
   });
 
   Future<void> followFeed(int feedId);
+
+  Future<FeedListModel> listFeedsFollowedByCurrentUser({
+    String? searchKey,
+    String? searchValue,
+    int page,
+    int pageSize,
+    String? sortKey,
+  });
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -61,6 +69,39 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
         '/feeds/$feedId/followers',
       );
       return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<FeedListModel> listFeedsFollowedByCurrentUser({
+    String? searchKey,
+    String? searchValue,
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? sortKey,
+  }) async {
+    try {
+      Map<String, dynamic>? queryParams = {'page': page, 'page_size': pageSize};
+      if (searchKey != null && searchValue != null) {
+        queryParams[searchKey] = searchValue;
+      }
+      if (sortKey != null) {
+        queryParams['sort'] = sortKey;
+      }
+      final response = await semaphoreClient.dio.get(
+        '/me/feeds',
+        queryParameters: queryParams,
+      );
+      return FeedListModel.fromMap(response.data);
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {

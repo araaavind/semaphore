@@ -12,4 +12,12 @@ abstract interface class FeedRepository {
   });
 
   Future<Either<Failure, void>> followFeed(int feedId);
+
+  Future<Either<Failure, FeedList>> listFeedsFollowedByCurrentUser({
+    String? searchKey,
+    String? searchValue,
+    int page,
+    int pageSize,
+    String? sortKey,
+  });
 }
