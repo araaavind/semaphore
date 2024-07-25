@@ -13,7 +13,7 @@ class NoMoreItemsIndicator extends StatelessWidget {
           border: Border(
             top: BorderSide(
               color: context.theme.colorScheme.outline,
-              width: 0.3,
+              width: UIConstants.borderWidth,
             ),
           ),
         ),

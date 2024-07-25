@@ -116,14 +116,17 @@ class HomePage extends StatelessWidget {
           ),
           body: child,
           bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: context.theme.colorScheme.outline,
-                  width: 0.2,
-                ),
-              ),
-            ),
+            decoration:
+                (context.theme.colorScheme.brightness == Brightness.dark)
+                    ? BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: context.theme.colorScheme.outline,
+                            width: UIConstants.borderWidth,
+                          ),
+                        ),
+                      )
+                    : null,
             child: BottomNavigationBar(
               currentIndex: _calculateSelectedIndex(context),
               onTap: (value) => _onItemTapped(value, context),

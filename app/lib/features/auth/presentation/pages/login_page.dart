@@ -168,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                                   style: context.theme.textTheme.bodyMedium
                                       ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: context.theme.colorScheme.secondary,
+                                    color: context.theme.colorScheme.primary,
                                   ),
                                 ),
                               ],
@@ -204,7 +204,6 @@ class TitleTextSpan extends StatelessWidget {
               text: 'dive in to ',
               style: context.theme.textTheme.displaySmall?.copyWith(
                 fontWeight: FontWeight.w100,
-                color: context.theme.colorScheme.secondary,
               ),
               children: [
                 TextSpan(

@@ -8,6 +8,7 @@ class Button extends StatelessWidget {
   final void Function()? onPressed;
   final String text;
   final Color? textColor;
+  final TextStyle? textStyle;
   final Color? backgroundColor;
   final Size? fixedSize;
   final bool isLoading;
@@ -17,6 +18,7 @@ class Button extends StatelessWidget {
     super.key,
     required this.text,
     this.textColor,
+    this.textStyle,
     this.backgroundColor,
     this.fixedSize,
     this.onPressed,
@@ -36,15 +38,16 @@ class Button extends StatelessWidget {
       child: ElevatedButton.icon(
         iconAlignment: IconAlignment.end,
         style: ElevatedButton.styleFrom(
-          fixedSize: fixedSize ?? UIConstants.defaultButtonFixedSize,
+          fixedSize: fixedSize,
           backgroundColor: AppPalette.transparent,
           shadowColor: AppPalette.transparent,
         ),
         label: Text(
           text,
-          style: context.theme.textTheme.labelLarge?.copyWith(
-            color: textColor ?? context.theme.colorScheme.onPrimary,
-          ),
+          style: textStyle ??
+              context.theme.textTheme.labelLarge?.copyWith(
+                color: textColor ?? context.theme.colorScheme.onPrimary,
+              ),
         ),
         icon: isLoading
             ? Padding(
