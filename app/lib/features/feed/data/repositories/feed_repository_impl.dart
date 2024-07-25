@@ -32,4 +32,15 @@ class FeedRepositoryImpl implements FeedRepository {
       return left(Failure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> followFeed(int feedId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.followFeed(feedId),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }

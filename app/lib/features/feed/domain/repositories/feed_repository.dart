@@ -10,4 +10,6 @@ abstract interface class FeedRepository {
     int pageSize,
     String? sortKey,
   });
+
+  Future<Either<Failure, void>> followFeed(int feedId);
 }
