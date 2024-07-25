@@ -28,6 +28,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppColorScheme.lightColorScheme.surface,
     appBarTheme: AppBarTheme(
       elevation: 0.5,
+      scrolledUnderElevation: 0.5,
       backgroundColor: AppColorScheme.lightColorScheme.surface,
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.grey.shade50,
@@ -46,12 +47,11 @@ class AppTheme {
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
+      contentPadding: const EdgeInsets.all(UIConstants.contentPadding),
       border: _border(color: AppColorScheme.lightColorScheme.outline),
       enabledBorder: _border(color: AppColorScheme.lightColorScheme.outline),
       focusedBorder: _border(
         color: AppColorScheme.lightColorScheme.secondary,
-        width: 2,
       ),
       errorBorder: _border(color: AppColorScheme.lightColorScheme.error),
     ),
@@ -73,6 +73,7 @@ class AppTheme {
     scaffoldBackgroundColor: AppColorScheme.darkColorScheme.surface,
     appBarTheme: AppBarTheme(
       elevation: 0.5,
+      scrolledUnderElevation: 0.5,
       backgroundColor: AppColorScheme.darkColorScheme.surface,
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.grey.shade700,
@@ -91,12 +92,11 @@ class AppTheme {
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      contentPadding: const EdgeInsets.all(UIConstants.elementPadding),
+      contentPadding: const EdgeInsets.all(UIConstants.contentPadding),
       border: _border(color: AppColorScheme.darkColorScheme.outline),
       enabledBorder: _border(color: AppColorScheme.darkColorScheme.outline),
       focusedBorder: _border(
         color: AppColorScheme.darkColorScheme.secondary,
-        width: 2,
       ),
       errorBorder: _border(color: AppColorScheme.darkColorScheme.error),
     ),

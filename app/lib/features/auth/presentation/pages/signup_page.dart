@@ -54,7 +54,6 @@ class _SignupPageState extends State<SignupPage> {
                   text: 'join ',
                   style: context.theme.textTheme.displaySmall?.copyWith(
                     fontWeight: FontWeight.w100,
-                    color: context.theme.colorScheme.secondary,
                   ),
                   children: [
                     TextSpan(
@@ -152,7 +151,7 @@ class _SignupPageState extends State<SignupPage> {
                         text: 'Log in',
                         style: context.theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: context.theme.colorScheme.secondary,
+                          color: context.theme.colorScheme.primary,
                         ),
                       ),
                     ],

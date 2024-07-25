@@ -93,20 +93,31 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
       body: Column(
         children: [
           if (widget.isOnboarding) const TitleTextSpan(),
-          Padding(
-            padding: const EdgeInsets.all(UIConstants.pagePadding),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                hintStyle: context.theme.textTheme.bodyMedium,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _clearSearch,
-                      )
-                    : null,
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: UIConstants.borderWidth,
+                  color: context.theme.colorScheme.outline,
+                ),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  fillColor: context.theme.colorScheme.surface,
+                  hintText: 'Search...',
+                  hintStyle: context.theme.textTheme.bodyMedium,
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: _clearSearch,
+                        )
+                      : null,
+                ),
               ),
             ),
           ),

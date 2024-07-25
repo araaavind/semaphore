@@ -179,7 +179,6 @@ class TitleTextSpan extends StatelessWidget {
         text: 'pick a ',
         style: context.theme.textTheme.headlineMedium?.copyWith(
           fontWeight: FontWeight.w100,
-          color: context.theme.colorScheme.secondary,
         ),
         children: [
           TextSpan(
@@ -192,7 +191,6 @@ class TitleTextSpan extends StatelessWidget {
             text: 'username',
             style: context.theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w100,
-              color: context.theme.colorScheme.secondary,
             ),
           ),
         ],
