@@ -13,6 +13,7 @@ class FeedModel extends Feed {
     super.pubUpdated,
     super.feedType,
     super.language,
+    super.isFollowed,
   });
 
   FeedModel copyWith({
@@ -25,6 +26,7 @@ class FeedModel extends Feed {
     DateTime? pubUpdated,
     FeedType? feedType,
     String? language,
+    bool? isFollowed,
   }) {
     return FeedModel(
       id: id ?? this.id,
@@ -36,6 +38,7 @@ class FeedModel extends Feed {
       pubUpdated: pubUpdated ?? this.pubUpdated,
       feedType: feedType ?? this.feedType,
       language: language ?? this.language,
+      isFollowed: isFollowed ?? this.isFollowed,
     );
   }
 
@@ -50,6 +53,7 @@ class FeedModel extends Feed {
       'pub_updated': pubUpdated?.toIso8601String(),
       'feed_type': feedType?.name,
       'language': language,
+      'is_followed': isFollowed,
     };
   }
 
@@ -71,6 +75,8 @@ class FeedModel extends Feed {
           ? FeedType.fromString(map['feed_type'] as String)
           : null,
       language: map['language'] != null ? map['language'] as String : null,
+      isFollowed:
+          map['is_followed'] != null ? map['is_followed'] as bool : null,
     );
   }
 
