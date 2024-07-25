@@ -2,7 +2,7 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/debouncer.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
-import 'package:app/features/feed/presentation/bloc/feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -47,7 +47,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         if (pageKey != _pagingController.firstPageKey) {
           nextPageSize = ServerConstants.defaultPaginationNextPageSize;
         }
-        context.read<FeedBloc>().add(
+        context.read<SearchFeedBloc>().add(
               FeedSearchRequested(
                 searchKey: 'title',
                 searchValue: _searchQuery,
@@ -122,12 +122,12 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             ),
           ),
           Expanded(
-            child: BlocListener<FeedBloc, FeedState>(
+            child: BlocListener<SearchFeedBloc, SearchFeedState>(
               listener: (context, state) {
-                if (state.status != FeedStatus.loading) {
+                if (state.status != SearchFeedStatus.loading) {
                   _refreshController.refreshCompleted();
                 }
-                if (state.status == FeedStatus.success) {
+                if (state.status == SearchFeedStatus.success) {
                   if (state.feedList.metadata.currentPage ==
                       state.feedList.metadata.lastPage) {
                     _pagingController.appendLastPage(state.feedList.feeds);
@@ -136,7 +136,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                     _pagingController.appendPage(
                         state.feedList.feeds, nextPage);
                   }
-                } else if (state.status == FeedStatus.failure) {
+                } else if (state.status == SearchFeedStatus.failure) {
                   _pagingController.error = state.message;
                 }
               },

@@ -1,26 +1,26 @@
-part of 'feed_bloc.dart';
+part of 'search_feed_bloc.dart';
 
-enum FeedStatus { initial, loading, success, failure }
+enum SearchFeedStatus { initial, loading, success, failure }
 
 @immutable
-class FeedState extends Equatable {
-  final FeedStatus status;
+class SearchFeedState extends Equatable {
+  final SearchFeedStatus status;
   final FeedList feedList;
   final String? message;
 
-  const FeedState({
-    this.status = FeedStatus.initial,
+  const SearchFeedState({
+    this.status = SearchFeedStatus.initial,
     this.feedList = const FeedList(),
     this.message,
   });
 
-  FeedState copyWith({
-    FeedStatus? status,
+  SearchFeedState copyWith({
+    SearchFeedStatus? status,
     FeedList? feedList,
     bool? hasReachedMax,
     String? message,
   }) {
-    return FeedState(
+    return SearchFeedState(
       status: status ?? this.status,
       feedList: feedList ?? this.feedList,
       message: message ?? this.message,

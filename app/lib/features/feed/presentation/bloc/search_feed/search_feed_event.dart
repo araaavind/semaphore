@@ -1,12 +1,12 @@
-part of 'feed_bloc.dart';
+part of 'search_feed_bloc.dart';
 
 @immutable
-sealed class FeedEvent extends Equatable {
+sealed class SearchFeedEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class FeedSearchRequested extends FeedEvent {
+class FeedSearchRequested extends SearchFeedEvent {
   final String? searchKey;
   final String? searchValue;
   final int page;
