@@ -67,4 +67,16 @@ class FeedRepositoryImpl implements FeedRepository {
       return left(Failure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, List<bool>>> checkUserFollowsFeeds(
+      List<int> feedIds) async {
+    try {
+      return right(
+        await feedRemoteDatasource.checkUserFollowsFeeds(feedIds),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }
