@@ -10,7 +10,6 @@ class Feed extends Equatable {
   final DateTime? pubUpdated;
   final FeedType? feedType;
   final String? language;
-  final bool? isFollowed;
 
   const Feed({
     required this.id,
@@ -22,7 +21,6 @@ class Feed extends Equatable {
     this.pubUpdated,
     this.feedType,
     this.language,
-    this.isFollowed,
   });
 
   @override
@@ -36,7 +34,6 @@ class Feed extends Equatable {
         pubUpdated,
         feedType,
         language,
-        isFollowed,
       ];
 }
 
