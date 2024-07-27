@@ -7,9 +7,11 @@ CREATE TABLE IF NOT EXISTS feed_follows (
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
 	updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
 )
+CREATE INDEX IF NOT EXISTS feed_follows_user_feed_idx ON feed_follows(user_id, feed_id);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
+DROP INDEX IF EXISTS feed_follows_user_feed_idx;
 DROP TABLE IF EXISTS feed_follows;
 -- +goose StatementEnd
