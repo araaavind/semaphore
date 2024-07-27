@@ -64,6 +64,28 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 	return i
 }
 
+func (app *application) readInt64List(qs url.Values, key string, defaultValue []int64, v *validator.Validator) []int64 {
+	s := qs.Get(key)
+
+	if s == "" {
+		return defaultValue
+	}
+
+	stringValues := strings.Split(s, ",")
+	intValues := make([]int64, len(stringValues))
+
+	for i, stringValue := range stringValues {
+		intValue, err := strconv.Atoi(stringValue)
+		if err != nil {
+			v.AddError(key, "Must be a list of integer values")
+			return defaultValue
+		}
+		intValues[i] = int64(intValue)
+	}
+
+	return intValues
+}
+
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
 	// limit the size of the request body to 1MB.
 	maxBytes := 1_048_576
