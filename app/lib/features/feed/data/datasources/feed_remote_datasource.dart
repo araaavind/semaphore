@@ -22,6 +22,8 @@ abstract interface class FeedRemoteDatasource {
     int pageSize,
     String? sortKey,
   });
+
+  Future<List<bool>> checkUserFollowsFeeds(List<int> feedIds);
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -102,6 +104,29 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
         queryParameters: queryParams,
       );
       return FeedListModel.fromMap(response.data);
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<List<bool>> checkUserFollowsFeeds(List<int> feedIds) async {
+    try {
+      Map<String, dynamic>? queryParams = {'ids': feedIds};
+      final response = await semaphoreClient.dio.get(
+        '/me/feeds/contains',
+        queryParameters: queryParams,
+      );
+      return (response.data['follows'] as List)
+          .map((isFollowed) => isFollowed as bool)
+          .toList();
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {

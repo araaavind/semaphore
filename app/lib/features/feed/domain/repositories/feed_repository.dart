@@ -20,4 +20,6 @@ abstract interface class FeedRepository {
     int pageSize,
     String? sortKey,
   });
+
+  Future<Either<Failure, List<bool>>> checkUserFollowsFeeds(List<int> feedIds);
 }
