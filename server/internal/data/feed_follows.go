@@ -127,6 +127,48 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 	return feeds, metadata, nil
 }
 
+func (m FeedFollowModel) CheckFeedsFollowedByUser(userID int64, feedIDs []int64) (map[int64]bool, error) {
+	query := `
+		SELECT feeds.id AS feed_id,
+		EXISTS (
+			SELECT 1
+			FROM feed_follows
+			WHERE feed_follows.user_id = $1 AND feed_follows.feed_id = feeds.id
+		) AS is_followed
+		FROM feeds
+		WHERE feeds.id = ANY($2)`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, userID, feedIDs)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[int64]bool)
+	for rows.Next() {
+		var feedID int64
+		var isFollowed bool
+		err := rows.Scan(
+			&feedID,
+			&isFollowed,
+		)
+		if err != nil {
+			return nil, err
+		}
+		result[feedID] = isFollowed
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
 func (m FeedFollowModel) Insert(feedFollow *FeedFollow) error {
 	query := `
 		INSERT INTO feed_follows (user_id, feed_id)

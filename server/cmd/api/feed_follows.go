@@ -79,6 +79,43 @@ func (app *application) listFeedsForUser(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func (app *application) checkIfUserFollowsFeeds(w http.ResponseWriter, r *http.Request) {
+	v := validator.New()
+	qs := r.URL.Query()
+
+	feedIDs := app.readInt64List(qs, "ids", []int64{}, v)
+	if len(feedIDs) > 100 {
+		v.AddError("ids", "IDs should be a maximum of 100")
+	}
+
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	user := app.contextGetSession(r).User
+
+	result, err := app.models.FeedFollows.CheckFeedsFollowedByUser(user.ID, []int64(feedIDs))
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	followsList := make([]bool, len(feedIDs))
+	for i, feedID := range feedIDs {
+		if isFollowed, exists := result[feedID]; exists {
+			followsList[i] = isFollowed
+		} else {
+			followsList[i] = false
+		}
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"follows": followsList}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
 func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request) {
 	user := app.contextGetSession(r).User
 

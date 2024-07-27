@@ -54,6 +54,7 @@ func (app *application) routes() http.Handler {
 
 	router.Handler(http.MethodGet, "/v1/me", authenticated.ThenFunc(app.getCurrentUser))
 	router.Handler(http.MethodGet, "/v1/me/feeds", authenticated.ThenFunc(app.listFeedsForUser))
+	router.Handler(http.MethodGet, "/v1/me/feeds/contains", authenticated.ThenFunc(app.checkIfUserFollowsFeeds))
 
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
