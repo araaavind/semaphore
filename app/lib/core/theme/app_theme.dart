@@ -17,7 +17,9 @@ class AppTheme {
           color: color,
           width: width,
         ),
-        borderRadius: BorderRadius.circular(UIConstants.inputBorderRadius),
+        borderRadius: BorderRadius.circular(
+          UIConstants.inputBorderRadius,
+        ),
       );
 
   static final light = ThemeData.light(
@@ -27,8 +29,8 @@ class AppTheme {
     disabledColor: AppPalette.disabledPrimary,
     scaffoldBackgroundColor: AppColorScheme.lightColorScheme.surface,
     appBarTheme: AppBarTheme(
-      elevation: 0.5,
-      scrolledUnderElevation: 0.5,
+      elevation: 0,
+      scrolledUnderElevation: 0,
       backgroundColor: AppColorScheme.lightColorScheme.surface,
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.grey.shade50,
@@ -72,8 +74,8 @@ class AppTheme {
     disabledColor: AppPalette.disabledPrimaryDark,
     scaffoldBackgroundColor: AppColorScheme.darkColorScheme.surface,
     appBarTheme: AppBarTheme(
-      elevation: 0.5,
-      scrolledUnderElevation: 0.5,
+      elevation: 0,
+      scrolledUnderElevation: 0,
       backgroundColor: AppColorScheme.darkColorScheme.surface,
       surfaceTintColor: Colors.transparent,
       shadowColor: Colors.grey.shade700,
