@@ -17,6 +17,7 @@ import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart'
 import 'package:app/features/feed/domain/usecases/follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.dart';
+import 'package:app/features/feed/domain/usecases/unfollow_feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -145,6 +146,11 @@ void _initFeed() {
       serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => UnfollowFeed(
+      serviceLocator(),
+    ),
+  );
   // Register blocs
   serviceLocator.registerFactory(
     () => SearchFeedBloc(
@@ -155,6 +161,7 @@ void _initFeed() {
   serviceLocator.registerFactory(
     () => FollowFeedBloc(
       followFeed: serviceLocator(),
+      unfollowFeed: serviceLocator(),
     ),
   );
 }
