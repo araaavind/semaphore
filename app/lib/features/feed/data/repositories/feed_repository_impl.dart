@@ -46,6 +46,17 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
+  Future<Either<Failure, void>> unfollowFeed(int feedId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.unfollowFeed(feedId),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, FeedListModel>> listFeedsFollowedByCurrentUser({
     String? searchKey,
     String? searchValue,

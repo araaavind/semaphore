@@ -13,6 +13,8 @@ abstract interface class FeedRepository {
 
   Future<Either<Failure, void>> followFeed(int feedId);
 
+  Future<Either<Failure, void>> unfollowFeed(int feedId);
+
   Future<Either<Failure, FeedList>> listFeedsFollowedByCurrentUser({
     String? searchKey,
     String? searchValue,

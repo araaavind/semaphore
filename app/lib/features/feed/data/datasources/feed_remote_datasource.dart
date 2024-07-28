@@ -15,6 +15,8 @@ abstract interface class FeedRemoteDatasource {
 
   Future<void> followFeed(int feedId);
 
+  Future<void> unfollowFeed(int feedId);
+
   Future<FeedListModel> listFeedsFollowedByCurrentUser({
     String? searchKey,
     String? searchValue,
@@ -68,6 +70,25 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   Future<void> followFeed(int feedId) async {
     try {
       await semaphoreClient.dio.put(
+        '/feeds/$feedId/followers',
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> unfollowFeed(int feedId) async {
+    try {
+      await semaphoreClient.dio.delete(
         '/feeds/$feedId/followers',
       );
       return;
