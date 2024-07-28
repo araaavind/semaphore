@@ -100,9 +100,12 @@ class _FeedListTileState extends State<FeedListTile> {
               return SizedBox(
                 height: 28.0,
                 width: 28.0,
-                child: SpinKitRotatingCircle(
+                child: SpinKitHourGlass(
                   size: 24.0,
-                  color: context.theme.colorScheme.primary,
+                  duration: const Duration(milliseconds: 2400),
+                  color: isFollowed
+                      ? context.theme.colorScheme.onSurface
+                      : context.theme.colorScheme.primary,
                 ),
               );
             }
@@ -140,7 +143,7 @@ class _FeedListTileState extends State<FeedListTile> {
                   Icons.add_circle_outline_rounded,
                   size: 28.0,
                   weight: 0.4,
-                  color: context.theme.colorScheme.primary,
+                  color: context.theme.colorScheme.onSurface,
                 ),
                 constraints: const BoxConstraints(),
                 padding: EdgeInsets.zero,

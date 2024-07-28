@@ -25,7 +25,7 @@ abstract class AppPalette {
   static const error = Color.fromARGB(255, 214, 22, 60);
   static const onError = Colors.white;
   static const disabledPrimary = Color.fromARGB(255, 108, 103, 106);
-  static const outline = Color(0xFFABABAB);
+  static const outline = Color.fromARGB(255, 212, 212, 212);
   // Darks
   static const primaryDark = Color.fromARGB(255, 248, 180, 175);
   static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
@@ -49,7 +49,7 @@ abstract class AppPalette {
   static const errorDark = Color.fromARGB(255, 153, 34, 58);
   static const onErrorDark = Colors.white;
   static const disabledPrimaryDark = Color.fromARGB(255, 190, 190, 190);
-  static const outlineDark = Color(0xFF3D3D3D);
+  static const outlineDark = Color.fromARGB(255, 61, 61, 61);
 
   // Extension colors
   static const networkOnlineSnackbarContainer = Color.fromARGB(255, 9, 45, 15);

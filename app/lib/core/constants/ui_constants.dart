@@ -3,6 +3,7 @@ import 'dart:ui';
 abstract class UIConstants {
   static const inputBorderRadius = 8.0;
   static const buttonBorderRadius = 24.0;
+  static const searchInputBorderRadius = 24.0;
   static const contentPadding = 12.0;
   static const elementGap = 16.0;
   static const pagePadding = 18.0;

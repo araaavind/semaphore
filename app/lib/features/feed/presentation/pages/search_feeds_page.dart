@@ -84,37 +84,43 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     _onSearchChanged();
   }
 
+  _searchBorder() => OutlineInputBorder(
+        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(
+          UIConstants.searchInputBorderRadius,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
           if (widget.isOnboarding) const TitleTextSpan(),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: UIConstants.borderWidth,
-                  color: context.theme.colorScheme.outline,
-                ),
-              ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 12.0,
+              right: 12.0,
+              top: 6.0,
+              bottom: 12.0,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  fillColor: context.theme.colorScheme.surface,
-                  hintText: 'Search...',
-                  hintStyle: context.theme.textTheme.bodyMedium,
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: _clearSearch,
-                        )
-                      : null,
-                ),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                border: _searchBorder(),
+                focusedBorder: _searchBorder(),
+                enabledBorder: _searchBorder(),
+                filled: true,
+                fillColor: context.theme.colorScheme.outline.withAlpha(100),
+                hintText: 'Search...',
+                hintStyle: context.theme.textTheme.bodyMedium,
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: _clearSearch,
+                      )
+                    : null,
               ),
             ),
           ),
