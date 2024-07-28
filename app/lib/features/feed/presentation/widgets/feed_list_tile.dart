@@ -100,13 +100,18 @@ class _FeedListTileState extends State<FeedListTile> {
               return SizedBox(
                 height: 28.0,
                 width: 28.0,
-                child: SpinKitHourGlass(
-                  size: 24.0,
-                  duration: const Duration(milliseconds: 2400),
-                  color: isFollowed
-                      ? context.theme.colorScheme.onSurface
-                      : context.theme.colorScheme.primary,
-                ),
+                child: isFollowed
+                    ? SpinKitDualRing(
+                        size: 21.0,
+                        lineWidth: 3.0,
+                        duration: const Duration(milliseconds: 400),
+                        color: context.theme.colorScheme.onSurface,
+                      )
+                    : SpinKitHourGlass(
+                        size: 23.0,
+                        duration: const Duration(milliseconds: 2400),
+                        color: context.theme.colorScheme.primary,
+                      ),
               );
             }
             if (isFollowed) {
