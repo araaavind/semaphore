@@ -2,12 +2,14 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/core/utils/string_casing_extension.dart';
+import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class FeedListTile extends StatefulWidget {
@@ -29,10 +31,12 @@ class FeedListTile extends StatefulWidget {
 
 class _FeedListTileState extends State<FeedListTile> {
   bool isFollowed = false;
+  late final Feed feed;
 
   @override
   void initState() {
     super.initState();
+    feed = widget.feedIsFollowedMap.feed;
     isFollowed = widget.feedIsFollowedMap.isFollowed;
   }
 
@@ -49,13 +53,15 @@ class _FeedListTileState extends State<FeedListTile> {
       ),
       child: ListTile(
         visualDensity: VisualDensity.standard,
-        onTap: () {},
+        onTap: () {
+          context.push('/feed/${feed.id}', extra: feed);
+        },
         contentPadding: const EdgeInsets.symmetric(
           vertical: UIConstants.tileContentPadding,
           horizontal: UIConstants.pagePadding,
         ),
         title: AutoSizeText(
-          widget.feedIsFollowedMap.feed.title.toTitleCase(),
+          feed.title.toTitleCase(),
           style: context.theme.textTheme.bodyLarge!.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -63,10 +69,9 @@ class _FeedListTileState extends State<FeedListTile> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: widget.feedIsFollowedMap.feed.description != null &&
-                widget.feedIsFollowedMap.feed.description!.isNotEmpty
+        subtitle: feed.description != null && feed.description!.isNotEmpty
             ? AutoSizeText(
-                widget.feedIsFollowedMap.feed.description!,
+                feed.description!,
                 style: context.theme.textTheme.bodySmall!.copyWith(
                   fontWeight: FontWeight.w300,
                 ),
@@ -81,7 +86,7 @@ class _FeedListTileState extends State<FeedListTile> {
             if (state.status == FollowFeedStatus.failure) {
               showSnackbar(context, state.message!);
             }
-            if (state.feedId == widget.feedIsFollowedMap.feed.id &&
+            if (state.feedId == feed.id &&
                 (state.status == FollowFeedStatus.followed ||
                     state.status == FollowFeedStatus.unfollowed)) {
               setState(() {
@@ -89,14 +94,14 @@ class _FeedListTileState extends State<FeedListTile> {
               });
               widget._pagingController.itemList![widget._pageIndex] =
                   FeedFollowsMap(
-                feed: widget.feedIsFollowedMap.feed,
+                feed: feed,
                 isFollowed: isFollowed,
               );
             }
           },
           builder: (context, state) {
             if (state.status == FollowFeedStatus.loading &&
-                state.feedId == widget.feedIsFollowedMap.feed.id) {
+                state.feedId == feed.id) {
               return SizedBox(
                 height: 28.0,
                 width: 28.0,
@@ -129,7 +134,7 @@ class _FeedListTileState extends State<FeedListTile> {
                   onPressed: () {
                     context.read<FollowFeedBloc>().add(
                           FollowUnfollowRequested(
-                            widget.feedIsFollowedMap.feed.id,
+                            feed.id,
                             action: FollowUnfollowAction.unfollow,
                           ),
                         );
@@ -155,7 +160,7 @@ class _FeedListTileState extends State<FeedListTile> {
                 onPressed: () {
                   context.read<FollowFeedBloc>().add(
                         FollowUnfollowRequested(
-                          widget.feedIsFollowedMap.feed.id,
+                          feed.id,
                           action: FollowUnfollowAction.follow,
                         ),
                       );
