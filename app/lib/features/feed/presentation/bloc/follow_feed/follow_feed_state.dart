@@ -1,6 +1,6 @@
 part of 'follow_feed_bloc.dart';
 
-enum FollowFeedStatus { initial, loading, success, failure }
+enum FollowFeedStatus { unfollowed, loading, followed, failure }
 
 @immutable
 class FollowFeedState extends Equatable {

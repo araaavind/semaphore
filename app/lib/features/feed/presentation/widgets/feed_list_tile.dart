@@ -81,10 +81,11 @@ class _FeedListTileState extends State<FeedListTile> {
             if (state.status == FollowFeedStatus.failure) {
               showSnackbar(context, state.message!);
             }
-            if (state.status == FollowFeedStatus.success &&
-                state.feedId == widget.feedIsFollowedMap.feed.id) {
+            if (state.feedId == widget.feedIsFollowedMap.feed.id &&
+                (state.status == FollowFeedStatus.followed ||
+                    state.status == FollowFeedStatus.unfollowed)) {
               setState(() {
-                isFollowed = true;
+                isFollowed = !isFollowed;
               });
               widget._pagingController.itemList![widget._pageIndex] =
                   FeedFollowsMap(
@@ -118,7 +119,12 @@ class _FeedListTileState extends State<FeedListTile> {
                     color: context.theme.colorScheme.primary,
                   ),
                   onPressed: () {
-                    // unfollow
+                    context.read<FollowFeedBloc>().add(
+                          FollowUnfollowRequested(
+                            widget.feedIsFollowedMap.feed.id,
+                            action: FollowUnfollowAction.unfollow,
+                          ),
+                        );
                   },
                   constraints: const BoxConstraints(),
                   padding: EdgeInsets.zero,
@@ -140,7 +146,11 @@ class _FeedListTileState extends State<FeedListTile> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   context.read<FollowFeedBloc>().add(
-                      FollowFeedRequested(widget.feedIsFollowedMap.feed.id));
+                        FollowUnfollowRequested(
+                          widget.feedIsFollowedMap.feed.id,
+                          action: FollowUnfollowAction.follow,
+                        ),
+                      );
                 },
               ),
             );
