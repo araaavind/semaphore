@@ -1,7 +1,7 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/debouncer.dart';
-import 'package:app/features/feed/domain/entities/feed.dart';
+import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +20,8 @@ class SearchFeedsPage extends StatefulWidget {
 }
 
 class _SearchFeedsPageState extends State<SearchFeedsPage> {
-  final PagingController<int, Feed> _pagingController = PagingController(
+  final PagingController<int, FeedFollowsMap> _pagingController =
+      PagingController(
     firstPageKey: 1,
     // invisibleItemsThreshold will determine how many items should be loaded
     // after the first page is loaded (if the first page does not fill the
@@ -128,13 +129,21 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                   _refreshController.refreshCompleted();
                 }
                 if (state.status == SearchFeedStatus.success) {
+                  var feedFollowsList = <FeedFollowsMap>[];
+                  for (var i = 0; i < state.feedList.feeds.length; i++) {
+                    feedFollowsList.add(
+                      FeedFollowsMap(
+                        feed: state.feedList.feeds[i],
+                        isFollowed: state.followsList[i],
+                      ),
+                    );
+                  }
                   if (state.feedList.metadata.currentPage ==
                       state.feedList.metadata.lastPage) {
-                    _pagingController.appendLastPage(state.feedList.feeds);
+                    _pagingController.appendLastPage(feedFollowsList);
                   } else {
                     final nextPage = state.feedList.metadata.currentPage + 1;
-                    _pagingController.appendPage(
-                        state.feedList.feeds, nextPage);
+                    _pagingController.appendPage(feedFollowsList, nextPage);
                   }
                 } else if (state.status == SearchFeedStatus.failure) {
                   _pagingController.error = state.message;
