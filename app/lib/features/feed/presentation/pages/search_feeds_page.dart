@@ -44,16 +44,12 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     super.initState();
     _pagingController.addPageRequestListener(
       (pageKey) {
-        var nextPageSize = ServerConstants.defaultPaginationPageSize;
-        if (pageKey != _pagingController.firstPageKey) {
-          nextPageSize = ServerConstants.defaultPaginationNextPageSize;
-        }
         context.read<SearchFeedBloc>().add(
               FeedSearchRequested(
                 searchKey: 'title',
                 searchValue: _searchQuery,
                 page: pageKey,
-                pageSize: nextPageSize,
+                pageSize: ServerConstants.defaultPaginationPageSize,
               ),
             );
       },
