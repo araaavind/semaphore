@@ -119,7 +119,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   @override
   Future<List<bool>> checkUserFollowsFeeds(List<int> feedIds) async {
     try {
-      Map<String, dynamic>? queryParams = {'ids': feedIds};
+      Map<String, String> queryParams = {'ids': feedIds.join(',')};
       final response = await semaphoreClient.dio.get(
         '/me/feeds/contains',
         queryParameters: queryParams,
