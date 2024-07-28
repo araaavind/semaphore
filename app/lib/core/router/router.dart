@@ -5,6 +5,8 @@ import 'package:app/core/router/transitions/fade_transition_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
+import 'package:app/features/feed/domain/entities/feed.dart';
+import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/wall/presentation/wall_page.dart';
@@ -87,6 +89,14 @@ GoRouter router = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: RouteConstants.feedViewPagePath,
+      name: RouteConstants.feedViewPageName,
+      builder: (context, state) {
+        final feed = state.extra as Feed;
+        return FeedViewPage(feed: feed);
+      },
     ),
   ],
 );
