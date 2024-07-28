@@ -2,6 +2,7 @@ import 'package:app/core/constants/server_constants.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/core/utils/stream_tranformers.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
+import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -13,10 +14,13 @@ part 'search_feed_state.dart';
 
 class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
   final ListFeeds _listFeeds;
+  final CheckUserFollowsFeeds _checkUserFollowsFeeds;
 
   SearchFeedBloc({
     required ListFeeds listFeeds,
+    required CheckUserFollowsFeeds checkUserFollowsFeeds,
   })  : _listFeeds = listFeeds,
+        _checkUserFollowsFeeds = checkUserFollowsFeeds,
         super(const SearchFeedState()) {
     on<FeedSearchRequested>(
       _onFeedListFeeds,
@@ -29,7 +33,7 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
     Emitter<SearchFeedState> emit,
   ) async {
     emit(state.copyWith(status: SearchFeedStatus.loading));
-    final res = await _listFeeds(
+    final feedsRes = await _listFeeds(
       PaginationParams(
         searchKey: event.searchKey,
         searchValue: event.searchValue,
@@ -39,17 +43,28 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
       ),
     );
 
-    switch (res) {
+    switch (feedsRes) {
       case Left(value: final l):
         emit(state.copyWith(
           status: SearchFeedStatus.failure,
           message: l.message,
         ));
-      case Right(value: final r):
-        emit(state.copyWith(
-          status: SearchFeedStatus.success,
-          feedList: r,
-        ));
+      case Right(value: final feedList):
+        final feedIds = feedList.feeds.map((feed) => feed.id).toList();
+        final followsRes = await _checkUserFollowsFeeds(feedIds);
+        switch (followsRes) {
+          case Left(value: final l):
+            emit(state.copyWith(
+              status: SearchFeedStatus.failure,
+              message: l.message,
+            ));
+          case Right(value: final followsList):
+            emit(state.copyWith(
+              status: SearchFeedStatus.success,
+              feedList: feedList,
+              followsList: followsList,
+            ));
+        }
     }
   }
 }
