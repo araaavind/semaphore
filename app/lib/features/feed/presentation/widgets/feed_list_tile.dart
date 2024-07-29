@@ -54,8 +54,14 @@ class _FeedListTileState extends State<FeedListTile> {
       child: ListTile(
         visualDensity: VisualDensity.standard,
         onTap: () {
-          context.push('/feed/${feed.id}', extra: feed);
+          final Map<String, Object> extra = {
+            'feed': feed,
+            'followFeedBlocValue': BlocProvider.of<FollowFeedBloc>(context),
+            'isFollowed': isFollowed,
+          };
+          context.push('/feed/${feed.id}', extra: extra);
         },
+        splashColor: Colors.transparent,
         contentPadding: const EdgeInsets.symmetric(
           vertical: UIConstants.tileContentPadding,
           horizontal: UIConstants.pagePadding,
