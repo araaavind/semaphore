@@ -4,6 +4,9 @@ import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';
+import 'package:app/features/feed/presentation/widgets/followers_count.dart';
+import 'package:app/init_dependencies.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,7 +68,12 @@ class _FeedViewPageState extends State<FeedViewPage> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 12.0),
+                  BlocProvider(
+                    create: (context) => serviceLocator<ListFollowersBloc>(),
+                    child: FollowersCount(feed: feed),
+                  ),
+                  const SizedBox(height: 12.0),
                   BlocConsumer<FollowFeedBloc, FollowFeedState>(
                     listener: (context, state) {
                       if (state.status == FollowFeedStatus.failure) {

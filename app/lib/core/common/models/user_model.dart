@@ -5,8 +5,8 @@ import 'package:app/core/common/entities/user.dart';
 class UserModel extends User {
   const UserModel({
     required super.id,
-    required super.email,
     required super.username,
+    required super.email,
     super.fullName,
     super.lastLoginAt,
   });
@@ -40,7 +40,7 @@ class UserModel extends User {
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] as int,
-      email: map['email'] as String,
+      email: map['email'] ?? '',
       username: map['username'] as String,
       fullName: map['full_name'] ?? '',
       lastLoginAt: map['last_login_at'] != null
