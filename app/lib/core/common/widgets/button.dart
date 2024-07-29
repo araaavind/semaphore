@@ -35,6 +35,9 @@ class Button extends StatelessWidget {
             : context.theme.disabledColor,
         borderRadius: BorderRadius.circular(UIConstants.buttonBorderRadius),
       ),
+      height: fixedSize?.height,
+      width: fixedSize?.width,
+      constraints: const BoxConstraints(),
       child: ElevatedButton.icon(
         iconAlignment: IconAlignment.end,
         style: ElevatedButton.styleFrom(
