@@ -62,7 +62,31 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"feeds": feeds, "metadata": metadata}, nil)
+	feedIDs := []int64{}
+	for _, f := range feeds {
+		feedIDs = append(feedIDs, f.ID)
+	}
+
+	followCountMap, err := app.models.FeedFollows.CountFollowersForFeeds(feedIDs)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	type feedResponse struct {
+		FollowersCount int `json:"followers_count"`
+		*data.Feed
+	}
+
+	result := []*feedResponse{}
+	for _, feed := range feeds {
+		result = append(result, &feedResponse{
+			FollowersCount: followCountMap[feed.ID],
+			Feed:           feed,
+		})
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"feeds": result, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

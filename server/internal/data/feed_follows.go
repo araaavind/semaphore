@@ -127,9 +127,47 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 	return feeds, metadata, nil
 }
 
-func (m FeedFollowModel) CheckFeedsFollowedByUser(userID int64, feedIDs []int64) (map[int64]bool, error) {
+func (m FeedFollowModel) CountFollowersForFeeds(feedIDs []int64) (map[int64]int, error) {
 	query := `
-		SELECT feeds.id AS feed_id,
+		SELECT feeds.id, COALESCE(count(feeds.id), 0)
+		FROM feeds
+		LEFT JOIN feed_follows ON feed_follows.feed_id = feeds.id
+		WHERE feeds.id = ANY($1)
+		GROUP BY feeds.id`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, feedIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[int64]int)
+	for rows.Next() {
+		var feedID int64
+		var followerCount int
+		err := rows.Scan(
+			&feedID,
+			&followerCount,
+		)
+		if err != nil {
+			return nil, err
+		}
+		result[feedID] = followerCount
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (m FeedFollowModel) CheckIfUserFollowsFeeds(userID int64, feedIDs []int64) (map[int64]bool, error) {
+	query := `
+		SELECT feeds.id,
 		EXISTS (
 			SELECT 1
 			FROM feed_follows
@@ -142,7 +180,6 @@ func (m FeedFollowModel) CheckFeedsFollowedByUser(userID int64, feedIDs []int64)
 	defer cancel()
 
 	rows, err := m.DB.QueryContext(ctx, query, userID, feedIDs)
-
 	if err != nil {
 		return nil, err
 	}
