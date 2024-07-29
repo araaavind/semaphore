@@ -13,4 +13,6 @@ class RouteConstants {
   static const signupPageName = 'signup';
   static const feedViewPagePath = '/feed/:id';
   static const feedViewPageName = 'feed';
+  static const profilePagePath = '/profile';
+  static const profilePageName = 'profile';
 }

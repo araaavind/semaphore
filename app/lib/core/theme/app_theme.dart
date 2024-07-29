@@ -39,6 +39,7 @@ class AppTheme {
       backgroundColor: AppColorScheme.lightColorScheme.surface,
       elevation: 6.0,
       selectedItemColor: AppColorScheme.lightColorScheme.primary,
+      selectedIconTheme: const IconThemeData(size: 28.0),
       unselectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 12,
@@ -88,6 +89,7 @@ class AppTheme {
         fontSize: 12,
       ),
       selectedItemColor: AppColorScheme.darkColorScheme.primary,
+      selectedIconTheme: const IconThemeData(size: 28.0),
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 12,

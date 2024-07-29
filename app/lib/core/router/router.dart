@@ -10,6 +10,7 @@ import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/home/presentation/home_page.dart';
+import 'package:app/features/profile/presentation/profile_page.dart';
 import 'package:app/features/wall/presentation/wall_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,6 +63,14 @@ GoRouter router = GoRouter(
               child: SearchFeedsPage(isOnboarding: isOnboarding),
             );
           },
+        ),
+        GoRoute(
+          path: RouteConstants.profilePagePath,
+          name: RouteConstants.profilePageName,
+          pageBuilder: (context, state) => FadeTransitionPage(
+            key: const ValueKey('profile'),
+            child: const ProfilePage(),
+          ),
         ),
       ],
     ),
