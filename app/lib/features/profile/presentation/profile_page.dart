@@ -15,12 +15,20 @@ class ProfilePage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(UIConstants.pagePadding),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hi ${user.fullName}',
-              style: context.theme.textTheme.displayMedium,
-            )
+              user.fullName ?? 'User',
+              style: context.theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              '@${user.username}',
+              style: context.theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w300,
+              ),
+            ),
           ],
         ),
       ),
