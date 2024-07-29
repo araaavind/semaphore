@@ -26,6 +26,9 @@ class HomePage extends StatelessWidget {
       case 1:
         context.goNamed(RouteConstants.searchFeedsPageName);
         break;
+      case 2:
+        context.goNamed(RouteConstants.profilePageName);
+        break;
     }
   }
 
@@ -36,6 +39,9 @@ class HomePage extends StatelessWidget {
     }
     if (routeName == RouteConstants.searchFeedsPageName) {
       return 1;
+    }
+    if (routeName == RouteConstants.profilePageName) {
+      return 2;
     }
     return 0;
   }
@@ -88,38 +94,40 @@ class HomePage extends StatelessWidget {
               ),
             ),
             actions: [
-              IconButton(
-                onPressed: () {
-                  final user =
-                      (context.read<AppUserCubit>().state as AppUserLoggedIn)
-                          .user;
-                  context.read<AuthBloc>().add(
-                        AuthLogoutRequested(
-                          user: user,
-                          scope: LogoutScope.local,
-                        ),
-                      );
-                },
-                icon: BlocConsumer<AuthBloc, AuthState>(
-                  listener: (context, state) {
-                    if (state is AuthFailure) {
-                      showSnackbar(context, state.message);
-                    }
+              if (GoRouterState.of(context).topRoute!.name! ==
+                  RouteConstants.profilePageName)
+                IconButton(
+                  onPressed: () {
+                    final user =
+                        (context.read<AppUserCubit>().state as AppUserLoggedIn)
+                            .user;
+                    context.read<AuthBloc>().add(
+                          AuthLogoutRequested(
+                            user: user,
+                            scope: LogoutScope.local,
+                          ),
+                        );
                   },
-                  builder: (context, state) {
-                    if (state is AuthLoading) {
-                      return const SizedBox(
-                        height: 14,
-                        width: 14,
-                        child: Loader(
-                          strokeWidth: 2,
-                        ),
-                      );
-                    }
-                    return const Icon(Icons.logout);
-                  },
+                  icon: BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthFailure) {
+                        showSnackbar(context, state.message);
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is AuthLoading) {
+                        return const SizedBox(
+                          height: 14,
+                          width: 14,
+                          child: Loader(
+                            strokeWidth: 2,
+                          ),
+                        );
+                      }
+                      return const Icon(Icons.logout);
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
           body: child,
@@ -138,7 +146,7 @@ class HomePage extends StatelessWidget {
             child: BottomNavigationBar(
               currentIndex: _calculateSelectedIndex(context),
               onTap: (value) => _onItemTapped(value, context),
-              iconSize: 30.0,
+              iconSize: 26.0,
               items: const [
                 BottomNavigationBarItem(
                   label: 'Home',
@@ -148,6 +156,10 @@ class HomePage extends StatelessWidget {
                 BottomNavigationBarItem(
                   label: 'Search',
                   icon: Icon(Icons.search),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Profile',
+                  icon: Icon(Icons.person_outlined),
                 ),
               ],
             ),
