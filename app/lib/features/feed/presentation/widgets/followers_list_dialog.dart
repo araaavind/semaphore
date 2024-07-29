@@ -134,7 +134,7 @@ class _FollowersListDialogState extends State<FollowersListDialog> {
                 firstPageProgressIndicatorBuilder: (context) => const Stack(
                   children: [
                     Positioned(
-                      top: -55,
+                      top: -50,
                       bottom: 0,
                       left: 0,
                       right: 0,
