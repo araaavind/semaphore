@@ -83,8 +83,8 @@ class HomePage extends StatelessWidget {
             title: Text(
               'smphr',
               style: context.theme.textTheme.headlineMedium!.copyWith(
-                fontWeight: FontWeight.w900,
-                color: context.theme.colorScheme.primary,
+                fontWeight: FontWeight.w700,
+                color: context.theme.colorScheme.secondary,
               ),
             ),
             actions: [
