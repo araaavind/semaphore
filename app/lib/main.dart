@@ -5,6 +5,7 @@ import 'package:app/core/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -70,16 +71,23 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
       light: AppTheme.light,
       dark: AppTheme.dark,
       initial: AdaptiveThemeMode.system,
-      builder: (theme, darkTheme) => BlocListener<AppUserCubit, AppUserState>(
-        listener: (context, state) => router.refresh(),
-        child: MaterialApp.router(
-          routerConfig: router,
-          title: 'Semaphore',
-          theme: theme,
-          darkTheme: theme,
-          debugShowCheckedModeBanner: false,
-        ),
-      ),
+      builder: (theme, darkTheme) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            systemNavigationBarColor: theme.colorScheme.surface,
+          ),
+          child: BlocListener<AppUserCubit, AppUserState>(
+            listener: (context, state) => router.refresh(),
+            child: MaterialApp.router(
+              routerConfig: router,
+              title: 'Semaphore',
+              theme: theme,
+              darkTheme: darkTheme,
+              debugShowCheckedModeBanner: false,
+            ),
+          ),
+        );
+      },
     );
   }
 }
