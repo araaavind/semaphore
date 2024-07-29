@@ -1,7 +1,7 @@
 import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
-import 'package:app/features/auth/data/models/user_model.dart';
+import 'package:app/core/common/models/user_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
