@@ -106,9 +106,9 @@ class _FeedViewPageState extends State<FeedViewPage> {
                   const SizedBox(height: 16.0),
                   if (feed.pubUpdated != null)
                     Text(
-                      'Last published at ${DateFormat('d MMM, yyyy').format(feed.pubUpdated!)}',
+                      'Last published on ${DateFormat('d MMM, yyyy').format(feed.pubUpdated!)}',
                       style: context.theme.textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w100,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
                 ],
