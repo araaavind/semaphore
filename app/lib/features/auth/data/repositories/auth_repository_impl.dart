@@ -2,7 +2,7 @@ import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:app/features/auth/data/models/user_model.dart';
+import 'package:app/core/common/models/user_model.dart';
 import 'package:app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
