@@ -34,7 +34,9 @@ class FollowersCount extends StatelessWidget {
           if (state.status == ListFollowersStatus.success ||
               state.status == ListFollowersStatus.initial ||
               state.status == ListFollowersStatus.loading) {
-            final count = state.followersList.metadata.totalRecords;
+            final count = state.status == ListFollowersStatus.success
+                ? state.followersList.metadata.totalRecords
+                : feed.followersCount ?? 0;
             return Text(
               '${count > 0 ? '$count ' : ''}followers',
               style: context.theme.textTheme.titleMedium?.copyWith(
