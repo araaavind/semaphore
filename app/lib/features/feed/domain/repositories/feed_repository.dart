@@ -1,5 +1,6 @@
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
+import 'package:app/features/feed/domain/entities/followers_list.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class FeedRepository {
@@ -24,4 +25,13 @@ abstract interface class FeedRepository {
   });
 
   Future<Either<Failure, List<bool>>> checkUserFollowsFeeds(List<int> feedIds);
+
+  Future<Either<Failure, FollowersList>> listFollowersOfFeed({
+    required int feedId,
+    String? searchKey,
+    String? searchValue,
+    int page,
+    int pageSize,
+    String? sortKey,
+  });
 }
