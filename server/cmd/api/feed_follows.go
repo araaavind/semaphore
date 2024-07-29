@@ -95,7 +95,7 @@ func (app *application) checkIfUserFollowsFeeds(w http.ResponseWriter, r *http.R
 
 	user := app.contextGetSession(r).User
 
-	result, err := app.models.FeedFollows.CheckFeedsFollowedByUser(user.ID, []int64(feedIDs))
+	result, err := app.models.FeedFollows.CheckIfUserFollowsFeeds(user.ID, []int64(feedIDs))
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
