@@ -89,6 +89,7 @@ class _FeedViewPageState extends State<FeedViewPage> {
                       return Button(
                         text: buttonText,
                         fixedSize: const Size.fromHeight(40.0),
+                        filled: !isFollowed,
                         onPressed: () {
                           context.read<FollowFeedBloc>().add(
                                 FollowUnfollowRequested(

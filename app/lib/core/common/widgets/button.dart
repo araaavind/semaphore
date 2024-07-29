@@ -13,6 +13,7 @@ class Button extends StatelessWidget {
   final Size? fixedSize;
   final bool isLoading;
   final Widget? suffixIcon;
+  final bool filled;
 
   const Button({
     super.key,
@@ -24,15 +25,26 @@ class Button extends StatelessWidget {
     this.onPressed,
     this.isLoading = false,
     this.suffixIcon,
+    this.filled = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: onPressed != null
-            ? (backgroundColor ?? context.theme.colorScheme.primary)
-            : context.theme.disabledColor,
+        color: filled
+            ? onPressed != null
+                ? (backgroundColor ?? context.theme.colorScheme.primary)
+                : context.theme.disabledColor
+            : null,
+        border: filled
+            ? null
+            : Border.all(
+                width: 2,
+                color: onPressed != null
+                    ? (backgroundColor ?? context.theme.colorScheme.primary)
+                    : context.theme.disabledColor,
+              ),
         borderRadius: BorderRadius.circular(UIConstants.buttonBorderRadius),
       ),
       height: fixedSize?.height,
@@ -49,7 +61,10 @@ class Button extends StatelessWidget {
           text,
           style: textStyle ??
               context.theme.textTheme.labelLarge?.copyWith(
-                color: textColor ?? context.theme.colorScheme.onPrimary,
+                color: textColor ??
+                    (filled
+                        ? context.theme.colorScheme.onPrimary
+                        : context.theme.colorScheme.primary),
               ),
         ),
         icon: isLoading
@@ -59,7 +74,9 @@ class Button extends StatelessWidget {
                   height: 14,
                   width: 14,
                   child: Loader(
-                    color: context.theme.colorScheme.onPrimary,
+                    color: filled
+                        ? context.theme.colorScheme.onPrimary
+                        : context.theme.colorScheme.primary,
                     strokeWidth: 2,
                   ),
                 ),
