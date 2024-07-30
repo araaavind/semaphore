@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 abstract class UIConstants {
   static const inputBorderRadius = 8.0;
@@ -7,6 +7,10 @@ abstract class UIConstants {
   static const contentPadding = 12.0;
   static const elementGap = 16.0;
   static const pagePadding = 18.0;
+  static const defaultAppBarTextButtonPadding = EdgeInsets.only(
+    top: 4.0,
+    right: 4.0,
+  );
   static const tileContentPadding = 4.0;
   static const tileHorizontalTitleGap = 12.0;
   static const defaultButtonFixedSize = Size(160, 50);
