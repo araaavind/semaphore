@@ -138,7 +138,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 
 	parsedFeed, err := app.parser.ParseURL(input.FeedLink)
 	if err != nil {
-		v.AddError("feed_link", err.Error())
+		v.AddError("feed_link", "This URL does not point to a valid feed")
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
@@ -195,7 +195,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 	err = app.models.FeedFollows.Insert(feedFollow)
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateFeedFollow) {
-			v.AddError("feed_link", "You are already following the feed")
+			v.AddError("feed_link", "You are already following this feed")
 			app.failedValidationResponse(w, r, v.Errors)
 			return
 		} else {
