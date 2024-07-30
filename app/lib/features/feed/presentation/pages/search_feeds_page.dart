@@ -94,6 +94,40 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'smphr',
+          style: context.theme.textTheme.headlineMedium!.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.theme.colorScheme.secondary,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: UIConstants.defaultAppBarTextButtonPadding,
+            child: TextButton(
+              onPressed: () {},
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.add,
+                    size: 26.0,
+                    color: context.theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 3.0),
+                  Text(
+                    'Add feed',
+                    style: context.theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           if (widget.isOnboarding) const TitleTextSpan(),
