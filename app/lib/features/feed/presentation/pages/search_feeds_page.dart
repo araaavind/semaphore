@@ -107,8 +107,11 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           Padding(
             padding: UIConstants.defaultAppBarTextButtonPadding,
             child: TextButton(
-              onPressed: () {
-                context.pushNamed('add-feed');
+              onPressed: () async {
+                final isAdded = await context.pushNamed('add-feed');
+                if ((isAdded as bool) == true) {
+                  _pagingController.refresh();
+                }
               },
               style: const ButtonStyle(
                 splashFactory: NoSplash.splashFactory,

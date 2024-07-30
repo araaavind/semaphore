@@ -28,11 +28,11 @@ class TextConstants {
   static const String feedFollowersFetchErrorTitle = 'Failed to load followers';
   static const String feedListEmptyMessageTitle = 'Nothing to see here';
   static const String feedListEmptyMessageMessage =
-      'Come back when there are more feeds or add one yourself!';
+      'Cannot find the feeds that you are looking for?\nAdd them yourself!';
 
   static const String feedUrlBlankErrorMessage = 'Feed url should not be blank';
   static const String feedUrlNotUrlErrorMessage =
       'Given text is not a valid url';
   static const String feedUrlInvalidErrorMessage =
-      'Given url does not point to a valid feed';
+      'Given url does not point to any valid feed';
 }

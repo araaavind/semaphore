@@ -13,6 +13,7 @@ import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
+import 'package:app/features/feed/domain/usecases/add_follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart';
 import 'package:app/features/feed/domain/usecases/follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
@@ -144,6 +145,11 @@ void _initFeed() {
     ),
   );
   serviceLocator.registerFactory(
+    () => AddFollowFeed(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
     () => FollowFeed(
       serviceLocator(),
     ),
@@ -169,6 +175,11 @@ void _initFeed() {
     () => FollowFeedBloc(
       followFeed: serviceLocator(),
       unfollowFeed: serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => AddFollowFeedBloc(
+      addFollowFeed: serviceLocator(),
     ),
   );
   serviceLocator.registerFactory(

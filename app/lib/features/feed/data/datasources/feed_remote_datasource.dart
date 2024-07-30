@@ -14,6 +14,8 @@ abstract interface class FeedRemoteDatasource {
     String? sortKey,
   });
 
+  Future<void> addAndFollowFeed(String feedUrl);
+
   Future<void> followFeed(int feedId);
 
   Future<void> unfollowFeed(int feedId);
@@ -65,6 +67,33 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       );
       return FeedListModel.fromMap(response.data);
     } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> addAndFollowFeed(String feedUrl) async {
+    try {
+      await semaphoreClient.dio.post(
+        '/feeds',
+        data: {
+          'feed_link': feedUrl,
+        },
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {
       throw ServerException(e.message);
