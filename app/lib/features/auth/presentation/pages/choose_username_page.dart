@@ -1,7 +1,5 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/constants/text_constants.dart';
-import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/debouncer.dart';
 import 'package:app/core/utils/show_snackbar.dart';
@@ -65,7 +63,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TitleTextSpan(),
+                  const _TitleTextSpan(),
                   const SizedBox(height: 20),
                   AuthField(
                     hintText: 'Username',
@@ -131,6 +129,10 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                           }
                         }),
                   ),
+                  SizedBox(
+                    height:
+                        Scaffold.of(context).appBarMaxHeight ?? kToolbarHeight,
+                  )
                 ],
               ),
             );
@@ -167,10 +169,8 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
   }
 }
 
-class TitleTextSpan extends StatelessWidget {
-  const TitleTextSpan({
-    super.key,
-  });
+class _TitleTextSpan extends StatelessWidget {
+  const _TitleTextSpan();
 
   @override
   Widget build(BuildContext context) {
