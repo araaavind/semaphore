@@ -1,7 +1,7 @@
 import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-class AuthField<T> extends StatefulWidget {
+class AppTextField<T> extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool isPassword;
@@ -13,7 +13,7 @@ class AuthField<T> extends StatefulWidget {
   final int? errorMaxLines;
   final Color? validBorderColor;
 
-  const AuthField({
+  const AppTextField({
     super.key,
     required this.controller,
     required this.hintText,
@@ -28,10 +28,10 @@ class AuthField<T> extends StatefulWidget {
   });
 
   @override
-  State<AuthField<T>> createState() => _AuthFieldState<T>();
+  State<AppTextField<T>> createState() => _AppTextFieldState<T>();
 }
 
-class _AuthFieldState<T> extends State<AuthField<T>> {
+class _AppTextFieldState<T> extends State<AppTextField<T>> {
   bool _passwordVisible = false;
 
   void _togglePasswordVisibility() {

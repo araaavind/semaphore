@@ -6,7 +6,7 @@ import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/validate_fields.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:app/features/auth/presentation/widgets/auth_field.dart';
+import 'package:app/core/common/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 20),
-                        AuthField(
+                        AppTextField(
                           hintText: 'Username or Email',
                           controller: usernameOrEmailController,
                           onChanged: (_) => setState(() {
@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
                         const SizedBox(height: 10),
-                        AuthField(
+                        AppTextField(
                           hintText: 'Password',
                           controller: passwordController,
                           isPassword: true,
