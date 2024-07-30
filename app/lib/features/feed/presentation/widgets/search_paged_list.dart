@@ -1,4 +1,3 @@
-import 'package:app/core/common/widgets/refresher.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';

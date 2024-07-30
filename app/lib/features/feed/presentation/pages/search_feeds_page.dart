@@ -5,6 +5,7 @@ import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -106,7 +107,12 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           Padding(
             padding: UIConstants.defaultAppBarTextButtonPadding,
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed('add-feed');
+              },
+              style: const ButtonStyle(
+                splashFactory: NoSplash.splashFactory,
+              ),
               child: Row(
                 children: [
                   Icon(
