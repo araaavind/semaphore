@@ -7,6 +7,7 @@ import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/home/presentation/home_page.dart';
@@ -115,6 +116,11 @@ GoRouter router = GoRouter(
           isFollowed: isFollowed,
         );
       },
+    ),
+    GoRoute(
+      path: RouteConstants.addFeedPagePath,
+      name: RouteConstants.addFeedPageName,
+      builder: (context, state) => const AddFeedPage(),
     ),
   ],
 );
