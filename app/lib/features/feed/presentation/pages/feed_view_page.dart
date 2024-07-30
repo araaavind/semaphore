@@ -69,6 +69,16 @@ class _FeedViewPageState extends State<FeedViewPage> {
                     ),
                   ),
                   const SizedBox(height: 12.0),
+                  SelectableText(
+                    widget.feed.feedLink,
+                    style: context.theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w400,
+                      color: context.theme.colorScheme.tertiary,
+                    ),
+                    enableInteractiveSelection: true,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 12.0),
                   BlocProvider(
                     create: (context) => serviceLocator<ListFollowersBloc>(),
                     child: FollowersCount(feed: feed),
