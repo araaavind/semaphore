@@ -195,7 +195,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 	err = app.models.FeedFollows.Insert(feedFollow)
 	if err != nil {
 		if errors.Is(err, data.ErrDuplicateFeedFollow) {
-			v.AddError("feed_url", "You are already following the feed")
+			v.AddError("feed_link", "You are already following the feed")
 			app.failedValidationResponse(w, r, v.Errors)
 			return
 		} else {
