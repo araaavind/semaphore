@@ -1,7 +1,12 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
+import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class AddFeedPage extends StatefulWidget {
   const AddFeedPage({super.key});
@@ -22,47 +27,76 @@ class _AddFeedPageState extends State<AddFeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Builder(builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(UIConstants.pagePadding),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _TitleTextSpan(),
-                const SizedBox(height: 20),
-                AppTextField(
-                  hintText: 'Feed url',
-                  controller: feedUrl,
-                  errorMaxLines: 2,
-                  validator: _feedUrlValidator,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: Button(
-                    text: 'Add feed',
-                    fixedSize: const Size(120, 50),
-                    onPressed: () {
-                      if (formKey.currentState!.validate()) {
-                        // add and follow feed
-                      }
-                    },
+    return BlocProvider(
+      create: (context) => serviceLocator<AddFollowFeedBloc>(),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Builder(builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.all(UIConstants.pagePadding),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const _TitleTextSpan(),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    hintText: 'Feed url',
+                    controller: feedUrl,
+                    errorMaxLines: 2,
+                    validator: _feedUrlValidator,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
-                ),
-                SizedBox(
-                  height:
-                      Scaffold.of(context).appBarMaxHeight ?? kToolbarHeight,
-                )
-              ],
+                  const SizedBox(height: 20),
+                  Center(
+                    child: BlocConsumer<AddFollowFeedBloc, AddFollowFeedState>(
+                      listener: (context, state) {
+                        if (state.status == FollowFeedStatus.failure) {
+                          if (state.fieldErrors != null &&
+                              state.fieldErrors!['feed_link'] != null) {
+                            showSnackbar(
+                              context,
+                              state.fieldErrors!['feed_link']!,
+                            );
+                          } else {
+                            showSnackbar(context, state.message!);
+                          }
+                        }
+                        if (state.status == FollowFeedStatus.followed) {
+                          context.pop(true);
+                        }
+                      },
+                      builder: (context, state) {
+                        return Button(
+                          text: 'Add feed',
+                          fixedSize: const Size(140, 50),
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              context.read<AddFollowFeedBloc>().add(
+                                    AddFollowRequested(
+                                      feedUrl.text.trim(),
+                                    ),
+                                  );
+                            }
+                          },
+                          isLoading: state.status == FollowFeedStatus.loading,
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height:
+                        Scaffold.of(context).appBarMaxHeight ?? kToolbarHeight,
+                  )
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          );
+        }),
+      ),
     );
   }
 

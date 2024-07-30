@@ -1,3 +1,4 @@
+import 'package:app/features/feed/domain/usecases/add_follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/unfollow_feed.dart';
 import 'package:equatable/equatable.dart';
@@ -63,6 +64,39 @@ class FollowFeedBloc extends Bloc<FollowFeedEvent, FollowFeedState> {
             feedId: event.feedId,
           ));
       }
+    }
+  }
+}
+
+class AddFollowFeedBloc extends Bloc<FollowFeedEvent, AddFollowFeedState> {
+  final AddFollowFeed _addFollowFeed;
+
+  AddFollowFeedBloc({
+    required AddFollowFeed addFollowFeed,
+  })  : _addFollowFeed = addFollowFeed,
+        super(const AddFollowFeedState(status: FollowFeedStatus.initial)) {
+    on<AddFollowRequested>(_onAddFollowRequested);
+  }
+
+  void _onAddFollowRequested(
+    AddFollowRequested event,
+    Emitter<AddFollowFeedState> emit,
+  ) async {
+    emit(state.copyWith(
+      status: FollowFeedStatus.loading,
+    ));
+    final res = await _addFollowFeed(event.feedUrl);
+    switch (res) {
+      case Left(value: final l):
+        emit(state.copyWith(
+          status: FollowFeedStatus.failure,
+          message: l.message,
+          fieldErrors: l.fieldErrors,
+        ));
+      case Right():
+        emit(state.copyWith(
+          status: FollowFeedStatus.followed,
+        ));
     }
   }
 }
