@@ -30,7 +30,7 @@ class FollowFeedBloc extends Bloc<FollowFeedEvent, FollowFeedState> {
         status: FollowFeedStatus.loading,
         feedId: event.feedId,
       ));
-      final res = await _followFeed(FollowFeedParams(event.feedId));
+      final res = await _followFeed(event.feedId);
       switch (res) {
         case Left(value: final l):
           emit(state.copyWith(
@@ -49,7 +49,7 @@ class FollowFeedBloc extends Bloc<FollowFeedEvent, FollowFeedState> {
         status: FollowFeedStatus.loading,
         feedId: event.feedId,
       ));
-      final res = await _unfollowFeed(UnfollowFeedParams(event.feedId));
+      final res = await _unfollowFeed(event.feedId);
       switch (res) {
         case Left(value: final l):
           emit(state.copyWith(
