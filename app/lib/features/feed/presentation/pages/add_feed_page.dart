@@ -65,6 +65,10 @@ class _AddFeedPageState extends State<AddFeedPage> {
                           }
                         }
                         if (state.status == FollowFeedStatus.followed) {
+                          showSnackbar(
+                            context,
+                            'You are following the feed now!',
+                          );
                           context.pop(true);
                         }
                       },
