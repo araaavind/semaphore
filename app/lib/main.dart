@@ -75,6 +75,11 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
             systemNavigationBarColor: theme.colorScheme.surface,
+            systemNavigationBarContrastEnforced: true,
+            systemNavigationBarIconBrightness:
+                theme.brightness == Brightness.light
+                    ? Brightness.dark
+                    : Brightness.light,
           ),
           child: BlocListener<AppUserCubit, AppUserState>(
             listener: (context, state) => router.refresh(),
