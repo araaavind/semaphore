@@ -9,6 +9,7 @@ require (
 	github.com/justinas/alice v1.2.0
 	github.com/mmcdole/gofeed v1.3.0
 	golang.org/x/crypto v0.24.0
+	golang.org/x/time v0.5.0
 )
 
 require (

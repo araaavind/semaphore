@@ -66,6 +66,6 @@ func (app *application) routes() http.Handler {
 
 	router.Handler(http.MethodPost, "/v1/feeds", activated.ThenFunc(app.requirePermission("feeds:write", app.addAndFollowFeed)))
 
-	standard := alice.New(app.recoverPanic, app.authenticate)
+	standard := alice.New(app.recoverPanic, app.rateLimit, app.authenticate)
 	return standard.Then(router)
 }
