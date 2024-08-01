@@ -2,14 +2,17 @@ package main
 
 import (
 	"errors"
+	"expvar"
 	"fmt"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
+	"github.com/aravindmathradan/semaphore/internal/metrics"
 	"github.com/aravindmathradan/semaphore/internal/validator"
 	"golang.org/x/time/rate"
 )
@@ -80,6 +83,34 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 			mu.Unlock()
 		}
 		next.ServeHTTP(w, r)
+	})
+}
+
+func (app *application) metrics(next http.Handler) http.Handler {
+	var (
+		totalRequestsReceived           = expvar.NewInt("total_requests_received")
+		totalResponseSent               = expvar.NewInt("total_response_sent")
+		totalInFlightRequests           = expvar.NewInt("total_in_flight_requests")
+		totalProcessingTimeMicroseconds = expvar.NewInt("total_processing_time_μs")
+		totalResponsesSentByStatus      = expvar.NewMap("total_responses_sent_by_status")
+	)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		totalRequestsReceived.Add(1)
+
+		mw := metrics.New(w)
+
+		next.ServeHTTP(mw, r)
+
+		totalResponseSent.Add(1)
+		totalInFlightRequests.Set(totalRequestsReceived.Value() - totalResponseSent.Value())
+
+		totalResponsesSentByStatus.Add(strconv.Itoa(mw.StatusCode), 1)
+
+		duration := time.Since(start).Microseconds()
+		totalProcessingTimeMicroseconds.Add(duration)
 	})
 }
 
