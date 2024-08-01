@@ -58,28 +58,33 @@ func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) invalidCredentialsResponse(w http.ResponseWriter, r *http.Request) {
-	message := "invalid authentication credentials"
+	message := "Invalid authentication credentials"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
 }
 
 func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("WWW-Authenticate", "Bearer")
 
-	message := "invalid or missing authentication token"
+	message := "Invalid or missing authentication token"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
 }
 
 func (app *application) authenticationRequiredResponse(w http.ResponseWriter, r *http.Request) {
-	message := "you must be authenticated to access this resource"
+	message := "You must be authenticated to access this resource"
 	app.errorResponse(w, r, http.StatusUnauthorized, message)
 }
 
 func (app *application) inactiveAccountResponse(w http.ResponseWriter, r *http.Request) {
-	message := "your user account must be activated to access this resource"
+	message := "Your user account must be activated to access this resource"
 	app.errorResponse(w, r, http.StatusForbidden, message)
 }
 
 func (app *application) notPermittedResponse(w http.ResponseWriter, r *http.Request) {
-	message := "your user account doesn't have the necessary permissions to access this resource"
+	message := "Your user account doesn't have the necessary permissions to access this resource"
 	app.errorResponse(w, r, http.StatusForbidden, message)
+}
+
+func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request) {
+	message := "Rate limit exceeded"
+	app.errorResponse(w, r, http.StatusTooManyRequests, message)
 }
