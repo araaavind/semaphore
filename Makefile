@@ -74,3 +74,16 @@ vendor:
 	cd server && go mod verify
 	@echo 'Vendoring dependencies...'
 	cd server && go mod vendor
+
+
+# ==================================================================================== #
+# BUILD
+# ==================================================================================== #
+
+## build/api: build the cmd/api application for local machine and linux/amd64
+.PHONY: build/api
+build/api:
+	@echo 'Building cmd/api for local machine...'
+	cd server && go build -ldflags='-s -w' -o=./bin/local/api ./cmd/api
+	@echo 'Building cmd/api for deployment in linux/amd64...'
+	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/api ./cmd/api
