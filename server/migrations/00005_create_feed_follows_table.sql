@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS feed_follows (
     PRIMARY KEY(user_id, feed_id),
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
 	updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
-)
+);
 CREATE INDEX IF NOT EXISTS feed_follows_user_feed_idx ON feed_follows(user_id, feed_id);
 -- +goose StatementEnd
 
