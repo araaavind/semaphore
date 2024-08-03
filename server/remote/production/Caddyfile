@@ -1,4 +1,8 @@
-http://178.128.221.73 {
+{
+    email aravindmathradan@gmail.com
+}
+
+smphr.aravindunnikrishnan.in {
     respond /debug/* "Not Permitted" 403
     reverse_proxy localhost:5000
 }
