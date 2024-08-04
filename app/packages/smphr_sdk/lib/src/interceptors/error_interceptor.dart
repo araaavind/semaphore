@@ -86,6 +86,15 @@ class ErrorInterceptor extends Interceptor {
             fieldErrors: errRes.fieldErrors,
             responseStatusCode: 422,
           );
+        } else if (err.response != null && err.response!.statusCode == 403) {
+          final errRes = ErrorResponse.fromMap(err.response?.data);
+          err = SemaphoreException(
+            subType: SemaphoreExceptionSubType.forbidden,
+            message: errRes.message,
+            type: err.type,
+            requestOptions: err.requestOptions,
+            responseStatusCode: 403,
+          );
         } else {
           err = SemaphoreException(
             message: Constants.internalServerErrorMessage,
