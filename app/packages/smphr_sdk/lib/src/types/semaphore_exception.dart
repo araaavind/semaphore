@@ -6,6 +6,7 @@ enum SemaphoreExceptionSubType {
   none,
   notFound,
   unauthorized,
+  forbidden,
   sessionExpired,
   connectionFailed,
 }
