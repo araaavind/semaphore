@@ -2,6 +2,7 @@ import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/router/transitions/fade_transition_page.dart';
+import 'package:app/features/auth/presentation/pages/activation_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
@@ -34,7 +35,11 @@ GoRouter router = GoRouter(
       return RouteConstants.loginPagePath;
     }
     if (appUserState is AppUserLoggedIn && onLoginRoute) {
-      return RouteConstants.wallPagePath;
+      final isOnboarding = state.uri.queryParameters['isOnboarding'] != null &&
+          state.uri.queryParameters['isOnboarding'] == 'true';
+      return isOnboarding
+          ? RouteConstants.activationPagePath
+          : RouteConstants.wallPagePath;
     }
     return null;
   },
@@ -100,6 +105,11 @@ GoRouter router = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: RouteConstants.activationPagePath,
+      name: RouteConstants.activationPageName,
+      builder: (context, state) => const ActivationPage(),
     ),
     GoRoute(
       path: RouteConstants.feedViewPagePath,
