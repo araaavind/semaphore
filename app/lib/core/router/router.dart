@@ -37,9 +37,10 @@ GoRouter router = GoRouter(
     if (appUserState is AppUserLoggedIn && onLoginRoute) {
       final isOnboarding = state.uri.queryParameters['isOnboarding'] != null &&
           state.uri.queryParameters['isOnboarding'] == 'true';
-      return isOnboarding
-          ? RouteConstants.activationPagePath
-          : RouteConstants.wallPagePath;
+      if (isOnboarding) {
+        return '${RouteConstants.activationPagePath}?isOnboarding=$isOnboarding';
+      }
+      return RouteConstants.wallPagePath;
     }
     return null;
   },
@@ -109,7 +110,12 @@ GoRouter router = GoRouter(
     GoRoute(
       path: RouteConstants.activationPagePath,
       name: RouteConstants.activationPageName,
-      builder: (context, state) => const ActivationPage(),
+      builder: (context, state) {
+        final isOnboarding =
+            state.uri.queryParameters['isOnboarding'] != null &&
+                state.uri.queryParameters['isOnboarding'] == 'true';
+        return ActivationPage(isOnboarding: isOnboarding);
+      },
     ),
     GoRoute(
       path: RouteConstants.feedViewPagePath,

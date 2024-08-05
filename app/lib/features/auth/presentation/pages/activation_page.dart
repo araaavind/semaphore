@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ActivationPage extends StatefulWidget {
-  const ActivationPage({super.key});
+  final bool isOnboarding;
+  const ActivationPage({
+    super.key,
+    this.isOnboarding = false,
+  });
 
   @override
   State<ActivationPage> createState() => _ActivationPageState();
@@ -28,7 +32,11 @@ class _ActivationPageState extends State<ActivationPage> {
         actions: [
           TextButton(
             onPressed: () {
-              context.pop(false);
+              if (widget.isOnboarding) {
+                context.goNamed(RouteConstants.wallPageName);
+              } else {
+                context.pop(false);
+              }
             },
             child: const Text('Skip'),
           ),
@@ -56,16 +64,12 @@ class _ActivationPageState extends State<ActivationPage> {
                     text: 'Activate',
                     fixedSize: const Size(140, 50),
                     onPressed: () {
-                      // if (formKey.currentState!.validate()) {
-                      //   FocusManager.instance.primaryFocus?.unfocus();
-                      //   context.read<AddFollowFeedBloc>().add(
-                      //         AddFollowRequested(
-                      //           token.text.trim(),
-                      //         ),
-                      //       );
-                      // }
+                      if (widget.isOnboarding) {
+                        context.goNamed(RouteConstants.wallPageName);
+                      } else {
+                        context.pop(false);
+                      }
                     },
-                    // isLoading: state.status == FollowFeedStatus.loading,
                   ),
                 ),
                 const SizedBox(height: 20.0),
