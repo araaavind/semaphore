@@ -1,5 +1,6 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/logout_scope.dart';
+import 'package:app/core/common/widgets/button.dart';
 import 'package:app/core/common/widgets/loader.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
@@ -7,6 +8,7 @@ import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -59,14 +61,17 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(UIConstants.pagePadding),
+        padding: const EdgeInsets.symmetric(
+          vertical: 10.0,
+          horizontal: UIConstants.pagePadding,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               user.fullName ?? 'User',
               style: context.theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w700,
               ),
             ),
             Text(
@@ -75,6 +80,25 @@ class ProfilePage extends StatelessWidget {
                 fontWeight: FontWeight.w300,
               ),
             ),
+            if (!user.isActivated)
+              Center(
+                child: Column(
+                  children: [
+                    const SizedBox(height: UIConstants.elementGap),
+                    Button(
+                      text: 'Activate your account',
+                      backgroundColor:
+                          context.theme.colorScheme.primaryContainer,
+                      textColor: context.theme.colorScheme.primary,
+                      // fixedSize: UIConstants.defaultButtonFixedSize,
+                      fixedSize: const Size.fromHeight(40.0),
+                      onPressed: () {
+                        context.push(RouteConstants.activationPagePath);
+                      },
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
