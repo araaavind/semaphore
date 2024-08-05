@@ -70,7 +70,7 @@ func main() {
 	flag.IntVar(&cfg.smtp.port, "smtp-port", 2525, "SMTP port")
 	flag.StringVar(&cfg.smtp.username, "smtp-username", "", "SMTP username")
 	flag.StringVar(&cfg.smtp.password, "smtp-password", "", "SMTP password")
-	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Semaphore <no-reply@semaphore.com>", "SMTP sender")
+	flag.StringVar(&cfg.smtp.sender, "smtp-sender", "Semaphore <no-reply@smphr.aravindunnikrishnan.in>", "SMTP sender")
 
 	flag.Float64Var(&cfg.limiter.rps, "limiter-rps", 4, "Rate limiter maximum requests per second")
 	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 8, "Rate limiter maximum burst")
