@@ -6,11 +6,13 @@ class User {
   final String username;
   final String? fullName;
   final DateTime? lastLoginAt;
+  final bool isActivated;
 
   User({
     required this.id,
     required this.email,
     required this.username,
+    required this.isActivated,
     this.fullName,
     this.lastLoginAt,
   });
@@ -22,6 +24,7 @@ class User {
       'username': username,
       'full_name': fullName,
       'last_login_at': lastLoginAt?.toIso8601String(),
+      'is_activated': isActivated,
     };
   }
 
@@ -34,6 +37,7 @@ class User {
       lastLoginAt: map['last_login_at'] != null
           ? DateTime.parse(map['last_login_at'] as String)
           : null,
+      isActivated: map['activated'] != null ? map['activated'] as bool : false,
     );
   }
 
