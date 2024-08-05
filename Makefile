@@ -25,7 +25,7 @@ confirm:
 .PHONY: run/api
 run/api:
 	@echo 'Starting api server...'
-	cd server && go run ./cmd/api -dsn=${SEMAPHORE_DSN}
+	cd server && go run ./cmd/api -dsn=${SEMAPHORE_DSN} -smtp-username=${SMTP_USERNAME} -smtp-password=${SMTP_PASSWORD}
 
 ## db/migrations/version: check current database migration version
 .PHONY: db/migrations/version
