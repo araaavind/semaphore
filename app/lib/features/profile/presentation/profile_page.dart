@@ -1,5 +1,6 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/logout_scope.dart';
+import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/common/widgets/button.dart';
 import 'package:app/core/common/widgets/loader.dart';
 import 'package:app/core/constants/constants.dart';
@@ -10,8 +11,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool isActivated = false;
+  late User user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
+    isActivated = user.isActivated;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +96,7 @@ class ProfilePage extends StatelessWidget {
                 fontWeight: FontWeight.w300,
               ),
             ),
-            if (!user.isActivated)
+            if (!isActivated)
               Center(
                 child: Column(
                   children: [
@@ -92,8 +108,14 @@ class ProfilePage extends StatelessWidget {
                       textColor: context.theme.colorScheme.primary,
                       // fixedSize: UIConstants.defaultButtonFixedSize,
                       fixedSize: const Size.fromHeight(40.0),
-                      onPressed: () {
-                        context.push(RouteConstants.activationPagePath);
+                      onPressed: () async {
+                        final routeSuccess = await context
+                            .push(RouteConstants.activationPagePath) as bool;
+                        if (routeSuccess) {
+                          setState(() {
+                            isActivated = true;
+                          });
+                        }
                       },
                     ),
                   ],

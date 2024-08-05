@@ -1,7 +1,12 @@
+import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
+import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ActivationPage extends StatefulWidget {
@@ -60,35 +65,70 @@ class _ActivationPageState extends State<ActivationPage> {
                 ),
                 const SizedBox(height: 20.0),
                 Center(
-                  child: Button(
-                    text: 'Activate',
-                    fixedSize: const Size(140, 50),
-                    onPressed: () {
-                      if (widget.isOnboarding) {
-                        context.goNamed(RouteConstants.wallPageName);
-                      } else {
-                        context.pop(false);
+                  child: BlocConsumer<ActivateUserCubit, ActivateUserState>(
+                    listener: (context, state) {
+                      if (state is ActivateUserFailure) {
+                        showSnackbar(context, state.message);
                       }
+                      if (state is ActivateUserSuccess) {
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthCurrentUserRequested());
+                        showSnackbar(
+                          context,
+                          TextConstants.accountActivationSuccessMessage,
+                        );
+                        if (widget.isOnboarding) {
+                          context.goNamed(RouteConstants.wallPageName);
+                        } else {
+                          context.pop(true);
+                        }
+                      }
+                      if (state is SendActivationTokenSuccess) {
+                        showSnackbar(context, state.message);
+                      }
+                    },
+                    builder: (context, state) {
+                      return Button(
+                        text: 'Activate',
+                        fixedSize: const Size(140, 50),
+                        onPressed: () {
+                          context
+                              .read<ActivateUserCubit>()
+                              .activateUser(token.text.trim());
+                        },
+                        isLoading: state is ActivateUserLoading,
+                      );
                     },
                   ),
                 ),
                 const SizedBox(height: 20.0),
                 Center(
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Did not receive token? ',
-                      style: context.theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w300,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Resend',
-                          style: context.theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: context.theme.colorScheme.primary,
-                          ),
+                  child: InkWell(
+                    onTap: () {
+                      context.read<ActivateUserCubit>().sendActivationToken(
+                            (context.read<AppUserCubit>().state
+                                    as AppUserLoggedIn)
+                                .user
+                                .email,
+                          );
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Did not receive token? ',
+                        style: context.theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w300,
                         ),
-                      ],
+                        children: [
+                          TextSpan(
+                            text: 'Re-send',
+                            style: context.theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: context.theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

@@ -23,4 +23,7 @@ abstract interface class AuthRepository {
   Future<Either<Failure, void>> logout({
     LogoutScope scope = LogoutScope.local,
   });
+
+  Future<Either<Failure, String>> sendActivationToken(String email);
+  Future<Either<Failure, void>> activateUser(String token);
 }
