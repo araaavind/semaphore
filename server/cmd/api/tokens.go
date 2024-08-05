@@ -179,7 +179,7 @@ func (app *application) createActivationToken(w http.ResponseWriter, r *http.Req
 		}
 	})
 
-	env := envelope{"message": "an email will be sent you containing the activation token"}
+	env := envelope{"message": "An email will be sent to you containing the activation token"}
 
 	err = app.writeJSON(w, http.StatusAccepted, env, nil)
 	if err != nil {
@@ -239,7 +239,7 @@ func (app *application) createPasswordResetToken(w http.ResponseWriter, r *http.
 		}
 	})
 
-	env := envelope{"message": "an email will be sent you containing the password reset token"}
+	env := envelope{"message": "An email will be sent to you containing the password reset token"}
 
 	err = app.writeJSON(w, http.StatusAccepted, env, nil)
 	if err != nil {

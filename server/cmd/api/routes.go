@@ -46,6 +46,7 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationToken)
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationToken)
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetToken)
 
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
@@ -63,8 +64,6 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.unfollowFeed)))
 
 	activated := authenticated.Append(app.requireActivation)
-
-	router.Handler(http.MethodPost, "/v1/tokens/password-reset", activated.ThenFunc(app.createPasswordResetToken))
 
 	router.Handler(http.MethodPost, "/v1/feeds", activated.ThenFunc(app.requirePermission("feeds:write", app.addAndFollowFeed)))
 
