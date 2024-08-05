@@ -7,6 +7,7 @@ class UserModel extends User {
     required super.id,
     required super.username,
     required super.email,
+    required super.isActivated,
     super.fullName,
     super.lastLoginAt,
   });
@@ -17,6 +18,7 @@ class UserModel extends User {
     String? username,
     String? fullName,
     DateTime? lastLoginAt,
+    bool? isActivated,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -24,6 +26,7 @@ class UserModel extends User {
       username: username ?? this.username,
       fullName: fullName ?? this.fullName,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
+      isActivated: isActivated ?? this.isActivated,
     );
   }
 
@@ -34,6 +37,7 @@ class UserModel extends User {
       'username': username,
       'full_name': fullName,
       'last_login_at': lastLoginAt?.toIso8601String(),
+      'is_activated': isActivated,
     };
   }
 
@@ -46,6 +50,7 @@ class UserModel extends User {
       lastLoginAt: map['last_login_at'] != null
           ? DateTime.parse(map['last_login_at'] as String)
           : null,
+      isActivated: map['activated'] != null ? map['activated'] as bool : false,
     );
   }
 
