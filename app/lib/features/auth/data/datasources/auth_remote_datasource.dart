@@ -24,6 +24,10 @@ abstract interface class AuthRemoteDatasource {
   });
 
   Future<void> logout({LogoutScope scope = LogoutScope.local});
+
+  Future<String> sendActivationToken(String email);
+
+  Future<void> activateUser(String token);
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -157,6 +161,60 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         debugPrint(e.toString());
         throw const ServerException(TextConstants.internalServerErrorMessage);
       }
+    }
+  }
+
+  @override
+  Future<String> sendActivationToken(String email) async {
+    try {
+      final response = await semaphoreClient.dio.post(
+        '/tokens/activation',
+        data: {
+          'email': email,
+        },
+      );
+      return response.data['message'];
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> activateUser(String token) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/users/activate',
+        data: {
+          'token': token,
+        },
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
     }
   }
 }

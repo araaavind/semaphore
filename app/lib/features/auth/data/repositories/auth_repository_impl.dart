@@ -92,4 +92,22 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(Failure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> sendActivationToken(String email) async {
+    try {
+      return right(await remoteDatasource.sendActivationToken(email));
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> activateUser(String token) async {
+    try {
+      return right(await remoteDatasource.activateUser(token));
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }

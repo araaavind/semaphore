@@ -35,4 +35,6 @@ class TextConstants {
       'Given text is not a valid url';
   static const String feedUrlInvalidErrorMessage =
       'Given url does not point to any valid feed';
+  static const String accountActivationSuccessMessage =
+      'Your account is now active!';
 }

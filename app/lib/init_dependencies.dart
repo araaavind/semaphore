@@ -4,12 +4,15 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:app/features/auth/domain/usecases/activate_user.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
+import 'package:app/features/auth/domain/usecases/send_activation_token.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
 import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
@@ -101,6 +104,16 @@ void _initAuth() {
       serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => ActivateUser(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => SendActivationToken(
+      serviceLocator(),
+    ),
+  );
   // Register blocs
   serviceLocator.registerLazySingleton(
     () => AuthBloc(
@@ -111,6 +124,13 @@ void _initAuth() {
       userLogout: serviceLocator(),
       appUserCubit: serviceLocator(),
       client: serviceLocator(),
+    ),
+  );
+  // Register cubits
+  serviceLocator.registerLazySingleton(
+    () => ActivateUserCubit(
+      activateUser: serviceLocator(),
+      sendActivationToken: serviceLocator(),
     ),
   );
 }
