@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -136,7 +137,10 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	parsedFeed, err := app.parser.ParseURL(input.FeedLink)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	parsedFeed, err := app.parser.ParseURLWithContext(input.FeedLink, ctx)
 	if err != nil {
 		v.AddError("feed_link", "This URL does not point to a valid feed")
 		app.failedValidationResponse(w, r, v.Errors)
@@ -160,8 +164,10 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 				//If they are same, insert the parsed feed into DB.
 				copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 			} else {
+				ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+				defer cancel()
 				// if they are different, parse the 'self' link of parsed Feed and check if it is valid and latest.
-				parsedSelfFeed, err := app.parser.ParseURL(parsedFeed.FeedLink)
+				parsedSelfFeed, err := app.parser.ParseURLWithContext(parsedFeed.FeedLink, ctx)
 				if err != nil {
 					// if the 'self' link of parsed feed is invalid, insert the parsed feed of input link to DB
 					copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
@@ -301,4 +307,6 @@ func copyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
 	} else {
 		feed.Language = "en-us"
 	}
+	feed.LastFetchAt.Time = time.Now()
+	feed.LastFetchAt.Valid = true
 }
