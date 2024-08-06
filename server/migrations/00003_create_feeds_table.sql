@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS feeds (
     language text NOT NULL DEFAULT 'en-us',
     version integer NOT NULL DEFAULT 1,
     added_by bigint NOT NULL REFERENCES users ON DELETE CASCADE,
+    last_fetch_at timestamp(0) with time zone,
+    last_failure text,
+    last_failure_at timestamp(0) with time zone,
+    failure_count integer NOT NULL DEFAULT 0,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
 );

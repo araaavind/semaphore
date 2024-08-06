@@ -11,6 +11,7 @@ import (
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 var (
@@ -18,20 +19,24 @@ var (
 )
 
 type Feed struct {
-	ID          int64      `json:"id"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Link        string     `json:"link"`
-	FeedLink    string     `json:"feed_link"`
-	PubDate     time.Time  `json:"pub_date,omitempty"`
-	PubUpdated  time.Time  `json:"pub_updated,omitempty"`
-	FeedType    string     `json:"feed_type,omitempty"`
-	FeedVersion string     `json:"feed_version,omitempty"`
-	Language    string     `json:"language,omitempty"`
-	Version     int32      `json:"version,omitempty"`
-	AddedBy     int64      `json:"added_by,omitempty"`
-	CreatedAt   *time.Time `json:"created_at,omitempty"`
-	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
+	ID            int64              `json:"id"`
+	Title         string             `json:"title"`
+	Description   string             `json:"description"`
+	Link          string             `json:"link"`
+	FeedLink      string             `json:"feed_link"`
+	PubDate       time.Time          `json:"pub_date,omitempty"`
+	PubUpdated    time.Time          `json:"pub_updated,omitempty"`
+	FeedType      string             `json:"feed_type,omitempty"`
+	FeedVersion   string             `json:"feed_version,omitempty"`
+	Language      string             `json:"language,omitempty"`
+	Version       int32              `json:"version,omitempty"`
+	AddedBy       int64              `json:"added_by,omitempty"`
+	LastFetchAt   pgtype.Timestamptz `json:"last_fetch_at,omitempty"`
+	LastFailure   pgtype.Text        `json:"last_failure,omitempty"`
+	LastFailureAt pgtype.Timestamptz `json:"last_failure_at,omitempty"`
+	FailureCount  int32              `json:"failure_count,omitempty"`
+	CreatedAt     *time.Time         `json:"created_at,omitempty"`
+	UpdatedAt     *time.Time         `json:"updated_at,omitempty"`
 }
 
 func ValidateFeedLink(v *validator.Validator, feedLink string) {
@@ -44,8 +49,10 @@ type FeedModel struct {
 
 func (m FeedModel) Insert(feed *Feed) error {
 	query := `
-		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated,
+			feed_type, feed_version, language, added_by, last_fetch_at, last_failure_at,
+			last_failure)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 		RETURNING id, created_at, updated_at, version`
 
 	args := []any{
@@ -59,6 +66,9 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.FeedVersion,
 		feed.Language,
 		feed.AddedBy,
+		feed.LastFetchAt,
+		feed.LastFailureAt,
+		feed.LastFailure,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -84,7 +94,9 @@ func (m FeedModel) Insert(feed *Feed) error {
 
 func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
+		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date,
+		pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at,
+		version, last_fetch_at, last_failure_at, last_failure
 		FROM feeds
 		WHERE (
 			to_tsvector('simple', title) @@ plainto_tsquery('simple', $1)
@@ -125,6 +137,9 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.CreatedAt,
 			&feed.UpdatedAt,
 			&feed.Version,
+			&feed.LastFetchAt,
+			&feed.LastFailureAt,
+			&feed.LastFailure,
 		)
 		if err != nil {
 			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
@@ -142,7 +157,9 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	query := `
-		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
+		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type,
+		feed_version, language, added_by, created_at, updated_at, version, last_fetch_at,
+		last_failure_at, last_failure
 		FROM feeds WHERE feed_link = ANY ($1)`
 
 	var feed Feed
@@ -165,6 +182,9 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
 		&feed.Version,
+		&feed.LastFetchAt,
+		&feed.LastFailureAt,
+		&feed.LastFailure,
 	)
 	if err != nil {
 		switch {
@@ -184,7 +204,9 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	}
 
 	query := `
-		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at, version
+		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type,
+		feed_version, language, added_by, created_at, updated_at, version, last_fetch_at,
+		last_failure_at, last_failure
 		FROM feeds WHERE id = $1`
 
 	var feed Feed
@@ -207,6 +229,9 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
 		&feed.Version,
+		&feed.LastFetchAt,
+		&feed.LastFailureAt,
+		&feed.LastFailure,
 	)
 	if err != nil {
 		switch {
@@ -223,8 +248,10 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 func (m FeedModel) Update(feed *Feed) error {
 	query := `
 		UPDATE feeds
-		SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6, feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), version = version + 1
-		WHERE id = $10 AND version = $11
+		SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6,
+		feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), last_fetch_at = $10,
+		last_failure_at = $11, last_failure = $12, version = version + 1
+		WHERE id = $13 AND version = $14
 		RETURNING updated_at, version`
 
 	args := []any{
@@ -235,6 +262,9 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.PubDate,
 		feed.PubUpdated,
 		feed.FeedType,
+		feed.LastFetchAt,
+		feed.LastFailureAt,
+		feed.LastFailure,
 		feed.FeedVersion,
 		feed.Language,
 		feed.ID,
