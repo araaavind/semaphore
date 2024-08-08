@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
+	"runtime/debug"
 	"strconv"
 	"strings"
 
@@ -182,7 +184,10 @@ func (app *application) background(fn func()) {
 		defer app.wg.Done()
 		defer func() {
 			if err := recover(); err != nil {
-				app.logger.Error(fmt.Sprintf("%v", err))
+				app.logger.Error(
+					fmt.Sprintf("%v", err),
+					slog.String("trace", string(debug.Stack())),
+				)
 			}
 		}()
 

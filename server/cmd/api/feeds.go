@@ -3,9 +3,12 @@ package main
 import (
 	"errors"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/mmcdole/gofeed"
 )
 
 func (app *application) getFeed(w http.ResponseWriter, r *http.Request) {
@@ -90,4 +93,39 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+}
+
+func CopyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
+	feed.Title = parsedFeed.Title
+	feed.Description = parsedFeed.Description
+	feed.Link = parsedFeed.Link
+	feed.FeedLink = feedLink
+
+	if parsedFeed.PublishedParsed != nil {
+		feed.PubDate = *parsedFeed.PublishedParsed
+	} else {
+		feed.PubDate = time.Now()
+	}
+	if parsedFeed.UpdatedParsed != nil {
+		feed.PubUpdated = *parsedFeed.UpdatedParsed
+	} else {
+		feed.PubUpdated = time.Now()
+	}
+	if parsedFeed.FeedType != "" {
+		feed.FeedType = strings.ToLower(parsedFeed.FeedType)
+	} else {
+		feed.FeedType = "rss"
+	}
+	if parsedFeed.FeedVersion != "" {
+		feed.FeedVersion = parsedFeed.FeedVersion
+	} else {
+		feed.FeedVersion = "2.0"
+	}
+	if parsedFeed.Language != "" {
+		feed.Language = strings.ToLower(parsedFeed.Language)
+	} else {
+		feed.Language = "en-us"
+	}
+	feed.LastFetchAt.Time = time.Now()
+	feed.LastFetchAt.Valid = true
 }
