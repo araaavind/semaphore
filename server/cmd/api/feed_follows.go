@@ -5,12 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
-	"github.com/mmcdole/gofeed"
 )
 
 func (app *application) listFollowersForFeed(w http.ResponseWriter, r *http.Request) {
@@ -162,7 +160,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 			}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.
-				copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
+				CopyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 			} else {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 				defer cancel()
@@ -170,16 +168,16 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 				parsedSelfFeed, err := app.parser.ParseURLWithContext(parsedFeed.FeedLink, ctx)
 				if err != nil {
 					// if the 'self' link of parsed feed is invalid, insert the parsed feed of input link to DB
-					copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
+					CopyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 				} else {
 					if parsedSelfFeed.UpdatedParsed != nil &&
 						parsedFeed.UpdatedParsed != nil &&
 						parsedSelfFeed.UpdatedParsed.Before(*parsedFeed.UpdatedParsed) {
 						// if the 'self' link of parsed feed is valid but not latest, insert the parsed feed of input link to DB
-						copyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
+						CopyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
 					} else {
 						// if the 'self' link of parsed feed is valid and latest, insert the parsed feed of 'self' link to DB
-						copyFeedFields(feedToFolow, parsedSelfFeed, parsedSelfFeed.FeedLink)
+						CopyFeedFields(feedToFolow, parsedSelfFeed, parsedSelfFeed.FeedLink)
 					}
 				}
 			}
@@ -209,6 +207,10 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	}
+
+	app.background(func() {
+		app.RefreshFeed(feedToFolow)
+	})
 
 	w.Header().Set("Location", fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID))
 	w.WriteHeader(http.StatusCreated)
@@ -274,39 +276,4 @@ func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func copyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
-	feed.Title = parsedFeed.Title
-	feed.Description = parsedFeed.Description
-	feed.Link = parsedFeed.Link
-	feed.FeedLink = feedLink
-
-	if parsedFeed.PublishedParsed != nil {
-		feed.PubDate = *parsedFeed.PublishedParsed
-	} else {
-		feed.PubDate = time.Now()
-	}
-	if parsedFeed.UpdatedParsed != nil {
-		feed.PubUpdated = *parsedFeed.UpdatedParsed
-	} else {
-		feed.PubUpdated = time.Now()
-	}
-	if parsedFeed.FeedType != "" {
-		feed.FeedType = strings.ToLower(parsedFeed.FeedType)
-	} else {
-		feed.FeedType = "rss"
-	}
-	if parsedFeed.FeedVersion != "" {
-		feed.FeedVersion = parsedFeed.FeedVersion
-	} else {
-		feed.FeedVersion = "2.0"
-	}
-	if parsedFeed.Language != "" {
-		feed.Language = strings.ToLower(parsedFeed.Language)
-	} else {
-		feed.Language = "en-us"
-	}
-	feed.LastFetchAt.Time = time.Now()
-	feed.LastFetchAt.Valid = true
 }

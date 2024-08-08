@@ -17,6 +17,7 @@ type Models struct {
 	Permissions PermissionModel
 	Feeds       FeedModel
 	FeedFollows FeedFollowModel
+	Items       ItemModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -27,5 +28,6 @@ func NewModels(db *sql.DB) Models {
 		PermissionModel{DB: db},
 		FeedModel{DB: db},
 		FeedFollowModel{DB: db},
+		ItemModel{DB: db},
 	}
 }

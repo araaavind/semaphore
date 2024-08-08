@@ -262,12 +262,13 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.PubDate,
 		feed.PubUpdated,
 		feed.FeedType,
+		feed.FeedVersion,
+		feed.Language,
 		feed.LastFetchAt,
 		feed.LastFailureAt,
 		feed.LastFailure,
-		feed.FeedVersion,
-		feed.Language,
 		feed.ID,
+		feed.Version,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
