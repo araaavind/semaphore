@@ -18,7 +18,10 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		feed.LastFailure.Valid = true
 		feed.LastFailureAt.Time = time.Now()
 		feed.LastFetchAt.Valid = true
-		app.models.Feeds.Update(feed)
+		err = app.models.Feeds.Update(feed)
+		if err != nil {
+			app.logInternalError("app.models.Feeds.Update failed while updating failed feed status", err)
+		}
 		return
 	}
 
@@ -26,6 +29,14 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 	err = app.models.Items.UpsertMany(items)
 	if err != nil {
 		app.logInternalError("app.models.Items.UpsertMany failed", err)
+		feed.LastFailure.String = err.Error()
+		feed.LastFailure.Valid = true
+		feed.LastFailureAt.Time = time.Now()
+		feed.LastFetchAt.Valid = true
+		err = app.models.Feeds.Update(feed)
+		if err != nil {
+			app.logInternalError("app.models.Feeds.Update failed while updating failed feed status", err)
+		}
 		return
 	}
 
