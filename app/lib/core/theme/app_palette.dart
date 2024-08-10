@@ -31,10 +31,10 @@ abstract class AppPalette {
   static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
   static const primaryContainerDark = Color.fromARGB(255, 67, 13, 32);
   static const onPrimaryContainerDark = Color.fromARGB(255, 254, 215, 210);
-  static const secondaryDark = Color.fromARGB(255, 254, 209, 150);
+  static const secondaryDark = Color.fromARGB(255, 254, 169, 150);
   static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
-  static const secondaryContainerDark = Color.fromARGB(255, 100, 61, 11);
-  static const onSecondaryContainerDark = Color.fromARGB(255, 254, 209, 150);
+  static const secondaryContainerDark = Color.fromARGB(255, 100, 41, 11);
+  static const onSecondaryContainerDark = Color.fromARGB(255, 254, 169, 150);
   static const tertiaryDark = Color.fromARGB(255, 225, 248, 175);
   static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
   static const tertiaryContainerDark = Color.fromARGB(255, 59, 63, 4);
