@@ -44,6 +44,9 @@ type config struct {
 		burst   int
 		enabled bool
 	}
+	refresher struct {
+		maxConcurrentRefreshes int
+	}
 }
 
 type application struct {
@@ -75,6 +78,8 @@ func main() {
 	flag.Float64Var(&cfg.limiter.rps, "limiter-rps", 4, "Rate limiter maximum requests per second")
 	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 8, "Rate limiter maximum burst")
 	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
+
+	flag.IntVar(&cfg.refresher.maxConcurrentRefreshes, "max-concurrent-refreshes", 5, "Maximum concurrent refreshes")
 
 	// Create a new version boolean flag with the default value of false.
 	displayVersion := flag.Bool("version", false, "Display version and exit")
@@ -125,6 +130,8 @@ func main() {
 			cfg.smtp.sender,
 		),
 	}
+
+	go app.KeepFeedsFresh(cfg.refresher.maxConcurrentRefreshes)
 
 	err = app.serve()
 	if err != nil {
