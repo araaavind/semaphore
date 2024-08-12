@@ -7,6 +7,43 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/data"
 )
 
+func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int) {
+	for {
+		startTime := time.Now()
+		staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(startTime.Add(-5 * time.Minute))
+		if err != nil {
+			app.logInternalError("app.models.Feeds.GetUncheckedFeedsSince failed", err)
+			return
+		}
+
+		staleFeedsChan := make(chan *data.Feed)
+		finishChan := make(chan bool)
+
+		refreshWorker := func() {
+			for feed := range staleFeedsChan {
+				app.RefreshFeed(feed)
+			}
+			finishChan <- true
+		}
+
+		for i := 0; i < maxConcurrentRefreshes; i++ {
+			app.background(refreshWorker)
+		}
+
+		for _, feed := range staleFeeds {
+			staleFeedsChan <- feed
+		}
+		close(staleFeedsChan)
+
+		for i := 0; i < maxConcurrentRefreshes; i++ {
+			<-finishChan
+		}
+
+		// sleeps until startTime + 1 min. Returns immediately if startTime + 1 min is in the past
+		time.Sleep(time.Until(startTime.Add(time.Minute)))
+	}
+}
+
 func (app *application) RefreshFeed(feed *data.Feed) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
@@ -17,7 +54,7 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		feed.LastFailure.String = err.Error()
 		feed.LastFailure.Valid = true
 		feed.LastFailureAt.Time = time.Now()
-		feed.LastFetchAt.Valid = true
+		feed.LastFailureAt.Valid = true
 		err = app.models.Feeds.Update(feed)
 		if err != nil {
 			app.logInternalError("app.models.Feeds.Update failed while updating failed feed status", err)
@@ -32,7 +69,7 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		feed.LastFailure.String = err.Error()
 		feed.LastFailure.Valid = true
 		feed.LastFailureAt.Time = time.Now()
-		feed.LastFetchAt.Valid = true
+		feed.LastFailureAt.Valid = true
 		err = app.models.Feeds.Update(feed)
 		if err != nil {
 			app.logInternalError("app.models.Feeds.Update failed while updating failed feed status", err)

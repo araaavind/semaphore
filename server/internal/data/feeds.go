@@ -314,3 +314,34 @@ func (m FeedModel) DeleteByID(id int64) error {
 
 	return nil
 }
+
+func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
+	query := `
+		SELECT id, feed_link, version
+		FROM feeds
+		WHERE GREATEST(last_fetch_at, last_failure_at, '-Infinity'::timestamptz) < $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, since)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	feeds := []*Feed{}
+	for rows.Next() {
+		var feed Feed
+		err := rows.Scan(&feed.ID, &feed.FeedLink, &feed.Version)
+		if err != nil {
+			return nil, err
+		}
+		feeds = append(feeds, &feed)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return feeds, nil
+}
