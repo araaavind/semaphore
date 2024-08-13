@@ -18,6 +18,7 @@ type Models struct {
 	Feeds       FeedModel
 	FeedFollows FeedFollowModel
 	Items       ItemModel
+	Walls       WallModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -29,5 +30,6 @@ func NewModels(db *sql.DB) Models {
 		FeedModel{DB: db},
 		FeedFollowModel{DB: db},
 		ItemModel{DB: db},
+		WallModel{DB: db},
 	}
 }
