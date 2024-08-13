@@ -208,6 +208,22 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
+	wall, err := app.models.Walls.FindPrimaryWallForUser(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	wallFeed := &data.WallFeed{
+		FeedID: feedFollow.FeedID,
+		WallID: wall.ID,
+	}
+	err = app.models.WallFeeds.Insert(wallFeed)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 	app.background(func() {
 		app.RefreshFeed(feedToFolow)
 	})
@@ -247,6 +263,22 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	wall, err := app.models.Walls.FindPrimaryWallForUser(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	wallFeed := &data.WallFeed{
+		FeedID: feedFollow.FeedID,
+		WallID: wall.ID,
+	}
+	err = app.models.WallFeeds.Insert(wallFeed)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -273,6 +305,23 @@ func (app *application) unfollowFeed(w http.ResponseWriter, r *http.Request) {
 			app.serverErrorResponse(w, r, err)
 			return
 		}
+	}
+
+	walls, err := app.models.Walls.FindAllForUser(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	var wallIDs []int64
+	for _, wall := range walls {
+		wallIDs = append(wallIDs, wall.ID)
+	}
+
+	err = app.models.WallFeeds.DeleteFeedForWalls(feedID, wallIDs)
+	if err != nil && !errors.Is(err, data.ErrRecordNotFound) {
+		app.serverErrorResponse(w, r, err)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
