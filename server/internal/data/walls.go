@@ -49,3 +49,65 @@ func (m WallModel) InsertPrimaryWall(userID int64) error {
 	return m.Insert(wall)
 }
 
+func (m WallModel) FindAllForUser(userID int64) ([]*Wall, error) {
+	query := `
+		SELECT id, name, is_primary, user_id, created_at, updated_at
+		FROM walls
+		WHERE user_id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	walls := []*Wall{}
+	rows, err := m.DB.QueryContext(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		wall := &Wall{}
+		err := rows.Scan(
+			&wall.ID,
+			&wall.Name,
+			&wall.IsPrimary,
+			&wall.UserID,
+			&wall.CreatedAt,
+			&wall.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		walls = append(walls, wall)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return walls, nil
+}
+
+func (m WallModel) FindPrimaryWallForUser(userID int64) (*Wall, error) {
+	query := `
+		SELECT id, name, is_primary, user_id, created_at, updated_at
+		FROM walls
+		WHERE user_id = $1 AND is_primary = true
+		LIMIT 1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	wall := &Wall{}
+	err := m.DB.QueryRowContext(ctx, query, userID).Scan(
+		&wall.ID,
+		&wall.Name,
+		&wall.IsPrimary,
+		&wall.UserID,
+		&wall.CreatedAt,
+		&wall.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return wall, nil
+}
