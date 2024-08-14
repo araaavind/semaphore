@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -234,4 +235,73 @@ func (m ItemModel) Insert(item *Item) error {
 		return err
 	}
 	return nil
+}
+
+func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filters) ([]*Item, Metadata, error) {
+	query := fmt.Sprintf(`
+		SELECT count(*) OVER(), id, title, description, content, link, pub_date,
+			pub_updated, authors, guid, image_url, categories, feed_id, version,
+			created_at, updated_at
+		FROM items
+		WHERE feed_id = ANY($1)
+		AND (
+			to_tsvector('simple', title) @@ plainto_tsquery('simple', $2)
+			OR $2 = ''
+		)
+		ORDER BY %s %s, id ASC
+		LIMIT $3 OFFSET $4`, filters.sortColumn(), filters.sortDirection())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []any{feedIDs, title, filters.limit(), filters.offset()}
+
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+	}
+	defer rows.Close()
+
+	totalRecords := 0
+	items := []*Item{}
+	for rows.Next() {
+		authorsJSON := []byte{}
+		pgmap := pgtype.NewMap()
+		var item Item
+		err := rows.Scan(
+			&totalRecords,
+			&item.ID,
+			&item.Title,
+			&item.Description,
+			&item.Content,
+			&item.Link,
+			&item.PubDate,
+			&item.PubUpdated,
+			&authorsJSON,
+			&item.GUID,
+			&item.ImageURL,
+			pgmap.SQLScanner(&item.Categories),
+			&item.FeedID,
+			&item.Version,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+		)
+		if err != nil {
+			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+		}
+		if authorsJSON != nil {
+			err = json.Unmarshal(authorsJSON, &item.Authors)
+			if err != nil {
+				return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+			}
+		}
+		items = append(items, &item)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return items, metadata, nil
 }
