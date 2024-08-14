@@ -28,6 +28,17 @@ GET			/feeds/:feed_id/followers 	list followers for feed					auth							users li
 PUT			/feeds/:feed_id/followers 	follow a feed							auth, feeds:follow				empty response with 200
 DELETE		/feeds/:feed_id/followers	unfollow a feed							auth, feeds:follow				empty response with 200
 
+POST		/walls						create wall
+GET			/walls						list walls of user
+GET			/walls/:wall_id				get a specific wall
+PUT			/walls/:wall_id				update a wall's details
+POST		/walls/:wall_id/feeds		add feeds to a wall
+GET			/walls/:wall_id/feeds		get feeds for a wall
+GET			/walls/:wall_id/items		get items for a wall
+
+GET			/items						list all items (from primary wall)
+GET			/items/:item_id				get a specific item
+
 */
 
 func (app *application) routes() http.Handler {
@@ -62,6 +73,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
 	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.unfollowFeed)))
+
+	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
 
 	activated := authenticated.Append(app.requireActivation)
 

@@ -36,6 +36,51 @@ func (m WallFeedModel) Insert(wallFeed *WallFeed) error {
 	return nil
 }
 
+func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
+	query := `
+		SELECT feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
+		FROM feeds
+		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
+		WHERE wall_feeds.wall_id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.QueryContext(ctx, query, wallID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	feeds := []*Feed{}
+	for rows.Next() {
+		var feed Feed
+		err := rows.Scan(
+			&feed.ID,
+			&feed.Title,
+			&feed.Description,
+			&feed.Link,
+			&feed.FeedLink,
+			&feed.PubDate,
+			&feed.PubUpdated,
+			&feed.FeedType,
+			&feed.FeedVersion,
+			&feed.Language,
+		)
+		if err != nil {
+			return nil, err
+		}
+		feeds = append(feeds, &feed)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return feeds, nil
+}
+
 func (m WallFeedModel) DeleteFeedForWalls(feedID int64, wallIDs []int64) error {
 	query := `
 		DELETE FROM wall_feeds

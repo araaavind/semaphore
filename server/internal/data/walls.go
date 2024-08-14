@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 )
 
@@ -47,6 +48,35 @@ func (m WallModel) InsertPrimaryWall(userID int64) error {
 	}
 
 	return m.Insert(wall)
+}
+
+func (m WallModel) FindByID(wallID int64) (*Wall, error) {
+	query := `
+		SELECT id, name, is_primary, user_id, created_at, updated_at
+		FROM walls
+		WHERE id = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	wall := &Wall{}
+	err := m.DB.QueryRowContext(ctx, query, wallID).Scan(
+		&wall.ID,
+		&wall.Name,
+		&wall.IsPrimary,
+		&wall.UserID,
+		&wall.CreatedAt,
+		&wall.UpdatedAt,
+	)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+	return wall, nil
 }
 
 func (m WallModel) FindAllForUser(userID int64) ([]*Wall, error) {

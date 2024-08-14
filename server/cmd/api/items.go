@@ -58,9 +58,10 @@ func CopyItemsFields(parsedFeed *gofeed.Feed, feedID int64) (items []*data.Item)
 			}
 		}
 		if len(parsedItem.Categories) != 0 {
-			item.Categories = pgtype.Array[string]{}
-			item.Categories.Elements = append(item.Categories.Elements, parsedItem.Categories...)
-			item.Categories.Valid = true
+			item.Categories = pgtype.Array[string]{
+				Elements: parsedItem.Categories,
+				Valid:    true,
+			}
 		}
 		item.FeedID = feedID
 		items = append(items, item)
