@@ -27,9 +27,11 @@ class _ActivationPageState extends State<ActivationPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ActivateUserCubit>().sendActivationToken(
-          (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email,
-        );
+    if (!widget.isOnboarding) {
+      context.read<ActivateUserCubit>().sendActivationToken(
+            (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email,
+          );
+    }
   }
 
   @override
