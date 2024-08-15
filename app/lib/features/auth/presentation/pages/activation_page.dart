@@ -25,6 +25,14 @@ class _ActivationPageState extends State<ActivationPage> {
   final formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ActivateUserCubit>().sendActivationToken(
+          (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email,
+        );
+  }
+
+  @override
   void dispose() {
     token.dispose();
     super.dispose();
