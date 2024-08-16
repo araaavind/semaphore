@@ -232,39 +232,6 @@ func (m FeedFollowModel) Insert(feedFollow *FeedFollow) error {
 	return nil
 }
 
-func (m FeedFollowModel) Upsert(feedFollow FeedFollow) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	existsQuery := `
-		SELECT EXISTS (
-			SELECT 1 FROM feed_follows
-			WHERE user_id = $1
-			AND feed_id = $2
-		)`
-
-	var exists bool
-	err := m.DB.QueryRowContext(ctx, existsQuery, feedFollow.UserID, feedFollow.FeedID).Scan(&exists)
-	if err != nil {
-		return err
-	}
-
-	if exists {
-		return nil
-	}
-
-	insertQuery := `
-		INSERT INTO feed_follows (user_id, feed_id)
-		VALUES ($1, $2)`
-
-	_, err = m.DB.ExecContext(ctx, insertQuery, feedFollow.UserID, feedFollow.FeedID)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m FeedFollowModel) Delete(feedFollow FeedFollow) error {
 	query := `
 		DELETE FROM feed_follows
