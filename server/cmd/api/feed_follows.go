@@ -257,8 +257,8 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		FeedID: feed.ID,
 		UserID: user.ID,
 	}
-	err = app.models.FeedFollows.Upsert(feedFollow)
-	if err != nil {
+	err = app.models.FeedFollows.Insert(&feedFollow)
+	if err != nil && !errors.Is(err, data.ErrDuplicateFeedFollow) {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
