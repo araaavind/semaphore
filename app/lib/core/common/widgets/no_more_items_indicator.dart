@@ -3,7 +3,11 @@ import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class NoMoreItemsIndicator extends StatelessWidget {
+  final String title;
+  final String? message;
   const NoMoreItemsIndicator({
+    this.title = 'Nothing to see here',
+    this.message,
     super.key,
   });
 
@@ -23,18 +27,19 @@ class NoMoreItemsIndicator extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                TextConstants.feedListEmptyMessageTitle,
+                title,
                 textAlign: TextAlign.center,
                 style: context.theme.textTheme.bodyLarge,
               ),
               const SizedBox(height: 4.0),
-              Text(
-                TextConstants.feedListEmptyMessageMessage,
-                textAlign: TextAlign.center,
-                style: context.theme.textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.w300,
+              if (message != null)
+                Text(
+                  message!,
+                  textAlign: TextAlign.center,
+                  style: context.theme.textTheme.bodySmall!.copyWith(
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
