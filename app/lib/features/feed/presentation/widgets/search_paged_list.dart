@@ -55,8 +55,14 @@ class SearchPagedList extends StatelessWidget {
               pageSize: ServerConstants.defaultPaginationPageSize,
             ),
           ),
-          noMoreItemsIndicatorBuilder: (_) => const NoMoreItemsIndicator(),
-          noItemsFoundIndicatorBuilder: (_) => const NoMoreItemsIndicator(),
+          noMoreItemsIndicatorBuilder: (_) => const NoMoreItemsIndicator(
+            title: TextConstants.feedListEmptyMessageTitle,
+            message: TextConstants.feedListEmptyMessageMessage,
+          ),
+          noItemsFoundIndicatorBuilder: (_) => const NoMoreItemsIndicator(
+            title: TextConstants.feedListEmptyMessageTitle,
+            message: TextConstants.feedListEmptyMessageMessage,
+          ),
         ),
       ),
     );

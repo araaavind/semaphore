@@ -144,8 +144,9 @@ class _FollowersListDialogState extends State<FollowersListDialog> {
                 ),
                 newPageProgressIndicatorBuilder: (context) =>
                     const ShimmerLoader(pageSize: 2),
-                noItemsFoundIndicatorBuilder: (_) =>
-                    const NoMoreItemsIndicator(),
+                noItemsFoundIndicatorBuilder: (_) => const NoMoreItemsIndicator(
+                  title: TextConstants.feedFollowersEmptyMessageTitle,
+                ),
               ),
             ),
           ),

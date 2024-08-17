@@ -26,6 +26,7 @@ class TextConstants {
       'Follow the feeds that interest you';
   static const String feedListFetchErrorTitle = 'Failed to load feeds';
   static const String feedFollowersFetchErrorTitle = 'Failed to load followers';
+  static const String feedFollowersEmptyMessageTitle = 'No followers';
   static const String feedListEmptyMessageTitle = 'Nothing to see here';
   static const String feedListEmptyMessageMessage =
       'Cannot find the feeds that you are looking for?\nAdd them yourself!';
@@ -37,4 +38,8 @@ class TextConstants {
       'Given url does not point to any valid feed';
   static const String accountActivationSuccessMessage =
       'Your account is now active!';
+
+  static const String itemListFetchErrorTitle = 'Failed to load posts';
+  static const String itemListEmptyMessageTitle = 'Nothing to see here';
+  static const String itemListEmptyMessageMessage = 'Follow feeds to see posts';
 }
