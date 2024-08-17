@@ -1,5 +1,4 @@
-import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
+import 'package:app/features/wall/presentation/widgets/wall_page_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class WallPage extends StatelessWidget {
@@ -7,22 +6,30 @@ class WallPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'smphr',
-          style: context.theme.textTheme.headlineMedium!.copyWith(
-            fontWeight: FontWeight.w700,
-            color: context.theme.colorScheme.secondary,
-          ),
-        ),
+    return const Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          WallPageSliverAppBar(),
+          WallPageSliverList(),
+        ],
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(UIConstants.pagePadding),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Nothing to see here yet')],
-        ),
+    );
+  }
+}
+
+class WallPageSliverList extends StatelessWidget {
+  const WallPageSliverList({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return const Text('Nothing to see yet');
+        },
+        childCount: 1,
       ),
     );
   }
