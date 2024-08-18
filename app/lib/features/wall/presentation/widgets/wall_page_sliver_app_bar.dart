@@ -1,4 +1,5 @@
 import 'package:app/core/theme/theme.dart';
+import 'package:app/features/wall/presentation/widgets/wall_page_sliver_app_bar_bottom.dart';
 import 'package:flutter/material.dart';
 
 class WallPageSliverAppBar extends StatelessWidget {
@@ -21,6 +22,7 @@ class WallPageSliverAppBar extends StatelessWidget {
       snap: false,
       stretch: true,
       automaticallyImplyLeading: false,
+      bottom: const WallPageSliverAppBarBottom(),
     );
   }
 }
