@@ -7,10 +7,10 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/data"
 )
 
-func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int) {
+func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int, refreshStaleFeedsSince, refreshPeriod time.Duration) {
 	for {
 		startTime := time.Now()
-		staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(startTime.Add(-5 * time.Minute))
+		staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(startTime.Add(-1 * refreshStaleFeedsSince))
 		if err != nil {
 			app.logInternalError("app.models.Feeds.GetUncheckedFeedsSince failed", err)
 			return
@@ -40,7 +40,7 @@ func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int) {
 		}
 
 		// sleeps until startTime + 1 min. Returns immediately if startTime + 1 min is in the past
-		time.Sleep(time.Until(startTime.Add(time.Minute)))
+		time.Sleep(time.Until(startTime.Add(refreshPeriod)))
 	}
 }
 

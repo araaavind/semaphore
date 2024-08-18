@@ -46,6 +46,8 @@ type config struct {
 	}
 	refresher struct {
 		maxConcurrentRefreshes int
+		refreshStaleFeedsSince time.Duration
+		refreshPeriod          time.Duration
 	}
 }
 
@@ -67,7 +69,7 @@ func main() {
 	flag.StringVar(&cfg.db.dsn, "dsn", os.Getenv("SEMAPHORE_DB_DSN"), "PostgreSQL connection string")
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
-	flag.DurationVar(&cfg.db.maxIdleTime, "db-max-idle-time", 15*time.Minute, "PostgreSQL max connection idle time")
+	flag.DurationVar(&cfg.db.maxIdleTime, "db-max-idle-time", 15*time.Minute, "PostgreSQL max connection idle time (default: 15m)")
 
 	flag.StringVar(&cfg.smtp.host, "smtp-host", "sandbox.smtp.mailtrap.io", "SMTP host")
 	flag.IntVar(&cfg.smtp.port, "smtp-port", 2525, "SMTP port")
@@ -80,6 +82,8 @@ func main() {
 	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
 
 	flag.IntVar(&cfg.refresher.maxConcurrentRefreshes, "max-concurrent-refreshes", 5, "Maximum concurrent refreshes")
+	flag.DurationVar(&cfg.refresher.refreshStaleFeedsSince, "refresh-since", 5*time.Minute, "Refresh stale feeds since (default: 5m)")
+	flag.DurationVar(&cfg.refresher.refreshPeriod, "refresh-period", time.Minute, "Refresh feed period (default: 1m)")
 
 	// Create a new version boolean flag with the default value of false.
 	displayVersion := flag.Bool("version", false, "Display version and exit")
@@ -131,7 +135,11 @@ func main() {
 		),
 	}
 
-	go app.KeepFeedsFresh(cfg.refresher.maxConcurrentRefreshes)
+	go app.KeepFeedsFresh(
+		cfg.refresher.maxConcurrentRefreshes,
+		cfg.refresher.refreshStaleFeedsSince,
+		cfg.refresher.refreshPeriod,
+	)
 
 	err = app.serve()
 	if err != nil {
