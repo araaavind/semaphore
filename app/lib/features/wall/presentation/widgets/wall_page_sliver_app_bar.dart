@@ -3,7 +3,9 @@ import 'package:app/features/wall/presentation/widgets/wall_page_sliver_app_bar_
 import 'package:flutter/material.dart';
 
 class WallPageSliverAppBar extends StatelessWidget {
+  final String bottomBarTitle;
   const WallPageSliverAppBar({
+    required this.bottomBarTitle,
     super.key,
   });
 
@@ -22,7 +24,9 @@ class WallPageSliverAppBar extends StatelessWidget {
       snap: false,
       stretch: true,
       automaticallyImplyLeading: false,
-      bottom: const WallPageSliverAppBarBottom(),
+      bottom: WallPageSliverAppBarBottom(
+        title: bottomBarTitle,
+      ),
     );
   }
 }

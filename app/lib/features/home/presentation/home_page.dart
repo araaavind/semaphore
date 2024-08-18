@@ -5,7 +5,8 @@ import 'package:app/core/theme/extensions/app_snackbar_color_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
-import 'package:app/features/wall/presentation/bloc/list_items_bloc.dart';
+import 'package:app/features/wall/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +48,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(
+          create: (_) => serviceLocator<WallsBloc>(),
+        ),
         BlocProvider(
           create: (_) => serviceLocator<SearchFeedBloc>(),
         ),

@@ -1,6 +1,9 @@
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/features/wall/domain/entities/item.dart';
-import 'package:app/features/wall/presentation/bloc/list_items_bloc.dart';
+import 'package:app/features/wall/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
+import 'package:app/features/wall/presentation/widgets/wall_page_drawer.dart';
 import 'package:app/features/wall/presentation/widgets/wall_page_paged_list.dart';
 import 'package:app/features/wall/presentation/widgets/wall_page_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -31,15 +34,19 @@ class _WallPageState extends State<WallPage> {
   @override
   void initState() {
     super.initState();
+    context.read<WallsBloc>().add(ListWallsRequested());
     _pagingController.addPageRequestListener(
       (pageKey) {
-        context.read<ListItemsBloc>().add(
-              ListItemsRequested(
-                wallId: 1,
-                page: pageKey,
-                pageSize: ServerConstants.defaultPaginationPageSize,
-              ),
-            );
+        final currentWall = context.read<WallsBloc>().state.currentWall;
+        if (currentWall != null) {
+          context.read<ListItemsBloc>().add(
+                ListItemsRequested(
+                  wallId: currentWall.id,
+                  page: pageKey,
+                  pageSize: ServerConstants.defaultPaginationPageSize,
+                ),
+              );
+        }
       },
     );
   }
@@ -54,32 +61,45 @@ class _WallPageState extends State<WallPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) => [
-          const WallPageSliverAppBar(),
-        ],
-        body: BlocListener<ListItemsBloc, ListItemsState>(
-          listener: (context, state) {
-            if (state.status != ListItemsStatus.loading) {
-              _refreshController.refreshCompleted();
-            }
-            if (state.status == ListItemsStatus.success) {
-              if (state.itemList.metadata.currentPage ==
-                  state.itemList.metadata.lastPage) {
-                _pagingController.appendLastPage(state.itemList.items);
-              } else {
-                final nextPage = state.itemList.metadata.currentPage + 1;
-                _pagingController.appendPage(state.itemList.items, nextPage);
-              }
-            } else if (state.status == ListItemsStatus.failure) {
-              _pagingController.error = state.message;
-            }
-          },
-          child: WallPagePagedList(
-            pagingController: _pagingController,
-            refreshController: _refreshController,
-          ),
-        ),
+      drawer: const WallPageDrawer(),
+      body: BlocConsumer<WallsBloc, WallsState>(
+        listener: (context, state) => _pagingController.refresh(),
+        builder: (context, state) {
+          if (state.status == WallsStatus.loading ||
+              state.currentWall == null) {
+            return const ShimmerLoader(pageSize: 12);
+          }
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              WallPageSliverAppBar(
+                bottomBarTitle: state.currentWall?.name ?? 'All stories',
+              ),
+            ],
+            body: BlocListener<ListItemsBloc, ListItemsState>(
+              listener: (context, state) {
+                if (state.status != ListItemsStatus.loading) {
+                  _refreshController.refreshCompleted();
+                }
+                if (state.status == ListItemsStatus.success) {
+                  if (state.itemList.metadata.currentPage ==
+                      state.itemList.metadata.lastPage) {
+                    _pagingController.appendLastPage(state.itemList.items);
+                  } else {
+                    final nextPage = state.itemList.metadata.currentPage + 1;
+                    _pagingController.appendPage(
+                        state.itemList.items, nextPage);
+                  }
+                } else if (state.status == ListItemsStatus.failure) {
+                  _pagingController.error = state.message;
+                }
+              },
+              child: WallPagePagedList(
+                pagingController: _pagingController,
+                refreshController: _refreshController,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

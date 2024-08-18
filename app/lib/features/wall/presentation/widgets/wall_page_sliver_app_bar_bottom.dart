@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class WallPageSliverAppBarBottom extends StatelessWidget
     implements PreferredSizeWidget {
+  final String title;
   const WallPageSliverAppBarBottom({
+    required this.title,
     super.key,
   });
 
@@ -32,7 +34,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
             ),
             const SizedBox(width: 8),
             Text(
-              'All stories',
+              title,
               style: context.theme.textTheme.titleMedium,
             ),
           ],
