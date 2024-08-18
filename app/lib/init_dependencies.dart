@@ -30,7 +30,9 @@ import 'package:app/features/wall/data/datasources/wall_remote_datasource.dart';
 import 'package:app/features/wall/data/repositories/wall_repository_impl.dart';
 import 'package:app/features/wall/domain/repositories/wall_repository.dart';
 import 'package:app/features/wall/domain/usecases/list_wall_items.dart';
-import 'package:app/features/wall/presentation/bloc/list_items_bloc.dart';
+import 'package:app/features/wall/domain/usecases/list_walls.dart';
+import 'package:app/features/wall/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
@@ -234,7 +236,17 @@ void _initWall() {
       serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => ListWalls(
+      serviceLocator(),
+    ),
+  );
   // Register blocs
+  serviceLocator.registerFactory(
+    () => WallsBloc(
+      listWalls: serviceLocator(),
+    ),
+  );
   serviceLocator.registerFactory(
     () => ListItemsBloc(
       listWallItems: serviceLocator(),
