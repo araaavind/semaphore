@@ -1,6 +1,7 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/wall/data/models/item_list_model.dart';
+import 'package:app/features/wall/data/models/wall_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
@@ -13,6 +14,8 @@ abstract interface class WallRemoteDatasource {
     int pageSize,
     String? sortKey,
   });
+
+  Future<List<WallModel>> listWalls();
 }
 
 class WallRemoteDatasourceImpl implements WallRemoteDatasource {
@@ -43,6 +46,28 @@ class WallRemoteDatasourceImpl implements WallRemoteDatasource {
       );
       return ItemListModel.fromMap(response.data);
     } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<List<WallModel>> listWalls() async {
+    try {
+      final response = await semaphoreClient.dio.get('/walls');
+      return (response.data['walls'] as List)
+          .map((wall) => WallModel.fromMap(wall))
+          .toList();
+    } on sp.SemaphoreException catch (e) {
+      if (e.responseStatusCode != null && e.responseStatusCode == 404) {
+        throw const ServerException('No walls found');
+      }
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {
       throw ServerException(e.message);
