@@ -74,6 +74,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
 	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.unfollowFeed)))
 
+	router.Handler(http.MethodGet, "/v1/walls", authenticated.ThenFunc(app.listWalls))
 	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
 
 	activated := authenticated.Append(app.requireActivation)
