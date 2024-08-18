@@ -8,6 +8,21 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/validator"
 )
 
+func (app *application) listWalls(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetSession(r).User
+
+	walls, err := app.models.Walls.FindAllForUser(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"walls": walls}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
 func (app *application) listItemsForWall(w http.ResponseWriter, r *http.Request) {
 	wallID, err := app.readIDParam(r, "wall_id")
 	if err != nil || wallID < 1 {
