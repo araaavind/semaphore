@@ -1,5 +1,6 @@
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/wall/domain/entities/item_list.dart';
+import 'package:app/features/wall/domain/entities/wall.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class WallRepository {
@@ -11,4 +12,6 @@ abstract interface class WallRepository {
     int pageSize,
     String? sortKey,
   });
+
+  Future<Either<Failure, List<Wall>>> listWalls();
 }

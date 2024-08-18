@@ -3,6 +3,7 @@ import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/wall/data/datasources/wall_remote_datasource.dart';
 import 'package:app/features/wall/domain/entities/item_list.dart';
+import 'package:app/features/wall/domain/entities/wall.dart';
 import 'package:app/features/wall/domain/repositories/wall_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -30,6 +31,16 @@ class WallRepositoryImpl implements WallRepository {
         sortKey: sortKey,
       );
       return right(itemsList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Wall>>> listWalls() async {
+    try {
+      final wallsList = await wallRemoteDatasource.listWalls();
+      return right(wallsList);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
     }
