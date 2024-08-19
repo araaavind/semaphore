@@ -71,9 +71,11 @@ func (app *application) listItemsForWall(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	feedsMap := make(map[int64]*data.Feed)
 	feedIDs := []int64{}
 	for _, feed := range feeds {
 		feedIDs = append(feedIDs, feed.ID)
+		feedsMap[feed.ID] = feed
 	}
 
 	items, metadata, err := app.models.Items.FindAllForFeeds(feedIDs, input.Title, input.Filters)
@@ -82,7 +84,20 @@ func (app *application) listItemsForWall(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusOK, envelope{"items": items, "metadata": metadata}, nil)
+	type itemWithFeedType struct {
+		*data.Item
+		Feed *data.Feed `json:"feed"`
+	}
+
+	itemsResponse := []*itemWithFeedType{}
+	for _, item := range items {
+		itemsResponse = append(itemsResponse, &itemWithFeedType{
+			Item: item,
+			Feed: feedsMap[item.FeedID],
+		})
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"items": itemsResponse, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
