@@ -1,10 +1,8 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/features/wall/domain/entities/item.dart';
-import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/wall/presentation/widgets/item_list_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -25,7 +23,6 @@ class WallPagePagedList extends StatelessWidget {
       controller: _refreshController,
       onRefresh: () async {
         _pagingController.refresh();
-        context.read<WallsBloc>().add(ListWallsRequested());
       },
       child: CustomScrollView(
         slivers: [

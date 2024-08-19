@@ -27,6 +27,8 @@ class WallPageSliverAppBar extends StatelessWidget {
       bottom: WallPageSliverAppBarBottom(
         title: bottomBarTitle,
       ),
+      elevation: 0,
+      scrolledUnderElevation: 0,
     );
   }
 }

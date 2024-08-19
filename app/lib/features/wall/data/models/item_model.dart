@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app/features/feed/data/models/feed_model.dart';
 import 'package:app/features/wall/domain/entities/item.dart';
 
 class ItemModel extends Item {
@@ -12,6 +13,7 @@ class ItemModel extends Item {
     super.pubDate,
     super.pubUpdated,
     super.imageUrl,
+    super.feed,
   });
 
   ItemModel copyWith({
@@ -23,6 +25,7 @@ class ItemModel extends Item {
     DateTime? pubDate,
     DateTime? pubUpdated,
     String? imageUrl,
+    FeedModel? feed,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -33,6 +36,7 @@ class ItemModel extends Item {
       pubDate: pubDate ?? this.pubDate,
       pubUpdated: pubUpdated ?? this.pubUpdated,
       imageUrl: imageUrl ?? this.imageUrl,
+      feed: feed ?? this.feed,
     );
   }
 
@@ -46,6 +50,7 @@ class ItemModel extends Item {
       'pub_date': pubDate?.toIso8601String(),
       'pub_updated': pubUpdated?.toIso8601String(),
       'image_url': imageUrl,
+      'feed': (feed as FeedModel).toMap(),
     };
   }
 
@@ -64,6 +69,9 @@ class ItemModel extends Item {
           ? DateTime.parse(map['pub_updated'] as String)
           : null,
       imageUrl: map['image_url'] != null ? map['image_url'] as String : null,
+      feed: map['feed'] != null
+          ? FeedModel.fromMap(map['feed'] as Map<String, dynamic>)
+          : null,
     );
   }
 
