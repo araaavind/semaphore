@@ -2,7 +2,7 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/format_published_date.dart';
 import 'package:app/core/utils/string_casing_extension.dart';
-import 'package:app/features/wall/domain/entities/item.dart';
+import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +16,10 @@ class ItemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      visualDensity: VisualDensity.compact,
+      visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
+        vertical: UIConstants.tileContentPadding,
         horizontal: UIConstants.pagePadding,
       ),
       title: AutoSizeText(
@@ -33,18 +34,25 @@ class ItemListTile extends StatelessWidget {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          AutoSizeText(
-            item.feed?.title ?? 'Unknown feed',
-            style: context.theme.textTheme.bodySmall!.copyWith(
-              fontWeight: FontWeight.w300,
+          Container(
+            constraints: BoxConstraints.loose(
+              Size.fromWidth(
+                MediaQuery.of(context).size.width - 110,
+              ),
             ),
-            minFontSize: context.theme.textTheme.bodySmall!.fontSize!,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            child: AutoSizeText(
+              item.feed?.title ?? 'Unknown feed',
+              style: context.theme.textTheme.bodySmall!.copyWith(
+                fontWeight: FontWeight.w300,
+              ),
+              minFontSize: context.theme.textTheme.bodySmall!.fontSize!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           if (item.pubDate != null || item.pubUpdated != null)
             Text(
-              ' • ${formatPublishedDate(
+              '  •  ${formatPublishedDate(
                 item.pubUpdated ?? item.pubDate ?? DateTime.now(),
               )}',
               style: context.theme.textTheme.bodySmall!.copyWith(

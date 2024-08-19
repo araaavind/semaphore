@@ -1,5 +1,5 @@
 import 'package:app/core/common/entities/paginated_list.dart';
-import 'package:app/features/wall/domain/entities/item.dart';
+import 'package:app/features/feed/domain/entities/item.dart';
 
 class ItemList extends PaginatedList {
   final List<Item> items;

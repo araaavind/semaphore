@@ -1,7 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/features/wall/domain/entities/item.dart';
-import 'package:app/features/wall/presentation/widgets/item_list_tile.dart';
+import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/presentation/widgets/item_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';

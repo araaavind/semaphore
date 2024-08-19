@@ -1,7 +1,7 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
-import 'package:app/features/wall/data/models/item_list_model.dart';
-import 'package:app/features/wall/data/models/wall_model.dart';
+import 'package:app/features/feed/data/models/item_list_model.dart';
+import 'package:app/features/feed/data/models/wall_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 

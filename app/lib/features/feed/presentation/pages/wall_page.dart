@@ -1,11 +1,11 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/features/wall/domain/entities/item.dart';
-import 'package:app/features/wall/presentation/bloc/list_items/list_items_bloc.dart';
-import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/features/wall/presentation/widgets/wall_page_drawer.dart';
-import 'package:app/features/wall/presentation/widgets/wall_page_paged_list.dart';
-import 'package:app/features/wall/presentation/widgets/wall_page_sliver_app_bar.dart';
+import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
+import 'package:app/features/feed/presentation/widgets/wall_page_drawer.dart';
+import 'package:app/features/feed/presentation/widgets/wall_page_paged_list.dart';
+import 'package:app/features/feed/presentation/widgets/wall_page_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';

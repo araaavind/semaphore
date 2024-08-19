@@ -1,7 +1,7 @@
 import 'package:app/core/common/widgets/loader.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,7 +15,6 @@ class WallPageDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       elevation: 4.0,
-      width: 280,
       backgroundColor: context.theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
@@ -43,7 +42,9 @@ class WallPageDrawer extends StatelessWidget {
             initiallyExpanded: true,
             title: Text(
               'Your walls',
-              style: context.theme.textTheme.titleLarge,
+              style: context.theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
             ),
             children: [
               BlocBuilder<WallsBloc, WallsState>(
@@ -100,7 +101,9 @@ class WallPageDrawer extends StatelessWidget {
             initiallyExpanded: true,
             title: Text(
               'All feeds',
-              style: context.theme.textTheme.titleLarge,
+              style: context.theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
             ),
             expansionAnimationStyle: AnimationStyle(
               curve: Curves.easeOut,

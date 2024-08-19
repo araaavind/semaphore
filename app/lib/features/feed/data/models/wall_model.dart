@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:app/features/wall/domain/entities/wall.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
 
 class WallModel extends Wall {
   const WallModel({
