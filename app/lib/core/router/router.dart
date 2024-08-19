@@ -8,6 +8,7 @@ import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
@@ -125,10 +126,12 @@ GoRouter router = GoRouter(
         final feed = extra['feed'] as Feed;
         final followFeedBlocValue =
             extra['followFeedBlocValue'] as FollowFeedBloc;
+        final listItemsBlocValue = extra['listItemsBlocValue'] as ListItemsBloc;
         final isFollowed = extra['isFollowed'] as bool;
         return FeedViewPage(
           feed: feed,
           followFeedBlocValue: followFeedBlocValue,
+          listItemsBlocValue: listItemsBlocValue,
           isFollowed: isFollowed,
         );
       },

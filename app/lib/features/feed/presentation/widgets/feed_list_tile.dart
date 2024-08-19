@@ -5,6 +5,7 @@ import 'package:app/core/utils/string_casing_extension.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,6 +58,7 @@ class _FeedListTileState extends State<FeedListTile> {
           final Map<String, Object> extra = {
             'feed': feed,
             'followFeedBlocValue': BlocProvider.of<FollowFeedBloc>(context),
+            'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
             'isFollowed': isFollowed,
           };
           context.push('/feed/${feed.id}', extra: extra);
