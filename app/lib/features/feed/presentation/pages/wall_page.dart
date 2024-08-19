@@ -3,8 +3,8 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
+import 'package:app/features/feed/presentation/widgets/item_paged_sliver_list.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_drawer.dart';
-import 'package:app/features/feed/presentation/widgets/wall_page_paged_list.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -99,9 +99,18 @@ class _WallPageState extends State<WallPage> {
                     _pagingController.error = state.message;
                   }
                 },
-                child: WallPagePagedList(
-                  pagingController: _pagingController,
-                  refreshController: _refreshController,
+                child: Refresher(
+                  controller: _refreshController,
+                  onRefresh: () async {
+                    _pagingController.refresh();
+                  },
+                  child: CustomScrollView(
+                    slivers: [
+                      ItemPagedSliverList(
+                        pagingController: _pagingController,
+                      ),
+                    ],
+                  ),
                 ),
               );
             }),
