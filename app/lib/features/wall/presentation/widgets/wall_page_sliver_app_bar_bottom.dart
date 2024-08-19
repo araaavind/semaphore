@@ -16,7 +16,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false, // this will hide Drawer hamburger icon
-      backgroundColor: context.theme.colorScheme.surfaceContainerLow,
+      // backgroundColor: context.theme.colorScheme.surfaceContainerLow,
       title: GestureDetector(
         onTap: () {
           Scaffold.of(context).openDrawer();
@@ -24,18 +24,19 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 2),
-              child: Icon(
-                Icons.menu,
-                size: 20,
-                weight: 1,
-              ),
+            const Icon(
+              Icons.menu,
+              size: 22,
             ),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: context.theme.textTheme.titleMedium,
+            const SizedBox(width: 12.0),
+            Expanded(
+              child: Text(
+                title,
+                style: context.theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w800),
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+              ),
             ),
           ],
         ),
@@ -53,7 +54,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         ),
       ],
       elevation: 0,
-      scrolledUnderElevation: 0.5,
+      scrolledUnderElevation: 1,
     );
   }
 }

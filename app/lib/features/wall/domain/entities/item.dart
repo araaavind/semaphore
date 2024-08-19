@@ -1,3 +1,4 @@
+import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:equatable/equatable.dart';
 
 class Item extends Equatable {
@@ -9,6 +10,7 @@ class Item extends Equatable {
   final DateTime? pubUpdated;
   final String guid;
   final String? imageUrl;
+  final Feed? feed;
 
   const Item({
     required this.id,
@@ -19,6 +21,7 @@ class Item extends Equatable {
     this.pubUpdated,
     required this.guid,
     this.imageUrl,
+    this.feed,
   });
 
   @override
@@ -31,5 +34,6 @@ class Item extends Equatable {
         pubUpdated,
         guid,
         imageUrl,
+        feed,
       ];
 }
