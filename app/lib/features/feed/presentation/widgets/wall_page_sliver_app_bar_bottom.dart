@@ -24,15 +24,16 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.menu,
-            ),
+            Icon(Icons.menu,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.85)),
             const SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 title,
-                style: context.theme.textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w500),
+                style: context.theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18.0,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.fade,
               ),
@@ -44,10 +45,12 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         IconButton(
           onPressed: () {},
           icon: const Icon(Icons.search),
+          color: context.theme.colorScheme.onSurface.withOpacity(0.85),
         ),
         IconButton(
           onPressed: () {},
           icon: const Icon(Icons.filter_list),
+          color: context.theme.colorScheme.onSurface.withOpacity(0.85),
         ),
       ],
       elevation: 0,

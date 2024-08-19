@@ -24,7 +24,7 @@ class ItemListTile extends StatelessWidget {
       ),
       title: AutoSizeText(
         item.title.toTitleCase(),
-        style: context.theme.textTheme.bodyLarge!.copyWith(
+        style: context.theme.textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w600,
         ),
         minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
@@ -37,27 +37,27 @@ class ItemListTile extends StatelessWidget {
           Container(
             constraints: BoxConstraints.loose(
               Size.fromWidth(
-                MediaQuery.of(context).size.width - 110,
+                MediaQuery.of(context).size.width - 120,
               ),
             ),
             child: AutoSizeText(
               item.feed?.title ?? 'Unknown feed',
               style: context.theme.textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w300,
-              ),
-              minFontSize: context.theme.textTheme.bodySmall!.fontSize!,
+                  fontWeight: FontWeight.w300,
+                  color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
               maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.fade,
+              softWrap: false,
             ),
           ),
           if (item.pubDate != null || item.pubUpdated != null)
             Text(
-              '  •  ${formatPublishedDate(
+              '   •   ${formatPublishedDate(
                 item.pubUpdated ?? item.pubDate ?? DateTime.now(),
               )}',
               style: context.theme.textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w300,
-              ),
+                  fontWeight: FontWeight.w300,
+                  color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
         ],
       ),
