@@ -22,16 +22,13 @@ import 'package:app/features/feed/domain/usecases/follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.dart';
 import 'package:app/features/feed/domain/usecases/list_followers_of_feed.dart';
+import 'package:app/features/feed/domain/usecases/list_items.dart';
+import 'package:app/features/feed/domain/usecases/list_walls.dart';
 import 'package:app/features/feed/domain/usecases/unfollow_feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
-import 'package:app/features/feed/data/datasources/wall_remote_datasource.dart';
-import 'package:app/features/feed/data/repositories/wall_repository_impl.dart';
-import 'package:app/features/feed/domain/repositories/wall_repository.dart';
-import 'package:app/features/feed/domain/usecases/list_wall_items.dart';
-import 'package:app/features/feed/domain/usecases/list_walls.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
@@ -44,7 +41,6 @@ Future<void> initDependencies() async {
 
   _initAuth();
   _initFeed();
-  _initWall();
   // Register shared preferences for storing session
   serviceLocator.registerLazySingleton<LocalStorage>(
     () => SharedPreferencesLocalStorage(
@@ -192,6 +188,16 @@ void _initFeed() {
       serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => ListWalls(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => ListItems(
+      serviceLocator(),
+    ),
+  );
   // Register blocs
   serviceLocator.registerFactory(
     () => SearchFeedBloc(
@@ -215,33 +221,6 @@ void _initFeed() {
       listFollowers: serviceLocator(),
     ),
   );
-}
-
-void _initWall() {
-  // Register datasources
-  serviceLocator.registerFactory<WallRemoteDatasource>(
-    () => WallRemoteDatasourceImpl(
-      serviceLocator(),
-    ),
-  );
-  // Register repository
-  serviceLocator.registerFactory<WallRepository>(
-    () => WallRepositoryImpl(
-      serviceLocator(),
-    ),
-  );
-  // Register usecases
-  serviceLocator.registerFactory(
-    () => ListWallItems(
-      serviceLocator(),
-    ),
-  );
-  serviceLocator.registerFactory(
-    () => ListWalls(
-      serviceLocator(),
-    ),
-  );
-  // Register blocs
   serviceLocator.registerFactory(
     () => WallsBloc(
       listWalls: serviceLocator(),
@@ -249,7 +228,7 @@ void _initWall() {
   );
   serviceLocator.registerFactory(
     () => ListItemsBloc(
-      listWallItems: serviceLocator(),
+      listItems: serviceLocator(),
     ),
   );
 }

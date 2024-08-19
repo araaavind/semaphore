@@ -1,6 +1,9 @@
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/entities/followers_list.dart';
+import 'package:app/features/feed/domain/entities/item_list.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class FeedRepository {
@@ -36,4 +39,16 @@ abstract interface class FeedRepository {
     int pageSize,
     String? sortKey,
   });
+
+  Future<Either<Failure, ItemList>> listItems({
+    required int parentId,
+    required ListItemsParentType parentType,
+    String? searchKey,
+    String? searchValue,
+    int page,
+    int pageSize,
+    String? sortKey,
+  });
+
+  Future<Either<Failure, List<Wall>>> listWalls();
 }

@@ -40,7 +40,8 @@ class _WallPageState extends State<WallPage> {
         if (currentWall != null) {
           context.read<ListItemsBloc>().add(
                 ListItemsRequested(
-                  wallId: currentWall.id,
+                  parentId: currentWall.id,
+                  parentType: ListItemsParentType.wall,
                   page: pageKey,
                   pageSize: ServerConstants.defaultPaginationPageSize,
                 ),

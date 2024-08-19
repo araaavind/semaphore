@@ -1,5 +1,7 @@
 part of 'list_items_bloc.dart';
 
+enum ListItemsParentType { feed, wall }
+
 @immutable
 sealed class ListItemsEvent extends Equatable {
   @override
@@ -7,7 +9,8 @@ sealed class ListItemsEvent extends Equatable {
 }
 
 class ListItemsRequested extends ListItemsEvent {
-  final int wallId;
+  final int parentId;
+  final ListItemsParentType parentType;
   final String? searchKey;
   final String? searchValue;
   final int page;
@@ -15,7 +18,8 @@ class ListItemsRequested extends ListItemsEvent {
   final String? sortKey;
 
   ListItemsRequested({
-    required this.wallId,
+    required this.parentId,
+    required this.parentType,
     this.searchKey,
     this.searchValue,
     this.page = 1,
@@ -26,7 +30,8 @@ class ListItemsRequested extends ListItemsEvent {
   @override
   List<Object?> get props => super.props
     ..addAll([
-      wallId,
+      parentId,
+      parentType,
       searchKey,
       searchValue,
       page,
