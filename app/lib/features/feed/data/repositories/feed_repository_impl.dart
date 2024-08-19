@@ -4,7 +4,10 @@ import 'package:app/core/errors/failures.dart';
 import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
 import 'package:app/features/feed/domain/entities/followers_list.dart';
+import 'package:app/features/feed/domain/entities/item_list.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
 class FeedRepositoryImpl implements FeedRepository {
@@ -122,6 +125,42 @@ class FeedRepositoryImpl implements FeedRepository {
         sortKey: sortKey,
       );
       return right(followersList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ItemList>> listItems({
+    required int parentId,
+    required ListItemsParentType parentType,
+    String? searchKey,
+    String? searchValue,
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? sortKey,
+  }) async {
+    try {
+      final itemsList = await feedRemoteDatasource.listItems(
+        parentId: parentId,
+        parentType: parentType,
+        searchKey: searchKey,
+        searchValue: searchValue,
+        page: page,
+        pageSize: pageSize,
+        sortKey: sortKey,
+      );
+      return right(itemsList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Wall>>> listWalls() async {
+    try {
+      final wallsList = await feedRemoteDatasource.listWalls();
+      return right(wallsList);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));
     }

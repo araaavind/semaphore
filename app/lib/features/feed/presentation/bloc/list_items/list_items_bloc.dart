@@ -1,6 +1,6 @@
 import 'package:app/core/constants/server_constants.dart';
 import 'package:app/features/feed/domain/entities/item_list.dart';
-import 'package:app/features/feed/domain/usecases/list_wall_items.dart';
+import 'package:app/features/feed/domain/usecases/list_items.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,11 +10,11 @@ part 'list_items_event.dart';
 part 'list_items_state.dart';
 
 class ListItemsBloc extends Bloc<ListItemsEvent, ListItemsState> {
-  final ListWallItems _listWallItems;
+  final ListItems _listItems;
 
   ListItemsBloc({
-    required ListWallItems listWallItems,
-  })  : _listWallItems = listWallItems,
+    required ListItems listItems,
+  })  : _listItems = listItems,
         super(const ListItemsState()) {
     on<ListItemsRequested>(
       _onListItemsRequested,
@@ -26,9 +26,10 @@ class ListItemsBloc extends Bloc<ListItemsEvent, ListItemsState> {
     Emitter<ListItemsState> emit,
   ) async {
     emit(state.copyWith(status: ListItemsStatus.loading));
-    final itemsRes = await _listWallItems(
-      ListWallItemsParams(
-        wallId: event.wallId,
+    final itemsRes = await _listItems(
+      ListItemsParams(
+        parentId: event.parentId,
+        parentType: event.parentType,
         searchKey: event.searchKey,
         searchValue: event.searchValue,
         sortKey: event.sortKey,

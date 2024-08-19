@@ -2,6 +2,9 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
 import 'package:app/features/feed/data/models/followers_list_model.dart';
+import 'package:app/features/feed/data/models/item_list_model.dart';
+import 'package:app/features/feed/data/models/wall_model.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
@@ -38,6 +41,18 @@ abstract interface class FeedRemoteDatasource {
   });
 
   Future<List<bool>> checkUserFollowsFeeds(List<int> feedIds);
+
+  Future<ItemListModel> listItems({
+    required int parentId,
+    required ListItemsParentType parentType,
+    String? searchKey,
+    String? searchValue,
+    int page,
+    int pageSize,
+    String? sortKey,
+  });
+
+  Future<List<WallModel>> listWalls();
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -222,6 +237,69 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       );
       return FollowersListModel.fromMap(response.data);
     } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<ItemListModel> listItems({
+    required int parentId,
+    required ListItemsParentType parentType,
+    String? searchKey,
+    String? searchValue,
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? sortKey,
+  }) async {
+    try {
+      Map<String, dynamic>? queryParams = {'page': page, 'page_size': pageSize};
+      if (searchKey != null && searchValue != null) {
+        queryParams[searchKey] = searchValue;
+      }
+      if (sortKey != null) {
+        queryParams['sort'] = sortKey;
+      }
+      String url;
+      if (parentType == ListItemsParentType.wall) {
+        url = '/walls/$parentId/items';
+      } else {
+        url = '/feeds/$parentId/items';
+      }
+      final response = await semaphoreClient.dio.get(
+        url,
+        queryParameters: queryParams,
+      );
+      return ItemListModel.fromMap(response.data);
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<List<WallModel>> listWalls() async {
+    try {
+      final response = await semaphoreClient.dio.get('/walls');
+      return (response.data['walls'] as List)
+          .map((wall) => WallModel.fromMap(wall))
+          .toList();
+    } on sp.SemaphoreException catch (e) {
+      if (e.responseStatusCode != null && e.responseStatusCode == 404) {
+        throw const ServerException('No walls found');
+      }
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {
       throw ServerException(e.message);
