@@ -129,3 +129,51 @@ func CopyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
 	feed.LastFetchAt.Time = time.Now()
 	feed.LastFetchAt.Valid = true
 }
+
+func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request) {
+	feedID, err := app.readIDParam(r, "feed_id")
+	if err != nil || feedID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	var input struct {
+		Title string
+		data.Filters
+	}
+
+	v := validator.New()
+	qs := r.URL.Query()
+
+	input.Title = app.readString(qs, "title", "")
+	input.Page = app.readInt(qs, "page", 1, v)
+	input.PageSize = app.readInt(qs, "page_size", 16, v)
+	input.Sort = app.readString(qs, "sort", "-pub_date")
+	input.SortSafeList = []string{"id", "title", "pub_date", "-id", "-title", "-pub_date"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	feed, err := app.models.Feeds.FindByID(feedID)
+	if err != nil {
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFoundResponse(w, r)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	items, metadata, err := app.models.Items.FindAllForFeeds([]int64{feed.ID}, input.Title, input.Filters)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"items": items, "metadata": metadata}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}

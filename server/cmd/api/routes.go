@@ -27,6 +27,7 @@ GET			/feeds/:feed_id				get a feed								-								feed with 200
 GET			/feeds/:feed_id/followers 	list followers for feed					auth							users list, metadata with 200
 PUT			/feeds/:feed_id/followers 	follow a feed							auth, feeds:follow				empty response with 200
 DELETE		/feeds/:feed_id/followers	unfollow a feed							auth, feeds:follow				empty response with 200
+GET			/feeds/:feed_id/items		get feeds for a wall
 
 POST		/walls						create wall
 GET			/walls						list walls of user
@@ -73,6 +74,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
 	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.unfollowFeed)))
+	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/items", authenticated.ThenFunc(app.listItemsForFeed))
 
 	router.Handler(http.MethodGet, "/v1/walls", authenticated.ThenFunc(app.listWalls))
 	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
