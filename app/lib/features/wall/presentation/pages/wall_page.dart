@@ -65,39 +65,46 @@ class _WallPageState extends State<WallPage> {
       body: BlocConsumer<WallsBloc, WallsState>(
         listener: (context, state) => _pagingController.refresh(),
         builder: (context, state) {
-          if (state.status == WallsStatus.loading ||
-              state.currentWall == null) {
-            return const ShimmerLoader(pageSize: 12);
-          }
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               WallPageSliverAppBar(
                 bottomBarTitle: state.currentWall?.name ?? 'All stories',
               ),
             ],
-            body: BlocListener<ListItemsBloc, ListItemsState>(
-              listener: (context, state) {
-                if (state.status != ListItemsStatus.loading) {
-                  _refreshController.refreshCompleted();
-                }
-                if (state.status == ListItemsStatus.success) {
-                  if (state.itemList.metadata.currentPage ==
-                      state.itemList.metadata.lastPage) {
-                    _pagingController.appendLastPage(state.itemList.items);
-                  } else {
-                    final nextPage = state.itemList.metadata.currentPage + 1;
-                    _pagingController.appendPage(
-                        state.itemList.items, nextPage);
+            body: Builder(builder: (context) {
+              if (state.status == WallsStatus.loading ||
+                  state.currentWall == null) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: UIConstants.pagePadding,
+                  ),
+                  child: ShimmerLoader(pageSize: 12),
+                );
+              }
+              return BlocListener<ListItemsBloc, ListItemsState>(
+                listener: (context, state) {
+                  if (state.status != ListItemsStatus.loading) {
+                    _refreshController.refreshCompleted();
                   }
-                } else if (state.status == ListItemsStatus.failure) {
-                  _pagingController.error = state.message;
-                }
-              },
-              child: WallPagePagedList(
-                pagingController: _pagingController,
-                refreshController: _refreshController,
-              ),
-            ),
+                  if (state.status == ListItemsStatus.success) {
+                    if (state.itemList.metadata.currentPage ==
+                        state.itemList.metadata.lastPage) {
+                      _pagingController.appendLastPage(state.itemList.items);
+                    } else {
+                      final nextPage = state.itemList.metadata.currentPage + 1;
+                      _pagingController.appendPage(
+                          state.itemList.items, nextPage);
+                    }
+                  } else if (state.status == ListItemsStatus.failure) {
+                    _pagingController.error = state.message;
+                  }
+                },
+                child: WallPagePagedList(
+                  pagingController: _pagingController,
+                  refreshController: _refreshController,
+                ),
+              );
+            }),
           );
         },
       ),
