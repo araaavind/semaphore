@@ -1,8 +1,10 @@
 import 'package:app/core/common/widgets/loader.dart';
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/wall/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class WallPageDrawer extends StatelessWidget {
   const WallPageDrawer({
@@ -12,30 +14,36 @@ class WallPageDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      elevation: 4.0,
       width: 280,
+      backgroundColor: context.theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(0)),
+      ),
       child: ListView(
         children: [
           ExpansionTile(
-            childrenPadding: const EdgeInsets.all(16),
+            childrenPadding: const EdgeInsets.all(8.0),
+            expansionAnimationStyle: AnimationStyle(
+              curve: Curves.easeOut,
+              duration: Durations.short3,
+            ),
             shape: Border(
               bottom: BorderSide(
-                width: 0.5,
-                color: Theme.of(context).dividerColor.withOpacity(0.8),
+                width: 0,
+                color: context.theme.colorScheme.outline,
               ),
             ),
             collapsedShape: Border(
               bottom: BorderSide(
-                width: 0.5,
-                color: Theme.of(context).dividerColor.withOpacity(0.8),
+                width: 0,
+                color: context.theme.colorScheme.outline,
               ),
             ),
             initiallyExpanded: true,
-            title: const Text(
+            title: Text(
               'Your walls',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
+              style: context.theme.textTheme.titleLarge,
             ),
             children: [
               BlocBuilder<WallsBloc, WallsState>(
@@ -56,13 +64,19 @@ class WallPageDrawer extends StatelessWidget {
                           selected: e.id == state.currentWall!.id,
                           selectedTileColor:
                               context.theme.colorScheme.primaryContainer,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              UIConstants.inputBorderRadius,
+                            ),
+                          ),
+                          selectedColor: context.theme.colorScheme.primary,
                           visualDensity: VisualDensity.compact,
                           title: Text(
                             e.name,
-                            style: context.theme.textTheme.titleMedium,
+                            style: context.theme.textTheme.titleSmall,
                           ),
                           onTap: () {
-                            Navigator.pop(context);
+                            context.pop();
                             context
                                 .read<WallsBloc>()
                                 .add(SelectWallRequested(selectedWall: e));
@@ -76,57 +90,61 @@ class WallPageDrawer extends StatelessWidget {
             ],
           ),
           ExpansionTile(
-            childrenPadding: const EdgeInsets.all(16),
+            childrenPadding: const EdgeInsets.all(8.0),
             shape: Border.all(
               width: 0,
             ),
+            collapsedShape: Border.all(
+              width: 0,
+            ),
             initiallyExpanded: true,
-            title: const Text(
+            title: Text(
               'All feeds',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
+              style: context.theme.textTheme.titleLarge,
+            ),
+            expansionAnimationStyle: AnimationStyle(
+              curve: Curves.easeOut,
+              duration: Durations.short3,
             ),
             children: [
               ListTile(
                 visualDensity: VisualDensity.compact,
                 title: Text(
                   'Hackernews',
-                  style: context.theme.textTheme.titleMedium,
+                  style: context.theme.textTheme.titleSmall,
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
               ),
               ListTile(
                 visualDensity: VisualDensity.compact,
                 title: Text(
                   'Reddit',
-                  style: context.theme.textTheme.titleMedium,
+                  style: context.theme.textTheme.titleSmall,
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
               ),
               ListTile(
                 visualDensity: VisualDensity.compact,
                 title: Text(
                   'Zerodha Tech',
-                  style: context.theme.textTheme.titleMedium,
+                  style: context.theme.textTheme.titleSmall,
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
               ),
               ListTile(
                 visualDensity: VisualDensity.compact,
                 title: Text(
                   'Kent C. Dodds',
-                  style: context.theme.textTheme.titleMedium,
+                  style: context.theme.textTheme.titleSmall,
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
               ),
             ],

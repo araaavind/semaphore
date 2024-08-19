@@ -52,16 +52,8 @@ class WallPageSliverAppBarBottom extends StatelessWidget
           icon: const Icon(Icons.filter_list),
         ),
       ],
-      shape: Border(
-        top: BorderSide(
-          color: context.theme.colorScheme.outline,
-          width: 0.1,
-        ),
-        bottom: BorderSide(
-          color: context.theme.colorScheme.outline,
-          width: 0.1,
-        ),
-      ),
+      elevation: 0,
+      scrolledUnderElevation: 0.5,
     );
   }
 }

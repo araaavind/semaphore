@@ -34,7 +34,6 @@ class _WallPageState extends State<WallPage> {
   @override
   void initState() {
     super.initState();
-    context.read<WallsBloc>().add(ListWallsRequested());
     _pagingController.addPageRequestListener(
       (pageKey) {
         final currentWall = context.read<WallsBloc>().state.currentWall;
