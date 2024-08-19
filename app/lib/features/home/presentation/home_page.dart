@@ -49,7 +49,8 @@ class HomePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => serviceLocator<WallsBloc>(),
+          create: (_) => serviceLocator<WallsBloc>()..add(ListWallsRequested()),
+          lazy: false,
         ),
         BlocProvider(
           create: (_) => serviceLocator<SearchFeedBloc>(),

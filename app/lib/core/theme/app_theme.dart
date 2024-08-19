@@ -37,7 +37,7 @@ class AppTheme {
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: AppColorScheme.lightColorScheme.surface,
-      elevation: 6.0,
+      elevation: 4.0,
       selectedItemColor: AppColorScheme.lightColorScheme.primary,
       selectedIconTheme: const IconThemeData(size: 28.0),
       unselectedLabelStyle: const TextStyle(
@@ -83,7 +83,7 @@ class AppTheme {
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: AppColorScheme.darkColorScheme.surface,
-      elevation: 6.0,
+      elevation: 4.0,
       unselectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 12,

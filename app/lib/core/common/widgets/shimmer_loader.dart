@@ -13,7 +13,9 @@ class ShimmerLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
+    return SizedBox(
+      width: 200,
+      height: 100,
       child: Shimmer.fromColors(
         baseColor: context.theme.colorScheme.secondary.withAlpha(30),
         highlightColor: context.theme.colorScheme.secondary.withAlpha(65),
