@@ -4,8 +4,11 @@ String formatPublishedDate(DateTime publishedDate) {
   DateTime now = DateTime.now();
   Duration difference = now.difference(publishedDate);
 
-  if (difference.inDays > 7) {
-    // More than 7 days ago, return in "dd MMM" format
+  if (difference.inDays > 365) {
+    // More than 12 months ago, return in "dd MMM yy" format
+    return DateFormat('dd MMM yy').format(publishedDate);
+  } else if (difference.inDays > 7) {
+    // More than 7 days but less than 12 months, return in "dd MMM" format
     return DateFormat('dd MMM').format(publishedDate);
   } else if (difference.inDays >= 1) {
     // More than 1 day but less than 7 days, return in "Xd"

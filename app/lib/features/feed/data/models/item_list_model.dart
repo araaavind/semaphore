@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:app/core/common/models/pagination_metadata_model.dart';
-import 'package:app/features/wall/data/models/item_model.dart';
-import 'package:app/features/wall/domain/entities/item_list.dart';
+import 'package:app/features/feed/data/models/item_model.dart';
+import 'package:app/features/feed/domain/entities/item_list.dart';
 
 class ItemListModel extends ItemList {
   const ItemListModel({

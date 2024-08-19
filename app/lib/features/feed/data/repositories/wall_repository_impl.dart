@@ -1,10 +1,10 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
-import 'package:app/features/wall/data/datasources/wall_remote_datasource.dart';
-import 'package:app/features/wall/domain/entities/item_list.dart';
-import 'package:app/features/wall/domain/entities/wall.dart';
-import 'package:app/features/wall/domain/repositories/wall_repository.dart';
+import 'package:app/features/feed/data/datasources/wall_remote_datasource.dart';
+import 'package:app/features/feed/domain/entities/item_list.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/domain/repositories/wall_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
 class WallRepositoryImpl implements WallRepository {

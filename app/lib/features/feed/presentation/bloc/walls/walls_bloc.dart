@@ -1,6 +1,6 @@
 import 'package:app/core/usecase/usecase.dart';
-import 'package:app/features/wall/domain/entities/wall.dart';
-import 'package:app/features/wall/domain/usecases/list_walls.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/domain/usecases/list_walls.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -13,7 +13,7 @@ import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/profile/presentation/profile_page.dart';
-import 'package:app/features/wall/presentation/pages/wall_page.dart';
+import 'package:app/features/feed/presentation/pages/wall_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:app/features/feed/data/models/feed_model.dart';
-import 'package:app/features/wall/domain/entities/item.dart';
+import 'package:app/features/feed/domain/entities/item.dart';
 
 class ItemModel extends Item {
   const ItemModel({

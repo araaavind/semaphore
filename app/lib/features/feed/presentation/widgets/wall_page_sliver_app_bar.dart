@@ -1,5 +1,5 @@
 import 'package:app/core/theme/theme.dart';
-import 'package:app/features/wall/presentation/widgets/wall_page_sliver_app_bar_bottom.dart';
+import 'package:app/features/feed/presentation/widgets/wall_page_sliver_app_bar_bottom.dart';
 import 'package:flutter/material.dart';
 
 class WallPageSliverAppBar extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:app/core/errors/failures.dart';
 import 'package:app/core/usecase/usecase.dart';
-import 'package:app/features/wall/domain/entities/item_list.dart';
-import 'package:app/features/wall/domain/repositories/wall_repository.dart';
+import 'package:app/features/feed/domain/entities/item_list.dart';
+import 'package:app/features/feed/domain/repositories/wall_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
 class ListWallItemsParams extends PaginationParams {

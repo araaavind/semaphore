@@ -26,14 +26,13 @@ class WallPageSliverAppBarBottom extends StatelessWidget
           children: [
             const Icon(
               Icons.menu,
-              size: 22,
             ),
             const SizedBox(width: 12.0),
             Expanded(
               child: Text(
                 title,
                 style: context.theme.textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.w800),
+                    ?.copyWith(fontWeight: FontWeight.w500),
                 maxLines: 1,
                 overflow: TextOverflow.fade,
               ),
@@ -43,12 +42,10 @@ class WallPageSliverAppBarBottom extends StatelessWidget
       ),
       actions: [
         IconButton(
-          iconSize: 22,
           onPressed: () {},
           icon: const Icon(Icons.search),
         ),
         IconButton(
-          iconSize: 22,
           onPressed: () {},
           icon: const Icon(Icons.filter_list),
         ),

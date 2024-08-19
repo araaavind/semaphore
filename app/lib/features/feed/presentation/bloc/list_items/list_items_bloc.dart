@@ -1,6 +1,6 @@
 import 'package:app/core/constants/server_constants.dart';
-import 'package:app/features/wall/domain/entities/item_list.dart';
-import 'package:app/features/wall/domain/usecases/list_wall_items.dart';
+import 'package:app/features/feed/domain/entities/item_list.dart';
+import 'package:app/features/feed/domain/usecases/list_wall_items.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
