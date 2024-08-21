@@ -23,47 +23,20 @@ class SearchPagedList extends StatelessWidget {
     return Refresher(
       controller: _refreshController,
       onRefresh: () async => _pagingController.refresh(),
-      child: PagedListView<int, FeedFollowsMap>(
+      child: AppPagedList(
         pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<FeedFollowsMap>(
-          itemBuilder: (context, item, index) => FeedListTile(
-            pagingController: _pagingController,
-            index: index,
-            feedIsFollowedMap: item,
-          ),
-          firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
-            title: TextConstants.feedListFetchErrorTitle,
-            message: _pagingController.error,
-            onTryAgain: () {
-              _pagingController.refresh();
-            },
-          ),
-          newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
-            title: TextConstants.feedListFetchErrorTitle,
-            message: _pagingController.error,
-            onTap: _pagingController.retryLastFailedRequest,
-          ),
-          newPageProgressIndicatorBuilder: (_) => const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: UIConstants.pagePadding,
-            ),
-            child: ShimmerLoader(pageSize: 2),
-          ),
-          firstPageProgressIndicatorBuilder: (_) => const Padding(
-            padding: EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
-            child: ShimmerLoader(
-              pageSize: ServerConstants.defaultPaginationPageSize,
-            ),
-          ),
-          noMoreItemsIndicatorBuilder: (_) => const NoMoreItemsIndicator(
-            title: TextConstants.feedListEmptyMessageTitle,
-            message: TextConstants.feedListEmptyMessageMessage,
-          ),
-          noItemsFoundIndicatorBuilder: (_) => const NoMoreItemsIndicator(
-            title: TextConstants.feedListEmptyMessageTitle,
-            message: TextConstants.feedListEmptyMessageMessage,
-          ),
+        listType: PagedListType.list,
+        itemBuilder: (context, item, index) => FeedListTile(
+          feedIsFollowedMap: item,
+          pagingController: _pagingController,
+          index: index,
         ),
+        firstPageErrorTitle: TextConstants.feedListFetchErrorTitle,
+        newPageErrorTitle: TextConstants.feedListFetchErrorTitle,
+        noMoreItemsErrorTitle: TextConstants.feedListEmptyMessageTitle,
+        noMoreItemsErrorMessage: TextConstants.feedListEmptyMessageMessage,
+        listEmptyErrorTitle: TextConstants.feedListEmptyMessageTitle,
+        listEmptyErrorMessage: TextConstants.feedListEmptyMessageMessage,
       ),
     );
   }
