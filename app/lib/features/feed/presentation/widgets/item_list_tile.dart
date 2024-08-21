@@ -3,6 +3,7 @@ import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/format_published_date.dart';
 import 'package:app/core/utils/string_casing_extension.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/presentation/pages/web_view.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,17 @@ class ItemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WebView(
+              url: item.link,
+              title: item.title,
+            ),
+          ),
+        );
+      },
       visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
