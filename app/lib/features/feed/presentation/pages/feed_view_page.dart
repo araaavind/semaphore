@@ -8,7 +8,7 @@ import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc
 import 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/followers_count.dart';
-import 'package:app/features/feed/presentation/widgets/item_paged_sliver_list.dart';
+import 'package:app/features/feed/presentation/widgets/item_list_tile.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -244,8 +244,17 @@ class _FeedViewItemsState extends State<FeedViewItems> {
         },
         child: CustomScrollView(
           slivers: [
-            ItemPagedSliverList(
+            AppPagedList<Item>(
               pagingController: _pagingController,
+              listType: PagedListType.sliverList,
+              itemBuilder: (context, item, index) => ItemListTile(item: item),
+              firstPageErrorTitle: TextConstants.itemListFetchErrorTitle,
+              newPageErrorTitle: TextConstants.itemListFetchErrorTitle,
+              noMoreItemsErrorTitle: TextConstants.itemListEmptyMessageTitle,
+              noMoreItemsErrorMessage:
+                  TextConstants.itemListEmptyMessageMessage,
+              listEmptyErrorTitle: TextConstants.itemListEmptyMessageTitle,
+              listEmptyErrorMessage: TextConstants.itemListEmptyMessageMessage,
             ),
           ],
         ),

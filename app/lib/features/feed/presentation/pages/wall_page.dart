@@ -3,7 +3,7 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/features/feed/presentation/widgets/item_paged_sliver_list.dart';
+import 'package:app/features/feed/presentation/widgets/item_list_tile.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_drawer.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -106,8 +106,23 @@ class _WallPageState extends State<WallPage> {
                   },
                   child: CustomScrollView(
                     slivers: [
-                      ItemPagedSliverList(
+                      AppPagedList<Item>(
                         pagingController: _pagingController,
+                        listType: PagedListType.sliverList,
+                        itemBuilder: (context, item, index) =>
+                            ItemListTile(item: item),
+                        firstPageErrorTitle:
+                            TextConstants.itemListFetchErrorTitle,
+                        newPageErrorTitle:
+                            TextConstants.itemListFetchErrorTitle,
+                        noMoreItemsErrorTitle:
+                            TextConstants.itemListEmptyMessageTitle,
+                        noMoreItemsErrorMessage:
+                            TextConstants.itemListEmptyMessageMessage,
+                        listEmptyErrorTitle:
+                            TextConstants.itemListEmptyMessageTitle,
+                        listEmptyErrorMessage:
+                            TextConstants.itemListEmptyMessageMessage,
                       ),
                     ],
                   ),

@@ -1,15 +1,15 @@
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/debouncer.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
+import 'package:app/features/feed/presentation/widgets/feed_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-import '../widgets/search_paged_list.dart';
 
 class SearchFeedsPage extends StatefulWidget {
   final bool isOnboarding;
@@ -194,9 +194,27 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                   _pagingController.error = state.message;
                 }
               },
-              child: SearchPagedList(
-                pagingController: _pagingController,
-                refreshController: _refreshController,
+              child: Refresher(
+                controller: _refreshController,
+                onRefresh: () async => _pagingController.refresh(),
+                child: AppPagedList(
+                  pagingController: _pagingController,
+                  listType: PagedListType.list,
+                  itemBuilder: (context, item, index) => FeedListTile(
+                    feedIsFollowedMap: item,
+                    pagingController: _pagingController,
+                    index: index,
+                  ),
+                  firstPageErrorTitle: TextConstants.feedListFetchErrorTitle,
+                  newPageErrorTitle: TextConstants.feedListFetchErrorTitle,
+                  noMoreItemsErrorTitle:
+                      TextConstants.feedListEmptyMessageTitle,
+                  noMoreItemsErrorMessage:
+                      TextConstants.feedListEmptyMessageMessage,
+                  listEmptyErrorTitle: TextConstants.feedListEmptyMessageTitle,
+                  listEmptyErrorMessage:
+                      TextConstants.feedListEmptyMessageMessage,
+                ),
               ),
             ),
           ),
