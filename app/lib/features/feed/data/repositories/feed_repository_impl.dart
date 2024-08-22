@@ -165,4 +165,15 @@ class FeedRepositoryImpl implements FeedRepository {
       return left(Failure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> createWall(String wallName) async {
+    try {
+      return right(
+        await feedRemoteDatasource.createWall(wallName),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }

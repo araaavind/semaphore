@@ -53,6 +53,8 @@ abstract interface class FeedRemoteDatasource {
   });
 
   Future<List<WallModel>> listWalls();
+
+  Future<void> createWall(String wallName);
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -300,6 +302,23 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       if (e.responseStatusCode != null && e.responseStatusCode == 404) {
         throw const ServerException('No walls found');
       }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> createWall(String wallName) async {
+    try {
+      await semaphoreClient.dio.post('/walls', data: {'name': wallName});
+      return;
+    } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {
       throw ServerException(e.message);
