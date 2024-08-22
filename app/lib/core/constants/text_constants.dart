@@ -40,6 +40,12 @@ class TextConstants {
       'Your account is now active!';
 
   static const String itemListFetchErrorTitle = 'Failed to load posts';
+  static const String itemListNoMoreItemsErrorTitle = 'That\'s all for now';
+  static const String itemListNoMoreItemsErrorMessage =
+      'Come back later or follow more feeds';
   static const String itemListEmptyMessageTitle = 'Nothing to see here';
-  static const String itemListEmptyMessageMessage = 'Follow feeds to see posts';
+  static const String itemListEmptyMessageMessage =
+      'Couldn\'t find any posts in this feed';
+  static const String itemListEmptyFollowMessageMessage =
+      'Follow feeds to see posts';
 }
