@@ -29,6 +29,11 @@ class WallPageDrawer extends StatelessWidget {
         children: [
           ExpansionTile(
             childrenPadding: const EdgeInsets.all(8.0),
+            trailing: GestureDetector(
+              child: const Icon(Icons.add),
+              onTap: () {},
+            ),
+            controlAffinity: ListTileControlAffinity.leading,
             expansionAnimationStyle: AnimationStyle(
               curve: Curves.easeOut,
               duration: Durations.short3,
@@ -97,6 +102,13 @@ class WallPageDrawer extends StatelessWidget {
             ],
           ),
           ExpansionTile(
+            trailing: GestureDetector(
+              child: const Icon(Icons.add),
+              onTap: () {
+                context.goNamed('feeds');
+              },
+            ),
+            controlAffinity: ListTileControlAffinity.leading,
             childrenPadding: const EdgeInsets.all(8.0),
             shape: Border.all(
               width: 0,
