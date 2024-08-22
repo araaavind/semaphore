@@ -61,7 +61,7 @@ class _FeedListTileState extends State<FeedListTile> {
             'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
             'isFollowed': isFollowed,
           };
-          context.push('/feed/${feed.id}', extra: extra);
+          context.go('/feeds/${feed.id}', extra: extra);
         },
         splashColor: Colors.transparent,
         contentPadding: const EdgeInsets.symmetric(

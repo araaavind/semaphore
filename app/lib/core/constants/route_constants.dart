@@ -5,7 +5,7 @@ class RouteConstants {
   static const wallPageName = 'wall';
   static const searchFeedsPagePath = '/feeds';
   static const searchFeedsPageName = 'feeds';
-  static const feedViewPagePath = '/feed/:id';
+  static const feedViewPagePath = ':feedId';
   static const feedViewPageName = 'feed';
   static const addFeedPagePath = '/add-feed';
   static const addFeedPageName = 'add-feed';
@@ -20,5 +20,7 @@ class RouteConstants {
   static const activationPagePath = '/activate';
   static const activationPageName = 'activate';
   static const webViewPagePath = 'view';
-  static const webViewPageName = 'view';
+  static const webViewPageName = 'webview';
+  static const feedWebViewPagePath = 'view';
+  static const feedWebViewPageName = 'feed-webview';
 }
