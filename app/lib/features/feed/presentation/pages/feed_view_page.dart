@@ -13,6 +13,7 @@ import 'package:app/init_dependencies.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -56,113 +57,121 @@ class _FeedViewPageState extends State<FeedViewPage> {
           value: widget.listItemsBlocValue,
         ),
       ],
-      child: Scaffold(
-        appBar: AppBar(),
-        body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: UIConstants.pagePadding,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AutoSizeText(
-                            widget.feed.title,
-                            style:
-                                context.theme.textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.w700,
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+          context.pop(!isFollowed);
+        },
+        child: Scaffold(
+          appBar: AppBar(),
+          body: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: UIConstants.pagePadding,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoSizeText(
+                              widget.feed.title,
+                              style: context.theme.textTheme.displaySmall
+                                  ?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 5,
+                              minFontSize:
+                                  context.theme.textTheme.titleLarge!.fontSize!,
                             ),
-                            maxLines: 5,
-                            minFontSize:
-                                context.theme.textTheme.titleLarge!.fontSize!,
-                          ),
-                          const SizedBox(height: 20.0),
-                          Text(
-                            widget.feed.description ?? '',
-                            style:
-                                context.theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          const SizedBox(height: 12.0),
-                          SelectableText(
-                            widget.feed.feedLink,
-                            style:
-                                context.theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: context.theme.colorScheme.tertiary,
-                            ),
-                            enableInteractiveSelection: true,
-                            maxLines: 1,
-                          ),
-                          const SizedBox(height: 12.0),
-                          BlocProvider(
-                            create: (context) =>
-                                serviceLocator<ListFollowersBloc>(),
-                            child: FollowersCount(feed: feed),
-                          ),
-                          const SizedBox(height: 12.0),
-                          BlocConsumer<FollowFeedBloc, FollowFeedState>(
-                            listener: (context, state) {
-                              if (state.status == FollowFeedStatus.failure) {
-                                showSnackbar(context, state.message!);
-                              }
-                              if (state.feedId == widget.feed.id &&
-                                  (state.status == FollowFeedStatus.followed ||
-                                      state.status ==
-                                          FollowFeedStatus.unfollowed)) {
-                                setState(() {
-                                  isFollowed = !isFollowed;
-                                });
-                              }
-                            },
-                            builder: (context, state) {
-                              var buttonText = 'Follow';
-                              var action = FollowUnfollowAction.follow;
-                              if (isFollowed) {
-                                buttonText = 'Unfollow';
-                                action = FollowUnfollowAction.unfollow;
-                              }
-                              return Button(
-                                text: buttonText,
-                                fixedSize: const Size.fromHeight(40.0),
-                                filled: !isFollowed,
-                                onPressed: () {
-                                  context.read<FollowFeedBloc>().add(
-                                        FollowUnfollowRequested(
-                                          feed.id,
-                                          action: action,
-                                        ),
-                                      );
-                                },
-                                isLoading: state.feedId == feed.id &&
-                                    state.status == FollowFeedStatus.loading,
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 16.0),
-                          if (feed.pubUpdated != null)
+                            const SizedBox(height: 20.0),
                             Text(
-                              'Last published on ${DateFormat('d MMM, yyyy').format(feed.pubUpdated!)}',
+                              widget.feed.description ?? '',
                               style:
-                                  context.theme.textTheme.bodyMedium!.copyWith(
-                                fontWeight: FontWeight.w300,
+                                  context.theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
-                        ],
+                            const SizedBox(height: 12.0),
+                            SelectableText(
+                              widget.feed.feedLink,
+                              style:
+                                  context.theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: context.theme.colorScheme.tertiary,
+                              ),
+                              enableInteractiveSelection: true,
+                              maxLines: 1,
+                            ),
+                            const SizedBox(height: 12.0),
+                            BlocProvider(
+                              create: (context) =>
+                                  serviceLocator<ListFollowersBloc>(),
+                              child: FollowersCount(feed: feed),
+                            ),
+                            const SizedBox(height: 12.0),
+                            BlocConsumer<FollowFeedBloc, FollowFeedState>(
+                              listener: (context, state) {
+                                if (state.status == FollowFeedStatus.failure) {
+                                  showSnackbar(context, state.message!);
+                                }
+                                if (state.feedId == widget.feed.id &&
+                                    (state.status ==
+                                            FollowFeedStatus.followed ||
+                                        state.status ==
+                                            FollowFeedStatus.unfollowed)) {
+                                  setState(() {
+                                    isFollowed = !isFollowed;
+                                  });
+                                }
+                              },
+                              builder: (context, state) {
+                                var buttonText = 'Follow';
+                                var action = FollowUnfollowAction.follow;
+                                if (isFollowed) {
+                                  buttonText = 'Unfollow';
+                                  action = FollowUnfollowAction.unfollow;
+                                }
+                                return Button(
+                                  text: buttonText,
+                                  fixedSize: const Size.fromHeight(40.0),
+                                  filled: !isFollowed,
+                                  onPressed: () {
+                                    context.read<FollowFeedBloc>().add(
+                                          FollowUnfollowRequested(
+                                            feed.id,
+                                            action: action,
+                                          ),
+                                        );
+                                  },
+                                  isLoading: state.feedId == feed.id &&
+                                      state.status == FollowFeedStatus.loading,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16.0),
+                            if (feed.pubUpdated != null)
+                              Text(
+                                'Last published on ${DateFormat('d MMM, yyyy').format(feed.pubUpdated!)}',
+                                style: context.theme.textTheme.bodyMedium!
+                                    .copyWith(
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ];
-          },
-          body: FeedViewItems(feedId: feed.id),
+              ];
+            },
+            body: FeedViewItems(feedId: feed.id),
+          ),
         ),
       ),
     );

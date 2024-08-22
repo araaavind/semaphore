@@ -2,7 +2,6 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
-import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
@@ -13,9 +12,11 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class WallPageDrawer extends StatelessWidget {
+  final PagingController<int, Feed> _feedsPagingController;
   const WallPageDrawer({
+    required PagingController<int, Feed> feedsPagingController,
     super.key,
-  });
+  }) : _feedsPagingController = feedsPagingController;
 
   @override
   Widget build(BuildContext context) {
@@ -133,8 +134,10 @@ class WallPageDrawer extends StatelessWidget {
               curve: Curves.easeOut,
               duration: Durations.short3,
             ),
-            children: const [
-              DrawerFeedList(),
+            children: [
+              DrawerFeedList(
+                pagingController: _feedsPagingController,
+              ),
             ],
           ),
         ],
@@ -143,46 +146,12 @@ class WallPageDrawer extends StatelessWidget {
   }
 }
 
-class DrawerFeedList extends StatefulWidget {
+class DrawerFeedList extends StatelessWidget {
+  final PagingController<int, Feed> _pagingController;
   const DrawerFeedList({
+    required PagingController<int, Feed> pagingController,
     super.key,
-  });
-
-  @override
-  State<DrawerFeedList> createState() => _DrawerFeedListState();
-}
-
-class _DrawerFeedListState extends State<DrawerFeedList> {
-  final PagingController<int, Feed> _pagingController = PagingController(
-    firstPageKey: 1,
-    // invisibleItemsThreshold will determine how many items should be loaded
-    // after the first page is loaded (if the first page does not fill the
-    // screen, items enough to fill the page will be loaded anyway unless
-    // invisibleItemsThreshold is set to 0).
-    invisibleItemsThreshold: 1,
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    _pagingController.addPageRequestListener(
-      (pageKey) {
-        context.read<SearchFeedBloc>().add(
-              FeedSearchRequested(
-                page: pageKey,
-                pageSize: ServerConstants.defaultPaginationPageSize,
-                type: ListFeedsType.followed,
-              ),
-            );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
-  }
+  }) : _pagingController = pagingController;
 
   @override
   Widget build(BuildContext context) {
@@ -200,41 +169,40 @@ class _DrawerFeedListState extends State<DrawerFeedList> {
           _pagingController.error = state.message;
         }
       },
-      child: BlocListener<FollowFeedBloc, FollowFeedState>(
-        listener: (context, state) {
-          _pagingController.refresh();
-        },
-        child: AppPagedList(
-          pagingController: _pagingController,
-          listType: PagedListType.list,
-          itemBuilder: (context, item, index) => ListTile(
-            selectedTileColor: context.theme.colorScheme.primaryContainer,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                UIConstants.inputBorderRadius,
-              ),
+      child: AppPagedList(
+        pagingController: _pagingController,
+        listType: PagedListType.list,
+        itemBuilder: (context, item, index) => ListTile(
+          selectedTileColor: context.theme.colorScheme.primaryContainer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              UIConstants.inputBorderRadius,
             ),
-            selectedColor: context.theme.colorScheme.primary,
-            visualDensity: VisualDensity.compact,
-            title: Text(
-              item.title,
-              style: context.theme.textTheme.titleSmall,
-            ),
-            onTap: () {
-              final Map<String, Object> extra = {
-                'feed': item,
-                'followFeedBlocValue': BlocProvider.of<FollowFeedBloc>(context),
-                'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
-                'isFollowed': true,
-              };
-              context.push('/feeds/${item.id}', extra: extra);
-            },
           ),
-          showErrors: false,
-          loaderType: PagedListLoaderType.circularProgressIndicator,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          selectedColor: context.theme.colorScheme.primary,
+          visualDensity: VisualDensity.compact,
+          title: Text(
+            item.title,
+            style: context.theme.textTheme.titleSmall,
+          ),
+          onTap: () async {
+            final Map<String, Object> extra = {
+              'feed': item,
+              'followFeedBlocValue': BlocProvider.of<FollowFeedBloc>(context),
+              'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
+              'isFollowed': true,
+            };
+            final unfollowed =
+                await context.push('/feeds/${item.id}', extra: extra);
+            if ((unfollowed as bool) == true) {
+              _pagingController.refresh();
+            }
+          },
         ),
+        showErrors: false,
+        loaderType: PagedListLoaderType.circularProgressIndicator,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
       ),
     );
   }
