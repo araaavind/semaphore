@@ -1,7 +1,10 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_drawer.dart';
@@ -20,6 +23,16 @@ class WallPage extends StatefulWidget {
 
 class _WallPageState extends State<WallPage> {
   final PagingController<int, Item> _pagingController = PagingController(
+    firstPageKey: 1,
+    // invisibleItemsThreshold will determine how many items should be loaded
+    // after the first page is loaded (if the first page does not fill the
+    // screen, items enough to fill the page will be loaded anyway unless
+    // invisibleItemsThreshold is set to 0).
+    invisibleItemsThreshold: 1,
+  );
+
+  final PagingController<int, Feed> _drawerFeedsPagingController =
+      PagingController(
     firstPageKey: 1,
     // invisibleItemsThreshold will determine how many items should be loaded
     // after the first page is loaded (if the first page does not fill the
@@ -49,19 +62,33 @@ class _WallPageState extends State<WallPage> {
         }
       },
     );
+    _drawerFeedsPagingController.addPageRequestListener(
+      (pageKey) {
+        context.read<SearchFeedBloc>().add(
+              FeedSearchRequested(
+                page: pageKey,
+                pageSize: ServerConstants.defaultPaginationPageSize,
+                type: ListFeedsType.followed,
+              ),
+            );
+      },
+    );
   }
 
   @override
   void dispose() {
     _refreshController.dispose();
     _pagingController.dispose();
+    _drawerFeedsPagingController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const WallPageDrawer(),
+      drawer: WallPageDrawer(
+        feedsPagingController: _drawerFeedsPagingController,
+      ),
       body: BlocConsumer<WallsBloc, WallsState>(
         listener: (context, state) => _pagingController.refresh(),
         builder: (context, state) {
