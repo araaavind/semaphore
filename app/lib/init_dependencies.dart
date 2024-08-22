@@ -18,6 +18,7 @@ import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:app/features/feed/domain/usecases/add_follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart';
+import 'package:app/features/feed/domain/usecases/create_wall.dart';
 import 'package:app/features/feed/domain/usecases/follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.dart';
@@ -30,6 +31,7 @@ import 'package:app/features/feed/presentation/bloc/list_followers/list_follower
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
+import 'package:app/features/feed/presentation/cubit/create_wall/create_wall_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
@@ -196,6 +198,17 @@ void _initFeed() {
   serviceLocator.registerFactory(
     () => ListItems(
       serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => CreateWall(
+      serviceLocator(),
+    ),
+  );
+  // Register cubits
+  serviceLocator.registerFactory(
+    () => CreateWallCubit(
+      createWall: serviceLocator(),
     ),
   );
   // Register blocs

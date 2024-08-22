@@ -51,4 +51,6 @@ abstract interface class FeedRepository {
   });
 
   Future<Either<Failure, List<Wall>>> listWalls();
+
+  Future<Either<Failure, void>> createWall(String wallName);
 }

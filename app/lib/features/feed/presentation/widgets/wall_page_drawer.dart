@@ -31,7 +31,13 @@ class WallPageDrawer extends StatelessWidget {
             childrenPadding: const EdgeInsets.all(8.0),
             trailing: GestureDetector(
               child: const Icon(Icons.add),
-              onTap: () {},
+              onTap: () async {
+                final isCreated =
+                    await context.pushNamed(RouteConstants.createWallPageName);
+                if ((isCreated as bool) == true && context.mounted) {
+                  context.read<WallsBloc>().add(ListWallsRequested());
+                }
+              },
             ),
             controlAffinity: ListTileControlAffinity.leading,
             expansionAnimationStyle: AnimationStyle(

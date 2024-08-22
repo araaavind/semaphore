@@ -33,10 +33,25 @@ class ItemListTile extends StatelessWidget {
           );
         }
       },
+      leading: item.imageUrl != null
+          ? Container(
+              height: 50,
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(
+                    item.imageUrl!,
+                  ),
+                ),
                 borderRadius: BorderRadius.circular(8),
+              ),
+            )
+          : null,
+      visualDensity: VisualDensity.comfortable,
       splashColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
-        vertical: UIConstants.tileContentPadding,
         horizontal: UIConstants.pagePadding,
       ),
       title: AutoSizeText(
