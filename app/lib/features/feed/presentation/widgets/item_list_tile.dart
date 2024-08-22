@@ -21,7 +21,7 @@ class ItemListTile extends StatelessWidget {
         final String routeName = GoRouterState.of(context).topRoute!.name!;
         if (routeName == RouteConstants.wallPageName) {
           context.goNamed(
-            'view',
+            'webview',
             queryParameters: {'url': item.link},
           );
         } else if (routeName == RouteConstants.feedViewPageName) {
