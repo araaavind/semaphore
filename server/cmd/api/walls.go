@@ -2,11 +2,54 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
 )
+
+func (app *application) createWall(w http.ResponseWriter, r *http.Request) {
+	user := app.contextGetSession(r).User
+
+	var input struct {
+		WallName string `json:"name"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+
+	if v.Check(validator.NotBlank(input.WallName), "name", "Wall name cannot be empty"); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	wall := &data.Wall{
+		Name:      input.WallName,
+		UserID:    user.ID,
+		IsPrimary: false,
+	}
+
+	err = app.models.Walls.Insert(wall)
+	if err != nil {
+		if errors.Is(err, data.ErrDuplicateWall) {
+			v.AddError("name", "You already have a wall with the same name")
+			app.failedValidationResponse(w, r, v.Errors)
+			return
+		} else {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	w.Header().Set("Location", fmt.Sprintf("/v1/walls/%d", wall.ID))
+	w.WriteHeader(http.StatusCreated)
+}
 
 func (app *application) listWalls(w http.ResponseWriter, r *http.Request) {
 	user := app.contextGetSession(r).User
