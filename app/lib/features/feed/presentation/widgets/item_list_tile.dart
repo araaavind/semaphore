@@ -46,27 +46,37 @@ class ItemListTile extends StatelessWidget {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(
-            constraints: BoxConstraints.loose(
-              Size.fromWidth(
-                MediaQuery.of(context).size.width - 120,
+          if (item.feed?.title != null && item.feed!.title.isNotEmpty)
+            Container(
+              constraints: BoxConstraints.loose(
+                Size.fromWidth(
+                  MediaQuery.of(context).size.width - 120,
+                ),
+              ),
+              child: AutoSizeText(
+                item.feed!.title,
+                style: context.theme.textTheme.bodySmall!.copyWith(
+                    fontWeight: FontWeight.w300,
+                    color:
+                        context.theme.colorScheme.onSurface.withOpacity(0.7)),
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                softWrap: false,
               ),
             ),
-            child: AutoSizeText(
-              item.feed?.title ?? 'Unknown feed',
+          if ((item.feed?.title != null && item.feed!.title.isNotEmpty) &&
+              (item.pubDate != null || item.pubUpdated != null))
+            Text(
+              '   •   ',
               style: context.theme.textTheme.bodySmall!.copyWith(
                   fontWeight: FontWeight.w300,
                   color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
-              maxLines: 1,
-              overflow: TextOverflow.fade,
-              softWrap: false,
             ),
-          ),
           if (item.pubDate != null || item.pubUpdated != null)
             Text(
-              '   •   ${formatPublishedDate(
+              formatPublishedDate(
                 item.pubUpdated ?? item.pubDate ?? DateTime.now(),
-              )}',
+              ),
               style: context.theme.textTheme.bodySmall!.copyWith(
                   fontWeight: FontWeight.w300,
                   color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
