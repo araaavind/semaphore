@@ -5,11 +5,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class WebView extends StatefulWidget {
   final String url;
-  final String title;
   const WebView({
     super.key,
     required this.url,
-    required this.title,
   });
 
   @override
@@ -104,56 +102,45 @@ class _WebViewState extends State<WebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              if (webViewController != null) {
-                webViewController!.reload();
-              }
-            },
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          InAppWebView(
-            initialUrlRequest: URLRequest(url: WebUri(widget.url)),
-            initialSettings: InAppWebViewSettings(
-              contentBlockers: contentBlockers,
-              algorithmicDarkeningAllowed: true,
-            ),
-            pullToRefreshController: pullToRefreshController,
-            onWebViewCreated: (controller) {
-              webViewController = controller;
-            },
-            onLoadStart: (controller, url) {
-              // Handle when loading starts
-            },
-            onLoadStop: (controller, url) {
-              pullToRefreshController?.endRefreshing();
-            },
-            onReceivedError: (controller, request, error) {
-              pullToRefreshController?.endRefreshing();
-            },
-            onProgressChanged: (controller, progress) {
-              if (progress == 100) {
+      body: SafeArea(
+        child: Stack(
+          children: [
+            InAppWebView(
+              initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+              initialSettings: InAppWebViewSettings(
+                contentBlockers: contentBlockers,
+                algorithmicDarkeningAllowed: true,
+              ),
+              pullToRefreshController: pullToRefreshController,
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              onLoadStart: (controller, url) {
+                // Handle when loading starts
+              },
+              onLoadStop: (controller, url) {
                 pullToRefreshController?.endRefreshing();
-              }
-              setState(() {
-                this.progress = progress / 100;
-              });
-            },
-          ),
-          progress < 1.0
-              ? LinearProgressIndicator(
-                  value: progress,
-                  color: context.theme.colorScheme.secondary,
-                )
-              : Container(),
-        ],
+              },
+              onReceivedError: (controller, request, error) {
+                pullToRefreshController?.endRefreshing();
+              },
+              onProgressChanged: (controller, progress) {
+                if (progress == 100) {
+                  pullToRefreshController?.endRefreshing();
+                }
+                setState(() {
+                  this.progress = progress / 100;
+                });
+              },
+            ),
+            progress < 1.0
+                ? LinearProgressIndicator(
+                    value: progress,
+                    color: context.theme.colorScheme.secondary,
+                  )
+                : Container(),
+          ],
+        ),
       ),
     );
   }
