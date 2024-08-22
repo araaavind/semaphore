@@ -274,7 +274,7 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		WallID: wall.ID,
 	}
 	err = app.models.WallFeeds.Insert(wallFeed)
-	if err != nil {
+	if err != nil && !errors.Is(err, data.ErrDuplicateWallFeed) {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
