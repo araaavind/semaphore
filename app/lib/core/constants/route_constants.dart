@@ -19,4 +19,6 @@ class RouteConstants {
   static const profilePageName = 'profile';
   static const activationPagePath = '/activate';
   static const activationPageName = 'activate';
+  static const webViewPagePath = 'view';
+  static const webViewPageName = 'view';
 }

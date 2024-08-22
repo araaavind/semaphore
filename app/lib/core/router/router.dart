@@ -2,6 +2,7 @@ import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/router/transitions/fade_transition_page.dart';
+import 'package:app/core/router/transitions/slide_transition_page.dart';
 import 'package:app/features/auth/presentation/pages/activation_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
@@ -12,6 +13,7 @@ import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.d
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
+import 'package:app/features/feed/presentation/pages/web_view.dart';
 import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/profile/presentation/profile_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_page.dart';
@@ -52,13 +54,26 @@ GoRouter router = GoRouter(
       },
       routes: <RouteBase>[
         GoRoute(
-          path: RouteConstants.wallPagePath,
-          name: RouteConstants.wallPageName,
-          pageBuilder: (context, state) => FadeTransitionPage(
-            key: const ValueKey('wall'),
-            child: const WallPage(),
-          ),
-        ),
+            path: RouteConstants.wallPagePath,
+            name: RouteConstants.wallPageName,
+            pageBuilder: (context, state) => FadeTransitionPage(
+                  key: const ValueKey('wall'),
+                  child: const WallPage(),
+                ),
+            routes: [
+              GoRoute(
+                path: RouteConstants.webViewPagePath,
+                name: RouteConstants.webViewPageName,
+                pageBuilder: (context, state) {
+                  final url = state.uri.queryParameters['url'] ?? '';
+                  return SlideTransitionPage(
+                    key: const ValueKey('view'),
+                    child: WebView(url: url),
+                    direction: SlideDirection.bottomToTop,
+                  );
+                },
+              ),
+            ]),
         GoRoute(
           path: RouteConstants.searchFeedsPagePath,
           name: RouteConstants.searchFeedsPageName,
