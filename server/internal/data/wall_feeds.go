@@ -3,7 +3,16 @@ package data
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+var (
+	ErrDuplicateWallFeed = errors.New("feed is already added to the wall")
 )
 
 type WallFeed struct {
@@ -31,6 +40,12 @@ func (m WallFeedModel) Insert(wallFeed *WallFeed) error {
 		&wallFeed.UpdatedAt,
 	)
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "wall_feeds_pkey") {
+				return ErrDuplicateWallFeed
+			}
+		}
 		return err
 	}
 	return nil
