@@ -4,7 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+var (
+	ErrDuplicateWall = errors.New("user already owns a wall with same name")
 )
 
 type Wall struct {
@@ -35,6 +43,12 @@ func (m WallModel) Insert(wall *Wall) error {
 		&wall.UpdatedAt,
 	)
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "walls_name_key") {
+				return ErrDuplicateWall
+			}
+		}
 		return err
 	}
 	return nil

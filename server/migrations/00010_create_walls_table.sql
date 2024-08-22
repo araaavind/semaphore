@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS walls (
     id bigserial PRIMARY KEY,
-    name text NOT NULL,
+    name text UNIQUE NOT NULL,
     is_primary bool NOT NULL DEFAULT false,
     user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
