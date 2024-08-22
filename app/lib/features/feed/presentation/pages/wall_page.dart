@@ -68,7 +68,7 @@ class _WallPageState extends State<WallPage> {
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               WallPageSliverAppBar(
-                bottomBarTitle: state.currentWall?.name ?? 'All stories',
+                bottomBarTitle: state.currentWall?.name ?? 'All feeds',
               ),
             ],
             body: Builder(builder: (context) {
