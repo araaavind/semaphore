@@ -18,10 +18,20 @@ class ItemListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        context.goNamed(
-          'view',
-          queryParameters: {'url': item.link},
-        );
+        final String routeName = GoRouterState.of(context).topRoute!.name!;
+        if (routeName == RouteConstants.wallPageName) {
+          context.goNamed(
+            'view',
+            queryParameters: {'url': item.link},
+          );
+        } else if (routeName == RouteConstants.feedViewPageName) {
+          context.goNamed(
+            'feed-webview',
+            queryParameters: {'url': item.link},
+            pathParameters: GoRouterState.of(context).pathParameters,
+            extra: GoRouterState.of(context).extra,
+          );
+        }
       },
                 borderRadius: BorderRadius.circular(8),
       splashColor: Colors.transparent,

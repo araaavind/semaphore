@@ -35,7 +35,8 @@ class HomePage extends StatelessWidget {
     if (routeName == RouteConstants.wallPageName) {
       return 0;
     }
-    if (routeName == RouteConstants.searchFeedsPageName) {
+    if (routeName == RouteConstants.searchFeedsPageName ||
+        routeName == RouteConstants.feedViewPageName) {
       return 1;
     }
     if (routeName == RouteConstants.profilePageName) {

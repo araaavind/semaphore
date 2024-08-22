@@ -54,26 +54,27 @@ GoRouter router = GoRouter(
       },
       routes: <RouteBase>[
         GoRoute(
-            path: RouteConstants.wallPagePath,
-            name: RouteConstants.wallPageName,
-            pageBuilder: (context, state) => FadeTransitionPage(
-                  key: const ValueKey('wall'),
-                  child: const WallPage(),
-                ),
-            routes: [
-              GoRoute(
-                path: RouteConstants.webViewPagePath,
-                name: RouteConstants.webViewPageName,
-                pageBuilder: (context, state) {
-                  final url = state.uri.queryParameters['url'] ?? '';
-                  return SlideTransitionPage(
-                    key: const ValueKey('view'),
-                    child: WebView(url: url),
-                    direction: SlideDirection.bottomToTop,
-                  );
-                },
-              ),
-            ]),
+          path: RouteConstants.wallPagePath,
+          name: RouteConstants.wallPageName,
+          pageBuilder: (context, state) => FadeTransitionPage(
+            key: const ValueKey('wall'),
+            child: const WallPage(),
+          ),
+          routes: [
+            GoRoute(
+              path: RouteConstants.webViewPagePath,
+              name: RouteConstants.webViewPageName,
+              pageBuilder: (context, state) {
+                final url = state.uri.queryParameters['url'] ?? '';
+                return SlideTransitionPage(
+                  key: const ValueKey('view'),
+                  child: WebView(url: url),
+                  direction: SlideDirection.rightToLeft,
+                );
+              },
+            ),
+          ],
+        ),
         GoRoute(
           path: RouteConstants.searchFeedsPagePath,
           name: RouteConstants.searchFeedsPageName,
@@ -86,6 +87,45 @@ GoRouter router = GoRouter(
               child: SearchFeedsPage(isOnboarding: isOnboarding),
             );
           },
+          routes: [
+            GoRoute(
+              path: RouteConstants.feedViewPagePath,
+              name: RouteConstants.feedViewPageName,
+              pageBuilder: (context, state) {
+                final extra = state.extra as Map<String, Object>;
+                final feed = extra['feed'] as Feed;
+                final followFeedBlocValue =
+                    extra['followFeedBlocValue'] as FollowFeedBloc;
+                final listItemsBlocValue =
+                    extra['listItemsBlocValue'] as ListItemsBloc;
+                final isFollowed = extra['isFollowed'] as bool;
+                return SlideTransitionPage(
+                  key: const ValueKey(RouteConstants.feedViewPageName),
+                  direction: SlideDirection.rightToLeft,
+                  child: FeedViewPage(
+                    feed: feed,
+                    followFeedBlocValue: followFeedBlocValue,
+                    listItemsBlocValue: listItemsBlocValue,
+                    isFollowed: isFollowed,
+                  ),
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: RouteConstants.feedWebViewPagePath,
+                  name: RouteConstants.feedWebViewPageName,
+                  pageBuilder: (context, state) {
+                    final url = state.uri.queryParameters['url'] ?? '';
+                    return SlideTransitionPage(
+                      key: const ValueKey('feed-webview'),
+                      child: WebView(url: url),
+                      direction: SlideDirection.rightToLeft,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: RouteConstants.profilePagePath,
@@ -131,24 +171,6 @@ GoRouter router = GoRouter(
             state.uri.queryParameters['isOnboarding'] != null &&
                 state.uri.queryParameters['isOnboarding'] == 'true';
         return ActivationPage(isOnboarding: isOnboarding);
-      },
-    ),
-    GoRoute(
-      path: RouteConstants.feedViewPagePath,
-      name: RouteConstants.feedViewPageName,
-      builder: (context, state) {
-        final extra = state.extra as Map<String, Object>;
-        final feed = extra['feed'] as Feed;
-        final followFeedBlocValue =
-            extra['followFeedBlocValue'] as FollowFeedBloc;
-        final listItemsBlocValue = extra['listItemsBlocValue'] as ListItemsBloc;
-        final isFollowed = extra['isFollowed'] as bool;
-        return FeedViewPage(
-          feed: feed,
-          followFeedBlocValue: followFeedBlocValue,
-          listItemsBlocValue: listItemsBlocValue,
-          isFollowed: isFollowed,
-        );
       },
     ),
     GoRoute(
