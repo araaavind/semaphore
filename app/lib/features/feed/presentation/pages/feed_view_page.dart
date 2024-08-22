@@ -250,9 +250,10 @@ class _FeedViewItemsState extends State<FeedViewItems> {
               itemBuilder: (context, item, index) => ItemListTile(item: item),
               firstPageErrorTitle: TextConstants.itemListFetchErrorTitle,
               newPageErrorTitle: TextConstants.itemListFetchErrorTitle,
-              noMoreItemsErrorTitle: TextConstants.itemListEmptyMessageTitle,
+              noMoreItemsErrorTitle:
+                  TextConstants.itemListNoMoreItemsErrorTitle,
               noMoreItemsErrorMessage:
-                  TextConstants.itemListEmptyMessageMessage,
+                  TextConstants.itemListNoMoreItemsErrorMessage,
               listEmptyErrorTitle: TextConstants.itemListEmptyMessageTitle,
               listEmptyErrorMessage: TextConstants.itemListEmptyMessageMessage,
             ),

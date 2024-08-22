@@ -116,13 +116,13 @@ class _WallPageState extends State<WallPage> {
                         newPageErrorTitle:
                             TextConstants.itemListFetchErrorTitle,
                         noMoreItemsErrorTitle:
-                            TextConstants.itemListEmptyMessageTitle,
+                            TextConstants.itemListNoMoreItemsErrorTitle,
                         noMoreItemsErrorMessage:
-                            TextConstants.itemListEmptyMessageMessage,
+                            TextConstants.itemListNoMoreItemsErrorMessage,
                         listEmptyErrorTitle:
                             TextConstants.itemListEmptyMessageTitle,
                         listEmptyErrorMessage:
-                            TextConstants.itemListEmptyMessageMessage,
+                            TextConstants.itemListEmptyFollowMessageMessage,
                       ),
                     ],
                   ),
