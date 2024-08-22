@@ -5,6 +5,8 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 enum PagedListType { sliverList, list }
 
+enum PagedListLoaderType { circularProgressIndicator, shimmerIndicator }
+
 typedef ItemWidgetBuilder<ItemType> = Widget Function(
   BuildContext context,
   ItemType item,
@@ -23,6 +25,10 @@ class AppPagedList<ItemType> extends StatelessWidget {
     this.noMoreItemsErrorMessage = 'Try again later',
     this.listEmptyErrorTitle = 'Nothing to see here',
     this.listEmptyErrorMessage = 'Try again later',
+    this.showErrors = true,
+    this.loaderType = PagedListLoaderType.shimmerIndicator,
+    this.shrinkWrap = false,
+    this.physics,
   }) : _pagingController = pagingController;
 
   final PagingController<int, ItemType> _pagingController;
@@ -34,6 +40,10 @@ class AppPagedList<ItemType> extends StatelessWidget {
   final String noMoreItemsErrorMessage;
   final String listEmptyErrorTitle;
   final String listEmptyErrorMessage;
+  final bool showErrors;
+  final PagedListLoaderType loaderType;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +51,8 @@ class AppPagedList<ItemType> extends StatelessWidget {
       return PagedListView(
         pagingController: _pagingController,
         builderDelegate: appPagedChildBuilderDelegate(),
+        shrinkWrap: shrinkWrap,
+        physics: this.physics,
       );
     }
     return PagedSliverList<int, ItemType>(
@@ -52,38 +64,53 @@ class AppPagedList<ItemType> extends StatelessWidget {
   PagedChildBuilderDelegate<ItemType> appPagedChildBuilderDelegate() {
     return PagedChildBuilderDelegate<ItemType>(
       itemBuilder: itemBuilder,
-      firstPageErrorIndicatorBuilder: (_) => FirstPageErrorIndicator(
-        title: this.firstPageErrorTitle,
-        message: _pagingController.error,
-        onTryAgain: () {
-          _pagingController.refresh();
-        },
-      ),
-      newPageErrorIndicatorBuilder: (_) => NewPageErrorIndicator(
-        title: this.newPageErrorTitle,
-        message: _pagingController.error,
-        onTap: _pagingController.retryLastFailedRequest,
-      ),
-      newPageProgressIndicatorBuilder: (_) => const Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: UIConstants.pagePadding,
-        ),
-        child: ShimmerLoader(pageSize: 2),
-      ),
-      firstPageProgressIndicatorBuilder: (_) => const Padding(
-        padding: EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
-        child: ShimmerLoader(
-          pageSize: ServerConstants.defaultPaginationPageSize,
-        ),
-      ),
-      noMoreItemsIndicatorBuilder: (_) => NoMoreItemsIndicator(
-        title: this.noMoreItemsErrorTitle,
-        message: this.noMoreItemsErrorMessage,
-      ),
-      noItemsFoundIndicatorBuilder: (_) => NoMoreItemsIndicator(
-        title: this.listEmptyErrorTitle,
-        message: this.listEmptyErrorMessage,
-      ),
+      firstPageErrorIndicatorBuilder: this.showErrors
+          ? (_) => FirstPageErrorIndicator(
+                title: this.firstPageErrorTitle,
+                message: _pagingController.error,
+                onTryAgain: () {
+                  _pagingController.refresh();
+                },
+              )
+          : null,
+      newPageErrorIndicatorBuilder: this.showErrors
+          ? (_) => NewPageErrorIndicator(
+                title: this.newPageErrorTitle,
+                message: _pagingController.error,
+                onTap: _pagingController.retryLastFailedRequest,
+              )
+          : null,
+      newPageProgressIndicatorBuilder:
+          this.loaderType == PagedListLoaderType.shimmerIndicator
+              ? (_) => const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: UIConstants.pagePadding,
+                    ),
+                    child: ShimmerLoader(pageSize: 2),
+                  )
+              : null,
+      firstPageProgressIndicatorBuilder: this.loaderType ==
+              PagedListLoaderType.shimmerIndicator
+          ? (_) => const Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
+                child: ShimmerLoader(
+                  pageSize: ServerConstants.defaultPaginationPageSize,
+                ),
+              )
+          : null,
+      noMoreItemsIndicatorBuilder: this.showErrors
+          ? (_) => NoMoreItemsIndicator(
+                title: this.noMoreItemsErrorTitle,
+                message: this.noMoreItemsErrorMessage,
+              )
+          : null,
+      noItemsFoundIndicatorBuilder: this.showErrors
+          ? (_) => NoMoreItemsIndicator(
+                title: this.listEmptyErrorTitle,
+                message: this.listEmptyErrorMessage,
+              )
+          : null,
     );
   }
 }

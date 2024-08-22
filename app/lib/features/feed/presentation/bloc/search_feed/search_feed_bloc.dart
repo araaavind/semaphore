@@ -1,5 +1,4 @@
 import 'package:app/core/constants/server_constants.dart';
-import 'package:app/core/usecase/usecase.dart';
 import 'package:app/core/utils/stream_tranformers.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart';
@@ -34,12 +33,13 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
   ) async {
     emit(state.copyWith(status: SearchFeedStatus.loading));
     final feedsRes = await _listFeeds(
-      PaginationParams(
+      ListFeedsParams(
         searchKey: event.searchKey,
         searchValue: event.searchValue,
         sortKey: event.sortKey,
         page: event.page,
         pageSize: event.pageSize,
+        type: event.type,
       ),
     );
 
@@ -50,6 +50,13 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
           message: l.message,
         ));
       case Right(value: final feedList):
+        if (event.type == ListFeedsType.followed) {
+          emit(state.copyWith(
+            status: SearchFeedStatus.success,
+            feedList: feedList,
+          ));
+          return;
+        }
         final feedIds = feedList.feeds.map((feed) => feed.id).toList();
         final followsRes = await _checkUserFollowsFeeds(feedIds);
         switch (followsRes) {
