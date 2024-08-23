@@ -61,10 +61,12 @@ class AppTheme {
     textTheme: AppTextTheme.lightTextTheme,
     extensions: [
       AppSnackbarColorTheme(
-        networkOfflineContainer: AppPalette.networkOfflineSnackbarContainer,
-        networkOfflineOnContainer: AppPalette.networkOfflineSnackbarOnContainer,
-        networkOnlineContainer: AppPalette.networkOnlineSnackbarContainer,
-        networkOnlineOnContainer: AppPalette.networkOnlineSnackbarOnContainer,
+        successContainer: AppPalette.snackbarSuccessContainer,
+        successOnContainer: AppPalette.snackbarSuccessOnContainer,
+        failureContainer: AppPalette.snackbarFailureContainer,
+        failureOnContainer: AppPalette.snackbarFailureOnContainer,
+        infoContainer: AppPalette.snackbarInfoContainer,
+        infoOnContainer: AppPalette.snackbarInfoOnContainer,
       ),
     ],
   );
@@ -107,12 +109,12 @@ class AppTheme {
     textTheme: AppTextTheme.darkTextTheme,
     extensions: [
       AppSnackbarColorTheme(
-        networkOfflineContainer: AppPalette.networkOfflineSnackbarContainerDark,
-        networkOfflineOnContainer:
-            AppPalette.networkOfflineSnackbarOnContainerDark,
-        networkOnlineContainer: AppPalette.networkOnlineSnackbarContainerDark,
-        networkOnlineOnContainer:
-            AppPalette.networkOnlineSnackbarOnContainerDark,
+        successContainer: AppPalette.snackbarSuccessContainerDark,
+        successOnContainer: AppPalette.snackbarSuccessOnContainerDark,
+        failureContainer: AppPalette.snackbarFailureContainerDark,
+        failureOnContainer: AppPalette.snackbarFailureOnContainerDark,
+        infoContainer: AppPalette.snackbarInfoContainerDark,
+        infoOnContainer: AppPalette.snackbarInfoOnContainerDark,
       ),
     ],
   );

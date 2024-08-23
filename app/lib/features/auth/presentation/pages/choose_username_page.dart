@@ -46,7 +46,11 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                 });
                 formState!.validate();
               } else {
-                showSnackbar(context, state.message);
+                showSnackbar(
+                  context,
+                  state.message,
+                  type: SnackbarType.failure,
+                );
               }
             } else if (state is AuthUsernameSuccess) {
               setState(() {

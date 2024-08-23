@@ -107,7 +107,11 @@ class _SignupPageState extends State<SignupPage> {
                       updateFieldErrors(state.fieldErrors);
                       formKey.currentState!.validate();
                     } else {
-                      showSnackbar(context, state.message);
+                      showSnackbar(
+                        context,
+                        state.message,
+                        type: SnackbarType.failure,
+                      );
                     }
                   } else if (state is AuthSignupSuccess) {
                     context.goNamed(

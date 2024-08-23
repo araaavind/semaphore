@@ -59,15 +59,21 @@ class _AddFeedPageState extends State<AddFeedPage> {
                             showSnackbar(
                               context,
                               state.fieldErrors!['feed_link']!,
+                              type: SnackbarType.failure,
                             );
                           } else {
-                            showSnackbar(context, state.message!);
+                            showSnackbar(
+                              context,
+                              state.message!,
+                              type: SnackbarType.failure,
+                            );
                           }
                         }
                         if (state.status == FollowFeedStatus.followed) {
                           showSnackbar(
                             context,
                             'You are following the feed now!',
+                            type: SnackbarType.success,
                           );
                           context.pop(true);
                         }

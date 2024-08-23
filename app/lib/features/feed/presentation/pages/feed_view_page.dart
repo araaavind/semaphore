@@ -117,7 +117,11 @@ class _FeedViewPageState extends State<FeedViewPage> {
                             BlocConsumer<FollowFeedBloc, FollowFeedState>(
                               listener: (context, state) {
                                 if (state.status == FollowFeedStatus.failure) {
-                                  showSnackbar(context, state.message!);
+                                  showSnackbar(
+                                    context,
+                                    state.message!,
+                                    type: SnackbarType.failure,
+                                  );
                                 }
                                 if (state.feedId == widget.feed.id &&
                                     (state.status ==
