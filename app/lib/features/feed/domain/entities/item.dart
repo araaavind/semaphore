@@ -1,6 +1,31 @@
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:equatable/equatable.dart';
 
+class Author extends Equatable {
+  final String? name;
+  final String? email;
+
+  const Author({required this.name, required this.email});
+
+  @override
+  List<Object?> get props => [name, email];
+}
+
+class Enclosure extends Equatable {
+  final String? url;
+  final int? length;
+  final String? type;
+
+  const Enclosure({
+    required this.url,
+    required this.length,
+    required this.type,
+  });
+
+  @override
+  List<Object?> get props => [url, length, type];
+}
+
 class Item extends Equatable {
   final int id;
   final String title;
@@ -11,6 +36,10 @@ class Item extends Equatable {
   final String guid;
   final String? imageUrl;
   final Feed? feed;
+  final String? content;
+  final List<String>? categories;
+  final List<Author>? authors;
+  final List<Enclosure>? enclosures;
 
   const Item({
     required this.id,
@@ -22,6 +51,10 @@ class Item extends Equatable {
     required this.guid,
     this.imageUrl,
     this.feed,
+    this.content,
+    this.categories,
+    this.authors,
+    this.enclosures,
   });
 
   @override
@@ -35,5 +68,9 @@ class Item extends Equatable {
         guid,
         imageUrl,
         feed,
+        content,
+        categories,
+        authors,
+        enclosures,
       ];
 }
