@@ -279,6 +279,10 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	app.background(func() {
+		app.RefreshFeed(feed)
+	})
+
 	w.WriteHeader(http.StatusOK)
 }
 
