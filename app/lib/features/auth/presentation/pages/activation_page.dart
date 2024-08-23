@@ -78,7 +78,11 @@ class _ActivationPageState extends State<ActivationPage> {
                   child: BlocConsumer<ActivateUserCubit, ActivateUserState>(
                     listener: (context, state) {
                       if (state is ActivateUserFailure) {
-                        showSnackbar(context, state.message);
+                        showSnackbar(
+                          context,
+                          state.message,
+                          type: SnackbarType.failure,
+                        );
                       }
                       if (state is ActivateUserSuccess) {
                         context
@@ -87,6 +91,7 @@ class _ActivationPageState extends State<ActivationPage> {
                         showSnackbar(
                           context,
                           TextConstants.accountActivationSuccessMessage,
+                          type: SnackbarType.success,
                         );
                         if (widget.isOnboarding) {
                           context.goNamed(RouteConstants.wallPageName);
@@ -95,7 +100,11 @@ class _ActivationPageState extends State<ActivationPage> {
                         }
                       }
                       if (state is SendActivationTokenSuccess) {
-                        showSnackbar(context, state.message);
+                        showSnackbar(
+                          context,
+                          state.message,
+                          type: SnackbarType.info,
+                        );
                       }
                     },
                     builder: (context, state) {

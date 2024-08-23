@@ -54,12 +54,17 @@ class _CreateWallPageState extends State<CreateWallPage> {
                     child: BlocConsumer<CreateWallCubit, CreateWallState>(
                       listener: (context, state) {
                         if (state.status == CreateWallStatus.failure) {
-                          showSnackbar(context, state.message!);
+                          showSnackbar(
+                            context,
+                            state.message!,
+                            type: SnackbarType.failure,
+                          );
                         }
                         if (state.status == CreateWallStatus.success) {
                           showSnackbar(
                             context,
                             'Your wall has been created!',
+                            type: SnackbarType.success,
                           );
                           context.pop(true);
                         }

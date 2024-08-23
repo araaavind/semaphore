@@ -57,7 +57,11 @@ class _ProfilePageState extends State<ProfilePage> {
             icon: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthFailure) {
-                  showSnackbar(context, state.message);
+                  showSnackbar(
+                    context,
+                    state.message,
+                    type: SnackbarType.failure,
+                  );
                 }
               },
               builder: (context, state) {

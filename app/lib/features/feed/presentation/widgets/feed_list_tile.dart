@@ -92,7 +92,11 @@ class _FeedListTileState extends State<FeedListTile> {
         trailing: BlocConsumer<FollowFeedBloc, FollowFeedState>(
           listener: (context, state) {
             if (state.status == FollowFeedStatus.failure) {
-              showSnackbar(context, state.message!);
+              showSnackbar(
+                context,
+                state.message!,
+                type: SnackbarType.failure,
+              );
             }
             if (state.feedId == feed.id &&
                 (state.status == FollowFeedStatus.followed ||

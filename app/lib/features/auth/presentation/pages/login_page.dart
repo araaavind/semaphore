@@ -1,7 +1,6 @@
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/extensions/app_snackbar_color_theme.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/validate_fields.dart';
 import 'package:app/core/utils/show_snackbar.dart';
@@ -43,23 +42,13 @@ class _LoginPageState extends State<LoginPage> {
               showSnackbar(
                 context,
                 TextConstants.networkConnectedMessage,
-                backgroundColor: context.theme
-                    .extension<AppSnackbarColorTheme>()!
-                    .networkOnlineContainer,
-                textColor: context.theme
-                    .extension<AppSnackbarColorTheme>()!
-                    .networkOnlineOnContainer,
+                type: SnackbarType.success,
               );
             case NetworkStatus.disconnected:
               showSnackbar(
                 context,
                 TextConstants.networkDisconnectedMessage,
-                backgroundColor: context.theme
-                    .extension<AppSnackbarColorTheme>()!
-                    .networkOfflineContainer,
-                textColor: context.theme
-                    .extension<AppSnackbarColorTheme>()!
-                    .networkOfflineOnContainer,
+                type: SnackbarType.failure,
               );
           }
         },
@@ -74,7 +63,11 @@ class _LoginPageState extends State<LoginPage> {
                   formKey.currentState!.validate();
                 }
               } else {
-                showSnackbar(context, state.message);
+                showSnackbar(
+                  context,
+                  state.message,
+                  type: SnackbarType.failure,
+                );
               }
             }
           },

@@ -52,6 +52,22 @@ abstract class AppPalette {
   static const outlineDark = Color.fromARGB(255, 61, 61, 61);
 
   // Extension colors
+  static const snackbarSuccessContainer = Color.fromARGB(255, 233, 255, 228);
+  static const snackbarSuccessOnContainer = Color.fromARGB(255, 9, 45, 15);
+  static const snackbarFailureContainer = Color.fromARGB(255, 252, 204, 192);
+  static const snackbarFailureOnContainer = Color.fromARGB(255, 61, 18, 18);
+  static const snackbarInfoContainer = surface;
+  static const snackbarInfoOnContainer = onSurface;
+  // Extension darks
+  static const snackbarSuccessContainerDark = Color.fromARGB(255, 9, 45, 15);
+  static const snackbarSuccessOnContainerDark =
+      Color.fromARGB(255, 233, 255, 228);
+  static const snackbarFailureContainerDark = Color.fromARGB(255, 61, 18, 18);
+  static const snackbarFailureOnContainerDark =
+      Color.fromARGB(255, 252, 204, 192);
+  static const snackbarInfoContainerDark = surfaceDark;
+  static const snackbarInfoOnContainerDark = onSurfaceDark;
+
   static const networkOnlineSnackbarContainer = Color.fromARGB(255, 9, 45, 15);
   static const networkOnlineSnackbarOnContainer =
       Color.fromARGB(255, 233, 255, 228);

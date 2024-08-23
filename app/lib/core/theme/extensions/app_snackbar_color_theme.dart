@@ -1,34 +1,38 @@
 import 'package:flutter/material.dart';
 
 class AppSnackbarColorTheme extends ThemeExtension<AppSnackbarColorTheme> {
-  final Color? networkOfflineContainer;
-  final Color? networkOnlineContainer;
-  final Color? networkOfflineOnContainer;
-  final Color? networkOnlineOnContainer;
+  final Color? failureContainer;
+  final Color? successContainer;
+  final Color? infoContainer;
+  final Color? failureOnContainer;
+  final Color? successOnContainer;
+  final Color? infoOnContainer;
 
   AppSnackbarColorTheme({
-    required this.networkOfflineContainer,
-    required this.networkOnlineContainer,
-    required this.networkOfflineOnContainer,
-    required this.networkOnlineOnContainer,
+    required this.failureContainer,
+    required this.successContainer,
+    required this.infoContainer,
+    required this.failureOnContainer,
+    required this.successOnContainer,
+    required this.infoOnContainer,
   });
 
   @override
   ThemeExtension<AppSnackbarColorTheme> copyWith({
-    Color? networkOfflineContainer,
-    Color? networkOnlineContainer,
-    Color? networkOfflineOnContainer,
-    Color? networkOnlineOnContainer,
+    Color? failureContainer,
+    Color? successContainer,
+    Color? infoContainer,
+    Color? failureOnContainer,
+    Color? successOnContainer,
+    Color? infoOnContainer,
   }) {
     return AppSnackbarColorTheme(
-      networkOfflineContainer:
-          networkOfflineContainer ?? this.networkOfflineContainer,
-      networkOnlineContainer:
-          networkOnlineContainer ?? this.networkOnlineContainer,
-      networkOfflineOnContainer:
-          networkOfflineOnContainer ?? this.networkOfflineOnContainer,
-      networkOnlineOnContainer:
-          networkOnlineOnContainer ?? this.networkOnlineOnContainer,
+      failureContainer: failureContainer ?? this.failureContainer,
+      successContainer: successContainer ?? this.successContainer,
+      infoContainer: infoContainer ?? this.infoContainer,
+      failureOnContainer: failureOnContainer ?? this.failureOnContainer,
+      successOnContainer: successOnContainer ?? this.successOnContainer,
+      infoOnContainer: infoOnContainer ?? this.infoOnContainer,
     );
   }
 
@@ -39,14 +43,14 @@ class AppSnackbarColorTheme extends ThemeExtension<AppSnackbarColorTheme> {
   ) {
     if (other == null) return this;
     return AppSnackbarColorTheme(
-      networkOfflineContainer:
-          Color.lerp(networkOfflineContainer, other.networkOfflineContainer, t),
-      networkOnlineContainer:
-          Color.lerp(networkOnlineContainer, other.networkOnlineContainer, t),
-      networkOfflineOnContainer: Color.lerp(
-          networkOfflineOnContainer, other.networkOfflineOnContainer, t),
-      networkOnlineOnContainer: Color.lerp(
-          networkOnlineOnContainer, other.networkOnlineOnContainer, t),
+      failureContainer: Color.lerp(failureContainer, other.failureContainer, t),
+      successContainer: Color.lerp(successContainer, other.successContainer, t),
+      infoContainer: Color.lerp(infoContainer, other.infoContainer, t),
+      failureOnContainer:
+          Color.lerp(failureOnContainer, other.failureOnContainer, t),
+      successOnContainer:
+          Color.lerp(successOnContainer, other.successOnContainer, t),
+      infoOnContainer: Color.lerp(infoOnContainer, other.infoOnContainer, t),
     );
   }
 }
