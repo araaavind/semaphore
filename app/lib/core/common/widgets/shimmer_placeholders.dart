@@ -78,7 +78,7 @@ class ContentPlaceholder extends StatelessWidget {
             width: 96.0,
             height: 72.0,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(8.0),
               color: Colors.white,
             ),
           ),

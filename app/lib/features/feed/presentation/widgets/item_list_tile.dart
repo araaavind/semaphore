@@ -1,11 +1,14 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/extract_best_image_url.dart';
 import 'package:app/core/utils/format_published_date.dart';
 import 'package:app/core/utils/string_casing_extension.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ItemListTile extends StatelessWidget {
   final Item item;
@@ -13,6 +16,32 @@ class ItemListTile extends StatelessWidget {
     required this.item,
     super.key,
   });
+
+  String? getImageUrl(Item item) {
+    if (item.imageUrl != null) return item.imageUrl;
+    if (item.enclosures != null) {
+      for (var e in item.enclosures!) {
+        if (e.type != null && e.type == '/image' && e.url != null) {
+          return e.url!;
+        }
+      }
+      for (var e in item.enclosures!) {
+        if (e.url != null) {
+          final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+          final uri = Uri.tryParse(e.url!);
+
+          return uri != null &&
+                  uri.hasAbsolutePath &&
+                  imageExtensions
+                      .any((ext) => e.url!.toLowerCase().contains('.$ext'))
+              ? e.url
+              : null;
+        }
+      }
+    }
+    return extractBestImageUrl(item.description) ??
+        extractBestImageUrl(item.content);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +62,36 @@ class ItemListTile extends StatelessWidget {
           );
         }
       },
-      leading: item.imageUrl != null
-          ? Container(
-              height: 50,
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    item.imageUrl!,
+      leading: getImageUrl(item) != null
+          ? CachedNetworkImage(
+              imageUrl: getImageUrl(item)!,
+              imageBuilder: (context, imageProvider) => Container(
+                width: 60.0,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: imageProvider,
+                  ),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: context.theme.colorScheme.secondary.withAlpha(30),
+                highlightColor:
+                    context.theme.colorScheme.secondary.withAlpha(65),
+                child: Container(
+                  width: 60.0,
+                  height: 60.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
+                    color: Colors.white,
                   ),
                 ),
-                borderRadius: BorderRadius.circular(8),
               ),
             )
           : null,
-      visualDensity: VisualDensity.comfortable,
+      visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: UIConstants.pagePadding,
