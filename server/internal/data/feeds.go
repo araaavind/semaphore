@@ -10,8 +10,10 @@ import (
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -44,7 +46,7 @@ func ValidateFeedLink(v *validator.Validator, feedLink string) {
 }
 
 type FeedModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m FeedModel) Insert(feed *Feed) error {
@@ -74,7 +76,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(
+	err := m.DB.QueryRow(ctx, query, args...).Scan(
 		&feed.ID,
 		&feed.CreatedAt,
 		&feed.UpdatedAt,
@@ -111,17 +113,15 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 	args := []any{title, feedLink, filters.limit(), filters.offset()}
 
-	rows, err := m.DB.QueryContext(ctx, query, args...)
+	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
-	defer rows.Close()
 
 	totalRecords := 0
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
-		err := rows.Scan(
+		err := row.Scan(
 			&totalRecords,
 			&feed.ID,
 			&feed.Title,
@@ -141,12 +141,9 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.LastFailureAt,
 			&feed.LastFailure,
 		)
-		if err != nil {
-			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-		}
-		feeds = append(feeds, &feed)
-	}
-	if err = rows.Err(); err != nil {
+		return &feed, err
+	})
+	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
@@ -167,7 +164,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, feedLinks).Scan(
+	err := m.DB.QueryRow(ctx, query, feedLinks).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
@@ -214,7 +211,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+	err := m.DB.QueryRow(ctx, query, id).Scan(
 		&feed.ID,
 		&feed.Title,
 		&feed.Description,
@@ -274,7 +271,7 @@ func (m FeedModel) Update(feed *Feed) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&feed.UpdatedAt, &feed.Version)
+	err := m.DB.QueryRow(ctx, query, args...).Scan(&feed.UpdatedAt, &feed.Version)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrRecordNotFound):
@@ -298,17 +295,12 @@ func (m FeedModel) DeleteByID(id int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := m.DB.ExecContext(ctx, query, id)
+	result, err := m.DB.Exec(ctx, query, id)
 	if err != nil {
 		return err
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
+	if result.RowsAffected() == 0 {
 		return ErrRecordNotFound
 	}
 
@@ -324,22 +316,21 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, since)
+	rows, err := m.DB.Query(ctx, query, since)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
-		err := rows.Scan(&feed.ID, &feed.FeedLink, &feed.Version)
-		if err != nil {
-			return nil, err
-		}
-		feeds = append(feeds, &feed)
-	}
-	if err = rows.Err(); err != nil {
+		err := row.Scan(
+			&feed.ID,
+			&feed.FeedLink,
+			&feed.Version,
+		)
+		return &feed, err
+	})
+	if err != nil {
 		return nil, err
 	}
 

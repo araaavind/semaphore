@@ -1,8 +1,9 @@
 package data
 
 import (
-	"database/sql"
 	"errors"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -22,7 +23,7 @@ type Models struct {
 	WallFeeds   WallFeedModel
 }
 
-func NewModels(db *sql.DB) Models {
+func NewModels(db *pgxpool.Pool) Models {
 	return Models{
 		UserModel{DB: db},
 		TokenModel{DB: db},

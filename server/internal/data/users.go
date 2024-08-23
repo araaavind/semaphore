@@ -12,6 +12,7 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/validator"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -140,7 +141,7 @@ func (u *User) IsAnonymous() bool {
 }
 
 type UserModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m UserModel) Insert(user *User) error {
@@ -154,7 +155,7 @@ func (m UserModel) Insert(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.ID, &user.LastLoginAt, &user.CreatedAt, &user.UpdatedAt, &user.Version)
+	err := m.DB.QueryRow(ctx, query, args...).Scan(&user.ID, &user.LastLoginAt, &user.CreatedAt, &user.UpdatedAt, &user.Version)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -180,7 +181,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, id).Scan(
+	err := m.DB.QueryRow(ctx, query, id).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -214,7 +215,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, email).Scan(
+	err := m.DB.QueryRow(ctx, query, email).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -250,7 +251,7 @@ func (m UserModel) GetByUsername(username string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, username).Scan(
+	err := m.DB.QueryRow(ctx, query, username).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -292,7 +293,7 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, tokenHash[:], scope, time.Now()).Scan(
+	err := m.DB.QueryRow(ctx, query, tokenHash[:], scope, time.Now()).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,
@@ -326,7 +327,7 @@ func (m UserModel) CountByUsername(username string) (int, error) {
 	defer cancel()
 
 	count := 0
-	err := m.DB.QueryRowContext(ctx, query, username).Scan(&count)
+	err := m.DB.QueryRow(ctx, query, username).Scan(&count)
 
 	if err != nil {
 		return -1, err
@@ -358,7 +359,7 @@ func (m UserModel) Update(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&user.Version)
+	err := m.DB.QueryRow(ctx, query, args...).Scan(&user.Version)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {

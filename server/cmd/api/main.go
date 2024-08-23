@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"expvar"
 	"flag"
 	"fmt"
@@ -15,7 +14,7 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/mailer"
 	"github.com/aravindmathradan/semaphore/internal/vcs"
-	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -114,7 +113,7 @@ func main() {
 	}))
 
 	expvar.Publish("database", expvar.Func(func() any {
-		return db.Stats()
+		return db.Stat()
 	}))
 
 	expvar.Publish("timestamp", expvar.Func(func() any {
@@ -148,20 +147,24 @@ func main() {
 	}
 }
 
-func openDB(cfg config) (*sql.DB, error) {
-	db, err := sql.Open("pgx", cfg.db.dsn)
+func openDB(cfg config) (*pgxpool.Pool, error) {
+	poolConfig, err := pgxpool.ParseConfig(cfg.db.dsn)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(cfg.db.maxOpenConns)
-	db.SetMaxIdleConns(cfg.db.maxIdleConns)
-	db.SetConnMaxIdleTime(cfg.db.maxIdleTime)
+	poolConfig.MaxConns = int32(cfg.db.maxOpenConns)
+	poolConfig.MaxConnIdleTime = cfg.db.maxIdleTime
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err = db.PingContext(ctx)
+	db, err := pgxpool.NewWithConfig(ctx, poolConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping(ctx)
 	if err != nil {
 		defer db.Close()
 		return nil, err

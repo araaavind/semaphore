@@ -2,13 +2,14 @@ package data
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -23,7 +24,7 @@ type WallFeed struct {
 }
 
 type WallFeedModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m WallFeedModel) Insert(wallFeed *WallFeed) error {
@@ -35,7 +36,7 @@ func (m WallFeedModel) Insert(wallFeed *WallFeed) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, wallFeed.WallID, wallFeed.FeedID).Scan(
+	err := m.DB.QueryRow(ctx, query, wallFeed.WallID, wallFeed.FeedID).Scan(
 		&wallFeed.CreatedAt,
 		&wallFeed.UpdatedAt,
 	)
@@ -62,14 +63,12 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, wallID)
+	rows, err := m.DB.Query(ctx, query, wallID)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
 		err := rows.Scan(
 			&feed.ID,
@@ -83,13 +82,9 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
 			&feed.FeedVersion,
 			&feed.Language,
 		)
-		if err != nil {
-			return nil, err
-		}
-		feeds = append(feeds, &feed)
-	}
-
-	if err = rows.Err(); err != nil {
+		return &feed, err
+	})
+	if err != nil {
 		return nil, err
 	}
 
@@ -105,17 +100,12 @@ func (m WallFeedModel) DeleteFeedForWalls(feedID int64, wallIDs []int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := m.DB.ExecContext(ctx, query, feedID, wallIDs)
+	result, err := m.DB.Exec(ctx, query, feedID, wallIDs)
 	if err != nil {
 		return err
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
+	if result.RowsAffected() == 0 {
 		return ErrRecordNotFound
 	}
 
@@ -130,17 +120,12 @@ func (m WallFeedModel) Delete(wallFeed *WallFeed) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	result, err := m.DB.ExecContext(ctx, query, wallFeed.WallID, wallFeed.FeedID)
+	result, err := m.DB.Exec(ctx, query, wallFeed.WallID, wallFeed.FeedID)
 	if err != nil {
 		return err
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected == 0 {
+	if result.RowsAffected() == 0 {
 		return ErrRecordNotFound
 	}
 

@@ -20,6 +20,8 @@ HEAD		/users/:username			check if user exists(username taken)	-								empty res
 
 GET			/me							get logged in user						auth							user with 200
 GET			/me/feeds					get feeds followed by logged in user	auth							feeds list, metadata with 200
+GET			/me/feeds/contains			check if user follows feeds				auth							boolean list with 200
+GET			/me/walls					list walls of logged in user			auth							walls list with 200
 
 POST		/feeds						add and follow a feed					activation, feeds:write			empty response with 201
 GET			/feeds						list all feeds							-								feeds list, metadata with 200
@@ -30,7 +32,6 @@ DELETE		/feeds/:feed_id/followers	unfollow a feed							auth, feeds:follow				em
 GET			/feeds/:feed_id/items		get feeds for a wall
 
 POST		/walls						create wall
-GET			/walls						list walls of user
 GET			/walls/:wall_id				get a specific wall
 PUT			/walls/:wall_id				update a wall's details
 POST		/walls/:wall_id/feeds		add feeds to a wall
@@ -70,6 +71,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/me", authenticated.ThenFunc(app.getCurrentUser))
 	router.Handler(http.MethodGet, "/v1/me/feeds", authenticated.ThenFunc(app.listFeedsForUser))
 	router.Handler(http.MethodGet, "/v1/me/feeds/contains", authenticated.ThenFunc(app.checkIfUserFollowsFeeds))
+	router.Handler(http.MethodGet, "/v1/me/walls", authenticated.ThenFunc(app.listWalls))
 
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
