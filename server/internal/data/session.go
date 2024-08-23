@@ -3,10 +3,10 @@ package data
 import (
 	"context"
 	"crypto/sha256"
-	"database/sql"
 	"errors"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -59,7 +59,7 @@ func (m SessionModel) GetForToken(tokenPlaintext string) (*Session, error) {
 	session.Token = &token
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err

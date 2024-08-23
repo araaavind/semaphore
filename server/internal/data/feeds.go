@@ -2,7 +2,6 @@ package data
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
@@ -185,7 +184,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	)
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err
@@ -232,7 +231,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	)
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err
@@ -274,7 +273,7 @@ func (m FeedModel) Update(feed *Feed) error {
 	err := m.DB.QueryRow(ctx, query, args...).Scan(&feed.UpdatedAt, &feed.Version)
 	if err != nil {
 		switch {
-		case errors.Is(err, ErrRecordNotFound):
+		case errors.Is(err, pgx.ErrNoRows):
 			return ErrEditConflict
 		default:
 			return err
