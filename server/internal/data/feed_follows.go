@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -46,26 +47,19 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
-	defer rows.Close()
 
 	totalRecords := 0
-	users := []*User{}
-
-	for rows.Next() {
+	users, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*User, error) {
 		var user User
-		err = rows.Scan(
+		err := row.Scan(
 			&totalRecords,
 			&user.ID,
 			&user.FullName,
 			&user.Username,
 		)
-		if err != nil {
-			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-		}
-		users = append(users, &user)
-	}
-
-	if err = rows.Err(); err != nil {
+		return &user, err
+	})
+	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
@@ -93,13 +87,11 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
-	defer rows.Close()
 
 	totalRecords := 0
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
-		err := rows.Scan(
+		err := row.Scan(
 			&totalRecords,
 			&feed.ID,
 			&feed.Title,
@@ -112,13 +104,9 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 			&feed.FeedVersion,
 			&feed.Language,
 		)
-		if err != nil {
-			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-		}
-		feeds = append(feeds, &feed)
-	}
-
-	if err = rows.Err(); err != nil {
+		return &feed, err
+	})
+	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
@@ -129,11 +117,10 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 
 func (m FeedFollowModel) CountFollowersForFeeds(feedIDs []int64) (map[int64]int, error) {
 	query := `
-		SELECT feeds.id, COALESCE(count(feeds.id), 0)
-		FROM feeds
-		LEFT JOIN feed_follows ON feed_follows.feed_id = feeds.id
-		WHERE feeds.id = ANY($1)
-		GROUP BY feeds.id`
+		SELECT feed_id, COALESCE(count(feed_id), 0) AS followers
+		FROM feed_follows
+		WHERE feed_id = ANY($1)
+		GROUP BY feed_id`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -142,23 +129,15 @@ func (m FeedFollowModel) CountFollowersForFeeds(feedIDs []int64) (map[int64]int,
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
+	var feedID int64
+	var followerCount int
 	result := make(map[int64]int)
-	for rows.Next() {
-		var feedID int64
-		var followerCount int
-		err := rows.Scan(
-			&feedID,
-			&followerCount,
-		)
-		if err != nil {
-			return nil, err
-		}
+	_, err = pgx.ForEachRow(rows, []any{&feedID, &followerCount}, func() error {
 		result[feedID] = followerCount
-	}
-
-	if err = rows.Err(); err != nil {
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
 
@@ -183,23 +162,15 @@ func (m FeedFollowModel) CheckIfUserFollowsFeeds(userID int64, feedIDs []int64) 
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
+	var feedID int64
+	var isFollowed bool
 	result := make(map[int64]bool)
-	for rows.Next() {
-		var feedID int64
-		var isFollowed bool
-		err := rows.Scan(
-			&feedID,
-			&isFollowed,
-		)
-		if err != nil {
-			return nil, err
-		}
+	_, err = pgx.ForEachRow(rows, []any{&feedID, &isFollowed}, func() error {
 		result[feedID] = isFollowed
-	}
-
-	if err = rows.Err(); err != nil {
+		return nil
+	})
+	if err != nil {
 		return nil, err
 	}
 

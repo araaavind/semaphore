@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -49,22 +50,13 @@ func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	var permissions Permissions
-
-	for rows.Next() {
+	permissions, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (string, error) {
 		var permission string
-
-		err := rows.Scan(&permission)
-		if err != nil {
-			return nil, err
-		}
-
-		permissions = append(permissions, permission)
-	}
-
-	if err = rows.Err(); err != nil {
+		err := row.Scan(&permission)
+		return permission, err
+	})
+	if err != nil {
 		return nil, err
 	}
 

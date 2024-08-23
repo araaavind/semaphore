@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -260,14 +261,11 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
-	defer rows.Close()
 
 	totalRecords := 0
-	items := []*Item{}
-	for rows.Next() {
-		authorsJSON := []byte{}
-		pgmap := pgtype.NewMap()
+	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Item, error) {
 		var item Item
+		authorsJSON := []byte{}
 		err := rows.Scan(
 			&totalRecords,
 			&item.ID,
@@ -280,24 +278,18 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			&authorsJSON,
 			&item.GUID,
 			&item.ImageURL,
-			pgmap.SQLScanner(&item.Categories),
+			&item.Categories,
 			&item.FeedID,
 			&item.Version,
 			&item.CreatedAt,
 			&item.UpdatedAt,
 		)
-		if err != nil {
-			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-		}
 		if authorsJSON != nil {
 			err = json.Unmarshal(authorsJSON, &item.Authors)
-			if err != nil {
-				return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-			}
 		}
-		items = append(items, &item)
-	}
-	if err = rows.Err(); err != nil {
+		return &item, err
+	})
+	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
