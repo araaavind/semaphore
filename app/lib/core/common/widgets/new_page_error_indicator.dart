@@ -42,7 +42,7 @@ class NewPageErrorIndicator extends StatelessWidget {
                     Text(
                       'Tap to try again',
                       style: context.theme.textTheme.bodySmall!.copyWith(
-                        color: context.theme.colorScheme.secondary,
+                        color: context.theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(width: 4.0),
@@ -50,7 +50,7 @@ class NewPageErrorIndicator extends StatelessWidget {
                       Icons.refresh,
                       size: 14,
                       weight: 0.5,
-                      color: context.theme.colorScheme.secondary,
+                      color: context.theme.colorScheme.primary,
                     ),
                   ],
                 ),

@@ -39,7 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
           'smphr',
           style: context.theme.textTheme.headlineMedium!.copyWith(
             fontWeight: FontWeight.w700,
-            color: context.theme.colorScheme.secondary,
+            color: context.theme.colorScheme.primary,
           ),
         ),
         actions: [

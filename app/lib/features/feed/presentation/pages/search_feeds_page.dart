@@ -100,7 +100,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           'smphr',
           style: context.theme.textTheme.headlineMedium!.copyWith(
             fontWeight: FontWeight.w700,
-            color: context.theme.colorScheme.secondary,
+            color: context.theme.colorScheme.primary,
           ),
         ),
         actions: [
@@ -238,7 +238,7 @@ class TitleTextSpan extends StatelessWidget {
           'Follow the feeds that interest you',
           style: context.theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w100,
-            color: context.theme.colorScheme.secondary,
+            color: context.theme.colorScheme.primary,
           ),
         ),
       ],

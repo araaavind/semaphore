@@ -17,8 +17,8 @@ class ShimmerLoader extends StatelessWidget {
       width: 200,
       height: 100,
       child: Shimmer.fromColors(
-        baseColor: context.theme.colorScheme.secondary.withAlpha(30),
-        highlightColor: context.theme.colorScheme.secondary.withAlpha(65),
+        baseColor: context.theme.colorScheme.primary.withAlpha(30),
+        highlightColor: context.theme.colorScheme.primary.withAlpha(65),
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
