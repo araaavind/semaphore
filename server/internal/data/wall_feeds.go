@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -66,10 +67,8 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
 		err := rows.Scan(
 			&feed.ID,
@@ -83,13 +82,9 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
 			&feed.FeedVersion,
 			&feed.Language,
 		)
-		if err != nil {
-			return nil, err
-		}
-		feeds = append(feeds, &feed)
-	}
-
-	if err = rows.Err(); err != nil {
+		return &feed, err
+	})
+	if err != nil {
 		return nil, err
 	}
 

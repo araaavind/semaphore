@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -116,13 +117,11 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
-	defer rows.Close()
 
 	totalRecords := 0
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
-		err := rows.Scan(
+		err := row.Scan(
 			&totalRecords,
 			&feed.ID,
 			&feed.Title,
@@ -142,12 +141,9 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.LastFailureAt,
 			&feed.LastFailure,
 		)
-		if err != nil {
-			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-		}
-		feeds = append(feeds, &feed)
-	}
-	if err = rows.Err(); err != nil {
+		return &feed, err
+	})
+	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
@@ -324,18 +320,17 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
-	feeds := []*Feed{}
-	for rows.Next() {
+	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
-		err := rows.Scan(&feed.ID, &feed.FeedLink, &feed.Version)
-		if err != nil {
-			return nil, err
-		}
-		feeds = append(feeds, &feed)
-	}
-	if err = rows.Err(); err != nil {
+		err := row.Scan(
+			&feed.ID,
+			&feed.FeedLink,
+			&feed.Version,
+		)
+		return &feed, err
+	})
+	if err != nil {
 		return nil, err
 	}
 
