@@ -2,8 +2,9 @@ package data
 
 import (
 	"context"
-	"database/sql"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Permissions []string
@@ -18,7 +19,7 @@ func (p Permissions) Includes(code string) bool {
 }
 
 type PermissionModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m PermissionModel) AddForUser(userID int64, codes ...string) error {
@@ -29,7 +30,7 @@ func (m PermissionModel) AddForUser(userID int64, codes ...string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, query, userID, codes)
+	_, err := m.DB.Exec(ctx, query, userID, codes)
 	return err
 }
 
@@ -44,7 +45,7 @@ func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.QueryContext(ctx, query, userID)
+	rows, err := m.DB.Query(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}

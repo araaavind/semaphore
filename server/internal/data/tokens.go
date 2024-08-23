@@ -4,11 +4,11 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
-	"database/sql"
 	"encoding/base32"
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const (
@@ -71,7 +71,7 @@ func ValidateTokenPlaintext(v *validator.Validator, tokenPlaintext string) {
 }
 
 type TokenModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m TokenModel) New(userID int64, ttl time.Duration, scope string) (*Token, error) {
@@ -95,7 +95,7 @@ func (m TokenModel) Insert(token *Token) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&token.CreatedAt)
+	err := m.DB.QueryRow(ctx, query, args...).Scan(&token.CreatedAt)
 	return err
 }
 
@@ -107,7 +107,7 @@ func (m TokenModel) DeleteAllForUser(scope string, userID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, query, scope, userID)
+	_, err := m.DB.Exec(ctx, query, scope, userID)
 	return err
 }
 
@@ -119,7 +119,7 @@ func (m TokenModel) DeleteAllForUserExcept(scope string, userID int64, hash []by
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, query, scope, userID, hash)
+	_, err := m.DB.Exec(ctx, query, scope, userID, hash)
 	return err
 }
 
@@ -131,6 +131,6 @@ func (m TokenModel) DeleteByHash(hash []byte) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, query, hash)
+	_, err := m.DB.Exec(ctx, query, hash)
 	return err
 }

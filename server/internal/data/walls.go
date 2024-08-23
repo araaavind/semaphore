@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -25,7 +26,7 @@ type Wall struct {
 }
 
 type WallModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m WallModel) Insert(wall *Wall) error {
@@ -37,7 +38,7 @@ func (m WallModel) Insert(wall *Wall) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, wall.Name, wall.IsPrimary, wall.UserID).Scan(
+	err := m.DB.QueryRow(ctx, query, wall.Name, wall.IsPrimary, wall.UserID).Scan(
 		&wall.ID,
 		&wall.CreatedAt,
 		&wall.UpdatedAt,
@@ -74,7 +75,7 @@ func (m WallModel) FindByID(wallID int64) (*Wall, error) {
 	defer cancel()
 
 	wall := &Wall{}
-	err := m.DB.QueryRowContext(ctx, query, wallID).Scan(
+	err := m.DB.QueryRow(ctx, query, wallID).Scan(
 		&wall.ID,
 		&wall.Name,
 		&wall.IsPrimary,
@@ -103,7 +104,7 @@ func (m WallModel) FindAllForUser(userID int64) ([]*Wall, error) {
 	defer cancel()
 
 	walls := []*Wall{}
-	rows, err := m.DB.QueryContext(ctx, query, userID)
+	rows, err := m.DB.Query(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +143,7 @@ func (m WallModel) FindPrimaryWallForUser(userID int64) (*Wall, error) {
 	defer cancel()
 
 	wall := &Wall{}
-	err := m.DB.QueryRowContext(ctx, query, userID).Scan(
+	err := m.DB.QueryRow(ctx, query, userID).Scan(
 		&wall.ID,
 		&wall.Name,
 		&wall.IsPrimary,
