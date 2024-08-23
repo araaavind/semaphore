@@ -294,7 +294,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   @override
   Future<List<WallModel>> listWalls() async {
     try {
-      final response = await semaphoreClient.dio.get('/walls');
+      final response = await semaphoreClient.dio.get('/me/walls');
       return (response.data['walls'] as List)
           .map((wall) => WallModel.fromMap(wall))
           .toList();
