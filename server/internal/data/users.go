@@ -3,13 +3,13 @@ package data
 import (
 	"context"
 	"crypto/sha256"
-	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -194,7 +194,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 	)
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err
@@ -230,7 +230,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err
@@ -266,7 +266,7 @@ func (m UserModel) GetByUsername(username string) (*User, error) {
 
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err
@@ -307,7 +307,7 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 	)
 	if err != nil {
 		switch {
-		case errors.Is(err, sql.ErrNoRows):
+		case errors.Is(err, pgx.ErrNoRows):
 			return nil, ErrRecordNotFound
 		default:
 			return nil, err
@@ -368,7 +368,7 @@ func (m UserModel) Update(user *User) error {
 			} else if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "users_username_key") {
 				return ErrDuplicateUsername
 			}
-		} else if errors.Is(err, sql.ErrNoRows) {
+		} else if errors.Is(err, pgx.ErrNoRows) {
 			return ErrEditConflict
 		}
 		return err
