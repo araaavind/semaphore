@@ -3,16 +3,16 @@ package data
 import (
 	"bytes"
 	"context"
-	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -20,21 +20,21 @@ var (
 )
 
 type Item struct {
-	ID          int64                 `json:"id"`
-	Title       string                `json:"title,omitempty"`
-	Description string                `json:"description,omitempty"`
-	Content     pgtype.Text           `json:"content,omitempty"`
-	Link        string                `json:"link,omitempty"`
-	PubDate     pgtype.Timestamptz    `json:"pub_date,omitempty"`
-	PubUpdated  pgtype.Timestamptz    `json:"pub_updated,omitempty"`
-	Authors     pgtype.Array[*Person] `json:"authors,omitempty"`
-	GUID        string                `json:"guid,omitempty"`
-	ImageURL    pgtype.Text           `json:"image_url,omitempty"`
-	Categories  pgtype.Array[string]  `json:"categories,omitempty"`
-	FeedID      int64                 `json:"feed_id,omitempty"`
-	Version     int32                 `json:"version,omitempty"`
-	CreatedAt   time.Time             `json:"created_at,omitempty"`
-	UpdatedAt   time.Time             `json:"updated_at,omitempty"`
+	ID          int64                     `json:"id"`
+	Title       string                    `json:"title,omitempty"`
+	Description string                    `json:"description,omitempty"`
+	Content     pgtype.Text               `json:"content,omitempty"`
+	Link        string                    `json:"link,omitempty"`
+	PubDate     pgtype.Timestamptz        `json:"pub_date,omitempty"`
+	PubUpdated  pgtype.Timestamptz        `json:"pub_updated,omitempty"`
+	Authors     pgtype.FlatArray[*Person] `json:"authors,omitempty"`
+	GUID        string                    `json:"guid,omitempty"`
+	ImageURL    pgtype.Text               `json:"image_url,omitempty"`
+	Categories  pgtype.FlatArray[string]  `json:"categories,omitempty"`
+	FeedID      int64                     `json:"feed_id,omitempty"`
+	Version     int32                     `json:"version,omitempty"`
+	CreatedAt   time.Time                 `json:"created_at,omitempty"`
+	UpdatedAt   time.Time                 `json:"updated_at,omitempty"`
 }
 
 // Person is an individual specified in a feed
@@ -45,7 +45,7 @@ type Person struct {
 }
 
 type ItemModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
@@ -76,11 +76,7 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 
 		buf.WriteString(", $")
-		if item.Content.Valid {
-			args = append(args, item.Content.String)
-		} else {
-			args = append(args, nil)
-		}
+		args = append(args, item.Content)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 
 		buf.WriteString(", $")
@@ -88,20 +84,12 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 
 		buf.WriteString(", $")
-		if item.PubDate.Valid {
-			args = append(args, item.PubDate.Time)
-		} else {
-			args = append(args, nil)
-		}
+		args = append(args, item.PubDate)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 		buf.WriteString("::timestamptz")
 
 		buf.WriteString(", $")
-		if item.PubUpdated.Valid {
-			args = append(args, item.PubUpdated.Time)
-		} else {
-			args = append(args, nil)
-		}
+		args = append(args, item.PubUpdated)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 		buf.WriteString("::timestamptz")
 
@@ -110,32 +98,16 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 
 		buf.WriteString(", $")
-		if item.Authors.Valid {
-			authorsJSON, err := json.Marshal(item.Authors)
-			if err != nil {
-				panic(err)
-			}
-			args = append(args, authorsJSON)
-		} else {
-			args = append(args, nil)
-		}
+		args = append(args, item.Authors)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 		buf.WriteString("::jsonb")
 
 		buf.WriteString(", $")
-		if item.ImageURL.Valid {
-			args = append(args, item.ImageURL.String)
-		} else {
-			args = append(args, nil)
-		}
+		args = append(args, item.ImageURL)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 
 		buf.WriteString(", $")
-		if item.Categories.Valid {
-			args = append(args, item.Categories)
-		} else {
-			args = append(args, nil)
-		}
+		args = append(args, item.Categories)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 		buf.WriteString("::text[]")
 		buf.WriteString(")")
@@ -182,7 +154,7 @@ func (m ItemModel) UpsertMany(items []*Item) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, query, args...)
+	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -197,11 +169,6 @@ func (m ItemModel) Insert(item *Item) error {
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id, created_at, updated_at, version`
 
-	authorsJSON, err := json.Marshal(item.Authors)
-	if err != nil {
-		return err
-	}
-
 	args := []any{
 		item.Title,
 		item.Description,
@@ -210,7 +177,7 @@ func (m ItemModel) Insert(item *Item) error {
 		item.PubDate,
 		item.PubUpdated,
 		item.GUID,
-		authorsJSON,
+		item.Authors,
 		item.ImageURL,
 		item.Categories,
 		item.FeedID,
@@ -219,7 +186,7 @@ func (m ItemModel) Insert(item *Item) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err = m.DB.QueryRowContext(ctx, query, args...).Scan(
+	err := m.DB.QueryRow(ctx, query, args...).Scan(
 		&item.ID,
 		&item.CreatedAt,
 		&item.UpdatedAt,
@@ -256,17 +223,13 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 
 	args := []any{feedIDs, title, filters.limit(), filters.offset()}
 
-	rows, err := m.DB.QueryContext(ctx, query, args...)
+	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
-	defer rows.Close()
 
 	totalRecords := 0
-	items := []*Item{}
-	for rows.Next() {
-		authorsJSON := []byte{}
-		pgmap := pgtype.NewMap()
+	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Item, error) {
 		var item Item
 		err := rows.Scan(
 			&totalRecords,
@@ -277,27 +240,18 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			&item.Link,
 			&item.PubDate,
 			&item.PubUpdated,
-			&authorsJSON,
+			&item.Authors,
 			&item.GUID,
 			&item.ImageURL,
-			pgmap.SQLScanner(&item.Categories),
+			&item.Categories,
 			&item.FeedID,
 			&item.Version,
 			&item.CreatedAt,
 			&item.UpdatedAt,
 		)
-		if err != nil {
-			return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-		}
-		if authorsJSON != nil {
-			err = json.Unmarshal(authorsJSON, &item.Authors)
-			if err != nil {
-				return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
-			}
-		}
-		items = append(items, &item)
-	}
-	if err = rows.Err(); err != nil {
+		return &item, err
+	})
+	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
