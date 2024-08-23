@@ -3,6 +3,89 @@ import 'dart:convert';
 import 'package:app/features/feed/data/models/feed_model.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 
+class AuthorModel extends Author {
+  const AuthorModel({
+    super.name,
+    super.email,
+  });
+
+  @override
+  List<Object?> get props => [name, email];
+
+  AuthorModel copyWith({
+    String? name,
+    String? email,
+  }) {
+    return AuthorModel(
+      name: name ?? this.name,
+      email: email ?? this.email,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'name': name,
+      'email': email,
+    };
+  }
+
+  factory AuthorModel.fromMap(Map<String, dynamic> map) {
+    return AuthorModel(
+      name: map['name'] != null ? map['name'] as String : null,
+      email: map['email'] != null ? map['email'] as String : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory AuthorModel.fromJson(String source) =>
+      AuthorModel.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
+class EnclosureModel extends Enclosure {
+  const EnclosureModel({
+    super.url,
+    super.length,
+    super.type,
+  });
+
+  @override
+  List<Object?> get props => [url, length, type];
+
+  EnclosureModel copyWith({
+    String? url,
+    int? length,
+    String? type,
+  }) {
+    return EnclosureModel(
+      url: url ?? this.url,
+      length: length ?? this.length,
+      type: type ?? this.type,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'url': url,
+      'length': length,
+      'type': type,
+    };
+  }
+
+  factory EnclosureModel.fromMap(Map<String, dynamic> map) {
+    return EnclosureModel(
+      url: map['url'] != null ? map['url'] as String : null,
+      length: map['length'] != null ? map['length'] as int : null,
+      type: map['type'] != null ? map['type'] as String : null,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory EnclosureModel.fromJson(String source) =>
+      EnclosureModel.fromMap(json.decode(source) as Map<String, dynamic>);
+}
+
 class ItemModel extends Item {
   const ItemModel({
     required super.id,
@@ -14,6 +97,10 @@ class ItemModel extends Item {
     super.pubUpdated,
     super.imageUrl,
     super.feed,
+    super.content,
+    super.categories,
+    super.enclosures,
+    super.authors,
   });
 
   ItemModel copyWith({
@@ -26,6 +113,10 @@ class ItemModel extends Item {
     DateTime? pubUpdated,
     String? imageUrl,
     FeedModel? feed,
+    String? content,
+    List<String>? categories,
+    List<AuthorModel>? authors,
+    List<Enclosure>? enclosures,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -37,6 +128,10 @@ class ItemModel extends Item {
       pubUpdated: pubUpdated ?? this.pubUpdated,
       imageUrl: imageUrl ?? this.imageUrl,
       feed: feed ?? this.feed,
+      content: content ?? this.content,
+      categories: categories ?? this.categories,
+      authors: authors ?? this.authors,
+      enclosures: enclosures ?? this.enclosures,
     );
   }
 
@@ -51,6 +146,13 @@ class ItemModel extends Item {
       'pub_updated': pubUpdated?.toIso8601String(),
       'image_url': imageUrl,
       'feed': (feed as FeedModel).toMap(),
+      'content': content,
+      'categories': categories,
+      'authors':
+          authors?.map((author) => (author as AuthorModel).toMap()).toList(),
+      'enclosures': enclosures
+          ?.map((enclosure) => (enclosure as EnclosureModel).toMap())
+          .toList(),
     };
   }
 
@@ -71,6 +173,18 @@ class ItemModel extends Item {
       imageUrl: map['image_url'] != null ? map['image_url'] as String : null,
       feed: map['feed'] != null
           ? FeedModel.fromMap(map['feed'] as Map<String, dynamic>)
+          : null,
+      content: map['content'] != null ? map['content'] as String : null,
+      categories: List<String>.from(map['categories'] ?? []),
+      authors: map['authors'] != null
+          ? (map['authors'] as List)
+              .map((author) => AuthorModel.fromMap(author))
+              .toList()
+          : null,
+      enclosures: map['enclosures'] != null
+          ? (map['enclosures'] as List)
+              .map((enclosure) => EnclosureModel.fromMap(enclosure))
+              .toList()
           : null,
     );
   }
