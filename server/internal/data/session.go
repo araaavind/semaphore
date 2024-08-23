@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Session struct {
@@ -14,7 +16,7 @@ type Session struct {
 }
 
 type SessionModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func (m SessionModel) GetForToken(tokenPlaintext string) (*Session, error) {
@@ -37,7 +39,7 @@ func (m SessionModel) GetForToken(tokenPlaintext string) (*Session, error) {
 
 	var user User
 	var token Token
-	err := m.DB.QueryRowContext(ctx, query, tokenHash[:], ScopeAuthentication, time.Now()).Scan(
+	err := m.DB.QueryRow(ctx, query, tokenHash[:], ScopeAuthentication, time.Now()).Scan(
 		&user.ID,
 		&user.CreatedAt,
 		&user.UpdatedAt,

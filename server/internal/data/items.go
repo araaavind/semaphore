@@ -3,7 +3,6 @@ package data
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,6 +12,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
@@ -45,7 +45,7 @@ type Person struct {
 }
 
 type ItemModel struct {
-	DB *sql.DB
+	DB *pgxpool.Pool
 }
 
 func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
@@ -182,7 +182,7 @@ func (m ItemModel) UpsertMany(items []*Item) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.ExecContext(ctx, query, args...)
+	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
 		return err
 	}
@@ -219,7 +219,7 @@ func (m ItemModel) Insert(item *Item) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err = m.DB.QueryRowContext(ctx, query, args...).Scan(
+	err = m.DB.QueryRow(ctx, query, args...).Scan(
 		&item.ID,
 		&item.CreatedAt,
 		&item.UpdatedAt,
@@ -256,7 +256,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 
 	args := []any{feedIDs, title, filters.limit(), filters.offset()}
 
-	rows, err := m.DB.QueryContext(ctx, query, args...)
+	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
 		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
