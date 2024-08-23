@@ -40,7 +40,7 @@ class FollowersCount extends StatelessWidget {
             return Text(
               '${count > 0 ? '$count ' : ''}followers',
               style: context.theme.textTheme.titleMedium?.copyWith(
-                color: context.theme.colorScheme.secondary,
+                color: context.theme.colorScheme.primary,
               ),
             );
           }

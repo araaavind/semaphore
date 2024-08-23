@@ -95,7 +95,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                             height: 10,
                             width: 10,
                             child: SpinKitRing(
-                              color: context.theme.colorScheme.secondary
+                              color: context.theme.colorScheme.primary
                                   .withAlpha(127),
                               lineWidth: 2.5,
                               size: 22.0,

@@ -77,9 +77,8 @@ class ItemListTile extends StatelessWidget {
                 ),
               ),
               placeholder: (context, url) => Shimmer.fromColors(
-                baseColor: context.theme.colorScheme.secondary.withAlpha(30),
-                highlightColor:
-                    context.theme.colorScheme.secondary.withAlpha(65),
+                baseColor: context.theme.colorScheme.primary.withAlpha(30),
+                highlightColor: context.theme.colorScheme.primary.withAlpha(65),
                 child: Container(
                   width: 60.0,
                   height: 60.0,

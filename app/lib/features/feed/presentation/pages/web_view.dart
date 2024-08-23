@@ -92,9 +92,9 @@ class _WebViewState extends State<WebView> {
   void didChangeDependencies() {
     if (pullToRefreshController != null) {
       pullToRefreshController!.settings.color =
-          context.theme.colorScheme.onSecondary;
+          context.theme.colorScheme.onPrimary;
       pullToRefreshController!.settings.backgroundColor =
-          context.theme.colorScheme.secondary;
+          context.theme.colorScheme.primary;
     }
     super.didChangeDependencies();
   }
@@ -136,7 +136,7 @@ class _WebViewState extends State<WebView> {
             progress < 1.0
                 ? LinearProgressIndicator(
                     value: progress,
-                    color: context.theme.colorScheme.secondary,
+                    color: context.theme.colorScheme.primary,
                   )
                 : Container(),
           ],

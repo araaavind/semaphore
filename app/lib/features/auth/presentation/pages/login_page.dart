@@ -221,7 +221,7 @@ class TitleTextSpan extends StatelessWidget {
                 TextConstants.onboardingLoginPageMessage1,
                 style: context.theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w100,
-                  color: context.theme.colorScheme.secondary,
+                  color: context.theme.colorScheme.primary,
                 ),
               ),
               Text(
