@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS items (
     authors jsonb,
     image_url text,
     categories text[],
+    enclosures jsonb,
     version integer NOT NULL DEFAULT 1,
     feed_id bigint NOT NULL REFERENCES feeds ON DELETE CASCADE,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),

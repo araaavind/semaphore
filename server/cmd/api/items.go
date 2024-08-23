@@ -43,7 +43,7 @@ func CopyItemsFields(parsedFeed *gofeed.Feed, feedID int64) (items []*data.Item)
 		}
 		if parsedItem.Authors != nil {
 			var authors pgtype.FlatArray[*data.Person]
-			for _, a := range parsedFeed.Authors {
+			for _, a := range parsedItem.Authors {
 				authors = append(authors, &data.Person{
 					Name:  a.Name,
 					Email: a.Email,
@@ -69,6 +69,17 @@ func CopyItemsFields(parsedFeed *gofeed.Feed, feedID int64) (items []*data.Item)
 		}
 		if parsedItem.Categories != nil {
 			item.Categories = pgtype.FlatArray[string](parsedItem.Categories)
+		}
+		if parsedItem.Enclosures != nil {
+			var enclosures pgtype.FlatArray[*data.Enclosure]
+			for _, e := range parsedItem.Enclosures {
+				enclosures = append(enclosures, &data.Enclosure{
+					URL:    e.URL,
+					Length: e.Length,
+					Type:   e.Type,
+				})
+			}
+			item.Enclosures = enclosures
 		}
 		item.FeedID = feedID
 		items = append(items, item)

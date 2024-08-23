@@ -20,21 +20,22 @@ var (
 )
 
 type Item struct {
-	ID          int64                     `json:"id"`
-	Title       string                    `json:"title,omitempty"`
-	Description string                    `json:"description,omitempty"`
-	Content     pgtype.Text               `json:"content,omitempty"`
-	Link        string                    `json:"link,omitempty"`
-	PubDate     pgtype.Timestamptz        `json:"pub_date,omitempty"`
-	PubUpdated  pgtype.Timestamptz        `json:"pub_updated,omitempty"`
-	Authors     pgtype.FlatArray[*Person] `json:"authors,omitempty"`
-	GUID        string                    `json:"guid,omitempty"`
-	ImageURL    pgtype.Text               `json:"image_url,omitempty"`
-	Categories  pgtype.FlatArray[string]  `json:"categories,omitempty"`
-	FeedID      int64                     `json:"feed_id,omitempty"`
-	Version     int32                     `json:"version,omitempty"`
-	CreatedAt   time.Time                 `json:"created_at,omitempty"`
-	UpdatedAt   time.Time                 `json:"updated_at,omitempty"`
+	ID          int64                        `json:"id"`
+	Title       string                       `json:"title,omitempty"`
+	Description string                       `json:"description,omitempty"`
+	Content     pgtype.Text                  `json:"content,omitempty"`
+	Link        string                       `json:"link,omitempty"`
+	PubDate     pgtype.Timestamptz           `json:"pub_date,omitempty"`
+	PubUpdated  pgtype.Timestamptz           `json:"pub_updated,omitempty"`
+	Authors     pgtype.FlatArray[*Person]    `json:"authors,omitempty"`
+	GUID        string                       `json:"guid,omitempty"`
+	ImageURL    pgtype.Text                  `json:"image_url,omitempty"`
+	Categories  pgtype.FlatArray[string]     `json:"categories,omitempty"`
+	Enclosures  pgtype.FlatArray[*Enclosure] `json:"enclosures,omitempty"`
+	FeedID      int64                        `json:"feed_id,omitempty"`
+	Version     int32                        `json:"version,omitempty"`
+	CreatedAt   time.Time                    `json:"created_at,omitempty"`
+	UpdatedAt   time.Time                    `json:"updated_at,omitempty"`
 }
 
 // Person is an individual specified in a feed
@@ -42,6 +43,12 @@ type Item struct {
 type Person struct {
 	Name  string `json:"name,omitempty"`
 	Email string `json:"email,omitempty"`
+}
+
+type Enclosure struct {
+	URL    string `json:"url,omitempty"`
+	Length string `json:"length,omitempty"`
+	Type   string `json:"type,omitempty"`
 }
 
 type ItemModel struct {
@@ -53,7 +60,7 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 
 	buf.WriteString(`
 		WITH all_items(feed_id, title, description, content, link, pub_date, pub_updated, guid,
-			authors, image_url, categories) AS (
+			authors, image_url, categories, enclosures) AS (
 			VALUES
 	`)
 
@@ -110,6 +117,12 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 		args = append(args, item.Categories)
 		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
 		buf.WriteString("::text[]")
+
+		buf.WriteString(", $")
+		args = append(args, item.Enclosures)
+		buf.WriteString(strconv.FormatInt(int64(len(args)), 10))
+		buf.WriteString("::jsonb")
+
 		buf.WriteString(")")
 	}
 
@@ -127,14 +140,15 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 				guid = a.guid,
 				authors = a.authors,
 				image_url = a.image_url,
-				categories = a.categories
+				categories = a.categories,
+				enclosures = a.enclosures
 			FROM all_items as a
 			WHERE i.feed_id = a.feed_id
 			AND (i.link = a.link OR i.guid = a.guid)
 			RETURNING i.feed_id, i.guid, i.link
 		)
 		INSERT INTO items (feed_id, title, description, content, link, pub_date, pub_updated,
-			guid, authors, image_url, categories)
+			guid, authors, image_url, categories, enclosures)
 		SELECT *
 		FROM all_items ai
 		WHERE NOT EXISTS (
@@ -165,7 +179,7 @@ func (m ItemModel) UpsertMany(items []*Item) error {
 func (m ItemModel) Insert(item *Item) error {
 	query := `
 		INSERT INTO items (title, description, content, link, pub_date, pub_updated,
-			guid, authors, image_url, categories, feed_id)
+			guid, authors, image_url, categories, enclosures, feed_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		RETURNING id, created_at, updated_at, version`
 
@@ -180,6 +194,7 @@ func (m ItemModel) Insert(item *Item) error {
 		item.Authors,
 		item.ImageURL,
 		item.Categories,
+		item.Enclosures,
 		item.FeedID,
 	}
 
@@ -207,8 +222,8 @@ func (m ItemModel) Insert(item *Item) error {
 func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filters) ([]*Item, Metadata, error) {
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), id, title, description, content, link, pub_date,
-			pub_updated, authors, guid, image_url, categories, feed_id, version,
-			created_at, updated_at
+			pub_updated, authors, guid, image_url, categories, enclosures, feed_id,
+			version, created_at, updated_at
 		FROM items
 		WHERE feed_id = ANY($1)
 		AND (
@@ -244,6 +259,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			&item.GUID,
 			&item.ImageURL,
 			&item.Categories,
+			&item.Enclosures,
 			&item.FeedID,
 			&item.Version,
 			&item.CreatedAt,
