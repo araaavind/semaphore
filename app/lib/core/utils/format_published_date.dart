@@ -17,7 +17,10 @@ String formatPublishedDate(DateTime publishedDate) {
     // More than 1 hour but less than 1 day, return in "Xh Ym"
     int hours = difference.inHours;
     int minutes = difference.inMinutes.remainder(60);
-    return '${hours}h ${minutes}m';
+    if (minutes > 0) {
+      return '${hours}h ${minutes}m';
+    }
+    return '${hours}h';
   } else if (difference.inMinutes >= 1) {
     // More than 1 minute but less than 1 hour, return in "Xm"
     return '${difference.inMinutes}m';

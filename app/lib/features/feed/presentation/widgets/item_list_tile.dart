@@ -93,6 +93,7 @@ class ItemListTile extends StatelessWidget {
       visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
+        vertical: UIConstants.tileContentPadding,
         horizontal: UIConstants.pagePadding,
       ),
       title: AutoSizeText(
@@ -108,12 +109,7 @@ class ItemListTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           if (item.feed?.title != null && item.feed!.title.isNotEmpty)
-            Container(
-              constraints: BoxConstraints.loose(
-                Size.fromWidth(
-                  MediaQuery.of(context).size.width - 120,
-                ),
-              ),
+            Flexible(
               child: AutoSizeText(
                 item.feed!.title,
                 style: context.theme.textTheme.bodySmall!.copyWith(
