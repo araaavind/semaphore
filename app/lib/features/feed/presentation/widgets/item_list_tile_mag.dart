@@ -10,9 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ItemListTile extends StatelessWidget {
+class ItemListTileMag extends StatelessWidget {
   final Item item;
-  const ItemListTile({
+  const ItemListTileMag({
     required this.item,
     super.key,
   });
