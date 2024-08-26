@@ -16,3 +16,16 @@ class SelectWallRequested extends WallsEvent {
   @override
   List<Object?> get props => [selectedWall];
 }
+
+class ChangeWallOptions extends WallsEvent {
+  final WallSortOption? wallSort;
+  final WallViewOption? wallView;
+
+  ChangeWallOptions({
+    this.wallSort,
+    this.wallView,
+  });
+
+  @override
+  List<Object?> get props => [wallSort, wallView];
+}

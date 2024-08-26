@@ -18,6 +18,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
         super(const WallsState()) {
     on<ListWallsRequested>(_onListWalls);
     on<SelectWallRequested>(_onSelectWall);
+    on<ChangeWallOptions>(_onChangeWallSort);
   }
 
   void _onListWalls(
@@ -51,6 +52,16 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
   ) {
     emit(state.copyWith(
       currentWall: event.selectedWall,
+    ));
+  }
+
+  void _onChangeWallSort(
+    ChangeWallOptions event,
+    Emitter<WallsState> emit,
+  ) {
+    emit(state.copyWith(
+      wallSort: event.wallSort,
+      wallView: event.wallView,
     ));
   }
 }

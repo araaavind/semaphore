@@ -138,7 +138,9 @@ class _WallPageState extends State<WallPage> {
                         pagingController: _pagingController,
                         listType: PagedListType.sliverList,
                         itemBuilder: (context, item, index) =>
-                            ItemListTileCard(item: item),
+                            state.wallView == WallViewOption.card
+                                ? ItemListTileCard(item: item)
+                                : ItemListTileMag(item: item),
                         firstPageErrorTitle:
                             TextConstants.itemListFetchErrorTitle,
                         newPageErrorTitle:
