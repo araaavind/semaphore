@@ -1,4 +1,5 @@
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/theme/extensions/app_snackbar_color_theme.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ void showSnackbar(
   BuildContext context,
   String content, {
   required SnackbarType type,
+  String? actionLabel,
+  void Function()? onActionPressed,
 }) {
   Color backgroundColor;
   Color textColor;
@@ -38,18 +41,49 @@ void showSnackbar(
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
-        content: Text(
-          content,
-          style: TextStyle(
-            color: textColor,
-          ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                content,
+                style: TextStyle(
+                  color: textColor,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+              ),
+            ),
+            if (actionLabel != null && onActionPressed != null)
+              TextButton(
+                style: TextButton.styleFrom(
+                  overlayColor: AppPalette.transparent,
+                  padding: const EdgeInsets.only(left: 16.0),
+                ),
+                onPressed: () {
+                  onActionPressed();
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+                child: Text(
+                  actionLabel,
+                  style: context.theme.textTheme.bodyMedium?.copyWith(
+                    color: context.theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+          ],
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         dismissDirection: DismissDirection.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 32.0,
-          vertical: 16.0,
+        padding: EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical:
+              (actionLabel != null && onActionPressed != null) ? 2.0 : 16.0,
         ),
         elevation: 4.0,
         shape: RoundedRectangleBorder(
