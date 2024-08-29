@@ -11,6 +11,7 @@ import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
+import 'package:app/features/feed/presentation/pages/add_to_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/create_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
@@ -178,6 +179,11 @@ GoRouter router = GoRouter(
       path: RouteConstants.addFeedPagePath,
       name: RouteConstants.addFeedPageName,
       builder: (context, state) => const AddFeedPage(),
+    ),
+    GoRoute(
+      path: RouteConstants.addToWallPagePath,
+      name: RouteConstants.addToWallPageName,
+      builder: (context, state) => const AddToWallPage(),
     ),
     GoRoute(
       path: RouteConstants.createWallPagePath,

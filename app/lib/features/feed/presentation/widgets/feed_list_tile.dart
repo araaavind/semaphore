@@ -109,6 +109,16 @@ class _FeedListTileState extends State<FeedListTile> {
                 feed: feed,
                 isFollowed: isFollowed,
               );
+              if (state.status == FollowFeedStatus.followed) {
+                showSnackbar(
+                  context,
+                  'Followed ${feed.title}',
+                  type: SnackbarType.utility,
+                  actionLabel: 'Add to walls',
+                  onActionPressed: () =>
+                      context.pushNamed(RouteConstants.addToWallPageName),
+                );
+              }
             }
           },
           builder: (context, state) {
