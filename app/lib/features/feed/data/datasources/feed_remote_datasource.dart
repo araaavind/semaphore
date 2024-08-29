@@ -55,6 +55,10 @@ abstract interface class FeedRemoteDatasource {
   Future<List<WallModel>> listWalls();
 
   Future<void> createWall(String wallName);
+
+  Future<void> addFeedToWall(int feedId, int wallId);
+
+  Future<void> removeFeedFromWall(int feedId, int wallId);
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -317,6 +321,44 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   Future<void> createWall(String wallName) async {
     try {
       await semaphoreClient.dio.post('/walls', data: {'name': wallName});
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> addFeedToWall(int feedId, int wallId) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/walls/$wallId/feeds/$feedId',
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> removeFeedFromWall(int feedId, int wallId) async {
+    try {
+      await semaphoreClient.dio.delete(
+        '/walls/$wallId/feeds/$feedId',
+      );
       return;
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
