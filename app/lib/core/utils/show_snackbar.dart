@@ -31,6 +31,11 @@ void showSnackbar(
           context.theme.extension<AppSnackbarColorTheme>()!.infoContainer!;
       textColor =
           context.theme.extension<AppSnackbarColorTheme>()!.infoOnContainer!;
+    case SnackbarType.utility:
+      backgroundColor =
+          context.theme.extension<AppSnackbarColorTheme>()!.utilContainer!;
+      textColor =
+          context.theme.extension<AppSnackbarColorTheme>()!.utilOnContainer!;
     default:
       backgroundColor =
           context.theme.extension<AppSnackbarColorTheme>()!.infoContainer!;
@@ -50,7 +55,7 @@ void showSnackbar(
                 content,
                 style: TextStyle(
                   color: textColor,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w400,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.fade,
@@ -70,8 +75,10 @@ void showSnackbar(
                 child: Text(
                   actionLabel,
                   style: context.theme.textTheme.bodyMedium?.copyWith(
-                    color: context.theme.colorScheme.primary,
-                    fontWeight: FontWeight.w600,
+                    color: context.theme
+                        .extension<AppSnackbarColorTheme>()!
+                        .actionTextColor!,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               )

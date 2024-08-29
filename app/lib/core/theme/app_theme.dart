@@ -67,6 +67,9 @@ class AppTheme {
         failureOnContainer: AppPalette.snackbarFailureOnContainer,
         infoContainer: AppPalette.snackbarInfoContainer,
         infoOnContainer: AppPalette.snackbarInfoOnContainer,
+        utilContainer: AppPalette.snackbarUtilContainer,
+        utilOnContainer: AppPalette.snackbarUtilOnContainer,
+        actionTextColor: AppPalette.snackbarActionTextColor,
       ),
     ],
   );
@@ -115,6 +118,9 @@ class AppTheme {
         failureOnContainer: AppPalette.snackbarFailureOnContainerDark,
         infoContainer: AppPalette.snackbarInfoContainerDark,
         infoOnContainer: AppPalette.snackbarInfoOnContainerDark,
+        utilContainer: AppPalette.snackbarUtilContainerDark,
+        utilOnContainer: AppPalette.snackbarUtilOnContainerDark,
+        actionTextColor: AppPalette.snackbarActionTextColorDark,
       ),
     ],
   );

@@ -91,7 +91,7 @@ class _ActivationPageState extends State<ActivationPage> {
                         showSnackbar(
                           context,
                           TextConstants.accountActivationSuccessMessage,
-                          type: SnackbarType.success,
+                          type: SnackbarType.info,
                         );
                         if (widget.isOnboarding) {
                           context.goNamed(RouteConstants.wallPageName);
