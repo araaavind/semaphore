@@ -2,6 +2,7 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/debouncer.dart';
+import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/feed_list_tile.dart';
@@ -111,6 +112,16 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 final isAdded = await context.pushNamed('add-feed');
                 if ((isAdded as bool) == true) {
                   _pagingController.refresh();
+                  if (context.mounted) {
+                    showSnackbar(
+                      context,
+                      'Followed',
+                      type: SnackbarType.utility,
+                      actionLabel: 'Add to walls',
+                      onActionPressed: () =>
+                          context.pushNamed(RouteConstants.addToWallPageName),
+                    );
+                  }
                 }
               },
               style: const ButtonStyle(
