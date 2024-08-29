@@ -10,36 +10,37 @@ import (
 
 /*
 
-Method		Route						Description								Permission						Response
------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Method		Route								Description								Permission						Response
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-POST		/users						signup									-								user with 201
-PUT			/users/activate				activate user							-								empty response with 200
-GET			/users/:username			get a user								-							user with 200
-HEAD		/users/:username			check if user exists(username taken)	-								empty response with 200 if user exists or 404 for error
+POST		/users								signup									-								user with 201
+PUT			/users/activate						activate user							-								empty response with 200
+GET			/users/:username					get a user								-								user with 200
+HEAD		/users/:username					check if user exists(username taken)	-								empty response with 200 if user exists or 404 for error
 
-GET			/me							get logged in user						auth							user with 200
-GET			/me/feeds					get feeds followed by logged in user	auth							feeds list, metadata with 200
-GET			/me/feeds/contains			check if user follows feeds				auth							boolean list with 200
-GET			/me/walls					list walls of logged in user			auth							walls list with 200
+GET			/me									get logged in user						auth							user with 200
+GET			/me/feeds							get feeds followed by logged in user	auth							feeds list, metadata with 200
+GET			/me/feeds/contains					check if user follows feeds				auth							boolean list with 200
+GET			/me/walls							list walls of logged in user			auth							walls list with 200
 
-POST		/feeds						add and follow a feed					activation, feeds:write			empty response with 201
-GET			/feeds						list all feeds							-								feeds list, metadata with 200
-GET			/feeds/:feed_id				get a feed								-								feed with 200
-GET			/feeds/:feed_id/followers 	list followers for feed					auth							users list, metadata with 200
-PUT			/feeds/:feed_id/followers 	follow a feed							auth, feeds:follow				empty response with 200
-DELETE		/feeds/:feed_id/followers	unfollow a feed							auth, feeds:follow				empty response with 200
-GET			/feeds/:feed_id/items		get feeds for a wall
+POST		/feeds								add and follow a feed					activation, feeds:write			empty response with 201
+GET			/feeds								list all feeds							-								feeds list, metadata with 200
+GET			/feeds/:feed_id						get a feed								-								feed with 200
+GET			/feeds/:feed_id/followers 			list followers for feed					auth							users list, metadata with 200
+PUT			/feeds/:feed_id/followers 			follow a feed							auth, feeds:follow				empty response with 200
+DELETE		/feeds/:feed_id/followers			unfollow a feed							auth, feeds:follow				empty response with 200
+GET			/feeds/:feed_id/items				get feeds for a wall
 
-POST		/walls						create wall
-GET			/walls/:wall_id				get a specific wall
-PUT			/walls/:wall_id				update a wall's details
-POST		/walls/:wall_id/feeds		add feeds to a wall
-GET			/walls/:wall_id/feeds		get feeds for a wall
-GET			/walls/:wall_id/items		get items for a wall
+POST		/walls								create wall
+GET			/walls/:wall_id						get a specific wall
+PUT			/walls/:wall_id						update a wall's details
+PUT			/walls/:wall_id/feeds/:feed_id		add feeds to a wall
+DELETE		/walls/:wall_id/feeds/:feed_id		remove feeds from a wall
+GET			/walls/:wall_id/feeds				get feeds for a wall
+GET			/walls/:wall_id/items				get items for a wall
 
-GET			/items						list all items (from primary wall)
-GET			/items/:item_id				get a specific item
+GET			/items								list all items (from primary wall)
+GET			/items/:item_id						get a specific item
 
 */
 
@@ -78,7 +79,9 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.unfollowFeed)))
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/items", authenticated.ThenFunc(app.listItemsForFeed))
 
+	router.Handler(http.MethodPut, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.addFeedToWall))
 	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
+	router.Handler(http.MethodDelete, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.removeFeedFromWall))
 
 	activated := authenticated.Append(app.requireActivation)
 
