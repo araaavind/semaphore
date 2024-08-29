@@ -64,7 +64,7 @@ class _CreateWallPageState extends State<CreateWallPage> {
                           showSnackbar(
                             context,
                             'Your wall has been created!',
-                            type: SnackbarType.success,
+                            type: SnackbarType.info,
                           );
                           context.pop(true);
                         }

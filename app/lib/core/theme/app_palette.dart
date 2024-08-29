@@ -52,12 +52,15 @@ abstract class AppPalette {
   static const outlineDark = Color.fromARGB(255, 61, 61, 61);
 
   // Extension colors
-  static const snackbarSuccessContainer = Color.fromARGB(255, 233, 255, 228);
+  static const snackbarSuccessContainer = Color.fromARGB(255, 208, 255, 207);
   static const snackbarSuccessOnContainer = Color.fromARGB(255, 9, 45, 15);
-  static const snackbarFailureContainer = Color.fromARGB(255, 252, 204, 192);
-  static const snackbarFailureOnContainer = Color.fromARGB(255, 61, 18, 18);
-  static const snackbarInfoContainer = surface;
-  static const snackbarInfoOnContainer = onSurface;
+  static const snackbarFailureContainer = Color.fromARGB(255, 255, 213, 213);
+  static const snackbarFailureOnContainer = Color.fromARGB(255, 42, 3, 13);
+  static const snackbarInfoContainer = surfaceDark;
+  static const snackbarInfoOnContainer = onSurfaceDark;
+  static const snackbarUtilContainer = surfaceDark;
+  static const snackbarUtilOnContainer = onSurfaceDark;
+  static const snackbarActionTextColor = primaryDark;
   // Extension darks
   static const snackbarSuccessContainerDark = Color.fromARGB(255, 9, 45, 15);
   static const snackbarSuccessOnContainerDark =
@@ -65,24 +68,11 @@ abstract class AppPalette {
   static const snackbarFailureContainerDark = Color.fromARGB(255, 61, 18, 18);
   static const snackbarFailureOnContainerDark =
       Color.fromARGB(255, 252, 204, 192);
-  static const snackbarInfoContainerDark = surfaceDark;
-  static const snackbarInfoOnContainerDark = onSurfaceDark;
-
-  static const networkOnlineSnackbarContainer = Color.fromARGB(255, 9, 45, 15);
-  static const networkOnlineSnackbarOnContainer =
-      Color.fromARGB(255, 233, 255, 228);
-  static const networkOfflineSnackbarContainer =
-      Color.fromARGB(255, 61, 18, 18);
-  static const networkOfflineSnackbarOnContainer =
-      Color.fromARGB(255, 252, 204, 192);
-  static const networkOnlineSnackbarContainerDark =
-      Color.fromARGB(255, 233, 255, 228);
-  static const networkOnlineSnackbarOnContainerDark =
-      Color.fromARGB(255, 9, 45, 15);
-  static const networkOfflineSnackbarContainerDark =
-      Color.fromARGB(255, 252, 204, 192);
-  static const networkOfflineSnackbarOnContainerDark =
-      Color.fromARGB(255, 61, 18, 18);
+  static const snackbarInfoContainerDark = surface;
+  static const snackbarInfoOnContainerDark = onSurface;
+  static const snackbarUtilContainerDark = surface;
+  static const snackbarUtilOnContainerDark = onSurface;
+  static const snackbarActionTextColorDark = primary;
 
   // Green
   static const green = Color.fromARGB(255, 140, 181, 94);
