@@ -176,4 +176,27 @@ class FeedRepositoryImpl implements FeedRepository {
       return left(Failure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addFeedToWall(int feedId, int wallId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.addFeedToWall(feedId, wallId),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> removeFeedFromWall(
+      int feedId, int wallId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.removeFeedFromWall(feedId, wallId),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }
