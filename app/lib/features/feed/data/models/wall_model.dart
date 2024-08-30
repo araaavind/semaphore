@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app/features/feed/data/models/feed_model.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 
 class WallModel extends Wall {
@@ -8,6 +9,7 @@ class WallModel extends Wall {
     required super.name,
     required super.isPrimary,
     required super.userId,
+    super.feeds,
   });
 
   WallModel copyWith({
@@ -15,12 +17,14 @@ class WallModel extends Wall {
     String? name,
     bool? isPrimary,
     int? userId,
+    List<FeedModel>? feeds,
   }) {
     return WallModel(
       id: id ?? this.id,
       name: name ?? this.name,
       isPrimary: isPrimary ?? this.isPrimary,
       userId: userId ?? this.userId,
+      feeds: feeds ?? this.feeds,
     );
   }
 
@@ -30,6 +34,7 @@ class WallModel extends Wall {
       'name': name,
       'is_primary': isPrimary,
       'user_id': userId,
+      'feeds': feeds?.map((f) => (f as FeedModel).toMap()).toList(),
     };
   }
 
@@ -39,6 +44,11 @@ class WallModel extends Wall {
       name: map['name'] as String,
       isPrimary: map['is_primary'] as bool,
       userId: map['user_id'] as int,
+      feeds: map['feeds'] != null
+          ? (map['feeds'] as List)
+              .map((feed) => FeedModel.fromMap(feed))
+              .toList()
+          : null,
     );
   }
 
