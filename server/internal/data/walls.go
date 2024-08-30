@@ -29,6 +29,11 @@ type WallModel struct {
 	DB *pgxpool.Pool
 }
 
+type WallWithFeedDTO struct {
+	Wall
+	Feeds []Feed `json:"feeds,omitempty"`
+}
+
 func (m WallModel) Insert(wall *Wall) error {
 	query := `
 		INSERT INTO walls (name, is_primary, user_id)
@@ -94,11 +99,18 @@ func (m WallModel) FindByID(wallID int64) (*Wall, error) {
 	return wall, nil
 }
 
-func (m WallModel) FindAllForUser(userID int64) ([]*Wall, error) {
+func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 	query := `
-		SELECT id, name, is_primary, user_id, created_at, updated_at
-		FROM walls
-		WHERE user_id = $1`
+		SELECT w.id, w.name, w.is_primary, w.user_id, w.created_at, w.updated_at,
+		COALESCE(
+			JSONB_AGG(JSONB_BUILD_OBJECT('id', f.id, 'title', f.title))
+			FILTER (WHERE f.id IS NOT NULL), '[]'
+		) as w_feeds	
+		FROM walls w
+		LEFT JOIN wall_feeds wf ON w.id = wf.wall_id
+		LEFT JOIN feeds f ON wf.feed_id = f.id
+		WHERE w.user_id = $1
+		GROUP BY w.id`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -108,8 +120,8 @@ func (m WallModel) FindAllForUser(userID int64) ([]*Wall, error) {
 		return nil, err
 	}
 
-	walls, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Wall, error) {
-		var wall Wall
+	walls, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*WallWithFeedDTO, error) {
+		var wall WallWithFeedDTO
 		err := rows.Scan(
 			&wall.ID,
 			&wall.Name,
@@ -117,6 +129,7 @@ func (m WallModel) FindAllForUser(userID int64) ([]*Wall, error) {
 			&wall.UserID,
 			&wall.CreatedAt,
 			&wall.UpdatedAt,
+			&wall.Feeds,
 		)
 		return &wall, err
 	})
