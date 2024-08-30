@@ -80,8 +80,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/items", authenticated.ThenFunc(app.listItemsForFeed))
 
 	router.Handler(http.MethodPut, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.addFeedToWall))
-	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
 	router.Handler(http.MethodDelete, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.removeFeedFromWall))
+	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
 
 	activated := authenticated.Append(app.requireActivation)
 
