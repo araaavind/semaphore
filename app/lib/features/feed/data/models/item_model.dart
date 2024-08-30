@@ -75,7 +75,7 @@ class EnclosureModel extends Enclosure {
   factory EnclosureModel.fromMap(Map<String, dynamic> map) {
     return EnclosureModel(
       url: map['url'] != null ? map['url'] as String : null,
-      length: map['length'] != null ? map['length'] as int : null,
+      length: map['length'] != null ? int.parse(map['length']) : null,
       type: map['type'] != null ? map['type'] as String : null,
     );
   }
