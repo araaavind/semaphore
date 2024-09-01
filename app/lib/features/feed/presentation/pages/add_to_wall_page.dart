@@ -55,7 +55,7 @@ class AddToWallPageContent extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              context.pop(true);
+              context.pop({"unfollow": false});
             },
             style: const ButtonStyle(
               splashFactory: NoSplash.splashFactory,
@@ -84,8 +84,8 @@ class AddToWallPageContent extends StatelessWidget {
               const SizedBox(height: 20.0),
               Button(
                 text: 'Create new Wall',
-                backgroundColor: context.theme.colorScheme.primary,
-                textColor: context.theme.colorScheme.onPrimary,
+                backgroundColor: context.theme.colorScheme.primaryContainer,
+                textColor: context.theme.colorScheme.primary,
                 onPressed: () async {
                   final isCreated = await context
                       .pushNamed(RouteConstants.createWallPageName);
@@ -110,12 +110,25 @@ class AddToWallPageContent extends StatelessWidget {
                       itemCount: state.walls.length,
                       itemBuilder: (context, index) {
                         final wall = state.walls[index];
+                        if (wall.isPrimary) {
+                          return const SizedBox.shrink();
+                        }
                         return WallListTile(wall: wall, feedId: feedId);
                       },
                     );
                   },
                 ),
               ),
+              const SizedBox(height: 20.0),
+              Button(
+                text: 'Unfollow feed',
+                fixedSize: const Size.fromHeight(40.0),
+                filled: false,
+                onPressed: () {
+                  context.pop({"unfollow": true});
+                },
+              ),
+              const SizedBox(height: 40.0),
             ],
           ),
         ),
