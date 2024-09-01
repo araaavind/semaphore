@@ -5,6 +5,7 @@ import 'package:app/core/utils/debouncer.dart';
 import 'package:app/core/utils/show_snackbar.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/feed_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,17 +110,27 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             padding: UIConstants.defaultAppBarTextButtonPadding,
             child: TextButton(
               onPressed: () async {
-                final isAdded = await context.pushNamed('add-feed');
-                if ((isAdded as bool) == true) {
+                final result = await context.pushNamed('add-feed');
+                if (result is Map<String, dynamic> &&
+                    result['success'] == true) {
                   _pagingController.refresh();
                   if (context.mounted) {
                     showSnackbar(
                       context,
-                      'Followed',
+                      'Followed feed',
                       type: SnackbarType.utility,
                       actionLabel: 'Add to walls',
-                      onActionPressed: () =>
-                          context.pushNamed(RouteConstants.addToWallPageName),
+                      onActionPressed: () {
+                        context.pushNamed(
+                          RouteConstants.addToWallPageName,
+                          pathParameters: {
+                            'feedId': result['feedId'].toString()
+                          },
+                          extra: {
+                            'wallsBloc': BlocProvider.of<WallsBloc>(context),
+                          },
+                        );
+                      },
                     );
                   }
                 }

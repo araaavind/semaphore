@@ -25,6 +25,6 @@ class RouteConstants {
   static const feedWebViewPageName = 'feed-webview';
   static const createWallPagePath = '/create-wall';
   static const createWallPageName = 'create-wall';
-  static const addToWallPagePath = '/add-to-wall';
+  static const addToWallPagePath = '/add-to-wall/:feedId';
   static const addToWallPageName = 'add-to-wall';
 }
