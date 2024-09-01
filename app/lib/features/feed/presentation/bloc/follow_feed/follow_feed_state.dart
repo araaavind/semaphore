@@ -34,26 +34,29 @@ class AddFollowFeedState extends Equatable {
   final FollowFeedStatus status;
   final String? message;
   final Map<String, String>? fieldErrors;
+  final int? feedId;
 
   const AddFollowFeedState({
     required this.status,
     this.message,
     this.fieldErrors,
+    this.feedId,
   });
 
   AddFollowFeedState copyWith({
     FollowFeedStatus? status,
-    int? feedId,
     String? message,
     Map<String, String>? fieldErrors,
+    int? feedId,
   }) {
     return AddFollowFeedState(
       status: status ?? this.status,
       message: message ?? this.message,
       fieldErrors: fieldErrors ?? this.fieldErrors,
+      feedId: feedId ?? this.feedId,
     );
   }
 
   @override
-  List<Object?> get props => [status, message, fieldErrors];
+  List<Object?> get props => [status, message, fieldErrors, feedId];
 }

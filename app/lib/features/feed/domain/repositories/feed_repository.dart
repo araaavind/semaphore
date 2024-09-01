@@ -15,7 +15,7 @@ abstract interface class FeedRepository {
     String? sortKey,
   });
 
-  Future<Either<Failure, void>> addAndFollowFeed(String feedUrl);
+  Future<Either<Failure, int>> addAndFollowFeed(String feedUrl);
 
   Future<Either<Failure, void>> followFeed(int feedId);
 
