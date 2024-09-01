@@ -8,7 +8,7 @@ class AddFollowFeed implements Usecase<void, String> {
   AddFollowFeed(this.feedRepository);
 
   @override
-  Future<Either<Failure, void>> call(String feedUrl) async {
+  Future<Either<Failure, int>> call(String feedUrl) async {
     return await feedRepository.addAndFollowFeed(feedUrl);
   }
 }

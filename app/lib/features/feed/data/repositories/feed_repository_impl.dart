@@ -39,7 +39,7 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Either<Failure, void>> addAndFollowFeed(String feedUrl) async {
+  Future<Either<Failure, int>> addAndFollowFeed(String feedUrl) async {
     try {
       return right(
         await feedRemoteDatasource.addAndFollowFeed(feedUrl),

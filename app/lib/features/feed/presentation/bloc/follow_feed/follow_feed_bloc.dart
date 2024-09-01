@@ -78,24 +78,23 @@ class AddFollowFeedBloc extends Bloc<FollowFeedEvent, AddFollowFeedState> {
     on<AddFollowRequested>(_onAddFollowRequested);
   }
 
-  void _onAddFollowRequested(
+  Future<void> _onAddFollowRequested(
     AddFollowRequested event,
     Emitter<AddFollowFeedState> emit,
   ) async {
-    emit(state.copyWith(
-      status: FollowFeedStatus.loading,
-    ));
-    final res = await _addFollowFeed(event.feedUrl);
-    switch (res) {
-      case Left(value: final l):
+    emit(state.copyWith(status: FollowFeedStatus.loading));
+    final result = await _addFollowFeed(event.feedUrl);
+    switch (result) {
+      case Left(value: final failure):
         emit(state.copyWith(
           status: FollowFeedStatus.failure,
-          message: l.message,
-          fieldErrors: l.fieldErrors,
+          message: failure.message,
+          fieldErrors: failure.fieldErrors,
         ));
-      case Right():
+      case Right(value: final feedId):
         emit(state.copyWith(
           status: FollowFeedStatus.followed,
+          feedId: feedId,
         ));
     }
   }
