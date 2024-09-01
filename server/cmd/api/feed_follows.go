@@ -228,8 +228,12 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		app.RefreshFeed(feedToFolow)
 	})
 
-	w.Header().Set("Location", fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID))
-	w.WriteHeader(http.StatusCreated)
+	err = app.writeJSON(w, http.StatusCreated, envelope{"feed_id": feedFollow.FeedID}, http.Header{
+		"Location": []string{fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID)},
+	})
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
