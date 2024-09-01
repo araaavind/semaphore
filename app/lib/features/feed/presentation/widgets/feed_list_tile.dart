@@ -116,78 +116,109 @@ class _FeedListTileState extends State<FeedListTile> {
                   'Followed ${feed.title}',
                   type: SnackbarType.utility,
                   actionLabel: 'Add to walls',
-                  onActionPressed: () {
-                    context.pushNamed(
+                  onActionPressed: () async {
+                    final result = await context.pushNamed(
                       RouteConstants.addToWallPageName,
                       pathParameters: {'feedId': feed.id.toString()},
                       extra: {
                         'wallsBloc': BlocProvider.of<WallsBloc>(context),
                       },
                     );
+                    if (result is Map<String, dynamic> &&
+                        result['unfollow'] == true) {
+                      if (context.mounted) {
+                        context.read<FollowFeedBloc>().add(
+                              FollowUnfollowRequested(
+                                feed.id,
+                                action: FollowUnfollowAction.unfollow,
+                              ),
+                            );
+                      }
+                    }
                   },
                 );
               }
             }
           },
           builder: (context, state) {
-            if (state.status == FollowFeedStatus.loading &&
-                state.feedId == feed.id) {
-              return SizedBox(
-                height: 28.0,
-                width: 28.0,
-                child: isFollowed
-                    ? SpinKitDualRing(
-                        size: 21.0,
-                        lineWidth: 3.0,
-                        duration: const Duration(milliseconds: 400),
-                        color: context.theme.colorScheme.onSurface,
-                      )
-                    : SpinKitHourGlass(
-                        size: 23.0,
-                        duration: const Duration(milliseconds: 2400),
-                        color: context.theme.colorScheme.primary,
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: state.status == FollowFeedStatus.loading &&
+                      state.feedId == feed.id
+                  ? SizedBox(
+                      height: 28.0,
+                      width: 28.0,
+                      child: isFollowed
+                          ? SpinKitDualRing(
+                              size: 21.0,
+                              lineWidth: 3.0,
+                              duration: const Duration(milliseconds: 400),
+                              color: context.theme.colorScheme.onSurface,
+                            )
+                          : SpinKitHourGlass(
+                              size: 23.0,
+                              duration: const Duration(milliseconds: 2400),
+                              color: context.theme.colorScheme.primary,
+                            ),
+                    )
+                  : Container(
+                      height: 28.0,
+                      width: 28.0,
+                      alignment: Alignment.center,
+                      child: IconButton(
+                        icon: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: isFollowed
+                              ? Icon(
+                                  Icons.check_circle,
+                                  size: 28.0,
+                                  weight: 0.4,
+                                  color: context.theme.colorScheme.primary,
+                                )
+                              : Icon(
+                                  Icons.add_circle_outline_rounded,
+                                  size: 28.0,
+                                  weight: 0.4,
+                                  color: context.theme.colorScheme.onSurface,
+                                ),
+                        ),
+                        onPressed: isFollowed
+                            ? () async {
+                                final result = await context.pushNamed(
+                                  RouteConstants.addToWallPageName,
+                                  pathParameters: {
+                                    'feedId': feed.id.toString()
+                                  },
+                                  extra: {
+                                    'wallsBloc':
+                                        BlocProvider.of<WallsBloc>(context),
+                                  },
+                                );
+                                if (result is Map<String, dynamic> &&
+                                    result['unfollow'] == true) {
+                                  if (context.mounted) {
+                                    context.read<FollowFeedBloc>().add(
+                                          FollowUnfollowRequested(
+                                            feed.id,
+                                            action:
+                                                FollowUnfollowAction.unfollow,
+                                          ),
+                                        );
+                                  }
+                                }
+                              }
+                            : () {
+                                context.read<FollowFeedBloc>().add(
+                                      FollowUnfollowRequested(
+                                        feed.id,
+                                        action: FollowUnfollowAction.follow,
+                                      ),
+                                    );
+                              },
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
                       ),
-              );
-            }
-            return Container(
-              height: 28.0,
-              width: 28.0,
-              alignment: Alignment.center,
-              child: IconButton(
-                icon: isFollowed
-                    ? Icon(
-                        Icons.check_circle,
-                        size: 28.0,
-                        weight: 0.4,
-                        color: context.theme.colorScheme.primary,
-                      )
-                    : Icon(
-                        Icons.add_circle_outline_rounded,
-                        size: 28.0,
-                        weight: 0.4,
-                        color: context.theme.colorScheme.onSurface,
-                      ),
-                onPressed: isFollowed
-                    ? () {
-                        context.pushNamed(
-                          RouteConstants.addToWallPageName,
-                          pathParameters: {'feedId': feed.id.toString()},
-                          extra: {
-                            'wallsBloc': BlocProvider.of<WallsBloc>(context),
-                          },
-                        );
-                      }
-                    : () {
-                        context.read<FollowFeedBloc>().add(
-                              FollowUnfollowRequested(
-                                feed.id,
-                                action: FollowUnfollowAction.follow,
-                              ),
-                            );
-                      },
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
+                    ),
             );
           },
         ),
