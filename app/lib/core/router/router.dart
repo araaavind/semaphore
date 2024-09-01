@@ -10,6 +10,7 @@ import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/add_to_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/create_wall_page.dart';
@@ -183,7 +184,17 @@ GoRouter router = GoRouter(
     GoRoute(
       path: RouteConstants.addToWallPagePath,
       name: RouteConstants.addToWallPageName,
-      builder: (context, state) => const AddToWallPage(),
+      builder: (context, state) {
+        final feedId = int.parse(state.pathParameters['feedId'] ?? '0');
+        final extra = state.extra as Map<String, dynamic>?;
+        final wallsBloc = extra?['wallsBloc'] as WallsBloc?;
+
+        if (wallsBloc == null) {
+          throw Exception('WallsBloc is required for AddToWallPage');
+        }
+
+        return AddToWallPage(feedId: feedId, wallsBloc: wallsBloc);
+      },
     ),
     GoRoute(
       path: RouteConstants.createWallPagePath,

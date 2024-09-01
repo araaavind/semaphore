@@ -6,6 +6,7 @@ import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -115,8 +116,15 @@ class _FeedListTileState extends State<FeedListTile> {
                   'Followed ${feed.title}',
                   type: SnackbarType.utility,
                   actionLabel: 'Add to walls',
-                  onActionPressed: () =>
-                      context.pushNamed(RouteConstants.addToWallPageName),
+                  onActionPressed: () {
+                    context.pushNamed(
+                      RouteConstants.addToWallPageName,
+                      pathParameters: {'feedId': feed.id.toString()},
+                      extra: {
+                        'wallsBloc': BlocProvider.of<WallsBloc>(context),
+                      },
+                    );
+                  },
                 );
               }
             }
@@ -141,52 +149,44 @@ class _FeedListTileState extends State<FeedListTile> {
                       ),
               );
             }
-            if (isFollowed) {
-              return Container(
-                height: 28.0,
-                width: 28.0,
-                alignment: Alignment.center,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.check_circle,
-                    size: 28.0,
-                    weight: 0.4,
-                    color: context.theme.colorScheme.primary,
-                  ),
-                  onPressed: () {
-                    context.read<FollowFeedBloc>().add(
-                          FollowUnfollowRequested(
-                            feed.id,
-                            action: FollowUnfollowAction.unfollow,
-                          ),
-                        );
-                  },
-                  constraints: const BoxConstraints(),
-                  padding: EdgeInsets.zero,
-                ),
-              );
-            }
             return Container(
               height: 28.0,
               width: 28.0,
               alignment: Alignment.center,
               child: IconButton(
-                icon: Icon(
-                  Icons.add_circle_outline_rounded,
-                  size: 28.0,
-                  weight: 0.4,
-                  color: context.theme.colorScheme.onSurface,
-                ),
+                icon: isFollowed
+                    ? Icon(
+                        Icons.check_circle,
+                        size: 28.0,
+                        weight: 0.4,
+                        color: context.theme.colorScheme.primary,
+                      )
+                    : Icon(
+                        Icons.add_circle_outline_rounded,
+                        size: 28.0,
+                        weight: 0.4,
+                        color: context.theme.colorScheme.onSurface,
+                      ),
+                onPressed: isFollowed
+                    ? () {
+                        context.pushNamed(
+                          RouteConstants.addToWallPageName,
+                          pathParameters: {'feedId': feed.id.toString()},
+                          extra: {
+                            'wallsBloc': BlocProvider.of<WallsBloc>(context),
+                          },
+                        );
+                      }
+                    : () {
+                        context.read<FollowFeedBloc>().add(
+                              FollowUnfollowRequested(
+                                feed.id,
+                                action: FollowUnfollowAction.follow,
+                              ),
+                            );
+                      },
                 constraints: const BoxConstraints(),
                 padding: EdgeInsets.zero,
-                onPressed: () {
-                  context.read<FollowFeedBloc>().add(
-                        FollowUnfollowRequested(
-                          feed.id,
-                          action: FollowUnfollowAction.follow,
-                        ),
-                      );
-                },
               ),
             );
           },

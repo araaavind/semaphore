@@ -72,7 +72,10 @@ class _AddFeedPageState extends State<AddFeedPage> {
                             }
                           }
                           if (state.status == FollowFeedStatus.followed) {
-                            context.pop(true);
+                            context.pop({
+                              'success': true,
+                              'feedId': state.feedId,
+                            });
                           }
                         },
                         builder: (context, state) {
