@@ -103,7 +103,18 @@ func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 	query := `
 		SELECT w.id, w.name, w.is_primary, w.user_id, w.created_at, w.updated_at,
 		COALESCE(
-			JSONB_AGG(JSONB_BUILD_OBJECT('id', f.id, 'title', f.title))
+			JSONB_AGG(JSONB_BUILD_OBJECT(
+				'id', f.id,
+				'title', f.title,
+				'description', f.description,
+				'link', f.link,
+				'feed_link', f.feed_link,
+				'pub_date', f.pub_date,
+				'pub_updated', f.pub_updated,
+				'feed_type', f.feed_type,
+				'feed_version', f.feed_version,
+				'language', f.language
+			))
 			FILTER (WHERE f.id IS NOT NULL), '[]'
 		) as w_feeds	
 		FROM walls w
