@@ -16,6 +16,7 @@ import 'package:app/features/auth/presentation/cubit/activate_user/activate_user
 import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/repositories/feed_repository_impl.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
+import 'package:app/features/feed/domain/usecases/add_feed_to_wall.dart';
 import 'package:app/features/feed/domain/usecases/add_follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart';
 import 'package:app/features/feed/domain/usecases/create_wall.dart';
@@ -25,11 +26,13 @@ import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.da
 import 'package:app/features/feed/domain/usecases/list_followers_of_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_items.dart';
 import 'package:app/features/feed/domain/usecases/list_walls.dart';
+import 'package:app/features/feed/domain/usecases/remove_feed_from_wall.dart';
 import 'package:app/features/feed/domain/usecases/unfollow_feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/cubit/create_wall/create_wall_cubit.dart';
 import 'package:equatable/equatable.dart';
@@ -205,6 +208,16 @@ void _initFeed() {
       serviceLocator(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => AddFeedToWall(
+      serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => RemoveFeedFromWall(
+      serviceLocator(),
+    ),
+  );
   // Register cubits
   serviceLocator.registerFactory(
     () => CreateWallCubit(
@@ -242,6 +255,12 @@ void _initFeed() {
   serviceLocator.registerFactory(
     () => ListItemsBloc(
       listItems: serviceLocator(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => WallFeedBloc(
+      addFeedToWall: serviceLocator(),
+      removeFeedFromWall: serviceLocator(),
     ),
   );
 }
