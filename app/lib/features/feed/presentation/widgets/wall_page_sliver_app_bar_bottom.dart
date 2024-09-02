@@ -199,15 +199,15 @@ Widget _buildOptionItem({
   return ListTile(
     leading: Icon(
       icon,
-      color: isSelected ? context.theme.colorScheme.secondary : Colors.grey,
+      color: isSelected ? context.theme.colorScheme.primary : Colors.grey,
     ),
     title: Text(
       title,
       style: TextStyle(
-          color: isSelected ? context.theme.colorScheme.secondary : null),
+          color: isSelected ? context.theme.colorScheme.primary : null),
     ),
     trailing: isSelected
-        ? Icon(Icons.check, color: context.theme.colorScheme.secondary)
+        ? Icon(Icons.check, color: context.theme.colorScheme.primary)
         : null,
     onTap: () {
       if (title == WallSortOption.hot.name) {
