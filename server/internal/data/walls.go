@@ -51,7 +51,7 @@ func (m WallModel) Insert(wall *Wall) error {
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
-			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "walls_name_key") {
+			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "walls_non_primary_name_unique_idx") {
 				return ErrDuplicateWall
 			}
 		}
