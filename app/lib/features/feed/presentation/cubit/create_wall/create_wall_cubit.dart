@@ -23,6 +23,7 @@ class CreateWallCubit extends Cubit<CreateWallState> {
         emit(state.copyWith(
           status: CreateWallStatus.failure,
           message: l.message,
+          fieldErrors: l.fieldErrors,
         ));
       case Right():
         emit(state.copyWith(

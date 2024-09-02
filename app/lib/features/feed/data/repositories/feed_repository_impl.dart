@@ -173,7 +173,7 @@ class FeedRepositoryImpl implements FeedRepository {
         await feedRemoteDatasource.createWall(wallName),
       );
     } on ServerException catch (e) {
-      return left(Failure(message: e.message));
+      return left(Failure(message: e.message, fieldErrors: e.fieldErrors));
     }
   }
 
