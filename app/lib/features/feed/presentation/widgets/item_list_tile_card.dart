@@ -8,6 +8,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:html/parser.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:shimmer/shimmer.dart';
 
 class ItemListTileCard extends StatelessWidget {
@@ -157,16 +159,42 @@ class ItemListTileCard extends StatelessWidget {
                   ),
                 )
               else
-                Text(
-                  item.description ?? '',
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: true,
-                ),
+                item.description != null && isHtml(item.description!)
+                    ? extractTextFromHtml(item.description!).isNotEmpty
+                        ? Text(
+                            extractTextFromHtml(item.description!),
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )
+                        : const SizedBox.shrink()
+                    : item.description != null && item.description!.isNotEmpty
+                        ? Text(
+                            item.description!,
+                            maxLines: 4,
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )
+                        : const SizedBox.shrink(),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+String extractTextFromHtml(String htmlString) {
+  final document = parse(htmlString);
+  final text = dom.DocumentFragment.html(document.body?.text ?? '').text;
+  if (['comment', 'comments', 'reply', 'replies']
+      .contains(text?.toLowerCase())) {
+    return '';
+  }
+  return text ?? '';
+}
+
+bool isHtml(String htmlString) {
+  final document = parse(htmlString);
+  return document.body?.children.isNotEmpty ?? false;
 }
