@@ -48,23 +48,31 @@ class AddToWallPageContent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          'Add to wall',
-          style: context.theme.textTheme.titleMedium,
-        ),
         actions: [
-          TextButton(
-            onPressed: () {
-              context.pop({"unfollow": false});
-            },
-            style: const ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            child: Text(
-              'Done',
-              style: context.theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: context.theme.colorScheme.primary,
+          Padding(
+            padding: UIConstants.defaultAppBarTextButtonPadding,
+            child: TextButton(
+              onPressed: () =>
+                  context.pushNamed(RouteConstants.createWallPageName),
+              style: const ButtonStyle(
+                splashFactory: NoSplash.splashFactory,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.add,
+                    size: 26.0,
+                    color: context.theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 3.0),
+                  Text(
+                    'New wall',
+                    style: context.theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -83,15 +91,13 @@ class AddToWallPageContent extends StatelessWidget {
             children: [
               const SizedBox(height: 20.0),
               Button(
-                text: 'Create new Wall',
+                text: 'Unfollow feed',
+                fixedSize: const Size.fromHeight(40.0),
+                filled: true,
                 backgroundColor: context.theme.colorScheme.primaryContainer,
                 textColor: context.theme.colorScheme.primary,
-                onPressed: () async {
-                  final isCreated = await context
-                      .pushNamed(RouteConstants.createWallPageName);
-                  if ((isCreated as bool) == true && context.mounted) {
-                    context.read<WallsBloc>().add(ListWallsRequested());
-                  }
+                onPressed: () {
+                  context.pop({"unfollow": true});
                 },
               ),
               const SizedBox(height: 20.0),
@@ -121,11 +127,11 @@ class AddToWallPageContent extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               Button(
-                text: 'Unfollow feed',
-                fixedSize: const Size.fromHeight(40.0),
-                filled: false,
+                text: 'Done',
+                backgroundColor: context.theme.colorScheme.primary,
+                textColor: context.theme.colorScheme.onPrimary,
                 onPressed: () {
-                  context.pop({"unfollow": true});
+                  context.pop({"unfollow": false});
                 },
               ),
               const SizedBox(height: 40.0),
