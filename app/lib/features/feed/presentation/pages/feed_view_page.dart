@@ -2,6 +2,7 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/core/utils/string_casing_extension.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
@@ -79,7 +80,9 @@ class _FeedViewPageState extends State<FeedViewPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AutoSizeText(
-                              widget.feed.title,
+                              widget.feed.title.isNotEmpty
+                                  ? widget.feed.title.toTitleCase()
+                                  : 'Feed',
                               style: context.theme.textTheme.displaySmall
                                   ?.copyWith(
                                 fontWeight: FontWeight.w700,

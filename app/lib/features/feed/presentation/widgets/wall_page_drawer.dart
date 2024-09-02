@@ -1,6 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/string_casing_extension.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
@@ -184,7 +185,7 @@ class DrawerFeedList extends StatelessWidget {
           selectedColor: context.theme.colorScheme.primary,
           visualDensity: VisualDensity.compact,
           title: Text(
-            item.title,
+            item.title.isNotEmpty ? item.title.toTitleCase() : 'Feed',
             style: context.theme.textTheme.titleSmall,
           ),
           onTap: () async {
