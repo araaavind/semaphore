@@ -8,6 +8,7 @@ import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/followers_count.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_mag.dart';
 import 'package:app/init_dependencies.dart';
@@ -143,21 +144,89 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                   buttonText = 'Unfollow';
                                   action = FollowUnfollowAction.unfollow;
                                 }
-                                return Button(
-                                  text: buttonText,
-                                  fixedSize: const Size.fromHeight(40.0),
-                                  filled: !isFollowed,
-                                  onPressed: () {
-                                    context.read<FollowFeedBloc>().add(
-                                          FollowUnfollowRequested(
-                                            feed.id,
-                                            action: action,
+                                return isFollowed
+                                    ? Row(
+                                        children: [
+                                          Flexible(
+                                            child: Button(
+                                              text: buttonText,
+                                              fixedSize:
+                                                  const Size.fromHeight(40.0),
+                                              filled: !isFollowed,
+                                              onPressed: () {
+                                                context
+                                                    .read<FollowFeedBloc>()
+                                                    .add(
+                                                      FollowUnfollowRequested(
+                                                        feed.id,
+                                                        action: action,
+                                                      ),
+                                                    );
+                                              },
+                                              isLoading: state.feedId ==
+                                                      feed.id &&
+                                                  state.status ==
+                                                      FollowFeedStatus.loading,
+                                            ),
                                           ),
-                                        );
-                                  },
-                                  isLoading: state.feedId == feed.id &&
-                                      state.status == FollowFeedStatus.loading,
-                                );
+                                          const SizedBox(width: 12.0),
+                                          Flexible(
+                                            child: Button(
+                                              text: 'Add to walls',
+                                              fixedSize:
+                                                  const Size.fromHeight(40.0),
+                                              filled: true,
+                                              onPressed: () async {
+                                                final result =
+                                                    await context.pushNamed(
+                                                  RouteConstants
+                                                      .addToWallPageName,
+                                                  pathParameters: {
+                                                    'feedId': feed.id.toString()
+                                                  },
+                                                  extra: {
+                                                    'wallsBloc': BlocProvider
+                                                        .of<WallsBloc>(context),
+                                                  },
+                                                );
+                                                if (result is Map<String,
+                                                        dynamic> &&
+                                                    result['unfollow'] ==
+                                                        true) {
+                                                  if (context.mounted) {
+                                                    context
+                                                        .read<FollowFeedBloc>()
+                                                        .add(
+                                                          FollowUnfollowRequested(
+                                                            feed.id,
+                                                            action:
+                                                                FollowUnfollowAction
+                                                                    .unfollow,
+                                                          ),
+                                                        );
+                                                  }
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Button(
+                                        text: buttonText,
+                                        fixedSize: const Size.fromHeight(40.0),
+                                        filled: !isFollowed,
+                                        onPressed: () {
+                                          context.read<FollowFeedBloc>().add(
+                                                FollowUnfollowRequested(
+                                                  feed.id,
+                                                  action: action,
+                                                ),
+                                              );
+                                        },
+                                        isLoading: state.feedId == feed.id &&
+                                            state.status ==
+                                                FollowFeedStatus.loading,
+                                      );
                               },
                             ),
                             const SizedBox(height: 16.0),
