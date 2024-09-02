@@ -59,7 +59,9 @@ void showSnackbar(
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.fade,
-                softWrap: false,
+                softWrap: (actionLabel != null && onActionPressed != null)
+                    ? false
+                    : true,
               ),
             ),
             if (actionLabel != null && onActionPressed != null)
