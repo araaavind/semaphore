@@ -32,7 +32,6 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
 
   @override
   Widget build(BuildContext context) {
-    FormState? formState = formKey.currentState;
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -44,7 +43,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                 setState(() {
                   _isUsernameTaken = true;
                 });
-                formState!.validate();
+                formKey.currentState!.validate();
               } else {
                 showSnackbar(
                   context,
@@ -56,7 +55,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
               setState(() {
                 _isUsernameTaken = false;
               });
-              formState!.validate();
+              formKey.currentState!.validate();
             }
           },
           builder: (context, state) {
@@ -78,7 +77,8 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                           setState(() {
                             _isUsernameTaken = false;
                           });
-                          if (formState != null && formState.validate()) {
+                          if (formKey.currentState != null &&
+                              formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
                                   AuthCheckUsernameRequested(
                                     usernameController.text.trim(),
@@ -90,8 +90,8 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                     },
                     validator: _usernameValidator,
                     validBorderColor: state is AuthUsernameSuccess &&
-                            formState != null &&
-                            formState.validate()
+                            formKey.currentState != null &&
+                            formKey.currentState!.validate()
                         ? AppPalette.green
                         : null,
                     suffixIcon: state is AuthLoading
@@ -106,8 +106,8 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                             ),
                           )
                         : (state is AuthUsernameSuccess &&
-                                formState != null &&
-                                formState.validate()
+                                formKey.currentState != null &&
+                                formKey.currentState!.validate()
                             ? const Icon(
                                 Icons.check,
                                 color: AppPalette.green,
@@ -121,8 +121,8 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                         fixedSize: const Size(120, 50),
                         onPressed: () {
                           if (state is AuthUsernameSuccess &&
-                              formState != null &&
-                              formState.validate()) {
+                              formKey.currentState != null &&
+                              formKey.currentState!.validate()) {
                             context.goNamed(
                               RouteConstants.signupPageName,
                               pathParameters: {
