@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 abstract class AppPalette {
+  // Brand Colors
+  static const brand = Color.fromARGB(255, 188, 112, 73);
+
   // Color Scheme Colors
   // Lights
   static const primary = Color.fromARGB(255, 75, 2, 52);
