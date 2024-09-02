@@ -68,7 +68,9 @@ class WallPageSliverAppBarBottom extends StatelessWidget
 void _showFilterModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: context.theme.colorScheme.surface,
+    backgroundColor: context.theme.brightness == Brightness.dark
+        ? context.theme.colorScheme.surfaceContainerLowest
+        : context.theme.colorScheme.surface,
     showDragHandle: false,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
