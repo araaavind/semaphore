@@ -70,7 +70,7 @@ class _FeedListTileState extends State<FeedListTile> {
           horizontal: UIConstants.pagePadding,
         ),
         title: AutoSizeText(
-          feed.title.toTitleCase(),
+          feed.title.isNotEmpty ? feed.title.toTitleCase() : 'Feed',
           style: context.theme.textTheme.bodyLarge!.copyWith(
             fontWeight: FontWeight.w600,
           ),
