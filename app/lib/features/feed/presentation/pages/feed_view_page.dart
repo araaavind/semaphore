@@ -263,8 +263,10 @@ class _FeedViewItemsState extends State<FeedViewItems> {
             AppPagedList<Item>(
               pagingController: _pagingController,
               listType: PagedListType.sliverList,
-              itemBuilder: (context, item, index) =>
-                  ItemListTileMag(item: item),
+              itemBuilder: (context, item, index) => ItemListTileMag(
+                item: item,
+                pagingController: _pagingController,
+              ),
               firstPageErrorTitle: TextConstants.itemListFetchErrorTitle,
               newPageErrorTitle: TextConstants.itemListFetchErrorTitle,
               noMoreItemsErrorTitle:

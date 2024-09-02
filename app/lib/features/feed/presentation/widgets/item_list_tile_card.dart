@@ -4,20 +4,26 @@ import 'package:app/core/utils/extract_best_image_url.dart';
 import 'package:app/core/utils/format_published_date.dart';
 import 'package:app/core/utils/string_casing_extension.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/parser.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ItemListTileCard extends StatelessWidget {
   final Item item;
+  final PagingController<int, Item> _pagingController;
   const ItemListTileCard({
     required this.item,
+    required PagingController<int, Item> pagingController,
     super.key,
-  });
+  }) : _pagingController = pagingController;
 
   String? getImageUrl(Item item) {
     if (item.imageUrl != null) return item.imageUrl;
@@ -84,15 +90,37 @@ class ItemListTileCard extends StatelessWidget {
                 children: [
                   if (item.feed?.title != null && item.feed!.title.isNotEmpty)
                     Flexible(
-                      child: AutoSizeText(
-                        item.feed!.title,
-                        style: context.theme.textTheme.bodySmall!.copyWith(
-                            fontWeight: FontWeight.w300,
-                            color: context.theme.colorScheme.onSurface
-                                .withOpacity(0.7)),
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
+                      child: InkWell(
+                        onTap: () async {
+                          final Map<String, Object> extra = {
+                            'feed': item.feed!,
+                            'followFeedBlocValue':
+                                BlocProvider.of<FollowFeedBloc>(context),
+                            'listItemsBlocValue':
+                                BlocProvider.of<ListItemsBloc>(context),
+                            'isFollowed': true,
+                          };
+                          final unfollowed = await context.pushNamed(
+                            RouteConstants.feedViewPageName,
+                            pathParameters: {
+                              'feedId': item.feed!.id.toString(),
+                            },
+                            extra: extra,
+                          );
+                          if ((unfollowed as bool) == true) {
+                            _pagingController.refresh();
+                          }
+                        },
+                        child: AutoSizeText(
+                          item.feed!.title,
+                          style: context.theme.textTheme.bodySmall!.copyWith(
+                              fontWeight: FontWeight.w300,
+                              color: context.theme.colorScheme.onSurface
+                                  .withOpacity(0.7)),
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                        ),
                       ),
                     ),
                   if ((item.feed?.title != null &&
