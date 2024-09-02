@@ -54,11 +54,20 @@ class _CreateWallPageState extends State<CreateWallPage> {
                     child: BlocConsumer<CreateWallCubit, CreateWallState>(
                       listener: (context, state) {
                         if (state.status == CreateWallStatus.failure) {
-                          showSnackbar(
-                            context,
-                            state.message!,
-                            type: SnackbarType.failure,
-                          );
+                          if (state.fieldErrors != null &&
+                              state.fieldErrors!['name'] != null) {
+                            showSnackbar(
+                              context,
+                              state.fieldErrors!['name']!,
+                              type: SnackbarType.failure,
+                            );
+                          } else {
+                            showSnackbar(
+                              context,
+                              state.message!,
+                              type: SnackbarType.failure,
+                            );
+                          }
                         }
                         if (state.status == CreateWallStatus.success) {
                           showSnackbar(

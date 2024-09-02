@@ -323,6 +323,11 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       await semaphoreClient.dio.post('/walls', data: {'name': wallName});
       return;
     } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {
       throw ServerException(e.message);
