@@ -1,5 +1,6 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/debouncer.dart';
 import 'package:app/core/utils/show_snackbar.dart';
@@ -102,7 +103,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           'smphr',
           style: context.theme.textTheme.headlineMedium!.copyWith(
             fontWeight: FontWeight.w700,
-            color: context.theme.colorScheme.primary,
+            color: AppPalette.brand,
           ),
         ),
         actions: [
