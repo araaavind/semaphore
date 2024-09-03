@@ -20,7 +20,7 @@ abstract class LocalStorage {
 }
 
 class SharedPreferencesLocalStorage extends LocalStorage {
-  late final SharedPreferences _prefs;
+  late final SharedPreferencesWithCache _prefsWithCache;
 
   SharedPreferencesLocalStorage({required this.persistSessionKey});
 
@@ -28,26 +28,28 @@ class SharedPreferencesLocalStorage extends LocalStorage {
 
   @override
   Future<void> initialize() async {
-    _prefs = await SharedPreferences.getInstance();
+    _prefsWithCache = await SharedPreferencesWithCache.create(
+      cacheOptions: SharedPreferencesWithCacheOptions(),
+    );
   }
 
   @override
   Future<bool> hasSession() async {
-    return _prefs.containsKey(persistSessionKey);
+    return _prefsWithCache.containsKey(persistSessionKey);
   }
 
   @override
   Future<String?> getSession() async {
-    return _prefs.getString(persistSessionKey);
+    return _prefsWithCache.getString(persistSessionKey);
   }
 
   @override
   Future<void> removeSession() async {
-    await _prefs.remove(persistSessionKey);
+    await _prefsWithCache.remove(persistSessionKey);
   }
 
   @override
   Future<void> persistSession(String persistSessionString) {
-    return _prefs.setString(persistSessionKey, persistSessionString);
+    return _prefsWithCache.setString(persistSessionKey, persistSessionString);
   }
 }
