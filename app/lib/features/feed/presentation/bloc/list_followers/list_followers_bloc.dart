@@ -1,5 +1,5 @@
 import 'package:app/core/constants/server_constants.dart';
-import 'package:app/core/utils/stream_tranformers.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/followers_list.dart';
 import 'package:app/features/feed/domain/usecases/list_followers_of_feed.dart';
 import 'package:equatable/equatable.dart';

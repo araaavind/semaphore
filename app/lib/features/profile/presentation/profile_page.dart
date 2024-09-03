@@ -6,7 +6,7 @@ import 'package:app/core/common/widgets/loader.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

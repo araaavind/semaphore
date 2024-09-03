@@ -1,8 +1,7 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/core/utils/extract_best_image_url.dart';
-import 'package:app/core/utils/format_published_date.dart';
-import 'package:app/core/utils/string_casing_extension.dart';
+import 'package:app/features/feed/utils/extract_best_image_url.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
@@ -23,32 +22,6 @@ class ItemListTileMag extends StatelessWidget {
     super.key,
   }) : _pagingController = pagingController;
 
-  String? getImageUrl(Item item) {
-    if (item.imageUrl != null) return item.imageUrl;
-    if (item.enclosures != null) {
-      for (var e in item.enclosures!) {
-        if (e.type != null && e.type == '/image' && e.url != null) {
-          return e.url!;
-        }
-      }
-      for (var e in item.enclosures!) {
-        if (e.url != null) {
-          final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-          final uri = Uri.tryParse(e.url!);
-
-          return uri != null &&
-                  uri.hasAbsolutePath &&
-                  imageExtensions
-                      .any((ext) => e.url!.toLowerCase().contains('.$ext'))
-              ? e.url
-              : null;
-        }
-      }
-    }
-    return extractBestImageUrl(item.description) ??
-        extractBestImageUrl(item.content);
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -68,9 +41,9 @@ class ItemListTileMag extends StatelessWidget {
           );
         }
       },
-      leading: getImageUrl(item) != null
+      leading: getItemImageUrl(item) != null
           ? CachedNetworkImage(
-              imageUrl: getImageUrl(item)!,
+              imageUrl: getItemImageUrl(item)!,
               imageBuilder: (context, imageProvider) => Container(
                 width: 60.0,
                 height: 60.0,
