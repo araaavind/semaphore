@@ -1,7 +1,7 @@
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';

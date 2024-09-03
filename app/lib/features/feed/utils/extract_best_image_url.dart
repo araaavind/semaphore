@@ -1,10 +1,37 @@
+import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart';
+
+String? getItemImageUrl(Item item) {
+  if (item.imageUrl != null) return item.imageUrl;
+  if (item.enclosures != null) {
+    for (var e in item.enclosures!) {
+      if (e.type != null && e.type == '/image' && e.url != null) {
+        return e.url!;
+      }
+    }
+    for (var e in item.enclosures!) {
+      if (e.url != null) {
+        final imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        final uri = Uri.tryParse(e.url!);
+
+        return uri != null &&
+                uri.hasAbsolutePath &&
+                imageExtensions
+                    .any((ext) => e.url!.toLowerCase().contains('.$ext'))
+            ? e.url
+            : null;
+      }
+    }
+  }
+  return extractBestImageUrlFromContent(item.description) ??
+      extractBestImageUrlFromContent(item.content);
+}
 
 /// Extracts the largest image URL if width and height attributes are available.
 /// If not, checks for images inside specific tags like "featured".
 /// If none are found, returns any image element as a fallback.
-String? extractBestImageUrl(String? content) {
+String? extractBestImageUrlFromContent(String? content) {
   if (content == null) return null;
 
   Document document = html_parser.parse(content);

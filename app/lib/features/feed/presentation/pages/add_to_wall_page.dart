@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
-import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/core/utils/utils.dart';
 
 class AddToWallPage extends StatelessWidget {
   final int feedId;

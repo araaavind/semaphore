@@ -1,7 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
-import 'package:app/core/utils/show_snackbar.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
