@@ -92,6 +92,8 @@ class ItemModel extends Item {
     required super.title,
     required super.link,
     required super.guid,
+    required super.createdAt,
+    required super.updatedAt,
     super.description,
     super.pubDate,
     super.pubUpdated,
@@ -117,6 +119,8 @@ class ItemModel extends Item {
     List<String>? categories,
     List<AuthorModel>? authors,
     List<Enclosure>? enclosures,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -132,6 +136,8 @@ class ItemModel extends Item {
       categories: categories ?? this.categories,
       authors: authors ?? this.authors,
       enclosures: enclosures ?? this.enclosures,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -153,6 +159,8 @@ class ItemModel extends Item {
       'enclosures': enclosures
           ?.map((enclosure) => (enclosure as EnclosureModel).toMap())
           .toList(),
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
@@ -186,6 +194,8 @@ class ItemModel extends Item {
               .map((enclosure) => EnclosureModel.fromMap(enclosure))
               .toList()
           : null,
+      createdAt: DateTime.parse(map['created_at'] as String),
+      updatedAt: DateTime.parse(map['updated_at'] as String),
     );
   }
 
