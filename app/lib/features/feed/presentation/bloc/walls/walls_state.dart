@@ -24,7 +24,8 @@ enum WallSortOption {
 
 enum WallViewOption {
   magazine,
-  card;
+  card,
+  text;
 
   String get name {
     switch (this) {
@@ -32,6 +33,8 @@ enum WallViewOption {
         return 'Magazine View';
       case WallViewOption.card:
         return 'Card View';
+      case WallViewOption.text:
+        return 'Text Only';
     }
   }
 }

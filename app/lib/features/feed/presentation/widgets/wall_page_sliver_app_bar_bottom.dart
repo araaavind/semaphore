@@ -142,13 +142,6 @@ void _showFilterModal(BuildContext context) {
                           icon: Icons.bar_chart,
                           isSelected: WallSortOption.top == selectedWallSort,
                         ),
-                        _buildOptionItem(
-                          context: context,
-                          title: WallSortOption.trending.name,
-                          icon: Icons.trending_up,
-                          isSelected:
-                              WallSortOption.trending == selectedWallSort,
-                        ),
                         Divider(
                           thickness: 0.5,
                           color: context.theme.colorScheme.outline,
@@ -166,6 +159,12 @@ void _showFilterModal(BuildContext context) {
                           icon: Icons.view_list,
                           isSelected:
                               WallViewOption.magazine == selectedWallView,
+                        ),
+                        _buildOptionItem(
+                          context: context,
+                          title: WallViewOption.text.name,
+                          icon: Icons.text_fields,
+                          isSelected: WallViewOption.text == selectedWallView,
                         ),
                       ],
                     );
@@ -233,6 +232,10 @@ Widget _buildOptionItem({
       } else if (title == WallViewOption.magazine.name) {
         context.read<WallsBloc>().add(
               ChangeWallOptions(wallView: WallViewOption.magazine),
+            );
+      } else if (title == WallViewOption.text.name) {
+        context.read<WallsBloc>().add(
+              ChangeWallOptions(wallView: WallViewOption.text),
             );
       }
       context.pop();
