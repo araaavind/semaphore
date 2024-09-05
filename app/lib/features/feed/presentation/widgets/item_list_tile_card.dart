@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/utils/extract_best_image_url.dart';
@@ -10,8 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:html/parser.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -53,7 +53,10 @@ class ItemListTileCard extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: UIConstants.pagePadding,
+            vertical: 16.0,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -118,8 +121,7 @@ class ItemListTileCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 8),
-
+              const SizedBox(height: 6.0),
               // Post title
               AutoSizeText(
                 item.title.toTitleCase(),
@@ -130,72 +132,105 @@ class ItemListTileCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 8),
-
-              // Post content (optional image or text)
-              if (getItemImageUrl(item) != null)
-                CachedNetworkImage(
-                  imageUrl: getItemImageUrl(item)!,
-                  imageBuilder: (context, imageProvider) => Container(
-                    height: 180.0,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: imageProvider,
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: context.theme.colorScheme.primary.withAlpha(30),
-                    highlightColor:
-                        context.theme.colorScheme.primary.withAlpha(65),
-                    child: Container(
-                      height: 180.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                )
-              else
-                item.description != null && isHtml(item.description!)
-                    ? extractTextFromHtml(item.description!).isNotEmpty
-                        ? Text(
-                            extractTextFromHtml(item.description!),
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                          )
-                        : const SizedBox.shrink()
-                    : item.description != null && item.description!.isNotEmpty
-                        ? Text(
-                            item.description!,
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                          )
-                        : const SizedBox.shrink(),
+              const SizedBox(height: 6.0),
+              _buildCardBody(),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-String extractTextFromHtml(String htmlString) {
-  final document = parse(htmlString);
-  final text = dom.DocumentFragment.html(document.body?.text ?? '').text;
-  if (['comment', 'comments', 'reply', 'replies']
-      .contains(text?.toLowerCase())) {
-    return '';
+  FutureBuilder<List<String>> _buildCardBody() {
+    return FutureBuilder(
+      future: getItemImageUrls(
+        item,
+        includeFavicon: false,
+        scrapeFromLink: true,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.hasData &&
+            snapshot.data != null &&
+            snapshot.data!.isNotEmpty) {
+          final url = snapshot.data!.firstWhere(
+            (url) => !url.contains('.svg'),
+            orElse: () => snapshot.data!.first,
+          );
+          return CachedNetworkImage(
+            imageUrl: url,
+            imageBuilder: (context, imageProvider) => Container(
+              height: 180.0,
+              decoration: BoxDecoration(
+                color: context.theme.colorScheme.primaryContainer,
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: imageProvider,
+                ),
+                borderRadius: BorderRadius.circular(
+                  UIConstants.cardImageBorderRadius,
+                ),
+              ),
+            ),
+            placeholder: (context, url) => Shimmer.fromColors(
+              baseColor: context.theme.colorScheme.primary.withAlpha(30),
+              highlightColor: context.theme.colorScheme.primary.withAlpha(65),
+              child: Container(
+                height: 180.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(
+                    UIConstants.cardImageBorderRadius,
+                  ),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            errorWidget: (context, url, error) => _buildNoImageWidget(context),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Shimmer.fromColors(
+            baseColor: context.theme.colorScheme.primary.withAlpha(30),
+            highlightColor: context.theme.colorScheme.primary.withAlpha(65),
+            child: Container(
+              height: 180.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  UIConstants.cardImageBorderRadius,
+                ),
+                color: Colors.white,
+              ),
+            ),
+          );
+        }
+        return _buildNoImageWidget(context);
+      },
+    );
   }
-  return text ?? '';
 }
 
-bool isHtml(String htmlString) {
-  final document = parse(htmlString);
-  return document.body?.children.isNotEmpty ?? false;
+Widget _buildNoImageWidget(BuildContext context) {
+  final random = Random();
+  final hue = random.nextDouble() * 360;
+  final color = HSLColor.fromAHSL(
+    0.4, // Alpha
+    hue, // Random Hue
+    0.4, // Low Saturation (40%)
+    0.8, // High Lightness (80%)
+  ).toColor();
+  return Container(
+    height: 180.0,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(UIConstants.cardImageBorderRadius),
+      color: color,
+    ),
+    child: Center(
+      child: Text(
+        'SMPHR',
+        style: context.theme.textTheme.titleLarge!.copyWith(
+          color: context.theme.colorScheme.surface.withAlpha(180),
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    ),
+  );
 }

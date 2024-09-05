@@ -7,13 +7,15 @@ import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:math';
 
-class ItemListTileMag extends StatelessWidget {
+class ItemListTileMag extends StatefulWidget {
   final Item item;
   final PagingController<int, Item> _pagingController;
   const ItemListTileMag({
@@ -23,6 +25,13 @@ class ItemListTileMag extends StatelessWidget {
   }) : _pagingController = pagingController;
 
   @override
+  State<ItemListTileMag> createState() => _ItemListTileMagState();
+}
+
+class _ItemListTileMagState extends State<ItemListTileMag> {
+  String? imageUrl;
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
@@ -30,45 +39,18 @@ class ItemListTileMag extends StatelessWidget {
         if (routeName == RouteConstants.wallPageName) {
           context.goNamed(
             'webview',
-            queryParameters: {'url': item.link},
+            queryParameters: {'url': widget.item.link},
           );
         } else if (routeName == RouteConstants.feedViewPageName) {
           context.goNamed(
             'feed-webview',
-            queryParameters: {'url': item.link},
+            queryParameters: {'url': widget.item.link},
             pathParameters: GoRouterState.of(context).pathParameters,
             extra: GoRouterState.of(context).extra,
           );
         }
       },
-      leading: getItemImageUrl(item) != null
-          ? CachedNetworkImage(
-              imageUrl: getItemImageUrl(item)!,
-              imageBuilder: (context, imageProvider) => Container(
-                width: 60.0,
-                height: 60.0,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: imageProvider,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              placeholder: (context, url) => Shimmer.fromColors(
-                baseColor: context.theme.colorScheme.primary.withAlpha(30),
-                highlightColor: context.theme.colorScheme.primary.withAlpha(65),
-                child: Container(
-                  width: 60.0,
-                  height: 60.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            )
-          : null,
+      leading: _buildMagImage(),
       visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
       contentPadding: const EdgeInsets.symmetric(
@@ -76,7 +58,7 @@ class ItemListTileMag extends StatelessWidget {
         horizontal: UIConstants.pagePadding,
       ),
       title: AutoSizeText(
-        item.title.toTitleCase(),
+        widget.item.title.toTitleCase(),
         style: context.theme.textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w600,
         ),
@@ -87,12 +69,13 @@ class ItemListTileMag extends StatelessWidget {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          if (item.feed?.title != null && item.feed!.title.isNotEmpty)
+          if (widget.item.feed?.title != null &&
+              widget.item.feed!.title.isNotEmpty)
             Flexible(
               child: InkWell(
                 onTap: () async {
                   final Map<String, Object> extra = {
-                    'feed': item.feed!,
+                    'feed': widget.item.feed!,
                     'followFeedBlocValue':
                         BlocProvider.of<FollowFeedBloc>(context),
                     'listItemsBlocValue':
@@ -102,16 +85,16 @@ class ItemListTileMag extends StatelessWidget {
                   final unfollowed = await context.pushNamed(
                     RouteConstants.feedViewPageName,
                     pathParameters: {
-                      'feedId': item.feed!.id.toString(),
+                      'feedId': widget.item.feed!.id.toString(),
                     },
                     extra: extra,
                   );
                   if ((unfollowed as bool) == true) {
-                    _pagingController.refresh();
+                    widget._pagingController.refresh();
                   }
                 },
                 child: AutoSizeText(
-                  item.feed!.title,
+                  widget.item.feed!.title,
                   style: context.theme.textTheme.bodySmall!.copyWith(
                       fontWeight: FontWeight.w300,
                       color:
@@ -122,18 +105,19 @@ class ItemListTileMag extends StatelessWidget {
                 ),
               ),
             ),
-          if ((item.feed?.title != null && item.feed!.title.isNotEmpty) &&
-              (item.pubDate != null || item.pubUpdated != null))
+          if ((widget.item.feed?.title != null &&
+                  widget.item.feed!.title.isNotEmpty) &&
+              (widget.item.pubDate != null || widget.item.pubUpdated != null))
             Text(
               '   •   ',
               style: context.theme.textTheme.bodySmall!.copyWith(
                   fontWeight: FontWeight.w300,
                   color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
             ),
-          if (item.pubDate != null || item.pubUpdated != null)
+          if (widget.item.pubDate != null || widget.item.pubUpdated != null)
             Text(
               formatPublishedDate(
-                item.pubUpdated ?? item.pubDate ?? DateTime.now(),
+                widget.item.pubUpdated ?? widget.item.pubDate ?? DateTime.now(),
               ),
               style: context.theme.textTheme.bodySmall!.copyWith(
                   fontWeight: FontWeight.w300,
@@ -144,4 +128,117 @@ class ItemListTileMag extends StatelessWidget {
       horizontalTitleGap: UIConstants.tileHorizontalTitleGap,
     );
   }
+
+  FutureBuilder<List<String>> _buildMagImage() {
+    return FutureBuilder(
+      future: getItemImageUrls(widget.item),
+      builder: (context, snapshot) {
+        if (snapshot.hasData &&
+            snapshot.data != null &&
+            snapshot.data!.isNotEmpty) {
+          final url = imageUrl ??
+              snapshot.data!.firstWhere(
+                (url) => !url.contains('.svg'),
+                orElse: () => snapshot.data!.first,
+              );
+          return CachedNetworkImage(
+            imageUrl: url,
+            imageBuilder: (context, imageProvider) => Container(
+              width: 60,
+              height: 60,
+              foregroundDecoration: BoxDecoration(
+                color:
+                    context.theme.colorScheme.primaryContainer.withAlpha(100),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: imageProvider,
+                ),
+                borderRadius:
+                    BorderRadius.circular(UIConstants.magImageBorderRadius),
+              ),
+              child: _buildNoImageWidget(context),
+            ),
+            placeholder: (context, url) => Shimmer.fromColors(
+              baseColor: context.theme.colorScheme.primary.withAlpha(30),
+              highlightColor: context.theme.colorScheme.primary.withAlpha(65),
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(UIConstants.magImageBorderRadius),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            errorWidget: (context, url, error) {
+              return _buildNoImageWidget(context);
+            },
+            errorListener: (e) {
+              if (kDebugMode) {
+                print('Error listener for widget ${widget.item.title}: $e');
+              }
+              if (imageUrl == null) {
+                for (var url in snapshot.data!) {
+                  if (url != snapshot.data!.first && !url.contains('.svg')) {
+                    setState(() {
+                      imageUrl = url;
+                    });
+                    break;
+                  }
+                }
+              }
+            },
+          );
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Shimmer.fromColors(
+            baseColor: context.theme.colorScheme.primary.withAlpha(30),
+            highlightColor: context.theme.colorScheme.primary.withAlpha(65),
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius:
+                    BorderRadius.circular(UIConstants.magImageBorderRadius),
+                color: Colors.white,
+              ),
+            ),
+          );
+        }
+
+        return _buildNoImageWidget(context);
+      },
+    );
+  }
+}
+
+Widget _buildNoImageWidget(BuildContext context) {
+  final random = Random();
+  final hue = random.nextDouble() * 360;
+  final color = HSLColor.fromAHSL(
+    0.4, // Alpha
+    hue, // Random Hue
+    0.4, // Low Saturation (40%)
+    0.8, // High Lightness (80%)
+  ).toColor();
+
+  return Container(
+    height: 60.0,
+    width: 60.0,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(UIConstants.magImageBorderRadius),
+      color: color,
+    ),
+    child: Center(
+      child: Text(
+        'SMPHR',
+        style: context.theme.textTheme.bodySmall!.copyWith(
+          color: context.theme.colorScheme.surface.withAlpha(180),
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    ),
+  );
 }

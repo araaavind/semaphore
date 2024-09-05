@@ -37,6 +37,7 @@ import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/cubit/create_wall/create_wall_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
 
 part 'init_dependencies.main.dart';

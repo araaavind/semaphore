@@ -8,7 +8,7 @@ Future<void> initDependencies() async {
   _initAuth();
   _initFeed();
   await _initSdk();
-
+  await _initSharedPrefs();
   // Core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => NetworkCubit());
@@ -35,6 +35,15 @@ Future<void> _initSdk() async {
     dispose: (param) {
       param.dispose();
     },
+  );
+}
+
+Future<void> _initSharedPrefs() async {
+  final prefsWithCache = await SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(),
+  );
+  serviceLocator.registerLazySingleton<SharedPreferencesWithCache>(
+    () => prefsWithCache,
   );
 }
 
