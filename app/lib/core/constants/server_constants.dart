@@ -7,4 +7,7 @@ class ServerConstants {
 
   static const throttleDuration = Duration(milliseconds: 100);
   static const debounceDuration = Duration(milliseconds: 300);
+
+  static const int maxImageUrlCacheSize = 100;
+  static const int maxImageUrlCacheDurationInMinutes = 10;
 }
