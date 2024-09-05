@@ -45,6 +45,26 @@ class _WallPageState extends State<WallPage> {
   final RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
+
+  ShimmerLoaderType _shimmerLoaderType = ShimmerLoaderType.text;
+
+  void _setShimmerLoaderType(WallViewOption wallView) {
+    setState(() {
+      switch (wallView) {
+        case WallViewOption.card:
+          _shimmerLoaderType = ShimmerLoaderType.card;
+          break;
+        case WallViewOption.text:
+          _shimmerLoaderType = ShimmerLoaderType.text;
+          break;
+        case WallViewOption.magazine:
+        default:
+          _shimmerLoaderType = ShimmerLoaderType.magazine;
+          break;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,6 +94,10 @@ class _WallPageState extends State<WallPage> {
             );
       },
     );
+
+    // Set initial shimmer loader type
+    final currentWallView = context.read<WallsBloc>().state.wallView;
+    _setShimmerLoaderType(currentWallView);
   }
 
   @override
@@ -91,7 +115,10 @@ class _WallPageState extends State<WallPage> {
         feedsPagingController: _drawerFeedsPagingController,
       ),
       body: BlocConsumer<WallsBloc, WallsState>(
-        listener: (context, state) => _pagingController.refresh(),
+        listener: (context, state) {
+          _pagingController.refresh();
+          _setShimmerLoaderType(state.wallView);
+        },
         builder: (context, state) {
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -102,11 +129,14 @@ class _WallPageState extends State<WallPage> {
             body: Builder(builder: (context) {
               if (state.status == WallsStatus.loading ||
                   state.currentWall == null) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: UIConstants.pagePadding,
                   ),
-                  child: ShimmerLoader(pageSize: 12),
+                  child: ShimmerLoader(
+                    pageSize: 12,
+                    type: _shimmerLoaderType,
+                  ),
                 );
               }
               return BlocListener<ListItemsBloc, ListItemsState>(
@@ -149,6 +179,7 @@ class _WallPageState extends State<WallPage> {
                                     isTextOnly:
                                         state.wallView == WallViewOption.text,
                                   ),
+                        shimmerLoaderType: _shimmerLoaderType,
                         firstPageErrorTitle:
                             TextConstants.itemListFetchErrorTitle,
                         newPageErrorTitle:
