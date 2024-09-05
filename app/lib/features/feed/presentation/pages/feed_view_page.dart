@@ -331,6 +331,7 @@ class _FeedViewItemsState extends State<FeedViewItems> {
             AppPagedList<Item>(
               pagingController: _pagingController,
               listType: PagedListType.sliverList,
+              shimmerLoaderType: ShimmerLoaderType.magazine,
               itemBuilder: (context, item, index) => ItemListTileMag(
                 item: item,
                 pagingController: _pagingController,

@@ -27,6 +27,7 @@ class AppPagedList<ItemType> extends StatelessWidget {
     this.listEmptyErrorMessage = 'Try again later',
     this.showErrors = true,
     this.loaderType = PagedListLoaderType.shimmerIndicator,
+    this.shimmerLoaderType = ShimmerLoaderType.text,
     this.shrinkWrap = false,
     this.physics,
   }) : _pagingController = pagingController;
@@ -42,6 +43,7 @@ class AppPagedList<ItemType> extends StatelessWidget {
   final String listEmptyErrorMessage;
   final bool showErrors;
   final PagedListLoaderType loaderType;
+  final ShimmerLoaderType shimmerLoaderType;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
 
@@ -82,23 +84,28 @@ class AppPagedList<ItemType> extends StatelessWidget {
           : null,
       newPageProgressIndicatorBuilder:
           this.loaderType == PagedListLoaderType.shimmerIndicator
-              ? (_) => const Padding(
-                    padding: EdgeInsets.symmetric(
+              ? (_) => Padding(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: UIConstants.pagePadding,
                     ),
-                    child: ShimmerLoader(pageSize: 2),
+                    child: ShimmerLoader(
+                      pageSize: 2,
+                      type: shimmerLoaderType,
+                    ),
                   )
               : null,
-      firstPageProgressIndicatorBuilder: this.loaderType ==
-              PagedListLoaderType.shimmerIndicator
-          ? (_) => const Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
-                child: ShimmerLoader(
-                  pageSize: ServerConstants.defaultPaginationPageSize,
-                ),
-              )
-          : null,
+      firstPageProgressIndicatorBuilder:
+          this.loaderType == PagedListLoaderType.shimmerIndicator
+              ? (_) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: UIConstants.pagePadding,
+                    ),
+                    child: ShimmerLoader(
+                      pageSize: ServerConstants.defaultPaginationPageSize,
+                      type: shimmerLoaderType,
+                    ),
+                  )
+              : null,
       noMoreItemsIndicatorBuilder: this.showErrors
           ? (_) => NoMoreItemsIndicator(
                 title: this.noMoreItemsErrorTitle,
