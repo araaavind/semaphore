@@ -40,6 +40,8 @@ class Item extends Equatable {
   final List<String>? categories;
   final List<Author>? authors;
   final List<Enclosure>? enclosures;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   const Item({
     required this.id,
@@ -55,6 +57,8 @@ class Item extends Equatable {
     this.categories,
     this.authors,
     this.enclosures,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   @override
@@ -72,5 +76,7 @@ class Item extends Equatable {
         categories,
         authors,
         enclosures,
+        createdAt,
+        updatedAt,
       ];
 }

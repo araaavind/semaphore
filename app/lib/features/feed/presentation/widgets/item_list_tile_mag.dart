@@ -126,23 +126,23 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
             ),
           ),
         if ((widget.item.feed?.title != null &&
-                widget.item.feed!.title.isNotEmpty) &&
-            (widget.item.pubDate != null || widget.item.pubUpdated != null))
+            widget.item.feed!.title.isNotEmpty))
           Text(
             '   •   ',
             style: context.theme.textTheme.bodySmall!.copyWith(
                 fontWeight: FontWeight.w300,
                 color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
           ),
-        if (widget.item.pubDate != null || widget.item.pubUpdated != null)
-          Text(
-            formatPublishedDate(
-              widget.item.pubUpdated ?? widget.item.pubDate ?? DateTime.now(),
-            ),
-            style: context.theme.textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w300,
-                color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
+        Text(
+          formatPublishedDate(
+            widget.item.pubUpdated ??
+                widget.item.pubDate ??
+                widget.item.createdAt,
           ),
+          style: context.theme.textTheme.bodySmall!.copyWith(
+              fontWeight: FontWeight.w300,
+              color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
+        ),
       ],
     );
   }

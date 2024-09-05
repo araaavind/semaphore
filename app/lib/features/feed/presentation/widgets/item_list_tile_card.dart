@@ -99,9 +99,7 @@ class ItemListTileCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  if ((item.feed?.title != null &&
-                          item.feed!.title.isNotEmpty) &&
-                      (item.pubDate != null || item.pubUpdated != null))
+                  if (item.feed?.title != null && item.feed!.title.isNotEmpty)
                     Text(
                       '   •   ',
                       style: context.theme.textTheme.bodySmall!.copyWith(
@@ -109,16 +107,15 @@ class ItemListTileCard extends StatelessWidget {
                           color: context.theme.colorScheme.onSurface
                               .withOpacity(0.7)),
                     ),
-                  if (item.pubDate != null || item.pubUpdated != null)
-                    Text(
-                      formatPublishedDate(
-                        item.pubUpdated ?? item.pubDate ?? DateTime.now(),
-                      ),
-                      style: context.theme.textTheme.bodySmall!.copyWith(
-                          fontWeight: FontWeight.w300,
-                          color: context.theme.colorScheme.onSurface
-                              .withOpacity(0.7)),
+                  Text(
+                    formatPublishedDate(
+                      item.pubUpdated ?? item.pubDate ?? item.createdAt,
                     ),
+                    style: context.theme.textTheme.bodySmall!.copyWith(
+                        fontWeight: FontWeight.w300,
+                        color: context.theme.colorScheme.onSurface
+                            .withOpacity(0.7)),
+                  ),
                 ],
               ),
               const SizedBox(height: 6.0),
