@@ -33,7 +33,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return InkWell(
       onTap: () {
         final String routeName = GoRouterState.of(context).topRoute!.name!;
         if (routeName == RouteConstants.wallPageName) {
@@ -50,82 +50,100 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
           );
         }
       },
-      leading: _buildMagImage(),
-      visualDensity: VisualDensity.standard,
       splashColor: Colors.transparent,
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: UIConstants.tileContentPadding,
-        horizontal: UIConstants.pagePadding,
-      ),
-      title: AutoSizeText(
-        widget.item.title.toTitleCase(),
-        style: context.theme.textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.w600,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 12.0,
+          horizontal: UIConstants.pagePadding,
         ),
-        minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          if (widget.item.feed?.title != null &&
-              widget.item.feed!.title.isNotEmpty)
-            Flexible(
-              child: InkWell(
-                onTap: () async {
-                  final Map<String, Object> extra = {
-                    'feed': widget.item.feed!,
-                    'followFeedBlocValue':
-                        BlocProvider.of<FollowFeedBloc>(context),
-                    'listItemsBlocValue':
-                        BlocProvider.of<ListItemsBloc>(context),
-                    'isFollowed': true,
-                  };
-                  final unfollowed = await context.pushNamed(
-                    RouteConstants.feedViewPageName,
-                    pathParameters: {
-                      'feedId': widget.item.feed!.id.toString(),
-                    },
-                    extra: extra,
-                  );
-                  if ((unfollowed as bool) == true) {
-                    widget._pagingController.refresh();
-                  }
-                },
-                child: AutoSizeText(
-                  widget.item.feed!.title,
-                  style: context.theme.textTheme.bodySmall!.copyWith(
-                      fontWeight: FontWeight.w300,
-                      color:
-                          context.theme.colorScheme.onSurface.withOpacity(0.7)),
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildMagImage(),
+            const SizedBox(width: UIConstants.tileHorizontalTitleGap),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoSizeText(
+                    widget.item.title[0].toUpperCase() +
+                        widget.item.title.substring(1),
+                    style: context.theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  _buildSubtitle(context),
+                ],
               ),
             ),
-          if ((widget.item.feed?.title != null &&
-                  widget.item.feed!.title.isNotEmpty) &&
-              (widget.item.pubDate != null || widget.item.pubUpdated != null))
-            Text(
-              '   •   ',
-              style: context.theme.textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.w300,
-                  color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
-            ),
-          if (widget.item.pubDate != null || widget.item.pubUpdated != null)
-            Text(
-              formatPublishedDate(
-                widget.item.pubUpdated ?? widget.item.pubDate ?? DateTime.now(),
-              ),
-              style: context.theme.textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.w300,
-                  color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
-            ),
-        ],
+          ],
+        ),
       ),
-      horizontalTitleGap: UIConstants.tileHorizontalTitleGap,
+    );
+  }
+
+  Row _buildSubtitle(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        if (widget.item.feed?.title != null &&
+            widget.item.feed!.title.isNotEmpty)
+          Flexible(
+            child: InkWell(
+              onTap: () async {
+                final Map<String, Object> extra = {
+                  'feed': widget.item.feed!,
+                  'followFeedBlocValue':
+                      BlocProvider.of<FollowFeedBloc>(context),
+                  'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
+                  'isFollowed': true,
+                };
+                final unfollowed = await context.pushNamed(
+                  RouteConstants.feedViewPageName,
+                  pathParameters: {
+                    'feedId': widget.item.feed!.id.toString(),
+                  },
+                  extra: extra,
+                );
+                if ((unfollowed as bool) == true) {
+                  widget._pagingController.refresh();
+                }
+              },
+              child: AutoSizeText(
+                widget.item.feed!.title,
+                style: context.theme.textTheme.bodySmall!.copyWith(
+                    fontWeight: FontWeight.w300,
+                    color:
+                        context.theme.colorScheme.onSurface.withOpacity(0.7)),
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+              ),
+            ),
+          ),
+        if ((widget.item.feed?.title != null &&
+                widget.item.feed!.title.isNotEmpty) &&
+            (widget.item.pubDate != null || widget.item.pubUpdated != null))
+          Text(
+            '   •   ',
+            style: context.theme.textTheme.bodySmall!.copyWith(
+                fontWeight: FontWeight.w300,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
+          ),
+        if (widget.item.pubDate != null || widget.item.pubUpdated != null)
+          Text(
+            formatPublishedDate(
+              widget.item.pubUpdated ?? widget.item.pubDate ?? DateTime.now(),
+            ),
+            style: context.theme.textTheme.bodySmall!.copyWith(
+                fontWeight: FontWeight.w300,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
+          ),
+      ],
     );
   }
 
@@ -144,8 +162,8 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
           return CachedNetworkImage(
             imageUrl: url,
             imageBuilder: (context, imageProvider) => Container(
-              width: 60,
-              height: 60,
+              width: 100.0,
+              height: 80.0,
               foregroundDecoration: BoxDecoration(
                 color:
                     context.theme.colorScheme.primaryContainer.withAlpha(100),
@@ -162,8 +180,8 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
               baseColor: context.theme.colorScheme.primary.withAlpha(30),
               highlightColor: context.theme.colorScheme.primary.withAlpha(65),
               child: Container(
-                width: 60,
-                height: 60,
+                width: 100.0,
+                height: 80.0,
                 decoration: BoxDecoration(
                   borderRadius:
                       BorderRadius.circular(UIConstants.magImageBorderRadius),
@@ -197,8 +215,8 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
             baseColor: context.theme.colorScheme.primary.withAlpha(30),
             highlightColor: context.theme.colorScheme.primary.withAlpha(65),
             child: Container(
-              width: 60,
-              height: 60,
+              width: 100.0,
+              height: 80.0,
               decoration: BoxDecoration(
                 borderRadius:
                     BorderRadius.circular(UIConstants.magImageBorderRadius),
@@ -225,8 +243,8 @@ Widget _buildNoImageWidget(BuildContext context) {
   ).toColor();
 
   return Container(
-    height: 60.0,
-    width: 60.0,
+    height: 80.0,
+    width: 100.0,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(UIConstants.magImageBorderRadius),
       color: color,

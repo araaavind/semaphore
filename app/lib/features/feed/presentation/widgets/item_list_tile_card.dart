@@ -124,7 +124,7 @@ class ItemListTileCard extends StatelessWidget {
               const SizedBox(height: 6.0),
               // Post title
               AutoSizeText(
-                item.title.toTitleCase(),
+                item.title[0].toUpperCase() + item.title.substring(1),
                 style: context.theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
