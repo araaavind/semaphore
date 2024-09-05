@@ -146,6 +146,8 @@ class _WallPageState extends State<WallPage> {
                                 : ItemListTileMag(
                                     item: item,
                                     pagingController: _pagingController,
+                                    isTextOnly:
+                                        state.wallView == WallViewOption.text,
                                   ),
                         firstPageErrorTitle:
                             TextConstants.itemListFetchErrorTitle,

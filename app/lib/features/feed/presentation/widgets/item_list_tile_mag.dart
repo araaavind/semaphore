@@ -18,9 +18,11 @@ import 'dart:math';
 class ItemListTileMag extends StatefulWidget {
   final Item item;
   final PagingController<int, Item> _pagingController;
+  final bool isTextOnly;
   const ItemListTileMag({
     required this.item,
     required PagingController<int, Item> pagingController,
+    this.isTextOnly = false,
     super.key,
   }) : _pagingController = pagingController;
 
@@ -59,8 +61,9 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMagImage(),
-            const SizedBox(width: UIConstants.tileHorizontalTitleGap),
+            if (!widget.isTextOnly) _buildMagImage(),
+            if (!widget.isTextOnly)
+              const SizedBox(width: UIConstants.tileHorizontalTitleGap),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
