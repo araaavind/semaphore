@@ -141,7 +141,8 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 				authors = a.authors,
 				image_url = a.image_url,
 				categories = a.categories,
-				enclosures = a.enclosures
+				enclosures = a.enclosures,
+				version = i.version + 1
 			FROM all_items as a
 			WHERE i.feed_id = a.feed_id
 			AND (i.link = a.link OR i.guid = a.guid)
@@ -157,6 +158,7 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 			WHERE ui.feed_id = ai.feed_id
 			AND (ui.link = ai.link OR ui.guid = ai.guid)
 		)
+		ON CONFLICT DO NOTHING
 	`)
 
 	return buf.String(), args
