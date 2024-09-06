@@ -55,7 +55,7 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		feed.LastFailure.Valid = true
 		feed.LastFailureAt.Time = time.Now()
 		feed.LastFailureAt.Valid = true
-		err = app.models.Feeds.Update(feed)
+		err = app.models.Feeds.UpdateFailureStatus(feed)
 		if err != nil {
 			app.logInternalError("app.models.Feeds.Update failed while updating failed feed status", err)
 		}
@@ -70,9 +70,9 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		feed.LastFailure.Valid = true
 		feed.LastFailureAt.Time = time.Now()
 		feed.LastFailureAt.Valid = true
-		err = app.models.Feeds.Update(feed)
+		err = app.models.Feeds.UpdateFailureStatus(feed)
 		if err != nil {
-			app.logInternalError("app.models.Feeds.Update failed while updating failed feed status", err)
+			app.logInternalError("app.models.Feeds.UpdateFailureStatus failed while updating failed feed status", err)
 		}
 		return
 	}

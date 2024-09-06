@@ -335,3 +335,32 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 
 	return feeds, nil
 }
+
+func (m FeedModel) UpdateFailureStatus(feed *Feed) error {
+	query := `
+		UPDATE feeds
+		SET last_failure_at = $1, last_failure = $2, version = version + 1
+		WHERE id = $3 AND version = $4
+		RETURNING updated_at, version`
+
+	args := []any{
+		feed.LastFailureAt,
+		feed.LastFailure,
+		feed.ID,
+		feed.Version,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRow(ctx, query, args...).Scan(&feed.UpdatedAt, &feed.Version)
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows):
+			return ErrEditConflict
+		default:
+			return err
+		}
+	}
+	return nil
+}
