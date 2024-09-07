@@ -237,6 +237,7 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
+                            const SizedBox(height: 8.0),
                           ],
                         ),
                       ),
