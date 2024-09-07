@@ -27,7 +27,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
-              Icons.menu,
+              Icons.arrow_right,
               color: context.theme.colorScheme.onSurface.withOpacity(0.85),
             ),
             const SizedBox(width: 12.0),
