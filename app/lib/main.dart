@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/router/router.dart';
 import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
+import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -31,6 +32,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<ActivateUserCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<ScrollToTopCubit>(),
         ),
       ],
       child: const SemaphoreApp(),
