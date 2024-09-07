@@ -74,10 +74,16 @@ class WallPageDrawer extends StatelessWidget {
                     return const SizedBox.shrink();
                   }
                   if (state.status == WallsStatus.failure) {
-                    return const Text('Unable to load walls');
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text('Unable to load walls'),
+                    );
                   }
                   if (state.status == WallsStatus.loading) {
-                    return const Loader();
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Loader(),
+                    );
                   }
                   return Column(
                     children: [
