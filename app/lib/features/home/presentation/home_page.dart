@@ -7,6 +7,7 @@ import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/cubit/create_wall/create_wall_cubit.dart';
+import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +20,12 @@ class HomePage extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.goNamed(RouteConstants.wallPageName);
+        if (GoRouterState.of(context).topRoute!.name ==
+            RouteConstants.wallPageName) {
+          context.read<ScrollToTopCubit>().scrollToTopRequested();
+        } else {
+          context.goNamed(RouteConstants.wallPageName);
+        }
         break;
       case 1:
         context.goNamed(RouteConstants.searchFeedsPageName);
