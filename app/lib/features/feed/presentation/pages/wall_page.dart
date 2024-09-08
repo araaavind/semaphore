@@ -6,7 +6,6 @@ import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_card.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_mag.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_drawer.dart';
@@ -49,8 +48,6 @@ class _WallPageState extends State<WallPage> {
 
   ShimmerLoaderType _shimmerLoaderType = ShimmerLoaderType.text;
 
-  final ScrollController _scrollController = ScrollController();
-
   void _setShimmerLoaderType(WallViewOption wallView) {
     setState(() {
       switch (wallView) {
@@ -66,30 +63,6 @@ class _WallPageState extends State<WallPage> {
           break;
       }
     });
-  }
-
-  void _scrollToTop({required bool animate}) {
-    if (_scrollController.hasClients) {
-      if (animate) {
-        _scrollController.animateTo(0,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut);
-      } else {
-        _scrollController.jumpTo(0);
-      }
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          if (animate) {
-            _scrollController.animateTo(0,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut);
-          } else {
-            _scrollController.jumpTo(0);
-          }
-        }
-      });
-    }
   }
 
   @override
@@ -132,7 +105,6 @@ class _WallPageState extends State<WallPage> {
     _refreshController.dispose();
     _pagingController.dispose();
     _drawerFeedsPagingController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
@@ -146,100 +118,86 @@ class _WallPageState extends State<WallPage> {
         listener: (context, state) {
           _pagingController.refresh();
           _setShimmerLoaderType(state.wallView);
-          _scrollToTop(animate: false);
         },
         builder: (context, state) {
-          return BlocListener<ScrollToTopCubit, bool>(
-            listener: (context, state) {
-              if (state) {
-                _scrollToTop(animate: true);
-                context.read<ScrollToTopCubit>().scrollToTopCompleted();
-              }
-            },
-            child: NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                WallPageSliverAppBar(
-                  bottomBarTitle: state.currentWall?.name ?? 'All feeds',
-                ),
-              ],
-              body: Builder(
-                builder: (context) {
-                  if (state.status == WallsStatus.loading ||
-                      state.currentWall == null) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: UIConstants.pagePadding,
-                      ),
-                      child: ShimmerLoader(
-                        pageSize: 12,
-                        type: _shimmerLoaderType,
-                      ),
-                    );
-                  }
-                  return BlocListener<ListItemsBloc, ListItemsState>(
-                    listener: (context, state) {
-                      if (state.status != ListItemsStatus.loading) {
-                        _refreshController.refreshCompleted();
-                      }
-                      if (state.status == ListItemsStatus.success) {
-                        if (state.itemList.metadata.currentPage ==
-                            state.itemList.metadata.lastPage) {
-                          _pagingController
-                              .appendLastPage(state.itemList.items);
-                        } else {
-                          final nextPage =
-                              state.itemList.metadata.currentPage + 1;
-                          _pagingController.appendPage(
-                              state.itemList.items, nextPage);
-                        }
-                      } else if (state.status == ListItemsStatus.failure) {
-                        _pagingController.error = state.message;
-                      }
-                    },
-                    child: Refresher(
-                      controller: _refreshController,
-                      onRefresh: () async {
-                        _pagingController.refresh();
-                      },
-                      child: CustomScrollView(
-                        slivers: [
-                          AppPagedList<Item>(
-                            pagingController: _pagingController,
-                            listType: PagedListType.sliverList,
-                            itemBuilder: (context, item, index) =>
-                                state.wallView == WallViewOption.card
-                                    ? ItemListTileCard(
-                                        item: item,
-                                        pagingController: _pagingController,
-                                      )
-                                    : ItemListTileMag(
-                                        item: item,
-                                        pagingController: _pagingController,
-                                        isTextOnly: state.wallView ==
-                                            WallViewOption.text,
-                                      ),
-                            shimmerLoaderType: _shimmerLoaderType,
-                            firstPageErrorTitle:
-                                TextConstants.itemListFetchErrorTitle,
-                            newPageErrorTitle:
-                                TextConstants.itemListFetchErrorTitle,
-                            noMoreItemsErrorTitle:
-                                TextConstants.itemListNoMoreItemsErrorTitle,
-                            noMoreItemsErrorMessage:
-                                TextConstants.itemListNoMoreItemsErrorMessage,
-                            listEmptyErrorTitle:
-                                TextConstants.itemListEmptyMessageTitle,
-                            listEmptyErrorMessage:
-                                TextConstants.itemListEmptyFollowMessageMessage,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              WallPageSliverAppBar(
+                bottomBarTitle: state.currentWall?.name ?? 'All feeds',
               ),
-            ),
+            ],
+            body: Builder(builder: (context) {
+              if (state.status == WallsStatus.loading ||
+                  state.currentWall == null) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: UIConstants.pagePadding,
+                  ),
+                  child: ShimmerLoader(
+                    pageSize: 12,
+                    type: _shimmerLoaderType,
+                  ),
+                );
+              }
+              return BlocListener<ListItemsBloc, ListItemsState>(
+                listener: (context, state) {
+                  if (state.status != ListItemsStatus.loading) {
+                    _refreshController.refreshCompleted();
+                  }
+                  if (state.status == ListItemsStatus.success) {
+                    if (state.itemList.metadata.currentPage ==
+                        state.itemList.metadata.lastPage) {
+                      _pagingController.appendLastPage(state.itemList.items);
+                    } else {
+                      final nextPage = state.itemList.metadata.currentPage + 1;
+                      _pagingController.appendPage(
+                          state.itemList.items, nextPage);
+                    }
+                  } else if (state.status == ListItemsStatus.failure) {
+                    _pagingController.error = state.message;
+                  }
+                },
+                child: Refresher(
+                  controller: _refreshController,
+                  onRefresh: () async {
+                    _pagingController.refresh();
+                  },
+                  child: CustomScrollView(
+                    slivers: [
+                      AppPagedList<Item>(
+                        pagingController: _pagingController,
+                        listType: PagedListType.sliverList,
+                        itemBuilder: (context, item, index) =>
+                            state.wallView == WallViewOption.card
+                                ? ItemListTileCard(
+                                    item: item,
+                                    pagingController: _pagingController,
+                                  )
+                                : ItemListTileMag(
+                                    item: item,
+                                    pagingController: _pagingController,
+                                    isTextOnly:
+                                        state.wallView == WallViewOption.text,
+                                  ),
+                        shimmerLoaderType: _shimmerLoaderType,
+                        firstPageErrorTitle:
+                            TextConstants.itemListFetchErrorTitle,
+                        newPageErrorTitle:
+                            TextConstants.itemListFetchErrorTitle,
+                        noMoreItemsErrorTitle:
+                            TextConstants.itemListNoMoreItemsErrorTitle,
+                        noMoreItemsErrorMessage:
+                            TextConstants.itemListNoMoreItemsErrorMessage,
+                        listEmptyErrorTitle:
+                            TextConstants.itemListEmptyMessageTitle,
+                        listEmptyErrorMessage:
+                            TextConstants.itemListEmptyFollowMessageMessage,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
           );
         },
       ),
