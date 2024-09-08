@@ -200,9 +200,6 @@ void _initFeed() {
         createWall: serviceLocator(),
       ),
     )
-    ..registerFactory(
-      () => ScrollToTopCubit(),
-    )
     // Register blocs
     ..registerFactory(
       () => SearchFeedBloc(
