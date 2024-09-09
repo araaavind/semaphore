@@ -19,6 +19,17 @@ class WallPageSliverAppBarBottom extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false, // this will hide Drawer hamburger icon
+      backgroundColor: context.theme.colorScheme.surfaceContainerLowest,
+      shape: Border(
+        top: BorderSide(
+          color: context.theme.colorScheme.outline.withOpacity(0.8),
+          width: 0.2,
+        ),
+        bottom: BorderSide(
+          color: context.theme.colorScheme.outline.withOpacity(0.8),
+          width: 0.2,
+        ),
+      ),
       title: GestureDetector(
         onTap: () {
           Scaffold.of(context).openDrawer();
