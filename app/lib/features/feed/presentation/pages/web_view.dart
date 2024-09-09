@@ -15,6 +15,8 @@ class WebView extends StatefulWidget {
 }
 
 class _WebViewState extends State<WebView> {
+  final GlobalKey webViewKey = GlobalKey();
+
   InAppWebViewController? webViewController;
   PullToRefreshController? pullToRefreshController;
   double progress = 0;
@@ -100,12 +102,20 @@ class _WebViewState extends State<WebView> {
   }
 
   @override
+  void dispose() {
+    webViewController?.dispose();
+    pullToRefreshController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
             InAppWebView(
+              key: webViewKey,
               initialUrlRequest: URLRequest(url: WebUri(widget.url)),
               initialSettings: InAppWebViewSettings(
                 contentBlockers: contentBlockers,
@@ -114,9 +124,6 @@ class _WebViewState extends State<WebView> {
               pullToRefreshController: pullToRefreshController,
               onWebViewCreated: (controller) {
                 webViewController = controller;
-              },
-              onLoadStart: (controller, url) {
-                // Handle when loading starts
               },
               onLoadStop: (controller, url) {
                 pullToRefreshController?.endRefreshing();

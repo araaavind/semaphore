@@ -154,6 +154,9 @@ class ItemListTileCard extends StatelessWidget {
             orElse: () => snapshot.data!.first,
           );
           return CachedNetworkImage(
+            memCacheHeight: 180 * View.of(context).devicePixelRatio.ceil(),
+            maxHeightDiskCache: 180 * View.of(context).devicePixelRatio.ceil(),
+            height: 180.0,
             imageUrl: url,
             imageBuilder: (context, imageProvider) => Container(
               height: 180.0,
