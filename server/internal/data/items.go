@@ -232,7 +232,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			to_tsvector('simple', title) @@ plainto_tsquery('simple', $2)
 			OR $2 = ''
 		)
-		ORDER BY COALESCE(%s, updated_at) %s
+		ORDER BY COALESCE(%s, updated_at) %s, id desc
 		LIMIT $3 OFFSET $4`, filters.sortColumn(), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
