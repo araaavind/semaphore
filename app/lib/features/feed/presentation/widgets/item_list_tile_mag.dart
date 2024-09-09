@@ -163,6 +163,12 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                 orElse: () => snapshot.data!.first,
               );
           return CachedNetworkImage(
+            memCacheWidth: 100 * View.of(context).devicePixelRatio.ceil(),
+            memCacheHeight: 80 * View.of(context).devicePixelRatio.ceil(),
+            maxWidthDiskCache: 100 * View.of(context).devicePixelRatio.ceil(),
+            maxHeightDiskCache: 80 * View.of(context).devicePixelRatio.ceil(),
+            width: 100.0,
+            height: 80.0,
             imageUrl: url,
             imageBuilder: (context, imageProvider) => Container(
               width: 100.0,
