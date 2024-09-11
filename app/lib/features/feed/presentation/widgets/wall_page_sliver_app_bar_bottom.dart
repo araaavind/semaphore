@@ -1,4 +1,6 @@
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,9 +8,9 @@ import 'package:go_router/go_router.dart';
 
 class WallPageSliverAppBarBottom extends StatelessWidget
     implements PreferredSizeWidget {
-  final String title;
+  final Wall wall;
   const WallPageSliverAppBarBottom({
-    required this.title,
+    required this.wall,
     super.key,
   });
 
@@ -44,7 +46,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
             const SizedBox(width: 12.0),
             Expanded(
               child: Text(
-                title,
+                wall.name,
                 style: context.theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 18.0,
@@ -57,11 +59,12 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         ),
       ),
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.search),
-          color: context.theme.colorScheme.onSurface.withOpacity(0.85),
-        ),
+        if (!wall.isPrimary)
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.edit_note),
+            color: context.theme.colorScheme.onSurface.withOpacity(0.85),
+          ),
         IconButton(
           onPressed: () {
             _showFilterModal(context);
