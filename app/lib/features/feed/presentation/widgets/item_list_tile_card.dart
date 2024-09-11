@@ -153,6 +153,22 @@ class ItemListTileCard extends StatelessWidget {
             (url) => !url.contains('.svg'),
             orElse: () => snapshot.data!.first,
           );
+          if (url.endsWith('.gif')) {
+            return Container(
+              height: 180.0,
+              foregroundDecoration: BoxDecoration(
+                color:
+                    context.theme.colorScheme.primaryContainer.withAlpha(100),
+                borderRadius:
+                    BorderRadius.circular(UIConstants.magImageBorderRadius),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: Image.network(url).image,
+                ),
+              ),
+              child: _buildNoImageWidget(context),
+            );
+          }
           return CachedNetworkImage(
             memCacheHeight: 180 * View.of(context).devicePixelRatio.ceil(),
             maxHeightDiskCache: 180 * View.of(context).devicePixelRatio.ceil(),
