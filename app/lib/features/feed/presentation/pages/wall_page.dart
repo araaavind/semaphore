@@ -1,7 +1,9 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
@@ -144,6 +146,10 @@ class _WallPageState extends State<WallPage> {
       ),
       body: BlocConsumer<WallsBloc, WallsState>(
         listener: (context, state) {
+          if (state.status == WallsStatus.failure) {
+            showSnackbar(context, state.message!, type: SnackbarType.failure);
+            return;
+          }
           _pagingController.refresh();
           _setShimmerLoaderType(state.wallView);
           _scrollToTop(animate: false);
@@ -160,7 +166,13 @@ class _WallPageState extends State<WallPage> {
               controller: _scrollController,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 WallPageSliverAppBar(
-                  bottomBarTitle: state.currentWall?.name ?? 'All feeds',
+                  wall: state.currentWall ??
+                      const Wall(
+                        id: 0,
+                        isPrimary: true,
+                        name: 'All feeds',
+                        userId: 0,
+                      ),
                 ),
               ],
               body: Builder(
