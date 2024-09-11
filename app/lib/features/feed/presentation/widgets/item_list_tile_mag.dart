@@ -162,6 +162,23 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                 (url) => !url.contains('.svg'),
                 orElse: () => snapshot.data!.first,
               );
+          if (url.endsWith('.gif')) {
+            return Container(
+              width: 100.0,
+              height: 80.0,
+              foregroundDecoration: BoxDecoration(
+                color:
+                    context.theme.colorScheme.primaryContainer.withAlpha(100),
+                borderRadius:
+                    BorderRadius.circular(UIConstants.magImageBorderRadius),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: Image.network(url).image,
+                ),
+              ),
+              child: _buildNoImageWidget(context),
+            );
+          }
           return CachedNetworkImage(
             memCacheWidth: 100 * View.of(context).devicePixelRatio.ceil(),
             memCacheHeight: 80 * View.of(context).devicePixelRatio.ceil(),
@@ -185,19 +202,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
               ),
               child: _buildNoImageWidget(context),
             ),
-            placeholder: (context, url) => Shimmer.fromColors(
-              baseColor: context.theme.colorScheme.primary.withAlpha(30),
-              highlightColor: context.theme.colorScheme.primary.withAlpha(65),
-              child: Container(
-                width: 100.0,
-                height: 80.0,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(UIConstants.magImageBorderRadius),
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            placeholder: (context, _) => _buildShimmerLoader(context),
             errorWidget: (context, url, error) {
               return _buildNoImageWidget(context);
             },
@@ -220,23 +225,26 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Shimmer.fromColors(
-            baseColor: context.theme.colorScheme.primary.withAlpha(30),
-            highlightColor: context.theme.colorScheme.primary.withAlpha(65),
-            child: Container(
-              width: 100.0,
-              height: 80.0,
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.circular(UIConstants.magImageBorderRadius),
-                color: Colors.white,
-              ),
-            ),
-          );
+          return _buildShimmerLoader(context);
         }
 
         return _buildNoImageWidget(context);
       },
+    );
+  }
+
+  Shimmer _buildShimmerLoader(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: context.theme.colorScheme.primary.withAlpha(30),
+      highlightColor: context.theme.colorScheme.primary.withAlpha(65),
+      child: Container(
+        width: 100.0,
+        height: 80.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(UIConstants.magImageBorderRadius),
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }
