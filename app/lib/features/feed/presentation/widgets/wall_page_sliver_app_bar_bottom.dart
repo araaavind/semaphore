@@ -61,7 +61,13 @@ class WallPageSliverAppBarBottom extends StatelessWidget
       actions: [
         if (!wall.isPrimary)
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.pushNamed(
+                RouteConstants.wallViewPageName,
+                pathParameters: {'wallId': wall.id.toString()},
+                extra: wall,
+              );
+            },
             icon: const Icon(Icons.edit_note),
             color: context.theme.colorScheme.onSurface.withOpacity(0.85),
           ),

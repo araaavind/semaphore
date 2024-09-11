@@ -8,6 +8,7 @@ import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
+import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:app/features/feed/presentation/pages/web_view.dart';
 import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/profile/presentation/profile_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_page.dart';
+import 'package:app/features/feed/presentation/pages/wall_view_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -72,6 +74,7 @@ List<RouteBase> _buildRoutes() {
     _buildAddFeedRoute(),
     _buildAddToWallRoute(),
     _buildCreateWallRoute(),
+    _buildWallViewRoute(),
   ];
 }
 
@@ -236,5 +239,17 @@ GoRoute _buildWallRoute() {
         },
       ),
     ],
+  );
+}
+
+GoRoute _buildWallViewRoute() {
+  return GoRoute(
+    path: RouteConstants.wallViewPagePath,
+    name: RouteConstants.wallViewPageName,
+    builder: (context, state) {
+      return WallViewPage(
+        wall: state.extra as Wall,
+      );
+    },
   );
 }
