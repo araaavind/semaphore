@@ -81,8 +81,8 @@ func (app *application) routes() http.Handler {
 
 	router.Handler(http.MethodPut, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.addFeedToWall))
 	router.Handler(http.MethodDelete, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.removeFeedFromWall))
+	router.Handler(http.MethodGet, "/v1/walls/:wall_id/feeds", authenticated.ThenFunc(app.listFeedsForWall))
 	router.Handler(http.MethodGet, "/v1/walls/:wall_id/items", authenticated.ThenFunc(app.listItemsForWall))
-
 	activated := authenticated.Append(app.requireActivation)
 
 	router.Handler(http.MethodPost, "/v1/walls", activated.ThenFunc(app.createWall))
