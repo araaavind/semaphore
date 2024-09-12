@@ -116,3 +116,40 @@ func (app *application) removeFeedFromWall(w http.ResponseWriter, r *http.Reques
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func (app *application) listFeedsForWall(w http.ResponseWriter, r *http.Request) {
+	wallID, err := app.readIDParam(r, "wall_id")
+	if err != nil || wallID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	wall, err := app.models.Walls.FindByID(wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+			return
+		default:
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	user := app.contextGetSession(r).User
+	if wall.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	feeds, err := app.models.WallFeeds.FindFeedsForWall(wallID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"feeds": feeds}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
