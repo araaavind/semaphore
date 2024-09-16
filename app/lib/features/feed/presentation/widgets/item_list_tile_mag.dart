@@ -15,7 +15,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:math';
 
-class ItemListTileMag extends StatefulWidget {
+class ItemListTileMag extends StatelessWidget {
   final Item item;
   final PagingController<int, Item> _pagingController;
   final bool isTextOnly;
@@ -27,13 +27,6 @@ class ItemListTileMag extends StatefulWidget {
   }) : _pagingController = pagingController;
 
   @override
-  State<ItemListTileMag> createState() => _ItemListTileMagState();
-}
-
-class _ItemListTileMagState extends State<ItemListTileMag> {
-  String? imageUrl;
-
-  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
@@ -41,12 +34,12 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
         if (routeName == RouteConstants.wallPageName) {
           context.goNamed(
             'webview',
-            queryParameters: {'url': widget.item.link},
+            queryParameters: {'url': item.link},
           );
         } else if (routeName == RouteConstants.feedViewPageName) {
           context.goNamed(
             'feed-webview',
-            queryParameters: {'url': widget.item.link},
+            queryParameters: {'url': item.link},
             pathParameters: GoRouterState.of(context).pathParameters,
             extra: GoRouterState.of(context).extra,
           );
@@ -61,16 +54,15 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!widget.isTextOnly) _buildMagImage(),
-            if (!widget.isTextOnly)
+            if (!isTextOnly) _buildMagImage(),
+            if (!isTextOnly)
               const SizedBox(width: UIConstants.tileHorizontalTitleGap),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoSizeText(
-                    widget.item.title[0].toUpperCase() +
-                        widget.item.title.substring(1),
+                    item.title[0].toUpperCase() + item.title.substring(1),
                     style: context.theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -93,13 +85,12 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (widget.item.feed?.title != null &&
-            widget.item.feed!.title.isNotEmpty)
+        if (item.feed?.title != null && item.feed!.title.isNotEmpty)
           Flexible(
             child: InkWell(
               onTap: () async {
                 final Map<String, Object> extra = {
-                  'feed': widget.item.feed!,
+                  'feed': item.feed!,
                   'followFeedBlocValue':
                       BlocProvider.of<FollowFeedBloc>(context),
                   'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
@@ -108,16 +99,16 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                 final unfollowed = await context.pushNamed(
                   RouteConstants.feedViewPageName,
                   pathParameters: {
-                    'feedId': widget.item.feed!.id.toString(),
+                    'feedId': item.feed!.id.toString(),
                   },
                   extra: extra,
                 );
                 if ((unfollowed as bool) == true) {
-                  widget._pagingController.refresh();
+                  _pagingController.refresh();
                 }
               },
               child: AutoSizeText(
-                widget.item.feed!.title,
+                item.feed!.title,
                 style: context.theme.textTheme.bodySmall!.copyWith(
                     fontWeight: FontWeight.w300,
                     color:
@@ -128,8 +119,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
               ),
             ),
           ),
-        if ((widget.item.feed?.title != null &&
-            widget.item.feed!.title.isNotEmpty))
+        if ((item.feed?.title != null && item.feed!.title.isNotEmpty))
           Text(
             '   •   ',
             style: context.theme.textTheme.bodySmall!.copyWith(
@@ -138,9 +128,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
           ),
         Text(
           formatPublishedDate(
-            widget.item.pubUpdated ??
-                widget.item.pubDate ??
-                widget.item.createdAt,
+            item.pubUpdated ?? item.pubDate ?? item.createdAt,
           ),
           style: context.theme.textTheme.bodySmall!.copyWith(
               fontWeight: FontWeight.w300,
@@ -152,16 +140,15 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
 
   FutureBuilder<List<String>> _buildMagImage() {
     return FutureBuilder(
-      future: getItemImageUrls(widget.item),
+      future: getItemImageUrls(item),
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.data != null &&
             snapshot.data!.isNotEmpty) {
-          final url = imageUrl ??
-              snapshot.data!.firstWhere(
-                (url) => !url.contains('.svg'),
-                orElse: () => snapshot.data!.first,
-              );
+          final url = snapshot.data!.firstWhere(
+            (url) => !url.contains('.svg'),
+            orElse: () => snapshot.data!.first,
+          );
           if (url.endsWith('.gif')) {
             return Container(
               width: 100.0,
@@ -208,17 +195,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
             },
             errorListener: (e) {
               if (kDebugMode) {
-                print('Error listener for widget ${widget.item.title}: $e');
-              }
-              if (imageUrl == null) {
-                for (var url in snapshot.data!) {
-                  if (url != snapshot.data!.first && !url.contains('.svg')) {
-                    setState(() {
-                      imageUrl = url;
-                    });
-                    break;
-                  }
-                }
+                print('Error listener for widget ${item.title}: $e');
               }
             },
           );
