@@ -11,12 +11,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
 import 'core/theme/theme.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await initDependencies();
   runApp(
     MultiBlocProvider(
@@ -65,6 +67,10 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
     );
 
     context.read<AuthBloc>().add(AuthCurrentUserRequested());
+
+    Future.delayed(const Duration(milliseconds: 300), () {
+      FlutterNativeSplash.remove();
+    });
   }
 
   @override
