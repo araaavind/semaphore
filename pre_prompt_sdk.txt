@@ -1,0 +1,63 @@
+You are analyzing the smphr_sdk package, a custom Flutter package that serves as the client SDK for the Semaphore RSS reader application. This SDK provides a clean interface between the Flutter mobile app and the Go backend server, handling all network communication, authentication, and session management.
+
+The SDK is built using Dart and follows a well-structured architecture with clear separation of concerns. It leverages Dio for HTTP networking, shared_preferences for local storage, and internet_connection_checker_plus for monitoring network connectivity.
+
+The package structure is organized as follows:
+- lib/: Main package code
+  - smphr_sdk.dart: Entry point that exports all public APIs
+  - src/: Implementation details
+    - semaphore.dart: Singleton class for SDK initialization
+    - semaphore_client.dart: Main client class that manages the SDK components
+    - auth_client.dart: Handles authentication, user sessions, and tokens
+    - local_storage.dart: Manages persistent storage of session information
+    - constants.dart: SDK-wide constants and enumerations
+    - interceptors/: Dio interceptors for request/response handling
+      - auth_interceptor.dart: Adds authentication headers to requests
+      - error_interceptor.dart: Processes and standardizes error responses
+    - types/: Data models used across the SDK
+      - user.dart: User data model
+      - session.dart: Session data model with token management
+      - auth_response.dart: Authentication response model
+      - error_response.dart: Standardized error response model
+      - semaphore_exception.dart: Custom exception for API errors
+      - internal_exception.dart: Exception for internal SDK errors
+
+Key features of the SDK include:
+1. Authentication management with token-based authentication
+2. Session persistence across app restarts
+3. Automatic token refresh handling
+4. Standardized error handling and reporting
+5. Network connectivity monitoring
+6. User profile management
+
+The SDK follows a reactive programming model with Stream-based APIs for authentication status and network connectivity. This allows the app to react to changes in real-time.
+
+Authentication flow is managed through the AuthClient class, which provides methods for:
+- User registration (signupWithPassword)
+- User login (signInWithPassword)
+- Current user retrieval (getCurrentUser)
+- Username availability checking (isUsernameTaken)
+- User logout with configurable scope (signout)
+
+The SDK implements proper error handling with custom exceptions (SemaphoreException and InternalException) that provide standardized error information. The error_interceptor processes HTTP errors and converts them into application-specific exceptions.
+
+Network requests are managed using Dio with custom interceptors that handle:
+- Authentication token injection into requests
+- Token refresh on expiration
+- Error standardization
+- Network connectivity checks
+
+Local storage is abstracted through the LocalStorage interface, with a default implementation using SharedPreferences. This allows for flexible storage strategies while maintaining a consistent API.
+
+The SDK follows a singleton pattern with lazy initialization through the Semaphore class. This ensures that the SDK is properly initialized before use and prevents multiple instances.
+
+Connection state is monitored using internet_connection_checker_plus, which provides real-time updates on network connectivity. The SDK exposes this as a stream of NetworkStatus events.
+
+When analyzing the SDK, pay attention to:
+- The initialization flow in semaphore.dart and semaphore_client.dart
+- Authentication management in auth_client.dart
+- Error handling in the error_interceptor.dart
+- Data models in the types/ directory
+- Network connectivity monitoring in semaphore_client.dart
+
+The SDK is designed to be initialized at app startup and provides a clean, type-safe API for interacting with the Semaphore backend service. It handles all the complexities of network communication, authentication, and error handling, allowing the main application to focus on UI and user experience. 

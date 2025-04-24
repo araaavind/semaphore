@@ -1,0 +1,59 @@
+You are analyzing a Flutter mobile application called Semaphore, which is an RSS reader. The app follows a clean architecture pattern with feature-based organization. The codebase is structured with a clear separation of concerns following domain-driven design principles.
+
+The app is built using Flutter and utilizes several key dependencies including flutter_bloc for state management, go_router for navigation, dio for network requests, and fpdart for functional programming features. It also uses a custom SDK package called smphr_sdk for core functionality.
+
+The app structure is organized as follows:
+- Root directory: Contains Flutter configuration files and the main app structure
+- app/lib: Core application code
+  - main.dart: Entry point that initializes dependencies and sets up the app
+  - init_dependencies.dart: Service locator setup using GetIt
+  - features: Contains the main functionality of the app organized by domain
+    - auth: Authentication functionality including login, signup, and activation
+    - feed: Core RSS feed functionality including viewing, following, and organizing feeds
+    - home: Main navigation and layout structure
+    - profile: User profile management
+  - core: Shared components and utilities
+    - router: Navigation using go_router with route definitions
+    - theme: App theming and styles
+    - common: Shared widgets and cubit state management
+    - utils: Helper functions and utilities
+    - constants: App-wide constants
+    - errors: Error handling and exception management
+
+The app implements a feature-based architecture where each feature follows a clean architecture approach with:
+- data: Repositories, data sources, and models
+- domain: Use cases, entities, and repository interfaces
+- presentation: UI components, blocs/cubits for state management, and pages
+
+Key features of the application:
+1. Authentication system with login, signup, and account activation
+2. RSS feed management for following and reading content
+3. Wall feature for organizing feeds into collections
+4. Search functionality for discovering feeds
+5. Web view for reading feed content
+6. Profile management
+
+The state management relies heavily on BLoC pattern using flutter_bloc with:
+- Cubits for simpler states (AppUserCubit, NetworkCubit)
+- Blocs for more complex state management (AuthBloc, FollowFeedBloc, ListItemsBloc)
+
+Navigation is handled with go_router with a mix of regular routes and nested routes. The app uses custom transitions between screens including slide and fade transitions.
+
+The app uses a custom SDK (smphr_sdk) which encapsulates API communication, network status monitoring, and other core functionality. This SDK provides a clean interface between the server and the mobile app.
+
+The app follows responsive design principles and supports both light and dark themes using adaptive_theme package. It implements proper error handling and loading states throughout the application.
+
+The application uses a dependencies initialization pattern with GetIt for service location, making the codebase maintainable and testable.
+
+When analyzing code or making changes, be aware of:
+- Clean architecture principles and separation of concerns
+- BLoC/Cubit pattern for state management
+- Dependency injection with GetIt
+- Navigation with go_router
+- Error handling patterns
+- Responsive design considerations
+- Theme management with adaptive_theme
+
+The UI is built with Material Design components and follows Flutter best practices. Pay attention to app state persistence, authentication flow, and the feed reading experience which are core to the app's functionality.
+
+When examining specific features, first look at the domain entities and use cases to understand the core business logic, then the repositories and data sources for API integration, and finally the presentation layer for UI implementation. 

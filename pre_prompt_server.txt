@@ -1,0 +1,63 @@
+You are analyzing a Go-based backend server application for Semaphore, an RSS reader platform. The server follows a clean architecture pattern and provides a RESTful API to support the Flutter mobile application. The codebase is well-structured with a clear separation of concerns.
+
+The server is built with Go (Golang) and uses several key dependencies including pgx for PostgreSQL database access, httprouter for HTTP routing, gofeed for RSS feed parsing, and go-mail for email functionality. It does not use any large frameworks, instead opting for a collection of focused libraries.
+
+The server architecture is organized as follows:
+- /cmd: Contains the application entry points
+  - /api: The main API server implementation
+    - main.go: Application bootstrapping and configuration
+    - server.go: HTTP server setup and lifecycle management
+    - routes.go: API route definitions
+    - middleware.go: HTTP middleware functions
+    - Multiple handler files for different resources (users.go, feeds.go, etc.)
+- /internal: Private application code not intended for external use
+  - /data: Database models and query methods
+  - /validator: Input validation utilities
+  - /mailer: Email sending functionality
+  - /vcs: Version control information
+  - /metrics: Application metrics
+- /migrations: SQL database migration files using Goose migration format
+- /bin: Compiled binaries
+
+The server implements a data model that supports the following key entities:
+- Users: Application users with authentication and authorization
+- Feeds: RSS/Atom feeds with metadata and refresh capabilities
+- Items: Individual content items from feeds
+- Walls: Collections of feeds created by users
+- Feed-follows: Relationship between users and feeds they follow
+- Tokens: Authentication and verification tokens
+
+The API follows RESTful principles with endpoints for managing all these entities. Authentication is implemented using a token-based approach, and the server includes middleware for authentication, authorization, rate limiting, panic recovery, and metrics collection.
+
+Database access is managed through the internal/data package with separate model files for each entity. The application uses PostgreSQL with the pgx driver, implementing clean data access patterns with proper error handling and validation.
+
+The server includes a background process that periodically refreshes feed content, managed through a worker goroutine that respects concurrency limits. This ensures feeds are kept up-to-date while preventing excessive resource consumption.
+
+Configuration is handled through command-line flags with sensible defaults, allowing for easy deployment in different environments (development, staging, production). The application uses structured logging via slog.
+
+Key API endpoints include:
+- User management (/v1/users)
+- Authentication (/v1/tokens)
+- Feed management (/v1/feeds)
+- Wall management (/v1/walls)
+- Item retrieval (/v1/items)
+
+The server implements proper error handling with consistent error responses. It also includes a health check endpoint for monitoring. Rate limiting is implemented to prevent abuse.
+
+The database schema is defined through migrations, supporting proper versioning and deployment. The schema includes tables for all the main entities with appropriate indexes and constraints.
+
+Security features include:
+- Password hashing using secure algorithms
+- Token-based authentication
+- Rate limiting
+- Input validation
+- Proper error handling without leaking sensitive information
+
+When analyzing the codebase, pay special attention to:
+- Handler functions in the cmd/api directory to understand API behavior
+- Data models in the internal/data directory for entity relationships
+- Migration files for database schema details
+- Middleware implementation for cross-cutting concerns
+- Background processes like the feed refresher
+
+The server is designed to be deployed as a standalone API service, potentially behind a reverse proxy, and can be scaled horizontally if needed. 
