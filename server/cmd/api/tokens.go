@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha256"
 	"errors"
 	"net/http"
 	"time"
@@ -78,6 +79,12 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 		return
 	}
 
+	refreshToken, err := app.models.Tokens.New(user.ID, 30*24*time.Hour, data.ScopeRefresh)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
 	user.LastLoginAt.Time = time.Now()
 	user.LastLoginAt.Valid = true
 	err = app.models.Users.Update(user)
@@ -91,7 +98,11 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"authentication_token": token, "user": user}, nil)
+	err = app.writeJSON(w, http.StatusCreated, envelope{
+		"authentication_token": token,
+		"refresh_token":        refreshToken,
+		"user":                 user,
+	}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
@@ -101,15 +112,34 @@ func (app *application) deleteAuthenticationToken(w http.ResponseWriter, r *http
 	session := app.contextGetSession(r)
 	qs := r.URL.Query()
 
+	// Get the refresh token from the request header so that the refresh token of the session
+	// can be deleted if the logout scope is local (or avoid deleting if logout scope is others)
+	refreshToken := r.Header.Get("X-Refresh-Token")
+
 	deleteSessionScope := app.readString(qs, "scope", deleteLocalSessionScope)
 	var err error
 	switch deleteSessionScope {
 	case deleteLocalSessionScope:
-		err = app.models.Tokens.DeleteByHash(session.Token.Hash)
+		if refreshToken != "" && len(refreshToken) == 26 {
+			refreshTokenHash := sha256.Sum256([]byte(refreshToken))
+			err = app.models.Tokens.DeleteByHash(refreshTokenHash[:])
+		}
+		if err == nil {
+			err = app.models.Tokens.DeleteByHash(session.Token.Hash)
+		}
 	case deleteGlobalSessionScope:
-		err = app.models.Tokens.DeleteAllForUser(data.ScopeAuthentication, session.User.ID)
+		err = app.models.Tokens.DeleteAllForUser(data.ScopeRefresh, session.User.ID)
+		if err == nil {
+			err = app.models.Tokens.DeleteAllForUser(data.ScopeAuthentication, session.User.ID)
+		}
 	case deleteOthersSessionScope:
-		err = app.models.Tokens.DeleteAllForUserExcept(data.ScopeAuthentication, session.User.ID, session.Token.Hash)
+		if refreshToken != "" && len(refreshToken) == 26 {
+			refreshTokenHash := sha256.Sum256([]byte(refreshToken))
+			err = app.models.Tokens.DeleteAllForUserExcept(data.ScopeAuthentication, session.User.ID, refreshTokenHash[:])
+		}
+		if err == nil {
+			err = app.models.Tokens.DeleteAllForUserExcept(data.ScopeAuthentication, session.User.ID, session.Token.Hash)
+		}
 	default:
 		app.failedValidationResponse(w, r, map[string]string{"scope": "invalid scope"})
 		return
@@ -242,6 +272,81 @@ func (app *application) createPasswordResetToken(w http.ResponseWriter, r *http.
 	env := envelope{"message": "An email will be sent to you containing the password reset token"}
 
 	err = app.writeJSON(w, http.StatusAccepted, env, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) refreshAuthenticationToken(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+	if data.ValidateTokenPlaintext(v, input.RefreshToken); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	// Get the user associated with the refresh token
+	user, err := app.models.Users.GetForToken(data.ScopeRefresh, input.RefreshToken)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.invalidCredentialsResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	// Implement refresh token rotation by deleting the current refresh token
+	// and assigning a new one.
+	refreshTokenHash := sha256.Sum256([]byte(input.RefreshToken))
+	err = app.models.Tokens.DeleteByHash(refreshTokenHash[:])
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	refreshToken, err := app.models.Tokens.New(user.ID, 30*24*time.Hour, data.ScopeRefresh)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	// Create a new authentication token
+	authToken, err := app.models.Tokens.New(user.ID, 24*time.Hour, data.ScopeAuthentication)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	// Update the last login time
+	user.LastLoginAt.Time = time.Now()
+	user.LastLoginAt.Valid = true
+	err = app.models.Users.Update(user)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{
+		"authentication_token": authToken,
+		"refresh_token":        refreshToken,
+		"user":                 user,
+	}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

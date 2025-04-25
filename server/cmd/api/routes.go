@@ -59,6 +59,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodHead, "/v1/users/:username", app.checkUsername)
 
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/authentication", app.createAuthenticationToken)
+	router.HandlerFunc(http.MethodPost, "/v1/tokens/refresh", app.refreshAuthenticationToken)
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationToken)
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetToken)
 
