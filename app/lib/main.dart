@@ -4,6 +4,7 @@ import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/router/router.dart';
 import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -53,6 +54,7 @@ class SemaphoreApp extends StatefulWidget {
 
 class _SemaphoreAppState extends State<SemaphoreApp> {
   late StreamSubscription<sp.NetworkStatus> _networkStatusSubscription;
+  late final AppLifecycleListener _appLifecycleListener;
 
   @override
   void initState() {
@@ -63,6 +65,20 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
         context.read<NetworkCubit>().updateNetworkStatus(
               status == sp.NetworkStatus.connected,
             );
+      },
+      onError: (error) {
+        if (kDebugMode) {
+          print("Error in network status stream: $error");
+        }
+      },
+    );
+
+    _appLifecycleListener = AppLifecycleListener(
+      onResume: () {
+        serviceLocator<sp.SemaphoreClient>().resumeNetworkListener();
+      },
+      onPause: () {
+        serviceLocator<sp.SemaphoreClient>().pauseNetworkListener();
       },
     );
 
@@ -76,6 +92,7 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
   @override
   void dispose() {
     _networkStatusSubscription.cancel();
+    _appLifecycleListener.dispose();
     super.dispose();
   }
 

@@ -28,7 +28,7 @@ class SemaphoreClient {
   }
 
   // Stream controller for broadcasting network status changes.
-  final _networkStreamController = StreamController<NetworkStatus>();
+  final _networkStreamController = StreamController<NetworkStatus>.broadcast();
 
   /// A stream that emits the current network status.
   ///
@@ -40,13 +40,17 @@ class SemaphoreClient {
   }
 
   // Subscription to the internet connection status changes.
-  late final StreamSubscription<InternetStatus> _networkStatusListener;
+  StreamSubscription<InternetStatus>? _networkStatusListener;
+  bool _isNetworkListenerPaused = false;
 
   /// Initializes the listener for network status changes.
   ///
   /// Listens to [InternetConnection().onStatusChange] and updates the
   /// [_networkStreamController] accordingly.
   void initializeNetworkListener() {
+    // Prevent multiple initializations
+    if (_networkStatusListener != null) return;
+
     _networkStatusListener = InternetConnection().onStatusChange.listen(
       (InternetStatus status) {
         switch (status) {
@@ -57,6 +61,32 @@ class SemaphoreClient {
         }
       },
     );
+    // If it was paused before initialization, pause it now
+    if (_isNetworkListenerPaused) {
+      _networkStatusListener?.pause();
+    }
+  }
+
+  /// Pauses the network status listener.
+  ///
+  /// Call this when the app goes into the background to potentially save resources.
+  void pauseNetworkListener() {
+    if (_networkStatusListener != null && !_networkStatusListener!.isPaused) {
+      _networkStatusListener!.pause();
+    }
+    // Set flag even if listener isn't initialized yet, so it gets paused upon init
+    _isNetworkListenerPaused = true;
+  }
+
+  /// Resumes the network status listener.
+  ///
+  /// Call this when the app comes back to the foreground.
+  void resumeNetworkListener() {
+    if (_networkStatusListener != null && _networkStatusListener!.isPaused) {
+      _networkStatusListener!.resume();
+    }
+    // Reset flag
+    _isNetworkListenerPaused = false;
   }
 
   /// Initializes the [SemaphoreClient].
@@ -77,7 +107,16 @@ class SemaphoreClient {
       // Check if session is not null as having a key does not guarantee that
       // there is a non null value
       if (session != null) {
-        auth.setInitialSession(session);
+        // Use try-catch as setInitialSession might throw if JSON is invalid
+        try {
+          await auth.setInitialSession(session);
+        } catch (e) {
+          // Handle potential error during session loading, maybe log it
+          print('Error setting initial session: $e');
+          await _sharedLocalStorage.removeSession(); // Clear invalid session
+        }
+      } else {
+        await _sharedLocalStorage.removeSession(); // Clear invalid session key
       }
     }
 
@@ -92,7 +131,7 @@ class SemaphoreClient {
   /// memory leaks. It cancels the network status listener, closes the stream
   /// controller, and disposes the [AuthClient].
   void dispose() {
-    _networkStatusListener.cancel();
+    _networkStatusListener?.cancel();
     _networkStreamController.close();
     auth.dispose();
   }
