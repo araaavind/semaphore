@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -48,6 +49,9 @@ type config struct {
 		refreshStaleFeedsSince time.Duration
 		refreshPeriod          time.Duration
 	}
+	cors struct {
+		trustedOrigins []string
+	}
 }
 
 type application struct {
@@ -83,6 +87,11 @@ func main() {
 	flag.IntVar(&cfg.refresher.maxConcurrentRefreshes, "max-concurrent-refreshes", 5, "Maximum concurrent refreshes")
 	flag.DurationVar(&cfg.refresher.refreshStaleFeedsSince, "refresh-since", 5*time.Minute, "Refresh stale feeds since (default: 5m)")
 	flag.DurationVar(&cfg.refresher.refreshPeriod, "refresh-period", time.Minute, "Refresh feed period (default: 1m)")
+
+	flag.Func("cors-trusted-origins", "Trusted CORS origins (space separated within double quotes)", func(val string) error {
+		cfg.cors.trustedOrigins = strings.Fields(val)
+		return nil
+	})
 
 	// Create a new version boolean flag with the default value of false.
 	displayVersion := flag.Bool("version", false, "Display version and exit")
