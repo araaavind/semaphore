@@ -17,6 +17,8 @@ class Constants {
       'Took too long to get response. Please try again later';
   static const String connectionErrorMessage =
       'Cannot connect to server. Check your internet or try again later';
+  static const String tokenRefreshErrorMessage =
+      'Could not refresh session. Please login again';
   static const String authenticationRequiredErrorMessage =
       'You are not logged in';
   static const String activationRequiredErrorMessage =
@@ -30,7 +32,7 @@ class Constants {
   static const defaultPersistSessionKey = 'sm-session';
 
   // The margin to use when checking if a token is expired.
-  static const expiryMargin = Duration(seconds: 30);
+  static const expiryMargin = Duration(seconds: 10);
 }
 
 enum SignOutScope {

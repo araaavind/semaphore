@@ -12,7 +12,7 @@ import 'types/internal_exception.dart';
 import 'types/session.dart';
 import 'types/user.dart';
 
-enum AuthStatus { unkown, authenticated, unauthenticated }
+enum AuthStatus { unknown, authenticated, unauthenticated }
 
 class AuthClient {
   final Dio _dio;
@@ -121,6 +121,86 @@ class AuthClient {
       }
       throw InternalException(
         Constants.internalServerErrorMessage,
+        statusCode: Constants.httpInternalServerErrorCode,
+      );
+    }
+  }
+
+  /// Refreshes the authentication token using the refresh token
+  ///
+  /// Returns the new authentication session or throws an exception if the refresh token is invalid or expired
+  Future<Session> refreshToken() async {
+    if (_currentSession == null) {
+      throw SemaphoreException(
+        message: Constants.authenticationRequiredErrorMessage,
+        type: DioExceptionType.badResponse,
+        subType: SemaphoreExceptionSubType.unauthorized,
+        responseStatusCode: 401,
+        requestOptions: RequestOptions(path: '/tokens/refresh'),
+      );
+    }
+
+    if (_currentSession!.isRefreshTokenExpired) {
+      await signout();
+      throw SemaphoreException(
+        message: Constants.sessionExpiredErrorMessage,
+        type: DioExceptionType.badResponse,
+        subType: SemaphoreExceptionSubType.sessionExpired,
+        responseStatusCode: 401,
+        requestOptions: RequestOptions(path: '/tokens/refresh'),
+      );
+    }
+
+    try {
+      // Create a new Dio instance without auth interceptor to avoid infinite loops
+      final refreshDio = Dio(_dio.options);
+
+      final response = await refreshDio.post(
+        '/tokens/refresh',
+        data: {
+          'refresh_token': _currentSession!.refreshToken,
+        },
+      );
+
+      final authResponse = AuthResponse.fromMap(response.data);
+
+      if (authResponse.session == null) {
+        throw SemaphoreException(
+          message: Constants.tokenRefreshErrorMessage,
+          type: DioExceptionType.badResponse,
+          subType: SemaphoreExceptionSubType.unauthorized,
+          responseStatusCode: 401,
+          requestOptions: RequestOptions(path: '/tokens/refresh'),
+        );
+      }
+
+      // Update the session with the new tokens
+      final updatedSession = authResponse.session!;
+
+      // Persist the new session
+      await _sharedLocalStorage
+          .persistSession(jsonEncode(updatedSession.toJson()));
+      _saveSession(updatedSession);
+
+      return updatedSession;
+    } on SemaphoreException catch (e) {
+      if (kDebugMode) {
+        print('SemaphoreException ${e.message}');
+      }
+
+      // If token refresh fails, log the user out
+      await signout();
+      rethrow;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception ${e.toString()}');
+      }
+
+      // If token refresh fails with an unknown error, log the user out
+      await signout();
+
+      throw InternalException(
+        Constants.tokenRefreshErrorMessage,
         statusCode: Constants.httpInternalServerErrorCode,
       );
     }
@@ -244,7 +324,7 @@ class AuthClient {
     final session = Session.fromMap(json.decode(jsonStr));
     // Even though the json session string received may be non-null, fromMap
     // function returns a null session if the token is missing from json string
-    if (session == null || session.isExpired) {
+    if (session == null) {
       // signout to delete the session from local storage
       await signout();
       return;
