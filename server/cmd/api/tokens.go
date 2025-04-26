@@ -14,6 +14,11 @@ const (
 	deleteGlobalSessionScope = "global"
 	deleteLocalSessionScope  = "local"
 	deleteOthersSessionScope = "others"
+
+	authTokenTTL          = 1 * time.Hour
+	refreshTokenTTL       = 30 * 24 * time.Hour
+	activationTokenTTL    = 3 * 24 * time.Hour
+	passwordResetTokenTTL = 45 * time.Minute
 )
 
 func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http.Request) {
@@ -73,13 +78,13 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 		return
 	}
 
-	token, err := app.models.Tokens.New(user.ID, 24*time.Hour, data.ScopeAuthentication)
+	refreshToken, err := app.models.Tokens.New(user.ID, refreshTokenTTL, data.ScopeRefresh)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	refreshToken, err := app.models.Tokens.New(user.ID, 30*24*time.Hour, data.ScopeRefresh)
+	authToken, err := app.models.Tokens.New(user.ID, authTokenTTL, data.ScopeAuthentication)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -99,7 +104,7 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 	}
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{
-		"authentication_token": token,
+		"authentication_token": authToken,
 		"refresh_token":        refreshToken,
 		"user":                 user,
 	}, nil)
@@ -188,7 +193,7 @@ func (app *application) createActivationToken(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	token, err := app.models.Tokens.New(user.ID, 3*24*time.Hour, data.ScopeActivation)
+	token, err := app.models.Tokens.New(user.ID, activationTokenTTL, data.ScopeActivation)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -252,7 +257,7 @@ func (app *application) createPasswordResetToken(w http.ResponseWriter, r *http.
 		return
 	}
 
-	token, err := app.models.Tokens.New(user.ID, 45*time.Minute, data.ScopePasswordReset)
+	token, err := app.models.Tokens.New(user.ID, passwordResetTokenTTL, data.ScopePasswordReset)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -315,14 +320,14 @@ func (app *application) refreshAuthenticationToken(w http.ResponseWriter, r *htt
 		return
 	}
 
-	refreshToken, err := app.models.Tokens.New(user.ID, 30*24*time.Hour, data.ScopeRefresh)
+	refreshToken, err := app.models.Tokens.New(user.ID, refreshTokenTTL, data.ScopeRefresh)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
 	// Create a new authentication token
-	authToken, err := app.models.Tokens.New(user.ID, 24*time.Hour, data.ScopeAuthentication)
+	authToken, err := app.models.Tokens.New(user.ID, authTokenTTL, data.ScopeAuthentication)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

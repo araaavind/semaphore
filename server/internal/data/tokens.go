@@ -135,3 +135,15 @@ func (m TokenModel) DeleteByHash(hash []byte) error {
 	_, err := m.DB.Exec(ctx, query, hash)
 	return err
 }
+
+func (m TokenModel) DeleteExpiredTokens() error {
+	query := `
+		DELETE FROM tokens 
+		WHERE expiry < NOW()`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query)
+	return err
+}

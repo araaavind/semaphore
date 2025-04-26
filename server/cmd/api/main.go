@@ -140,6 +140,16 @@ func main() {
 		cfg.refresher.refreshPeriod,
 	)
 
+	go func() {
+		for {
+			time.Sleep(time.Hour * 12)
+			err := app.models.Tokens.DeleteExpiredTokens()
+			if err != nil {
+				logger.Error(err.Error())
+			}
+		}
+	}()
+
 	err = app.serve()
 	if err != nil {
 		logger.Error(err.Error())

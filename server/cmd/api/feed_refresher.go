@@ -26,7 +26,7 @@ func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int, refreshStaleF
 			finishChan <- true
 		}
 
-		for i := 0; i < maxConcurrentRefreshes; i++ {
+		for range maxConcurrentRefreshes {
 			app.background(refreshWorker)
 		}
 
@@ -35,7 +35,7 @@ func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int, refreshStaleF
 		}
 		close(staleFeedsChan)
 
-		for i := 0; i < maxConcurrentRefreshes; i++ {
+		for range maxConcurrentRefreshes {
 			<-finishChan
 		}
 
