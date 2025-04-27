@@ -43,6 +43,10 @@ class SemaphoreClient {
   StreamSubscription<InternetStatus>? _networkStatusListener;
   bool _isNetworkListenerPaused = false;
 
+  // Track if we're in a grace period after resuming the app
+  bool _isInPostResumeGracePeriod = false;
+  Timer? _gracePeriodTimer;
+
   /// Initializes the listener for network status changes.
   ///
   /// Listens to [InternetConnection().onStatusChange] and updates the
@@ -53,6 +57,12 @@ class SemaphoreClient {
 
     _networkStatusListener = InternetConnection().onStatusChange.listen(
       (InternetStatus status) {
+        // Ignore disconnection events during the post-resume grace period
+        if (status == InternetStatus.disconnected &&
+            _isInPostResumeGracePeriod) {
+          return; // Skip emitting the disconnected status
+        }
+
         switch (status) {
           case InternetStatus.connected:
             _networkStreamController.add(NetworkStatus.connected);
@@ -71,6 +81,10 @@ class SemaphoreClient {
   ///
   /// Call this when the app goes into the background to potentially save resources.
   void pauseNetworkListener() {
+    // Cancel any existing grace period timer
+    _gracePeriodTimer?.cancel();
+    _isInPostResumeGracePeriod = false;
+
     if (_networkStatusListener != null && !_networkStatusListener!.isPaused) {
       _networkStatusListener!.pause();
     }
@@ -81,12 +95,25 @@ class SemaphoreClient {
   /// Resumes the network status listener.
   ///
   /// Call this when the app comes back to the foreground.
-  void resumeNetworkListener() {
+  void resumeNetworkListener() async {
+    // Reset flag
+    _isNetworkListenerPaused = false;
+
+    // Start grace period to ignore disconnection events for a brief time
+    _isInPostResumeGracePeriod = true;
+
+    // Cancel any existing timer first
+    _gracePeriodTimer?.cancel();
+
+    // Set a timer to end the grace period after 3 seconds
+    _gracePeriodTimer = Timer(const Duration(seconds: 3), () {
+      _isInPostResumeGracePeriod = false;
+    });
+
+    // Now resume the listener for future updates
     if (_networkStatusListener != null && _networkStatusListener!.isPaused) {
       _networkStatusListener!.resume();
     }
-    // Reset flag
-    _isNetworkListenerPaused = false;
   }
 
   /// Initializes the [SemaphoreClient].
@@ -133,6 +160,7 @@ class SemaphoreClient {
   void dispose() {
     _networkStatusListener?.cancel();
     _networkStreamController.close();
+    _gracePeriodTimer?.cancel();
     auth.dispose();
   }
 }
