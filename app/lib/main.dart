@@ -119,7 +119,6 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
               title: 'Semaphore',
               theme: theme,
               darkTheme: darkTheme,
-              debugShowCheckedModeBanner: false,
             ),
           ),
         );

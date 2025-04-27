@@ -88,7 +88,7 @@ void showSnackbar(
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
-        dismissDirection: DismissDirection.horizontal,
+        dismissDirection: DismissDirection.down,
         padding: EdgeInsets.symmetric(
           horizontal: 24.0,
           vertical:
