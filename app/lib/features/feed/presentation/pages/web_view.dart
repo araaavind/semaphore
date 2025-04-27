@@ -104,7 +104,6 @@ class _WebViewState extends State<WebView> {
   @override
   void dispose() {
     webViewController?.dispose();
-    pullToRefreshController?.dispose();
     super.dispose();
   }
 
