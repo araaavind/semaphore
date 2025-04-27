@@ -50,7 +50,7 @@ class WallPageDrawer extends StatelessWidget {
             ),
             shape: Border(
               bottom: BorderSide(
-                width: 0,
+                width: 1,
                 color: context.theme.colorScheme.outline,
               ),
             ),
@@ -64,7 +64,7 @@ class WallPageDrawer extends StatelessWidget {
             title: Text(
               'Your walls',
               style: context.theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w900,
               ),
             ),
             children: [
@@ -132,11 +132,11 @@ class WallPageDrawer extends StatelessWidget {
             collapsedShape: Border.all(
               width: 0,
             ),
-            initiallyExpanded: true,
+            initiallyExpanded: false,
             title: Text(
               'Your feeds',
               style: context.theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w900,
               ),
             ),
             expansionAnimationStyle: AnimationStyle(

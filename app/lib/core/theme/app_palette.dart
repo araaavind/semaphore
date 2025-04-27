@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 abstract class AppPalette {
   // Brand Colors
-  static const brand = Color.fromARGB(255, 188, 112, 73);
+  static const brand = Color.fromARGB(255, 75, 2, 52);
+  static const brandDark = Color.fromARGB(255, 255, 163, 178);
 
   // Color Scheme Colors
   // Lights
@@ -30,7 +31,7 @@ abstract class AppPalette {
   static const disabledPrimary = Color.fromARGB(255, 108, 103, 106);
   static const outline = Color.fromARGB(255, 212, 212, 212);
   // Darks
-  static const primaryDark = Color.fromARGB(255, 248, 180, 175);
+  static const primaryDark = Color.fromARGB(255, 255, 163, 178);
   static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
   static const primaryContainerDark = Color.fromARGB(255, 67, 13, 32);
   static const onPrimaryContainerDark = Color.fromARGB(255, 254, 215, 210);
@@ -44,7 +45,7 @@ abstract class AppPalette {
   static const onTertiaryContainerDark = Color.fromARGB(255, 243, 248, 175);
   static const surfaceDark = Color.fromARGB(255, 0, 0, 0);
   static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
-  static const surfaceContainerLowestDark = Color.fromARGB(255, 23, 18, 17);
+  static const surfaceContainerLowestDark = Color.fromARGB(255, 19, 14, 17);
   static const surfaceContainerLowDark = Color.fromARGB(255, 32, 25, 24);
   static const surfaceContainerDark = Color.fromARGB(255, 36, 28, 27);
   static const surfaceContainerHighDark = Color.fromARGB(255, 44, 33, 31);

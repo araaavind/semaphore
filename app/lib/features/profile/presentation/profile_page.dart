@@ -37,10 +37,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'smphr',
-          style: context.theme.textTheme.headlineMedium!.copyWith(
-            fontWeight: FontWeight.w700,
-            color: AppPalette.brand,
+          'Semaphore',
+          style: context.theme.textTheme.headlineSmall!.copyWith(
+            fontWeight: FontWeight.w900,
+            color: context.theme.brightness == Brightness.dark
+                ? AppPalette.brandDark
+                : AppPalette.brand,
           ),
         ),
         actions: [

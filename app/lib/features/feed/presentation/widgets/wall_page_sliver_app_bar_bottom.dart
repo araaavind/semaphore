@@ -36,26 +36,36 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         onTap: () {
           Scaffold.of(context).openDrawer();
         },
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.arrow_right,
-              color: context.theme.colorScheme.onSurface.withOpacity(0.85),
-            ),
-            const SizedBox(width: 12.0),
-            Expanded(
-              child: Text(
-                wall.name,
-                style: context.theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 18.0,
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.theme.colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          height: 40,
+          child: IntrinsicWidth(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.arrow_right,
+                  color: context.theme.colorScheme.onSurface.withOpacity(0.85),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-              ),
+                const SizedBox(width: 4.0),
+                Flexible(
+                  child: Text(
+                    wall.name,
+                    style: context.theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18.0,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
+                const SizedBox(width: 12.0),
+              ],
             ),
-          ],
+          ),
         ),
       ),
       actions: [

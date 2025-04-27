@@ -14,10 +14,12 @@ class WallPageSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       title: Text(
-        'smphr',
-        style: context.theme.textTheme.headlineMedium!.copyWith(
-          fontWeight: FontWeight.w700,
-          color: AppPalette.brand,
+        'Semaphore',
+        style: context.theme.textTheme.headlineSmall!.copyWith(
+          fontWeight: FontWeight.w900,
+          color: context.theme.brightness == Brightness.dark
+              ? AppPalette.brandDark
+              : AppPalette.brand,
         ),
       ),
       floating: true,
