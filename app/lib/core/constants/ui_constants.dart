@@ -12,10 +12,9 @@ abstract class UIConstants {
     right: 4.0,
   );
   static const tileContentPadding = 4.0;
-  static const tileHorizontalTitleGap = 12.0;
+  static const tileHorizontalTitleGap = 16.0;
   static const defaultButtonFixedSize = Size(160, 50);
   static const borderWidth = 0.3;
 
-  static const cardImageBorderRadius = 8.0;
-  static const magImageBorderRadius = 6.0;
+  static const imageBorderRadius = 6.0;
 }

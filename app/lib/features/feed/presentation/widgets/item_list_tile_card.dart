@@ -1,19 +1,15 @@
-import 'dart:math';
-
+import 'package:app/core/common/widgets/item_cached_image.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/features/feed/utils/extract_best_image_url.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shimmer/shimmer.dart';
 
 class ItemListTileCard extends StatelessWidget {
   final Item item;
@@ -130,123 +126,14 @@ class ItemListTileCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 6.0),
-              _buildCardBody(),
+              ItemCachedImage(
+                item: item,
+                height: 180,
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
-  FutureBuilder<List<String>> _buildCardBody() {
-    return FutureBuilder(
-      future: getItemImageUrls(
-        item,
-        includeFavicon: false,
-        scrapeFromLink: true,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasData &&
-            snapshot.data != null &&
-            snapshot.data!.isNotEmpty) {
-          final url = snapshot.data!.firstWhere(
-            (url) => !url.contains('.svg'),
-            orElse: () => snapshot.data!.first,
-          );
-          if (url.endsWith('.gif')) {
-            return Container(
-              height: 180.0,
-              foregroundDecoration: BoxDecoration(
-                color:
-                    context.theme.colorScheme.primaryContainer.withAlpha(100),
-                borderRadius:
-                    BorderRadius.circular(UIConstants.magImageBorderRadius),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: Image.network(url).image,
-                ),
-              ),
-              child: _buildNoImageWidget(context),
-            );
-          }
-          return CachedNetworkImage(
-            memCacheHeight: 180 * View.of(context).devicePixelRatio.ceil(),
-            maxHeightDiskCache: 180 * View.of(context).devicePixelRatio.ceil(),
-            height: 180.0,
-            imageUrl: url,
-            imageBuilder: (context, imageProvider) => Container(
-              height: 180.0,
-              decoration: BoxDecoration(
-                color: context.theme.colorScheme.primaryContainer,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: imageProvider,
-                ),
-                borderRadius: BorderRadius.circular(
-                  UIConstants.cardImageBorderRadius,
-                ),
-              ),
-            ),
-            placeholder: (context, url) => Shimmer.fromColors(
-              baseColor: context.theme.colorScheme.primary.withAlpha(30),
-              highlightColor: context.theme.colorScheme.primary.withAlpha(65),
-              child: Container(
-                height: 180.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    UIConstants.cardImageBorderRadius,
-                  ),
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            errorWidget: (context, url, error) => _buildNoImageWidget(context),
-          );
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Shimmer.fromColors(
-            baseColor: context.theme.colorScheme.primary.withAlpha(30),
-            highlightColor: context.theme.colorScheme.primary.withAlpha(65),
-            child: Container(
-              height: 180.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                  UIConstants.cardImageBorderRadius,
-                ),
-                color: Colors.white,
-              ),
-            ),
-          );
-        }
-        return _buildNoImageWidget(context);
-      },
-    );
-  }
-}
-
-Widget _buildNoImageWidget(BuildContext context) {
-  final random = Random();
-  final hue = random.nextDouble() * 360;
-  final color = HSLColor.fromAHSL(
-    0.4, // Alpha
-    hue, // Random Hue
-    0.4, // Low Saturation (40%)
-    0.8, // High Lightness (80%)
-  ).toColor();
-  return Container(
-    height: 180.0,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(UIConstants.cardImageBorderRadius),
-      color: color,
-    ),
-    child: Center(
-      child: Text(
-        'SMPHR',
-        style: context.theme.textTheme.titleLarge!.copyWith(
-          color: context.theme.colorScheme.surface.withAlpha(180),
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    ),
-  );
 }

@@ -198,7 +198,13 @@ Future<List<String>> _scrapeImageUrlsFromLink(String link,
     {bool includeFavicon = true}) async {
   final dio = Dio();
   try {
-    final response = await dio.get(Uri.parse(link).toString());
+    final response = await dio.get(
+      Uri.parse(link).toString(),
+      options: Options(
+        receiveTimeout: const Duration(seconds: 3),
+        sendTimeout: const Duration(seconds: 3),
+      ),
+    );
     if (response.statusCode != 200) return [];
 
     final links = <String>[];

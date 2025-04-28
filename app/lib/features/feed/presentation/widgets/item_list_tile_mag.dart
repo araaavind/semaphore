@@ -1,19 +1,15 @@
+import 'package:app/core/common/widgets/item_cached_image.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/features/feed/utils/extract_best_image_url.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:shimmer/shimmer.dart';
-import 'dart:math';
 
 class ItemListTileMag extends StatelessWidget {
   final Item item;
@@ -54,25 +50,29 @@ class ItemListTileMag extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!isTextOnly) _buildMagImage(),
+            if (!isTextOnly)
+              ItemCachedImage(item: item, height: 90, width: 100),
             if (!isTextOnly)
               const SizedBox(width: UIConstants.tileHorizontalTitleGap),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoSizeText(
-                    item.title[0].toUpperCase() + item.title.substring(1),
-                    style: context.theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
+              child: SizedBox(
+                height: 90,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AutoSizeText(
+                      item.title[0].toUpperCase() + item.title.substring(1),
+                      style: context.theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                      minFontSize: 16,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  _buildSubtitle(context),
-                ],
+                    _buildSubtitle(context),
+                  ],
+                ),
               ),
             ),
           ],
@@ -121,7 +121,7 @@ class ItemListTileMag extends StatelessWidget {
           ),
         if ((item.feed?.title != null && item.feed!.title.isNotEmpty))
           Text(
-            '   •   ',
+            '  •  ',
             style: context.theme.textTheme.bodySmall!.copyWith(
                 fontWeight: FontWeight.w300,
                 color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
@@ -137,120 +137,4 @@ class ItemListTileMag extends StatelessWidget {
       ],
     );
   }
-
-  FutureBuilder<List<String>> _buildMagImage() {
-    return FutureBuilder(
-      future: getItemImageUrls(item),
-      builder: (context, snapshot) {
-        if (snapshot.hasData &&
-            snapshot.data != null &&
-            snapshot.data!.isNotEmpty) {
-          final url = snapshot.data!.firstWhere(
-            (url) => !url.contains('.svg'),
-            orElse: () => snapshot.data!.first,
-          );
-          if (url.endsWith('.gif')) {
-            return Container(
-              width: 100.0,
-              height: 80.0,
-              foregroundDecoration: BoxDecoration(
-                color:
-                    context.theme.colorScheme.primaryContainer.withAlpha(100),
-                borderRadius:
-                    BorderRadius.circular(UIConstants.magImageBorderRadius),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: Image.network(url).image,
-                ),
-              ),
-              child: _buildNoImageWidget(context),
-            );
-          }
-          return CachedNetworkImage(
-            memCacheWidth: 100 * View.of(context).devicePixelRatio.ceil(),
-            memCacheHeight: 80 * View.of(context).devicePixelRatio.ceil(),
-            maxWidthDiskCache: 100 * View.of(context).devicePixelRatio.ceil(),
-            maxHeightDiskCache: 80 * View.of(context).devicePixelRatio.ceil(),
-            width: 100.0,
-            height: 80.0,
-            imageUrl: url,
-            imageBuilder: (context, imageProvider) => Container(
-              width: 100.0,
-              height: 80.0,
-              foregroundDecoration: BoxDecoration(
-                color:
-                    context.theme.colorScheme.primaryContainer.withAlpha(100),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: imageProvider,
-                ),
-                borderRadius:
-                    BorderRadius.circular(UIConstants.magImageBorderRadius),
-              ),
-              child: _buildNoImageWidget(context),
-            ),
-            placeholder: (context, _) => _buildShimmerLoader(context),
-            errorWidget: (context, url, error) {
-              return _buildNoImageWidget(context);
-            },
-            errorListener: (e) {
-              if (kDebugMode) {
-                print('Error listener for widget ${item.title}: $e');
-              }
-            },
-          );
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildShimmerLoader(context);
-        }
-
-        return _buildNoImageWidget(context);
-      },
-    );
-  }
-
-  Shimmer _buildShimmerLoader(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: context.theme.colorScheme.primary.withAlpha(30),
-      highlightColor: context.theme.colorScheme.primary.withAlpha(65),
-      child: Container(
-        width: 100.0,
-        height: 80.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(UIConstants.magImageBorderRadius),
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
-Widget _buildNoImageWidget(BuildContext context) {
-  final random = Random();
-  final hue = random.nextDouble() * 360;
-  final color = HSLColor.fromAHSL(
-    0.4, // Alpha
-    hue, // Random Hue
-    0.4, // Low Saturation (40%)
-    0.8, // High Lightness (80%)
-  ).toColor();
-
-  return Container(
-    height: 80.0,
-    width: 100.0,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(UIConstants.magImageBorderRadius),
-      color: color,
-    ),
-    child: Center(
-      child: Text(
-        'SMPHR',
-        style: context.theme.textTheme.bodySmall!.copyWith(
-          color: context.theme.colorScheme.surface.withAlpha(180),
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    ),
-  );
 }
