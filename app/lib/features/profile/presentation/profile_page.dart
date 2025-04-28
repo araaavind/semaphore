@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Semaphore',
+          UIConstants.appBarTitle,
           style: context.theme.textTheme.headlineSmall!.copyWith(
             fontWeight: FontWeight.w900,
             color: context.theme.brightness == Brightness.dark

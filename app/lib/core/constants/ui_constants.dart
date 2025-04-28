@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 abstract class UIConstants {
+  static const appBarTitle = 'SMPHR';
+
+  static const tileItemBorderRadius = 8.0;
   static const inputBorderRadius = 8.0;
   static const buttonBorderRadius = 24.0;
   static const searchInputBorderRadius = 24.0;

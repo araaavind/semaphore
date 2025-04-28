@@ -1,5 +1,6 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
@@ -144,6 +145,9 @@ class _WallPageState extends State<WallPage> {
       drawer: WallPageDrawer(
         feedsPagingController: _drawerFeedsPagingController,
       ),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.60,
+      drawerScrimColor:
+          context.theme.colorScheme.surfaceContainerHigh.withAlpha(180),
       body: BlocConsumer<WallsBloc, WallsState>(
         listener: (context, state) {
           if (state.status == WallsStatus.failure) {

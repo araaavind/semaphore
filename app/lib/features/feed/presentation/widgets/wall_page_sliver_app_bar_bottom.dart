@@ -21,15 +21,15 @@ class WallPageSliverAppBarBottom extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false, // this will hide Drawer hamburger icon
-      backgroundColor: context.theme.colorScheme.surfaceContainerLowest,
+      backgroundColor: Colors.transparent,
       shape: Border(
         top: BorderSide(
           color: context.theme.colorScheme.outline.withOpacity(0.8),
-          width: 0.2,
+          width: 0.5,
         ),
         bottom: BorderSide(
           color: context.theme.colorScheme.outline.withOpacity(0.8),
-          width: 0.2,
+          width: 0.5,
         ),
       ),
       title: GestureDetector(
@@ -40,6 +40,14 @@ class WallPageSliverAppBarBottom extends StatelessWidget
           decoration: BoxDecoration(
             color: context.theme.colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(20),
+                blurRadius: 2,
+                spreadRadius: 0.1,
+                offset: const Offset(0.5, 0.5),
+              ),
+            ],
           ),
           height: 40,
           child: IntrinsicWidth(
@@ -90,7 +98,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
         ),
       ],
       elevation: 0,
-      scrolledUnderElevation: 1,
+      scrolledUnderElevation: 0,
     );
   }
 }
@@ -98,13 +106,12 @@ class WallPageSliverAppBarBottom extends StatelessWidget
 void _showFilterModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: context.theme.brightness == Brightness.dark
-        ? context.theme.colorScheme.surfaceContainerLowest
-        : context.theme.colorScheme.surface,
+    backgroundColor: context.theme.colorScheme.surface,
     showDragHandle: false,
     isScrollControlled: true,
+    barrierColor: context.theme.colorScheme.surfaceContainer.withAlpha(180),
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(0)),
     ),
     builder: (context) {
       return SizedBox(
@@ -127,9 +134,11 @@ void _showFilterModal(BuildContext context) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'View options',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: context.theme.textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => context.pop(),
@@ -226,18 +235,27 @@ Widget _buildOptionItem({
   bool isSelected = false,
 }) {
   return ListTile(
+    contentPadding: const EdgeInsets.symmetric(horizontal: 32),
     leading: Icon(
       icon,
-      color: isSelected ? context.theme.colorScheme.primary : Colors.grey,
+      color: isSelected
+          ? context.theme.colorScheme.primary
+          : context.theme.colorScheme.onSurface.withOpacity(0.8),
     ),
     title: Text(
       title,
       style: TextStyle(
-          color: isSelected ? context.theme.colorScheme.primary : null),
+          color: isSelected
+              ? context.theme.colorScheme.primary
+              : context.theme.colorScheme.onSurface.withOpacity(0.8)),
     ),
-    trailing: isSelected
-        ? Icon(Icons.check, color: context.theme.colorScheme.primary)
-        : null,
+    tileColor: isSelected
+        ? context.theme.colorScheme.primaryContainer
+        : context.theme.colorScheme.surface,
+    visualDensity: VisualDensity.compact,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(UIConstants.tileItemBorderRadius),
+    ),
     onTap: () {
       if (title == WallSortOption.hot.name) {
         context.read<WallsBloc>().add(

@@ -99,7 +99,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Semaphore',
+          UIConstants.appBarTitle,
           style: context.theme.textTheme.headlineSmall!.copyWith(
             fontWeight: FontWeight.w900,
             color: context.theme.brightness == Brightness.dark
@@ -145,14 +145,14 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                   Icon(
                     Icons.add,
                     size: 26.0,
-                    color: context.theme.colorScheme.primary,
+                    color: context.theme.colorScheme.onSurface,
                   ),
                   const SizedBox(width: 3.0),
                   Text(
                     'Add feed',
                     style: context.theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: context.theme.colorScheme.primary,
+                      color: context.theme.colorScheme.onSurface,
                     ),
                   ),
                 ],

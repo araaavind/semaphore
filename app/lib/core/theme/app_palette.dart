@@ -9,7 +9,7 @@ abstract class AppPalette {
   // Lights
   static const primary = Color.fromARGB(255, 75, 2, 52);
   static const onPrimary = Color.fromARGB(255, 255, 251, 245);
-  static const primaryContainer = Color.fromARGB(255, 254, 215, 210);
+  static const primaryContainer = Color.fromARGB(255, 249, 204, 198);
   static const onPrimaryContainer = Color.fromARGB(255, 67, 13, 32);
   static const secondary = Color.fromARGB(255, 154, 63, 33);
   static const onSecondary = Color.fromARGB(255, 255, 247, 238);
@@ -34,7 +34,7 @@ abstract class AppPalette {
   static const primaryDark = Color.fromARGB(255, 255, 163, 178);
   static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
   static const primaryContainerDark = Color.fromARGB(255, 67, 13, 32);
-  static const onPrimaryContainerDark = Color.fromARGB(255, 254, 215, 210);
+  static const onPrimaryContainerDark = Color.fromARGB(255, 249, 204, 198);
   static const secondaryDark = Color.fromARGB(255, 220, 142, 102);
   static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
   static const secondaryContainerDark = Color.fromARGB(255, 100, 41, 11);

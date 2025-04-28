@@ -1,3 +1,4 @@
+import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_sliver_app_bar_bottom.dart';
@@ -14,7 +15,7 @@ class WallPageSliverAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       title: Text(
-        'Semaphore',
+        UIConstants.appBarTitle,
         style: context.theme.textTheme.headlineSmall!.copyWith(
           fontWeight: FontWeight.w900,
           color: context.theme.brightness == Brightness.dark
@@ -22,6 +23,7 @@ class WallPageSliverAppBar extends StatelessWidget {
               : AppPalette.brand,
         ),
       ),
+      centerTitle: true,
       floating: true,
       pinned: true,
       snap: false,

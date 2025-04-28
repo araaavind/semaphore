@@ -23,12 +23,11 @@ class WallPageDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       elevation: 4.0,
-      backgroundColor: context.theme.brightness == Brightness.dark
-          ? context.theme.colorScheme.surfaceContainerLowest
-          : context.theme.colorScheme.surface,
+      backgroundColor: context.theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
+      shadowColor: Colors.black.withAlpha(140),
       child: ListView(
         children: [
           ExpansionTile(
@@ -88,27 +87,52 @@ class WallPageDrawer extends StatelessWidget {
                   return Column(
                     children: [
                       ...state.walls.map(
-                        (e) => ListTile(
-                          selected: e.id == state.currentWall!.id,
-                          selectedTileColor:
-                              context.theme.colorScheme.primaryContainer,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              UIConstants.inputBorderRadius,
+                        (e) => Container(
+                          decoration: e.id == state.currentWall!.id
+                              ? BoxDecoration(
+                                  color: context
+                                      .theme.colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.tileItemBorderRadius,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withAlpha(20),
+                                      blurRadius: 2,
+                                      spreadRadius: 0.1,
+                                      offset: const Offset(0.5, 0.5),
+                                    ),
+                                  ],
+                                )
+                              : null,
+                          child: ListTile(
+                            selected: e.id == state.currentWall!.id,
+                            selectedTileColor:
+                                context.theme.colorScheme.primaryContainer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.tileItemBorderRadius,
+                              ),
                             ),
+                            selectedColor: context.theme.colorScheme.primary,
+                            visualDensity: VisualDensity.compact,
+                            title: Text(
+                              e.name,
+                              style:
+                                  context.theme.textTheme.titleSmall?.copyWith(
+                                color: context.theme.colorScheme.onSurface,
+                                fontWeight: e.id == state.currentWall!.id
+                                    ? FontWeight.w900
+                                    : FontWeight.w400,
+                              ),
+                            ),
+                            onTap: () {
+                              context.pop();
+                              context
+                                  .read<WallsBloc>()
+                                  .add(SelectWallRequested(selectedWall: e));
+                            },
                           ),
-                          selectedColor: context.theme.colorScheme.primary,
-                          visualDensity: VisualDensity.compact,
-                          title: Text(
-                            e.name,
-                            style: context.theme.textTheme.titleSmall,
-                          ),
-                          onTap: () {
-                            context.pop();
-                            context
-                                .read<WallsBloc>()
-                                .add(SelectWallRequested(selectedWall: e));
-                          },
                         ),
                       ),
                     ],
@@ -128,9 +152,11 @@ class WallPageDrawer extends StatelessWidget {
             childrenPadding: const EdgeInsets.all(8.0),
             shape: Border.all(
               width: 0,
+              color: context.theme.colorScheme.outline,
             ),
             collapsedShape: Border.all(
               width: 0,
+              color: context.theme.colorScheme.outline,
             ),
             initiallyExpanded: false,
             title: Text(
