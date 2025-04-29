@@ -38,6 +38,8 @@ class TextConstants {
       'Given url does not point to any valid feed';
   static const String accountActivationSuccessMessage =
       'Your account is now active!';
+  static const String passwordResetSuccessMessage =
+      'Your password has been reset! Login to continue';
 
   static const String itemListFetchErrorTitle = 'Failed to load posts';
   static const String itemListNoMoreItemsErrorTitle = 'That\'s all for now';

@@ -28,6 +28,10 @@ abstract interface class AuthRemoteDatasource {
   Future<String> sendActivationToken(String email);
 
   Future<void> activateUser(String token);
+
+  Future<String> sendPasswordResetToken(String email);
+
+  Future<void> resetPassword(String token, String password);
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -198,6 +202,61 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         '/users/activate',
         data: {
           'token': token,
+        },
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<String> sendPasswordResetToken(String email) async {
+    try {
+      final response = await semaphoreClient.dio.post(
+        '/tokens/password-reset',
+        data: {
+          'email': email,
+        },
+      );
+      return response.data['message'];
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> resetPassword(String token, String password) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/users/password',
+        data: {
+          'token': token,
+          'password': password,
         },
       );
       return;

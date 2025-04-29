@@ -128,6 +128,29 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
+                        GestureDetector(
+                          onTap: () {
+                            context.pushNamed(
+                              RouteConstants.sendResetTokenPageName,
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12),
+                            child: Align(
+                              heightFactor: 2,
+                              alignment: Alignment.centerLeft,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'Forgot password? ',
+                                  style: context.theme.textTheme.bodyMedium
+                                      ?.copyWith(
+                                    color: context.theme.colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         Button(
                           text: 'Log in',

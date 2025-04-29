@@ -8,6 +8,7 @@ import 'package:app/features/auth/domain/usecases/activate_user.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
 import 'package:app/features/auth/domain/usecases/send_activation_token.dart';
+import 'package:app/features/auth/domain/usecases/send_password_reset_token.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
@@ -40,5 +41,8 @@ import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
+
+import 'features/auth/domain/usecases/resetPassword.dart';
+import 'features/auth/presentation/cubit/reset_password/reset_password_cubit.dart';
 
 part 'init_dependencies.main.dart';

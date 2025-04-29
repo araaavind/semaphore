@@ -6,6 +6,8 @@ import 'package:app/core/router/transitions/slide_transition_page.dart';
 import 'package:app/features/auth/presentation/pages/activation_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
+import 'package:app/features/auth/presentation/pages/reset_password_page.dart';
+import 'package:app/features/auth/presentation/pages/send_reset_token_page.dart';
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
@@ -39,11 +41,17 @@ String? _redirectLogic(BuildContext context, GoRouterState state) {
   final onUsernameRoute =
       state.topRoute!.name == RouteConstants.usernamePageName;
   final onSignupRoute = state.topRoute!.name == RouteConstants.signupPageName;
+  final onSendResetTokenRoute =
+      state.topRoute!.name == RouteConstants.sendResetTokenPageName;
+  final onResetPasswordRoute =
+      state.topRoute!.name == RouteConstants.resetPasswordPageName;
 
   if (appUserState is AppUserInitial &&
       !onLoginRoute &&
       !onUsernameRoute &&
-      !onSignupRoute) {
+      !onSignupRoute &&
+      !onSendResetTokenRoute &&
+      !onResetPasswordRoute) {
     return RouteConstants.loginPagePath;
   }
   if (appUserState is AppUserLoggedIn && onLoginRoute) {
@@ -71,6 +79,8 @@ List<RouteBase> _buildRoutes() {
     ),
     _buildLoginRoute(),
     _buildActivationRoute(),
+    _buildResetPasswordRoute(),
+    _buildSendResetTokenRoute(),
     _buildAddFeedRoute(),
     _buildAddToWallRoute(),
     _buildCreateWallRoute(),
@@ -121,6 +131,24 @@ GoRoute _buildActivationRoute() {
           state.uri.queryParameters['isOnboarding'] == 'true';
       return ActivationPage(isOnboarding: isOnboarding);
     },
+  );
+}
+
+GoRoute _buildResetPasswordRoute() {
+  return GoRoute(
+    path: RouteConstants.resetPasswordPagePath,
+    name: RouteConstants.resetPasswordPageName,
+    builder: (context, state) {
+      return const ResetPasswordPage();
+    },
+  );
+}
+
+GoRoute _buildSendResetTokenRoute() {
+  return GoRoute(
+    path: RouteConstants.sendResetTokenPagePath,
+    name: RouteConstants.sendResetTokenPageName,
+    builder: (context, state) => const SendResetTokenPage(),
   );
 }
 

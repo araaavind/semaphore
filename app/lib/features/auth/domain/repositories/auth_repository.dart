@@ -26,4 +26,7 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, String>> sendActivationToken(String email);
   Future<Either<Failure, void>> activateUser(String token);
+
+  Future<Either<Failure, String>> sendPasswordResetToken(String email);
+  Future<Either<Failure, void>> resetPassword(String token, String password);
 }

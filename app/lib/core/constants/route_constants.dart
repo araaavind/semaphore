@@ -19,6 +19,10 @@ class RouteConstants {
   static const profilePageName = 'profile';
   static const activationPagePath = '/activate';
   static const activationPageName = 'activate';
+  static const resetPasswordPagePath = '/reset-password';
+  static const resetPasswordPageName = 'reset-password';
+  static const sendResetTokenPagePath = '/send-reset-token';
+  static const sendResetTokenPageName = 'send-reset-token';
   static const webViewPagePath = 'view';
   static const webViewPageName = 'webview';
   static const feedWebViewPagePath = 'view';
