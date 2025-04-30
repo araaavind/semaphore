@@ -65,7 +65,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
             IconButton(
               onPressed: () {
                 context.pushNamed(
-                  RouteConstants.wallViewPageName,
+                  RouteConstants.wallEditPageName,
                   pathParameters: {'wallId': wall.id.toString()},
                   extra: wall,
                 );

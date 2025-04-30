@@ -35,13 +35,17 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           message: l.message,
         ));
       case Right(value: final walls):
+        Wall? currentWall;
+        if (state.currentWall != null) {
+          currentWall = walls
+              .firstWhere((element) => element.id == state.currentWall!.id);
+        } else {
+          currentWall = walls.firstWhere((element) => element.isPrimary);
+        }
         emit(state.copyWith(
           status: WallsStatus.success,
           walls: walls,
-          currentWall: state.currentWall ??
-              walls.firstWhere(
-                (element) => element.isPrimary,
-              ),
+          currentWall: currentWall,
         ));
     }
   }

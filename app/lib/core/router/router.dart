@@ -23,7 +23,7 @@ import 'package:app/features/feed/presentation/pages/web_view.dart';
 import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/profile/presentation/profile_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_page.dart';
-import 'package:app/features/feed/presentation/pages/wall_view_page.dart';
+import 'package:app/features/feed/presentation/pages/wall_edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -84,7 +84,6 @@ List<RouteBase> _buildRoutes() {
     _buildAddFeedRoute(),
     _buildAddToWallRoute(),
     _buildCreateWallRoute(),
-    _buildWallViewRoute(),
   ];
 }
 
@@ -266,16 +265,17 @@ GoRoute _buildWallRoute() {
           );
         },
       ),
+      _buildWallEditRoute(),
     ],
   );
 }
 
-GoRoute _buildWallViewRoute() {
+GoRoute _buildWallEditRoute() {
   return GoRoute(
-    path: RouteConstants.wallViewPagePath,
-    name: RouteConstants.wallViewPageName,
+    path: RouteConstants.wallEditPagePath,
+    name: RouteConstants.wallEditPageName,
     builder: (context, state) {
-      return WallViewPage(
+      return WallEditPage(
         wall: state.extra as Wall,
       );
     },

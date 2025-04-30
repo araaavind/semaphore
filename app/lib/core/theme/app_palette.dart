@@ -9,7 +9,7 @@ abstract class AppPalette {
   static const brand = Color.fromARGB(255, 95, 14, 27);
 
   // surface
-  static const surface = Color.fromARGB(255, 254, 241, 243);
+  static const surface = Color.fromARGB(255, 255, 248, 249);
   static const onSurface = Color.fromARGB(255, 17, 1, 4);
   static const surfaceContainerLowest = Color.fromARGB(255, 250, 231, 234);
   static const surfaceContainerLow = Color.fromARGB(255, 241, 224, 227);
@@ -19,7 +19,7 @@ abstract class AppPalette {
 
   // primary
   static const primary = Color.fromARGB(255, 95, 14, 27);
-  static const onPrimary = Color.fromARGB(255, 254, 241, 243);
+  static const onPrimary = Color.fromARGB(255, 255, 248, 249);
   static const primaryContainer = Color.fromARGB(255, 247, 144, 153);
   static const onPrimaryContainer = Color.fromARGB(255, 32, 5, 14);
   static const disabledPrimary = Color.fromARGB(255, 92, 77, 79);
@@ -47,10 +47,10 @@ abstract class AppPalette {
   static const snackbarSuccessOnContainer = Color.fromARGB(255, 3, 27, 7);
   static const snackbarFailureContainer = Color.fromARGB(255, 231, 110, 110);
   static const snackbarFailureOnContainer = Color.fromARGB(255, 25, 2, 2);
-  static const snackbarInfoContainer = Color.fromARGB(255, 17, 1, 4);
-  static const snackbarInfoOnContainer = Color.fromARGB(255, 254, 241, 243);
-  static const snackbarUtilContainer = Color.fromARGB(255, 17, 1, 4);
-  static const snackbarUtilOnContainer = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarInfoContainer = Color.fromARGB(255, 53, 37, 40);
+  static const snackbarInfoOnContainer = Color.fromARGB(255, 255, 248, 249);
+  static const snackbarUtilContainer = Color.fromARGB(255, 53, 37, 40);
+  static const snackbarUtilOnContainer = Color.fromARGB(255, 255, 248, 249);
   static const snackbarActionTextColor = Color.fromARGB(255, 247, 144, 153);
 
   /*
@@ -62,7 +62,7 @@ abstract class AppPalette {
 
   // surface
   static const surfaceDark = Color.fromARGB(255, 6, 0, 1);
-  static const onSurfaceDark = Color.fromARGB(255, 254, 241, 243);
+  static const onSurfaceDark = Color.fromARGB(255, 255, 248, 249);
   static const surfaceContainerLowestDark = Color.fromARGB(255, 21, 16, 16);
   static const surfaceContainerLowDark = Color.fromARGB(255, 29, 21, 21);
   static const surfaceContainerDark = Color.fromARGB(255, 33, 24, 24);
@@ -100,9 +100,9 @@ abstract class AppPalette {
   static const snackbarFailureContainerDark = Color.fromARGB(255, 71, 15, 15);
   static const snackbarFailureOnContainerDark =
       Color.fromARGB(255, 255, 223, 215);
-  static const snackbarInfoContainerDark = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarInfoContainerDark = Color.fromARGB(255, 199, 177, 181);
   static const snackbarInfoOnContainerDark = Color.fromARGB(255, 6, 0, 1);
-  static const snackbarUtilContainerDark = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarUtilContainerDark = Color.fromARGB(255, 199, 177, 181);
   static const snackbarUtilOnContainerDark = Color.fromARGB(255, 6, 0, 1);
   static const snackbarActionTextColorDark = Color.fromARGB(255, 95, 14, 27);
 

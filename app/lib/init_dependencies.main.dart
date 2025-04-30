@@ -201,6 +201,16 @@ void _initFeed() {
       ),
     )
     ..registerFactory(
+      () => UpdateWall(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => DeleteWall(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => AddFeedToWall(
         serviceLocator(),
       ),
@@ -212,8 +222,10 @@ void _initFeed() {
     )
     // Register cubits
     ..registerFactory(
-      () => CreateWallCubit(
+      () => WallCubit(
         createWall: serviceLocator(),
+        updateWall: serviceLocator(),
+        deleteWall: serviceLocator(),
       ),
     )
     ..registerFactory(

@@ -1,13 +1,12 @@
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
-import 'package:app/core/utils/mingcute.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/features/feed/presentation/cubit/create_wall/create_wall_cubit.dart';
+import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +60,7 @@ class HomePage extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(
-          create: (_) => serviceLocator<CreateWallCubit>(),
+          create: (_) => serviceLocator<WallCubit>(),
         ),
         BlocProvider(
           create: (_) => serviceLocator<SearchFeedBloc>(),
@@ -108,24 +107,24 @@ class HomePage extends StatelessWidget {
             child: Wrap(
               children: [
                 BottomNavigationBar(
-              currentIndex: _calculateSelectedIndex(context),
-              onTap: (value) => _onItemTapped(value, context),
-              iconSize: 26.0,
-              items: const [
-                BottomNavigationBarItem(
-                  label: 'Home',
-                  icon: Icon(MingCute.home_4_line),
-                  activeIcon: Icon(MingCute.home_4_fill),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Search',
-                  icon: Icon(MingCute.search_line),
-                  activeIcon: Icon(MingCute.search_fill),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Profile',
-                  icon: Icon(MingCute.user_3_line),
-                  activeIcon: Icon(MingCute.user_3_fill),
+                  currentIndex: _calculateSelectedIndex(context),
+                  onTap: (value) => _onItemTapped(value, context),
+                  iconSize: 26.0,
+                  items: const [
+                    BottomNavigationBarItem(
+                      label: 'Home',
+                      icon: Icon(MingCute.home_4_line),
+                      activeIcon: Icon(MingCute.home_4_fill),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Search',
+                      icon: Icon(MingCute.search_line),
+                      activeIcon: Icon(MingCute.search_fill),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Profile',
+                      icon: Icon(MingCute.user_3_line),
+                      activeIcon: Icon(MingCute.user_3_fill),
                     ),
                   ],
                 ),

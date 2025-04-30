@@ -56,6 +56,10 @@ abstract interface class FeedRemoteDatasource {
 
   Future<void> createWall(String wallName);
 
+  Future<WallModel> updateWall(int wallId, String wallName);
+
+  Future<void> deleteWall(int wallId);
+
   Future<void> addFeedToWall(int feedId, int wallId);
 
   Future<void> removeFeedFromWall(int feedId, int wallId);
@@ -110,9 +114,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       );
       return response.data['feed_id'] as int;
     } on sp.SemaphoreException catch (e) {
-      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
-          e.fieldErrors != null &&
-          e.fieldErrors!.isNotEmpty) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField) {
         throw ServerException(e.message!, fieldErrors: e.fieldErrors);
       }
       throw ServerException(e.message!);
@@ -323,11 +325,47 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       await semaphoreClient.dio.post('/walls', data: {'name': wallName});
       return;
     } on sp.SemaphoreException catch (e) {
-      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
-          e.fieldErrors != null &&
-          e.fieldErrors!.isNotEmpty) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField) {
         throw ServerException(e.message!, fieldErrors: e.fieldErrors);
       }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<WallModel> updateWall(int wallId, String wallName) async {
+    try {
+      final response = await semaphoreClient.dio
+          .put('/walls/$wallId', data: {'name': wallName});
+      return WallModel.fromMap(response.data['wall']);
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> deleteWall(int wallId) async {
+    try {
+      await semaphoreClient.dio.delete('/walls/$wallId');
+      return;
+    } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {
       throw ServerException(e.message);

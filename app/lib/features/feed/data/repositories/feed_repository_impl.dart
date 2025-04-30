@@ -178,6 +178,28 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
+  Future<Either<Failure, Wall>> updateWall(int wallId, String wallName) async {
+    try {
+      final updatedWall = await feedRemoteDatasource.updateWall(
+        wallId,
+        wallName,
+      );
+      return right(updatedWall);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message, fieldErrors: e.fieldErrors));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteWall(int wallId) async {
+    try {
+      return right(await feedRemoteDatasource.deleteWall(wallId));
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> addFeedToWall(int feedId, int wallId) async {
     try {
       return right(
@@ -190,7 +212,9 @@ class FeedRepositoryImpl implements FeedRepository {
 
   @override
   Future<Either<Failure, void>> removeFeedFromWall(
-      int feedId, int wallId) async {
+    int feedId,
+    int wallId,
+  ) async {
     try {
       return right(
         await feedRemoteDatasource.removeFeedFromWall(feedId, wallId),

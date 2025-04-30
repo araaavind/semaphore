@@ -31,6 +31,6 @@ class RouteConstants {
   static const createWallPageName = 'create-wall';
   static const addToWallPagePath = '/add-to-wall/:feedId';
   static const addToWallPageName = 'add-to-wall';
-  static const wallViewPagePath = '/walls/:wallId';
-  static const wallViewPageName = 'wall-view';
+  static const wallEditPagePath = ':wallId/edit';
+  static const wallEditPageName = 'wall-edit';
 }

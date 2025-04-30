@@ -22,6 +22,9 @@ class WallPageDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      width: MediaQuery.of(context).orientation == Orientation.portrait
+          ? MediaQuery.of(context).size.width * 0.75
+          : MediaQuery.of(context).size.width * 0.4,
       elevation: 6.0,
       backgroundColor: context.theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(
@@ -62,7 +65,7 @@ class WallPageDrawer extends StatelessWidget {
             collapsedShape: Border(
               bottom: BorderSide(
                 width: 0,
-                color: context.theme.colorScheme.outline,
+                color: context.theme.colorScheme.outline.withOpacity(0),
               ),
             ),
             initiallyExpanded: true,
@@ -164,13 +167,13 @@ class WallPageDrawer extends StatelessWidget {
             childrenPadding: const EdgeInsets.all(8.0),
             shape: Border.all(
               width: 0,
-              color: context.theme.colorScheme.outline,
+              color: context.theme.colorScheme.outline.withOpacity(0),
             ),
             collapsedShape: Border.all(
               width: 0,
-              color: context.theme.colorScheme.outline,
+              color: context.theme.colorScheme.outline.withOpacity(0),
             ),
-            initiallyExpanded: false,
+            initiallyExpanded: true,
             title: Text(
               'Your feeds',
               style: context.theme.textTheme.titleLarge?.copyWith(

@@ -2,7 +2,7 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
-import 'package:app/features/feed/presentation/cubit/create_wall/create_wall_cubit.dart';
+import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +28,7 @@ class _CreateWallPageState extends State<CreateWallPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => serviceLocator<CreateWallCubit>(),
+      create: (context) => serviceLocator<WallCubit>(),
       child: Scaffold(
         appBar: AppBar(),
         body: Builder(builder: (context) {
@@ -51,9 +51,10 @@ class _CreateWallPageState extends State<CreateWallPage> {
                   ),
                   const SizedBox(height: 20),
                   Center(
-                    child: BlocConsumer<CreateWallCubit, CreateWallState>(
+                    child: BlocConsumer<WallCubit, WallState>(
                       listener: (context, state) {
-                        if (state.status == CreateWallStatus.failure) {
+                        if (state.status == WallStatus.failure &&
+                            state.action == WallAction.create) {
                           if (state.fieldErrors != null &&
                               state.fieldErrors!['name'] != null) {
                             showSnackbar(
@@ -69,7 +70,8 @@ class _CreateWallPageState extends State<CreateWallPage> {
                             );
                           }
                         }
-                        if (state.status == CreateWallStatus.success) {
+                        if (state.status == WallStatus.success &&
+                            state.action == WallAction.create) {
                           showSnackbar(
                             context,
                             'Your wall has been created!',
@@ -85,11 +87,12 @@ class _CreateWallPageState extends State<CreateWallPage> {
                             if (formKey.currentState!.validate()) {
                               FocusManager.instance.primaryFocus?.unfocus();
                               context
-                                  .read<CreateWallCubit>()
+                                  .read<WallCubit>()
                                   .createWall(wallNameController.text.trim());
                             }
                           },
-                          isLoading: state.status == CreateWallStatus.loading,
+                          isLoading: state.status == WallStatus.loading &&
+                              state.action == WallAction.create,
                         );
                       },
                     ),

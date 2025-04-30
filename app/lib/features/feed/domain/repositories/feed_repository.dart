@@ -54,6 +54,10 @@ abstract interface class FeedRepository {
 
   Future<Either<Failure, void>> createWall(String wallName);
 
+  Future<Either<Failure, Wall>> updateWall(int wallId, String wallName);
+
+  Future<Either<Failure, void>> deleteWall(int wallId);
+
   Future<Either<Failure, void>> addFeedToWall(int feedId, int wallId);
 
   Future<Either<Failure, void>> removeFeedFromWall(int feedId, int wallId);
