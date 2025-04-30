@@ -13,7 +13,7 @@ class AppTextField<T> extends StatefulWidget {
   final Widget? suffixIcon;
   final int? errorMaxLines;
   final Color? validBorderColor;
-
+  final TextInputType? keyboardType;
   const AppTextField({
     super.key,
     required this.controller,
@@ -26,6 +26,7 @@ class AppTextField<T> extends StatefulWidget {
     this.suffixIcon,
     this.errorMaxLines,
     this.validBorderColor,
+    this.keyboardType,
   });
 
   @override
@@ -45,6 +46,7 @@ class _AppTextFieldState<T> extends State<AppTextField<T>> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         errorMaxLines: widget.errorMaxLines,
         hintText: widget.hintText,

@@ -69,6 +69,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                   AppTextField(
                     hintText: 'Username',
                     controller: usernameController,
+                    keyboardType: TextInputType.name,
                     errorMaxLines: 2,
                     onChanged: (value) {
                       _debouncer.run(

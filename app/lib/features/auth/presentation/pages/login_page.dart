@@ -90,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                         AppTextField(
                           hintText: 'Username or Email',
                           controller: usernameOrEmailController,
+                          keyboardType: TextInputType.emailAddress,
                           onChanged: (_) => setState(() {
                             fieldErrors = null;
                           }),
@@ -118,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         AppTextField(
                           hintText: 'Password',
                           controller: passwordController,
+                          keyboardType: TextInputType.visiblePassword,
                           isPassword: true,
                           onChanged: (_) => setState(() {
                             fieldErrors = null;

@@ -51,6 +51,7 @@ class _SendResetTokenPageState extends State<SendResetTokenPage> {
                 AppTextField(
                   hintText: 'Email',
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   onChanged: (_) => setState(() {
                     fieldErrors = null;
                   }),

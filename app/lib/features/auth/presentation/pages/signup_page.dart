@@ -67,6 +67,7 @@ class _SignupPageState extends State<SignupPage> {
               AppTextField(
                 hintText: 'Full name',
                 controller: nameController,
+                keyboardType: TextInputType.name,
                 onChanged: (_) => updateFieldErrors(),
                 validator: (_) => validateFields(
                   jsonKey: 'full_name',
@@ -78,6 +79,7 @@ class _SignupPageState extends State<SignupPage> {
               AppTextField(
                 hintText: 'Email',
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 onChanged: (_) => updateFieldErrors(),
                 validator: (_) => validateFields(
                   jsonKey: 'email',
@@ -89,6 +91,7 @@ class _SignupPageState extends State<SignupPage> {
               AppTextField(
                 hintText: 'Password',
                 controller: passwordController,
+                keyboardType: TextInputType.visiblePassword,
                 onChanged: (_) => updateFieldErrors(),
                 isPassword: true,
                 validator: (_) => validateFields(
