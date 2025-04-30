@@ -25,6 +25,8 @@ class Constants {
       'You must activate your account to perform this action';
   static const String invalidInputErrorMessage =
       'Something went wrong. Check your inputs';
+  static const String unprocessableEntityErrorMessage =
+      'Something went wrong. Request cannot be processed';
   static const String notFoundErrorMessage =
       'Could not find what you\'re looking for';
 

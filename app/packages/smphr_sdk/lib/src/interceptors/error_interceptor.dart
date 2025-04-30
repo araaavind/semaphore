@@ -60,6 +60,7 @@ class ErrorInterceptor extends Interceptor {
               if (e is SemaphoreException) {
                 err = e;
               } else {
+                print('63 error ${err.response}');
                 err = SemaphoreException(
                   subType: SemaphoreExceptionSubType.none,
                   message: Constants.internalServerErrorMessage,
@@ -78,14 +79,24 @@ class ErrorInterceptor extends Interceptor {
           );
         } else if (err.response != null && err.response!.statusCode == 422) {
           final errRes = ErrorResponse.fromMap(err.response?.data);
-          err = SemaphoreException(
-            message: Constants.invalidInputErrorMessage,
-            subType: SemaphoreExceptionSubType.invalidField,
-            type: err.type,
-            requestOptions: err.requestOptions,
-            fieldErrors: errRes.fieldErrors,
-            responseStatusCode: 422,
-          );
+          if (errRes.fieldErrors != null && errRes.fieldErrors!.isNotEmpty) {
+            err = SemaphoreException(
+              message: Constants.invalidInputErrorMessage,
+              subType: SemaphoreExceptionSubType.invalidField,
+              type: err.type,
+              requestOptions: err.requestOptions,
+              fieldErrors: errRes.fieldErrors,
+              responseStatusCode: 422,
+            );
+          } else {
+            err = SemaphoreException(
+              message: errRes.message,
+              subType: SemaphoreExceptionSubType.unprocessableEntity,
+              type: err.type,
+              requestOptions: err.requestOptions,
+              responseStatusCode: 422,
+            );
+          }
         } else if (err.response != null && err.response!.statusCode == 403) {
           final errRes = ErrorResponse.fromMap(err.response?.data);
           err = SemaphoreException(
@@ -96,6 +107,7 @@ class ErrorInterceptor extends Interceptor {
             responseStatusCode: 403,
           );
         } else {
+          print('110 error ${err.response}');
           err = SemaphoreException(
             message: Constants.internalServerErrorMessage,
             responseStatusCode: err.response?.statusCode,
@@ -111,6 +123,7 @@ class ErrorInterceptor extends Interceptor {
         }
         break;
       default:
+        print('125 error ${err.response}');
         err = SemaphoreException(
           message: Constants.internalServerErrorMessage,
           requestOptions: err.requestOptions,

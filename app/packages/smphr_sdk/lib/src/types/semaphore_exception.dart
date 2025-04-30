@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 enum SemaphoreExceptionSubType {
   unknown,
   invalidField,
+  unprocessableEntity,
   none,
   notFound,
   unauthorized,
