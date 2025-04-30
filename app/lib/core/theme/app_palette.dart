@@ -72,8 +72,8 @@ abstract class AppPalette {
   // primary
   static const primaryDark = Color.fromARGB(255, 255, 148, 155);
   static const onPrimaryDark = Color.fromARGB(255, 28, 2, 7);
-  static const primaryContainerDark = Color.fromARGB(255, 95, 14, 27);
-  static const onPrimaryContainerDark = Color.fromARGB(255, 255, 219, 225);
+  static const primaryContainerDark = Color.fromARGB(255, 89, 21, 32);
+  static const onPrimaryContainerDark = Color.fromARGB(255, 255, 242, 244);
   static const disabledPrimaryDark = Color.fromARGB(255, 222, 203, 204);
 
   static const secondaryDark = Color.fromARGB(255, 227, 150, 124);

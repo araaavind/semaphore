@@ -142,14 +142,14 @@ Widget _buildOptionItem({
     leading: Icon(
       icon,
       color: isSelected
-          ? context.theme.colorScheme.primary
+          ? context.theme.colorScheme.onPrimaryContainer
           : context.theme.colorScheme.onSurface.withOpacity(0.6),
     ),
     title: Text(
       title,
       style: TextStyle(
           color: isSelected
-              ? context.theme.colorScheme.primary
+              ? context.theme.colorScheme.onPrimaryContainer
               : context.theme.colorScheme.onSurface.withOpacity(0.6)),
     ),
     tileColor: isSelected
