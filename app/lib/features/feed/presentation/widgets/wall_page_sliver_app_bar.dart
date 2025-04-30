@@ -35,7 +35,7 @@ class WallPageSliverAppBar extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: kToolbarHeight - 10),
+            const SizedBox(height: kToolbarHeight - 12),
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: UIConstants.pagePadding),
