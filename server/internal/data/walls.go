@@ -7,13 +7,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aravindmathradan/semaphore/internal/validator"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var (
-	ErrDuplicateWall = errors.New("user already owns a wall with same name")
+	ErrDuplicateWall       = errors.New("user already owns a wall with same name")
+	ErrDeletingPrimaryWall = errors.New("cannot delete primary wall")
 )
 
 type Wall struct {
@@ -32,6 +34,11 @@ type WallModel struct {
 type WallWithFeedDTO struct {
 	Wall
 	Feeds []Feed `json:"feeds,omitempty"`
+}
+
+func ValidateWall(v *validator.Validator, wall *Wall) {
+	v.Check(validator.NotBlank(wall.Name), "name", "Name must be provided")
+	v.Check(validator.MaxChars(wall.Name, 36), "name", "Name must not be more than 36 characters long")
 }
 
 func (m WallModel) Insert(wall *Wall) error {
@@ -173,4 +180,68 @@ func (m WallModel) FindPrimaryWallForUser(userID int64) (*Wall, error) {
 		return nil, err
 	}
 	return wall, nil
+}
+
+func (m WallModel) Update(wall *Wall) error {
+	query := `
+        UPDATE walls 
+        SET name = $1, updated_at = $2
+        WHERE id = $3 AND is_primary = false`
+
+	args := []any{
+		wall.Name,
+		time.Now(),
+		wall.ID,
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, args...)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "walls_non_primary_name_unique_idx") {
+				return ErrDuplicateWall
+			}
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m WallModel) Delete(wallID int64) error {
+	query := `
+		DELETE FROM walls
+		WHERE id = $1 AND is_primary = false
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows):
+			var isPrimary bool
+			searchQuery := `
+				SELECT is_primary
+				FROM walls
+				WHERE id = $1`
+			err = m.DB.QueryRow(ctx, searchQuery, wallID).Scan(
+				&isPrimary,
+			)
+			if err != nil {
+				return err
+			}
+			if isPrimary {
+				return ErrDeletingPrimaryWall
+			}
+			return ErrRecordNotFound
+		default:
+			return err
+		}
+	}
+	return nil
 }

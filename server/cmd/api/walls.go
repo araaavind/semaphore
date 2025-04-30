@@ -24,15 +24,16 @@ func (app *application) createWall(w http.ResponseWriter, r *http.Request) {
 
 	v := validator.New()
 
-	if v.Check(validator.NotBlank(input.WallName), "name", "Wall name cannot be empty"); !v.Valid() {
-		app.failedValidationResponse(w, r, v.Errors)
-		return
-	}
-
 	wall := &data.Wall{
 		Name:      input.WallName,
 		UserID:    user.ID,
 		IsPrimary: false,
+	}
+
+	data.ValidateWall(v, wall)
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
 	}
 
 	err = app.models.Walls.Insert(wall)
@@ -144,4 +145,108 @@ func (app *application) listItemsForWall(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+}
+
+func (app *application) updateWall(w http.ResponseWriter, r *http.Request) {
+	wallID, err := app.readIDParam(r, "wall_id")
+	if err != nil || wallID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	var input struct {
+		Name string `json:"name"`
+	}
+
+	err = app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	wall, err := app.models.Walls.FindByID(wallID)
+	if err != nil {
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFoundResponse(w, r)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if wall.IsPrimary {
+		app.errorResponse(w, r, http.StatusUnprocessableEntity, "Cannot update primary wall")
+		return
+	}
+
+	user := app.contextGetSession(r).User
+	if wall.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	wall.Name = input.Name
+
+	v := validator.New()
+
+	data.ValidateWall(v, wall)
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.models.Walls.Update(wall)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"wall": wall}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) deleteWall(w http.ResponseWriter, r *http.Request) {
+	wallID, err := app.readIDParam(r, "wall_id")
+	if err != nil || wallID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	wall, err := app.models.Walls.FindByID(wallID)
+	if err != nil {
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFoundResponse(w, r)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	if wall.IsPrimary {
+		app.errorResponse(w, r, http.StatusUnprocessableEntity, "Cannot delete primary wall")
+		return
+	}
+
+	user := app.contextGetSession(r).User
+	if wall.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	err = app.models.Walls.Delete(wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		case errors.Is(err, data.ErrDeletingPrimaryWall):
+			app.errorResponse(w, r, http.StatusUnprocessableEntity, "Cannot delete primary wall")
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

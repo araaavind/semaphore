@@ -87,6 +87,8 @@ func (app *application) routes() http.Handler {
 	activated := authenticated.Append(app.requireActivation)
 
 	router.Handler(http.MethodPost, "/v1/walls", activated.ThenFunc(app.createWall))
+	router.Handler(http.MethodPut, "/v1/walls/:wall_id", activated.ThenFunc(app.updateWall))
+	router.Handler(http.MethodDelete, "/v1/walls/:wall_id", activated.ThenFunc(app.deleteWall))
 
 	router.Handler(http.MethodPost, "/v1/feeds", activated.ThenFunc(app.requirePermission("feeds:write", app.addAndFollowFeed)))
 
