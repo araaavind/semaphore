@@ -60,9 +60,7 @@ class _FollowersListDialogState extends State<FollowersListDialog> {
         ),
         textAlign: TextAlign.center,
       ),
-      backgroundColor: context.theme.brightness == Brightness.dark
-          ? context.theme.colorScheme.surfaceContainerLowest
-          : context.theme.colorScheme.surface,
+      backgroundColor: context.theme.colorScheme.surface,
       titlePadding: const EdgeInsets.all(UIConstants.pagePadding),
       contentPadding:
           const EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),

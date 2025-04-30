@@ -22,12 +22,12 @@ class WallPageDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      elevation: 4.0,
+      elevation: 6.0,
       backgroundColor: context.theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
-      shadowColor: Colors.black.withAlpha(140),
+      shadowColor: Colors.black.withAlpha(160),
       child: ListView(
         children: [
           ExpansionTile(

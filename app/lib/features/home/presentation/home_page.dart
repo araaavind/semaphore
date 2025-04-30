@@ -93,6 +93,7 @@ class HomePage extends StatelessWidget {
         child: Scaffold(
           body: child,
           bottomNavigationBar: Container(
+            height: 54,
             decoration:
                 (context.theme.colorScheme.brightness == Brightness.dark)
                     ? BoxDecoration(
@@ -104,12 +105,12 @@ class HomePage extends StatelessWidget {
                         ),
                       )
                     : null,
-            child: BottomNavigationBar(
+            child: Wrap(
+              children: [
+                BottomNavigationBar(
               currentIndex: _calculateSelectedIndex(context),
               onTap: (value) => _onItemTapped(value, context),
               iconSize: 26.0,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
               items: const [
                 BottomNavigationBarItem(
                   label: 'Home',
@@ -125,6 +126,8 @@ class HomePage extends StatelessWidget {
                   label: 'Profile',
                   icon: Icon(MingCute.user_3_line),
                   activeIcon: Icon(MingCute.user_3_fill),
+                    ),
+                  ],
                 ),
               ],
             ),

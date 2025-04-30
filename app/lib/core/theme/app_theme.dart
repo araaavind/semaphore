@@ -36,14 +36,15 @@ class AppTheme {
       shadowColor: Colors.grey.shade50,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       backgroundColor: AppColorScheme.lightColorScheme.surface,
       elevation: 4.0,
       unselectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 12,
       ),
-      selectedItemColor:
-          AppColorScheme.lightColorScheme.onSurface.withOpacity(0.80),
+      selectedItemColor: AppColorScheme.lightColorScheme.onSurface,
       selectedIconTheme: const IconThemeData(size: 28.0),
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
@@ -60,6 +61,12 @@ class AppTheme {
       errorBorder: _border(color: AppColorScheme.lightColorScheme.error),
     ),
     textTheme: AppTextTheme.lightTextTheme,
+    dialogTheme: DialogTheme(
+      backgroundColor: AppColorScheme.lightColorScheme.surfaceContainerLow,
+      barrierColor:
+          AppColorScheme.lightColorScheme.surfaceContainerLow.withAlpha(160),
+      shadowColor: Colors.black.withAlpha(160),
+    ),
     extensions: [
       AppSnackbarColorTheme(
         successContainer: AppPalette.snackbarSuccessContainer,
@@ -88,14 +95,15 @@ class AppTheme {
       shadowColor: Colors.grey.shade700,
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       backgroundColor: AppColorScheme.darkColorScheme.surface,
       elevation: 4.0,
       unselectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 12,
       ),
-      selectedItemColor:
-          AppColorScheme.darkColorScheme.onSurface.withOpacity(0.90),
+      selectedItemColor: AppColorScheme.darkColorScheme.onSurface,
       selectedIconTheme: const IconThemeData(size: 28.0),
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
@@ -112,6 +120,12 @@ class AppTheme {
       errorBorder: _border(color: AppColorScheme.darkColorScheme.error),
     ),
     textTheme: AppTextTheme.darkTextTheme,
+    dialogTheme: DialogTheme(
+      backgroundColor: AppColorScheme.darkColorScheme.surfaceContainerLow,
+      barrierColor:
+          AppColorScheme.darkColorScheme.surfaceContainerLow.withAlpha(160),
+      shadowColor: Colors.black.withAlpha(160),
+    ),
     extensions: [
       AppSnackbarColorTheme(
         successContainer: AppPalette.snackbarSuccessContainerDark,
