@@ -141,13 +141,17 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 splashFactory: NoSplash.splashFactory,
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add,
-                    size: 26.0,
-                    color: context.theme.colorScheme.onSurface,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2.0),
+                    child: Icon(
+                      MingCute.add_fill,
+                      size: 18.0,
+                      color: context.theme.colorScheme.onSurface,
+                    ),
                   ),
-                  const SizedBox(width: 3.0),
+                  const SizedBox(width: 4.0),
                   Text(
                     'Add feed',
                     style: context.theme.textTheme.titleMedium?.copyWith(
@@ -178,10 +182,10 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 focusedBorder: _searchBorder(),
                 enabledBorder: _searchBorder(),
                 filled: true,
-                fillColor: context.theme.colorScheme.outline.withAlpha(100),
+                fillColor: context.theme.colorScheme.surfaceContainer,
                 hintText: 'Search...',
                 hintStyle: context.theme.textTheme.bodyMedium,
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(MingCute.search_line),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),

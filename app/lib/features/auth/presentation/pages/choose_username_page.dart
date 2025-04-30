@@ -108,7 +108,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                                 formKey.currentState != null &&
                                 formKey.currentState!.validate()
                             ? const Icon(
-                                Icons.check,
+                                MingCute.check_fill,
                                 color: AppPalette.green,
                               )
                             : null),
@@ -117,7 +117,6 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                   Center(
                     child: Button(
                         text: 'Continue',
-                        fixedSize: const Size(120, 50),
                         onPressed: () {
                           if (state is AuthUsernameSuccess &&
                               formKey.currentState != null &&

@@ -1,6 +1,7 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/theme/theme.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:flutter/material.dart';
 
@@ -25,18 +26,23 @@ class _WallViewPageState extends State<WallViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.wall.name),
+        title: Text(
+          widget.wall.name,
+          style: context.theme.textTheme.titleLarge!.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const Icon(MingCute.edit_line),
             onPressed: () {
-              // Implement edit wall name functionality
+              // TODO: Implement edit wall name functionality
             },
           ),
           IconButton(
-            icon: const Icon(Icons.delete),
+            icon: const Icon(MingCute.delete_line),
             onPressed: () {
-              // Implement delete wall functionality
+              // TODO: Implement delete wall functionality
             },
           ),
         ],
@@ -53,8 +59,6 @@ class _WallViewPageState extends State<WallViewPage> {
             const SizedBox(height: 20.0),
             Button(
               text: 'Add Feed',
-              backgroundColor: context.theme.colorScheme.primary,
-              textColor: context.theme.colorScheme.onPrimary,
               onPressed: () {
                 // Implement add feed to wall functionality
               },

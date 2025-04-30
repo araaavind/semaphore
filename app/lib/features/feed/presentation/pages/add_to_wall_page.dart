@@ -58,13 +58,17 @@ class AddToWallPageContent extends StatelessWidget {
                 splashFactory: NoSplash.splashFactory,
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add,
-                    size: 26.0,
-                    color: context.theme.colorScheme.primary,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 2.0),
+                    child: Icon(
+                      MingCute.add_fill,
+                      size: 18.0,
+                      color: context.theme.colorScheme.primary,
+                    ),
                   ),
-                  const SizedBox(width: 3.0),
+                  const SizedBox(width: 4.0),
                   Text(
                     'New wall',
                     style: context.theme.textTheme.titleMedium?.copyWith(
@@ -92,10 +96,10 @@ class AddToWallPageContent extends StatelessWidget {
               const SizedBox(height: 20.0),
               Button(
                 text: 'Unfollow feed',
-                fixedSize: const Size.fromHeight(40.0),
+                width: double.infinity,
                 filled: true,
                 backgroundColor: context.theme.colorScheme.primaryContainer,
-                textColor: context.theme.colorScheme.primary,
+                textColor: context.theme.colorScheme.onPrimaryContainer,
                 onPressed: () {
                   context.pop({"unfollow": true});
                 },
@@ -128,8 +132,6 @@ class AddToWallPageContent extends StatelessWidget {
               const SizedBox(height: 20.0),
               Button(
                 text: 'Done',
-                backgroundColor: context.theme.colorScheme.primary,
-                textColor: context.theme.colorScheme.onPrimary,
                 onPressed: () {
                   context.pop({"unfollow": false});
                 },
@@ -197,7 +199,7 @@ class _WallListTileState extends State<WallListTile> {
           ),
           contentPadding: const EdgeInsets.symmetric(
             vertical: UIConstants.tileContentPadding,
-            horizontal: UIConstants.pagePadding / 2,
+            horizontal: UIConstants.pagePadding,
           ),
           horizontalTitleGap: UIConstants.tileHorizontalTitleGap,
           trailing: AnimatedSwitcher(
@@ -233,8 +235,8 @@ class _WallListTileState extends State<WallListTile> {
                         },
                         child: Icon(
                           isFeedInWall
-                              ? Icons.check_circle
-                              : Icons.add_circle_outline,
+                              ? MingCute.check_circle_fill
+                              : MingCute.add_circle_line,
                           color: isFeedInWall
                               ? context.theme.colorScheme.primary
                               : context.theme.colorScheme.onSurface,

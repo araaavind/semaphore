@@ -1,82 +1,110 @@
 import 'package:flutter/material.dart';
 
+// Color Scheme Colors
 abstract class AppPalette {
-  // Brand Colors
-  static const brand = Color.fromARGB(255, 75, 2, 52);
-  static const brandDark = Color.fromARGB(255, 255, 163, 178);
+  /*
+  * Lights
+  */
+  // brand
+  static const brand = Color.fromARGB(255, 95, 14, 27);
 
-  // Color Scheme Colors
-  // Lights
-  static const primary = Color.fromARGB(255, 75, 2, 52);
-  static const onPrimary = Color.fromARGB(255, 255, 251, 245);
-  static const primaryContainer = Color.fromARGB(255, 249, 204, 198);
-  static const onPrimaryContainer = Color.fromARGB(255, 67, 13, 32);
-  static const secondary = Color.fromARGB(255, 154, 63, 33);
-  static const onSecondary = Color.fromARGB(255, 255, 247, 238);
-  static const secondaryContainer = Color.fromARGB(255, 241, 191, 175);
-  static const onSecondaryContainer = Color.fromARGB(255, 154, 63, 33);
-  static const tertiary = Color.fromARGB(255, 40, 75, 2);
+  // surface
+  static const surface = Color.fromARGB(255, 254, 241, 243);
+  static const onSurface = Color.fromARGB(255, 17, 1, 4);
+  static const surfaceContainerLowest = Color.fromARGB(255, 250, 231, 234);
+  static const surfaceContainerLow = Color.fromARGB(255, 241, 224, 227);
+  static const surfaceContainer = Color.fromARGB(255, 236, 218, 221);
+  static const surfaceContainerHigh = Color.fromARGB(255, 226, 209, 212);
+  static const surfaceContainerHighest = Color.fromARGB(255, 223, 205, 208);
+
+  // primary
+  static const primary = Color.fromARGB(255, 95, 14, 27);
+  static const onPrimary = Color.fromARGB(255, 254, 241, 243);
+  static const primaryContainer = Color.fromARGB(255, 247, 144, 153);
+  static const onPrimaryContainer = Color.fromARGB(255, 32, 5, 14);
+  static const disabledPrimary = Color.fromARGB(255, 92, 77, 79);
+
+  // secondary
+  static const secondary = Color.fromARGB(255, 134, 48, 19);
+  static const onSecondary = Color.fromARGB(255, 255, 242, 237);
+  static const secondaryContainer = Color.fromARGB(255, 227, 150, 124);
+  static const onSecondaryContainer = Color.fromARGB(255, 29, 9, 2);
+
+  // tertiary
+  static const tertiary = Color.fromARGB(255, 50, 91, 7);
   static const onTertiary = Color.fromARGB(255, 254, 255, 239);
-  static const tertiaryContainer = Color.fromARGB(255, 213, 237, 186);
-  static const onTertiaryContainer = Color.fromARGB(255, 40, 75, 2);
-  static const surface = Color.fromARGB(255, 253, 253, 253);
-  static const onSurface = Color.fromARGB(255, 41, 20, 23);
-  static const surfaceContainerLowest = Color.fromARGB(255, 247, 242, 244);
-  static const surfaceContainerLow = Color.fromARGB(255, 247, 237, 242);
-  static const surfaceContainer = Color.fromARGB(255, 241, 228, 235);
-  static const surfaceContainerHigh = Color.fromARGB(255, 234, 222, 228);
-  static const surfaceContainerHighest = Color.fromARGB(255, 224, 212, 218);
-  static const error = Color.fromARGB(255, 214, 22, 60);
-  static const onError = Colors.white;
-  static const disabledPrimary = Color.fromARGB(255, 108, 103, 106);
-  static const outline = Color.fromARGB(255, 212, 212, 212);
-  // Darks
-  static const primaryDark = Color.fromARGB(255, 255, 163, 178);
-  static const onPrimaryDark = Color.fromARGB(255, 19, 1, 4);
-  static const primaryContainerDark = Color.fromARGB(255, 67, 13, 32);
-  static const onPrimaryContainerDark = Color.fromARGB(255, 249, 204, 198);
-  static const secondaryDark = Color.fromARGB(255, 220, 142, 102);
-  static const onSecondaryDark = Color.fromARGB(255, 24, 10, 6);
-  static const secondaryContainerDark = Color.fromARGB(255, 100, 41, 11);
-  static const onSecondaryContainerDark = Color.fromARGB(255, 200, 121, 82);
-  static const tertiaryDark = Color.fromARGB(255, 225, 248, 175);
-  static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
-  static const tertiaryContainerDark = Color.fromARGB(255, 59, 63, 4);
-  static const onTertiaryContainerDark = Color.fromARGB(255, 243, 248, 175);
-  static const surfaceDark = Color.fromARGB(255, 0, 0, 0);
-  static const onSurfaceDark = Color.fromARGB(255, 246, 238, 227);
-  static const surfaceContainerLowestDark = Color.fromARGB(255, 19, 14, 17);
-  static const surfaceContainerLowDark = Color.fromARGB(255, 32, 25, 24);
-  static const surfaceContainerDark = Color.fromARGB(255, 36, 28, 27);
-  static const surfaceContainerHighDark = Color.fromARGB(255, 44, 33, 31);
-  static const surfaceContainerHighestDark = Color.fromARGB(255, 49, 36, 35);
-  static const errorDark = Color.fromARGB(255, 153, 34, 58);
-  static const onErrorDark = Colors.white;
-  static const disabledPrimaryDark = Color.fromARGB(255, 190, 190, 190);
-  static const outlineDark = Color.fromARGB(255, 61, 61, 61);
+  static const onTertiaryContainer = Color.fromARGB(255, 172, 215, 126);
+  static const tertiaryContainer = Color.fromARGB(255, 13, 23, 1);
 
-  // Extension colors
-  static const snackbarSuccessContainer = Color.fromARGB(255, 208, 255, 207);
-  static const snackbarSuccessOnContainer = Color.fromARGB(255, 9, 45, 15);
-  static const snackbarFailureContainer = Color.fromARGB(255, 255, 213, 213);
-  static const snackbarFailureOnContainer = Color.fromARGB(255, 42, 3, 13);
-  static const snackbarInfoContainer = surfaceDark;
-  static const snackbarInfoOnContainer = onSurfaceDark;
-  static const snackbarUtilContainer = surfaceDark;
-  static const snackbarUtilOnContainer = onSurfaceDark;
-  static const snackbarActionTextColor = primaryDark;
-  // Extension darks
-  static const snackbarSuccessContainerDark = Color.fromARGB(255, 9, 45, 15);
+  // error
+  static const error = Color.fromARGB(255, 214, 22, 60);
+  static const onError = Color.fromARGB(255, 255, 235, 235);
+
+  // outline
+  static const outline = Color.fromARGB(255, 215, 211, 211);
+
+  static const snackbarSuccessContainer = Color.fromARGB(255, 172, 215, 126);
+  static const snackbarSuccessOnContainer = Color.fromARGB(255, 3, 27, 7);
+  static const snackbarFailureContainer = Color.fromARGB(255, 231, 110, 110);
+  static const snackbarFailureOnContainer = Color.fromARGB(255, 25, 2, 2);
+  static const snackbarInfoContainer = Color.fromARGB(255, 17, 1, 4);
+  static const snackbarInfoOnContainer = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarUtilContainer = Color.fromARGB(255, 17, 1, 4);
+  static const snackbarUtilOnContainer = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarActionTextColor = Color.fromARGB(255, 247, 144, 153);
+
+  /*
+  * Darks
+  */
+
+  // brand
+  static const brandDark = Color.fromARGB(255, 255, 148, 155);
+
+  // surface
+  static const surfaceDark = Color.fromARGB(255, 6, 0, 1);
+  static const onSurfaceDark = Color.fromARGB(255, 254, 241, 243);
+  static const surfaceContainerLowestDark = Color.fromARGB(255, 21, 16, 16);
+  static const surfaceContainerLowDark = Color.fromARGB(255, 29, 21, 21);
+  static const surfaceContainerDark = Color.fromARGB(255, 33, 24, 24);
+  static const surfaceContainerHighDark = Color.fromARGB(255, 41, 30, 30);
+  static const surfaceContainerHighestDark = Color.fromARGB(255, 54, 40, 40);
+
+  // primary
+  static const primaryDark = Color.fromARGB(255, 255, 148, 155);
+  static const onPrimaryDark = Color.fromARGB(255, 28, 2, 7);
+  static const primaryContainerDark = Color.fromARGB(255, 95, 14, 27);
+  static const onPrimaryContainerDark = Color.fromARGB(255, 255, 219, 225);
+  static const disabledPrimaryDark = Color.fromARGB(255, 222, 203, 204);
+
+  static const secondaryDark = Color.fromARGB(255, 227, 150, 124);
+  static const onSecondaryDark = Color.fromARGB(255, 27, 8, 2);
+  static const secondaryContainerDark = Color.fromARGB(255, 134, 48, 19);
+  static const onSecondaryContainerDark = Color.fromARGB(255, 255, 229, 221);
+
+  // tertiary
+  static const tertiaryDark = Color.fromARGB(255, 217, 246, 187);
+  static const onTertiaryDark = Color.fromARGB(255, 14, 20, 8);
+  static const tertiaryContainerDark = Color.fromARGB(255, 50, 91, 7);
+  static const onTertiaryContainerDark = Color.fromARGB(255, 253, 255, 221);
+
+  // error
+  static const errorDark = Color.fromARGB(255, 149, 23, 48);
+  static const onErrorDark = Color.fromARGB(255, 247, 222, 227);
+
+  // outline
+  static const outlineDark = Color.fromARGB(255, 63, 60, 61);
+
+  static const snackbarSuccessContainerDark = Color.fromARGB(255, 14, 64, 22);
   static const snackbarSuccessOnContainerDark =
-      Color.fromARGB(255, 233, 255, 228);
-  static const snackbarFailureContainerDark = Color.fromARGB(255, 61, 18, 18);
+      Color.fromARGB(255, 229, 255, 223);
+  static const snackbarFailureContainerDark = Color.fromARGB(255, 71, 15, 15);
   static const snackbarFailureOnContainerDark =
-      Color.fromARGB(255, 252, 204, 192);
-  static const snackbarInfoContainerDark = surface;
-  static const snackbarInfoOnContainerDark = onSurface;
-  static const snackbarUtilContainerDark = surface;
-  static const snackbarUtilOnContainerDark = onSurface;
-  static const snackbarActionTextColorDark = primary;
+      Color.fromARGB(255, 255, 223, 215);
+  static const snackbarInfoContainerDark = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarInfoOnContainerDark = Color.fromARGB(255, 6, 0, 1);
+  static const snackbarUtilContainerDark = Color.fromARGB(255, 254, 241, 243);
+  static const snackbarUtilOnContainerDark = Color.fromARGB(255, 6, 0, 1);
+  static const snackbarActionTextColorDark = Color.fromARGB(255, 95, 14, 27);
 
   // Green
   static const green = Color.fromARGB(255, 140, 181, 94);

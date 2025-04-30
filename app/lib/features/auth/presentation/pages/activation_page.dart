@@ -110,7 +110,7 @@ class _ActivationPageState extends State<ActivationPage> {
                     builder: (context, state) {
                       return Button(
                         text: 'Activate',
-                        fixedSize: const Size(140, 50),
+                        width: 140,
                         onPressed: () {
                           context
                               .read<ActivateUserCubit>()

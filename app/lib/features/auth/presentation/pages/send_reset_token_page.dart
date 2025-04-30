@@ -101,7 +101,7 @@ class _SendResetTokenPageState extends State<SendResetTokenPage> {
                     builder: (context, state) {
                       return Button(
                         text: 'Send Reset Token',
-                        fixedSize: const Size(200, 50),
+                        width: 240,
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             context

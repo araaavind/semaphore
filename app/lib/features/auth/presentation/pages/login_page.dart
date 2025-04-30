@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 20),
                         Button(
                           text: 'Log in',
-                          fixedSize: UIConstants.defaultButtonFixedSize,
+                          width: 160,
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               context.read<AuthBloc>().add(

@@ -81,7 +81,6 @@ class _CreateWallPageState extends State<CreateWallPage> {
                       builder: (context, state) {
                         return Button(
                           text: 'Create',
-                          fixedSize: const Size(140, 50),
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               FocusManager.instance.primaryFocus?.unfocus();

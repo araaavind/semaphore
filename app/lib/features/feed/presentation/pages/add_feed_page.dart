@@ -81,7 +81,6 @@ class _AddFeedPageState extends State<AddFeedPage> {
                         builder: (context, state) {
                           return Button(
                             text: 'Add feed',
-                            fixedSize: const Size(140, 50),
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
                                 FocusManager.instance.primaryFocus?.unfocus();

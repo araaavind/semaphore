@@ -122,7 +122,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     builder: (context, state) {
                       return Button(
                         text: 'Reset password',
-                        fixedSize: const Size(180, 50),
                         onPressed: () {
                           context.read<ResetPasswordCubit>().resetPassword(
                               token.text.trim(), password.text.trim());

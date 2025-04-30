@@ -33,7 +33,13 @@ class WallPageDrawer extends StatelessWidget {
           ExpansionTile(
             childrenPadding: const EdgeInsets.all(8.0),
             trailing: GestureDetector(
-              child: const Icon(Icons.add),
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 2.0),
+                child: Icon(
+                  MingCute.add_fill,
+                  size: 20,
+                ),
+              ),
               onTap: () async {
                 final isCreated =
                     await context.pushNamed(RouteConstants.createWallPageName);
@@ -143,7 +149,13 @@ class WallPageDrawer extends StatelessWidget {
           ),
           ExpansionTile(
             trailing: GestureDetector(
-              child: const Icon(Icons.add),
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 2.0),
+                child: Icon(
+                  MingCute.add_fill,
+                  size: 20,
+                ),
+              ),
               onTap: () {
                 context.goNamed('feeds');
               },

@@ -1,4 +1,4 @@
-import 'package:app/features/auth/domain/usecases/resetPassword.dart';
+import 'package:app/features/auth/domain/usecases/reset_password.dart';
 import 'package:app/features/auth/domain/usecases/send_password_reset_token.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

@@ -22,8 +22,8 @@ class ShimmerLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: context.theme.colorScheme.primary.withAlpha(30),
-      highlightColor: context.theme.colorScheme.primary.withAlpha(65),
+      baseColor: context.theme.colorScheme.primary.withAlpha(20),
+      highlightColor: context.theme.colorScheme.primary.withAlpha(45),
       child: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Column(

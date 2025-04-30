@@ -38,15 +38,16 @@ class AppTheme {
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: AppColorScheme.lightColorScheme.surface,
       elevation: 4.0,
-      selectedItemColor: AppColorScheme.lightColorScheme.primary,
-      selectedIconTheme: const IconThemeData(size: 28.0),
       unselectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 12,
       ),
+      selectedItemColor:
+          AppColorScheme.lightColorScheme.onSurface.withOpacity(0.80),
+      selectedIconTheme: const IconThemeData(size: 28.0),
       selectedLabelStyle: const TextStyle(
-        fontWeight: FontWeight.w400,
-        fontSize: 12,
+        fontWeight: FontWeight.w300,
+        fontSize: 13,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -54,7 +55,7 @@ class AppTheme {
       border: _border(color: AppColorScheme.lightColorScheme.outline),
       enabledBorder: _border(color: AppColorScheme.lightColorScheme.outline),
       focusedBorder: _border(
-        color: AppColorScheme.lightColorScheme.secondary,
+        color: AppColorScheme.lightColorScheme.onSurface,
       ),
       errorBorder: _border(color: AppColorScheme.lightColorScheme.error),
     ),
@@ -93,11 +94,12 @@ class AppTheme {
         fontWeight: FontWeight.w300,
         fontSize: 12,
       ),
-      selectedItemColor: AppColorScheme.darkColorScheme.primary,
+      selectedItemColor:
+          AppColorScheme.darkColorScheme.onSurface.withOpacity(0.90),
       selectedIconTheme: const IconThemeData(size: 28.0),
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
-        fontSize: 12,
+        fontSize: 13,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -105,7 +107,7 @@ class AppTheme {
       border: _border(color: AppColorScheme.darkColorScheme.outline),
       enabledBorder: _border(color: AppColorScheme.darkColorScheme.outline),
       focusedBorder: _border(
-        color: AppColorScheme.darkColorScheme.secondary,
+        color: AppColorScheme.darkColorScheme.onSurface,
       ),
       errorBorder: _border(color: AppColorScheme.darkColorScheme.error),
     ),

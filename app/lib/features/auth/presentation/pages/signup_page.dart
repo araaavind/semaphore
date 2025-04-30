@@ -122,7 +122,7 @@ class _SignupPageState extends State<SignupPage> {
                 builder: (context, state) {
                   return Button(
                     text: 'Sign up',
-                    fixedSize: UIConstants.defaultButtonFixedSize,
+                    width: 160,
                     isLoading: state is AuthLoading,
                     onPressed: () {
                       if (formKey.currentState!.validate()) {

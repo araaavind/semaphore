@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract class UIConstants {
-  static const appBarTitle = 'SMPHR';
+  static const appBarTitle = 'Smphr.';
 
   static const tileItemBorderRadius = 8.0;
   static const inputBorderRadius = 8.0;
@@ -16,7 +16,7 @@ abstract class UIConstants {
   );
   static const tileContentPadding = 4.0;
   static const tileHorizontalTitleGap = 16.0;
-  static const defaultButtonFixedSize = Size(160, 50);
+  static const defaultButtonFixedSize = Size(160, 48);
   static const borderWidth = 0.3;
 
   static const imageBorderRadius = 6.0;

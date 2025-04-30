@@ -1,5 +1,5 @@
-import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 import 'button.dart';
@@ -51,12 +51,14 @@ class FirstPageErrorIndicator extends StatelessWidget {
               ),
             if (onTryAgain != null)
               Button(
-                fixedSize: UIConstants.defaultButtonFixedSize,
                 text: 'Try again',
                 backgroundColor: context.theme.colorScheme.primaryContainer,
                 textColor: context.theme.colorScheme.onPrimaryContainer,
                 onPressed: onTryAgain,
-                suffixIcon: const Icon(Icons.refresh),
+                suffixIcon: Icon(
+                  MingCute.refresh_anticlockwise_line,
+                  color: context.theme.colorScheme.onPrimaryContainer,
+                ),
               ),
           ],
         ),

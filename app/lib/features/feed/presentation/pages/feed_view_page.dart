@@ -149,8 +149,9 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                           Flexible(
                                             child: Button(
                                               text: buttonText,
-                                              fixedSize:
-                                                  const Size.fromHeight(40.0),
+                                              textColor: context
+                                                  .theme.colorScheme.onSurface,
+                                              width: double.infinity,
                                               filled: !isFollowed,
                                               onPressed: () {
                                                 context
@@ -172,8 +173,7 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                           Flexible(
                                             child: Button(
                                               text: 'Add to walls',
-                                              fixedSize:
-                                                  const Size.fromHeight(40.0),
+                                              width: double.infinity,
                                               filled: true,
                                               onPressed: () async {
                                                 final result =
@@ -212,8 +212,8 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                       )
                                     : Button(
                                         text: buttonText,
-                                        fixedSize: const Size.fromHeight(40.0),
                                         filled: !isFollowed,
+                                        width: double.infinity,
                                         onPressed: () {
                                           context.read<FollowFeedBloc>().add(
                                                 FollowUnfollowRequested(

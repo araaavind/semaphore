@@ -1,4 +1,5 @@
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class AppTextField<T> extends StatefulWidget {
@@ -61,12 +62,14 @@ class _AppTextFieldState<T> extends State<AppTextField<T>> {
                 ? IconButton(
                     icon: _passwordVisible
                         ? Icon(
-                            Icons.visibility_outlined,
-                            color: context.theme.colorScheme.outline,
+                            MingCute.eye_line,
+                            color: context.theme.colorScheme.onSurface
+                                .withOpacity(0.65),
                           )
                         : Icon(
-                            Icons.visibility_off_outlined,
-                            color: context.theme.colorScheme.outline,
+                            MingCute.eye_close_line,
+                            color: context.theme.colorScheme.onSurface
+                                .withOpacity(0.30),
                           ),
                     onPressed: _togglePasswordVisibility,
                   )

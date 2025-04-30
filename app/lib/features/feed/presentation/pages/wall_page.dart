@@ -147,7 +147,7 @@ class _WallPageState extends State<WallPage> {
       ),
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.60,
       drawerScrimColor:
-          context.theme.colorScheme.surfaceContainerHigh.withAlpha(180),
+          context.theme.colorScheme.surfaceContainer.withAlpha(180),
       body: BlocConsumer<WallsBloc, WallsState>(
         listener: (context, state) {
           if (state.status == WallsStatus.failure) {

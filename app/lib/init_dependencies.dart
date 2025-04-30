@@ -42,7 +42,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
 
-import 'features/auth/domain/usecases/resetPassword.dart';
+import 'features/auth/domain/usecases/reset_password.dart';
 import 'features/auth/presentation/cubit/reset_password/reset_password_cubit.dart';
 
 part 'init_dependencies.main.dart';

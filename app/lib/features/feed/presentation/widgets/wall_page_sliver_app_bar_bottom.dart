@@ -1,5 +1,6 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
@@ -19,86 +20,72 @@ class WallPageSliverAppBarBottom extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      automaticallyImplyLeading: false, // this will hide Drawer hamburger icon
-      backgroundColor: Colors.transparent,
-      shape: Border(
-        top: BorderSide(
-          color: context.theme.colorScheme.outline.withOpacity(0.8),
-          width: 0.5,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: AppBar(
+        automaticallyImplyLeading:
+            false, // this will hide Drawer hamburger icon
+        backgroundColor: context.theme.colorScheme.surfaceContainerHighest,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(24)),
         ),
-        bottom: BorderSide(
-          color: context.theme.colorScheme.outline.withOpacity(0.8),
-          width: 0.5,
-        ),
-      ),
-      title: GestureDetector(
-        onTap: () {
-          Scaffold.of(context).openDrawer();
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: context.theme.colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(20),
-                blurRadius: 2,
-                spreadRadius: 0.1,
-                offset: const Offset(0.5, 0.5),
+        toolbarHeight: kToolbarHeight - 8,
+        title: GestureDetector(
+          onTap: () {
+            Scaffold.of(context).openDrawer();
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2.0),
+                child: Icon(
+                  MingCute.right_small_fill,
+                  color: context.theme.colorScheme.onPrimaryContainer,
+                ),
               ),
+              const SizedBox(width: 4.0),
+              Flexible(
+                child: Text(
+                  wall.name,
+                  style: context.theme.textTheme.bodyLarge?.copyWith(
+                    color: context.theme.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18.0,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                ),
+              ),
+              const SizedBox(width: 12.0),
             ],
           ),
-          height: 40,
-          child: IntrinsicWidth(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.arrow_right,
-                  color: context.theme.colorScheme.onSurface.withOpacity(0.85),
-                ),
-                const SizedBox(width: 4.0),
-                Flexible(
-                  child: Text(
-                    wall.name,
-                    style: context.theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18.0,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.fade,
-                  ),
-                ),
-                const SizedBox(width: 12.0),
-              ],
-            ),
-          ),
         ),
-      ),
-      actions: [
-        if (!wall.isPrimary)
+        actions: [
+          if (!wall.isPrimary)
+            IconButton(
+              onPressed: () {
+                context.pushNamed(
+                  RouteConstants.wallViewPageName,
+                  pathParameters: {'wallId': wall.id.toString()},
+                  extra: wall,
+                );
+              },
+              icon: const Icon(MingCute.pencil_line),
+              color: context.theme.colorScheme.onSurface.withOpacity(0.85),
+            ),
           IconButton(
+            padding: const EdgeInsets.only(right: 12.0),
             onPressed: () {
-              context.pushNamed(
-                RouteConstants.wallViewPageName,
-                pathParameters: {'wallId': wall.id.toString()},
-                extra: wall,
-              );
+              _showFilterModal(context);
             },
-            icon: const Icon(Icons.edit_note),
+            icon: const Icon(Icons.filter_list),
             color: context.theme.colorScheme.onSurface.withOpacity(0.85),
           ),
-        IconButton(
-          onPressed: () {
-            _showFilterModal(context);
-          },
-          icon: const Icon(Icons.filter_list),
-          color: context.theme.colorScheme.onSurface.withOpacity(0.85),
-        ),
-      ],
-      elevation: 0,
-      scrolledUnderElevation: 0,
+        ],
+        elevation: 0,
+        scrolledUnderElevation: 0,
+      ),
     );
   }
 }
@@ -166,7 +153,7 @@ void _showFilterModal(BuildContext context) {
                         _buildOptionItem(
                           context: context,
                           title: WallSortOption.hot.name,
-                          icon: Icons.local_fire_department,
+                          icon: MingCute.fire_fill,
                           isSelected: WallSortOption.hot == selectedWallSort,
                         ),
                         _buildOptionItem(
@@ -189,20 +176,20 @@ void _showFilterModal(BuildContext context) {
                         _buildOptionItem(
                           context: context,
                           title: WallViewOption.card.name,
-                          icon: Icons.view_agenda,
+                          icon: MingCute.rows_3_fill,
                           isSelected: WallViewOption.card == selectedWallView,
                         ),
                         _buildOptionItem(
                           context: context,
                           title: WallViewOption.magazine.name,
-                          icon: Icons.view_list,
+                          icon: MingCute.list_check_3_fill,
                           isSelected:
                               WallViewOption.magazine == selectedWallView,
                         ),
                         _buildOptionItem(
                           context: context,
                           title: WallViewOption.text.name,
-                          icon: Icons.text_fields,
+                          icon: MingCute.menu_fill,
                           isSelected: WallViewOption.text == selectedWallView,
                         ),
                       ],
@@ -240,14 +227,14 @@ Widget _buildOptionItem({
       icon,
       color: isSelected
           ? context.theme.colorScheme.primary
-          : context.theme.colorScheme.onSurface.withOpacity(0.8),
+          : context.theme.colorScheme.onSurface.withOpacity(0.6),
     ),
     title: Text(
       title,
       style: TextStyle(
           color: isSelected
               ? context.theme.colorScheme.primary
-              : context.theme.colorScheme.onSurface.withOpacity(0.8)),
+              : context.theme.colorScheme.onSurface.withOpacity(0.6)),
     ),
     tileColor: isSelected
         ? context.theme.colorScheme.primaryContainer

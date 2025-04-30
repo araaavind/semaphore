@@ -1,5 +1,6 @@
 import 'package:app/core/constants/ui_constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class NewPageErrorIndicator extends StatelessWidget {
@@ -47,7 +48,7 @@ class NewPageErrorIndicator extends StatelessWidget {
                     ),
                     const SizedBox(width: 4.0),
                     Icon(
-                      Icons.refresh,
+                      MingCute.refresh_anticlockwise_line,
                       size: 14,
                       weight: 0.5,
                       color: context.theme.colorScheme.primary,

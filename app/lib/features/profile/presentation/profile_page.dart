@@ -77,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   );
                 }
-                return const Icon(Icons.logout);
+                return const Icon(MingCute.exit_fill);
               },
             ),
           ),
@@ -110,11 +110,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: UIConstants.elementGap),
                     Button(
                       text: 'Activate your account',
+                      width: double.infinity,
                       backgroundColor:
                           context.theme.colorScheme.primaryContainer,
                       textColor: context.theme.colorScheme.primary,
-                      // fixedSize: UIConstants.defaultButtonFixedSize,
-                      fixedSize: const Size.fromHeight(40.0),
                       onPressed: () async {
                         final routeSuccess = await context
                             .push(RouteConstants.activationPagePath) as bool;

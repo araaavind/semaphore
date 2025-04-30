@@ -10,7 +10,9 @@ class Button extends StatelessWidget {
   final Color? textColor;
   final TextStyle? textStyle;
   final Color? backgroundColor;
-  final Size? fixedSize;
+  final Color? borderColor;
+  final double? width;
+  final double? height;
   final bool isLoading;
   final Widget? suffixIcon;
   final bool filled;
@@ -21,7 +23,9 @@ class Button extends StatelessWidget {
     this.textColor,
     this.textStyle,
     this.backgroundColor,
-    this.fixedSize,
+    this.borderColor,
+    this.width,
+    this.height,
     this.onPressed,
     this.isLoading = false,
     this.suffixIcon,
@@ -34,51 +38,56 @@ class Button extends StatelessWidget {
       decoration: BoxDecoration(
         color: filled
             ? onPressed != null
-                ? (backgroundColor ?? context.theme.colorScheme.primary)
+                ? (backgroundColor ?? context.theme.colorScheme.onSurface)
                 : context.theme.disabledColor
             : null,
         border: filled
             ? null
             : Border.all(
-                width: 2,
+                width: 1,
                 color: onPressed != null
-                    ? (backgroundColor ?? context.theme.colorScheme.primary)
+                    ? (borderColor ??
+                        backgroundColor ??
+                        context.theme.colorScheme.onSurface)
                     : context.theme.disabledColor,
               ),
         borderRadius: BorderRadius.circular(UIConstants.buttonBorderRadius),
       ),
-      height: fixedSize?.height,
-      width: fixedSize?.width,
+      height: height ?? 46,
+      width: width,
       constraints: const BoxConstraints(),
       child: ElevatedButton.icon(
         iconAlignment: IconAlignment.end,
         style: ElevatedButton.styleFrom(
-          fixedSize: fixedSize,
+          maximumSize: Size(width ?? double.infinity, height ?? 46),
           backgroundColor: AppPalette.transparent,
           shadowColor: AppPalette.transparent,
         ),
-        label: Text(
-          text,
-          style: textStyle ??
-              context.theme.textTheme.labelLarge?.copyWith(
-                color: textColor ??
-                    (filled
-                        ? context.theme.colorScheme.onPrimary
-                        : context.theme.colorScheme.primary),
-              ),
+        label: Padding(
+          padding: suffixIcon != null
+              ? const EdgeInsets.only(left: 8.0)
+              : const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(
+            text,
+            style: textStyle ??
+                context.theme.textTheme.titleMedium?.copyWith(
+                  color: textColor ??
+                      (filled
+                          ? context.theme.colorScheme.surface
+                          : context.theme.colorScheme.onSurface),
+                ),
+          ),
         ),
         icon: isLoading
-            ? Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: SizedBox(
-                  height: 14,
-                  width: 14,
-                  child: Loader(
-                    color: filled
-                        ? context.theme.colorScheme.onPrimary
-                        : context.theme.colorScheme.primary,
-                    strokeWidth: 2,
-                  ),
+            ? SizedBox(
+                height: 14,
+                width: 14,
+                child: Loader(
+                  color: textColor ??
+                      (filled
+                          ? context.theme.colorScheme.surface
+                          : context.theme.colorScheme.onSurface),
+                  strokeWidth: 2,
                 ),
               )
             : suffixIcon,

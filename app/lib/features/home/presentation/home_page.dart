@@ -1,6 +1,7 @@
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/mingcute.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
@@ -107,19 +108,23 @@ class HomePage extends StatelessWidget {
               currentIndex: _calculateSelectedIndex(context),
               onTap: (value) => _onItemTapped(value, context),
               iconSize: 26.0,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
               items: const [
                 BottomNavigationBarItem(
                   label: 'Home',
-                  icon: Icon(Icons.home_outlined),
-                  // activeIcon: Icon(Icons.home),
+                  icon: Icon(MingCute.home_4_line),
+                  activeIcon: Icon(MingCute.home_4_fill),
                 ),
                 BottomNavigationBarItem(
                   label: 'Search',
-                  icon: Icon(Icons.search),
+                  icon: Icon(MingCute.search_line),
+                  activeIcon: Icon(MingCute.search_fill),
                 ),
                 BottomNavigationBarItem(
                   label: 'Profile',
-                  icon: Icon(Icons.person_outlined),
+                  icon: Icon(MingCute.user_3_line),
+                  activeIcon: Icon(MingCute.user_3_fill),
                 ),
               ],
             ),
