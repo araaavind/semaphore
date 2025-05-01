@@ -223,4 +223,29 @@ class FeedRepositoryImpl implements FeedRepository {
       return left(Failure(message: e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, FeedListModel>> listWallFeeds({
+    required int wallId,
+    String? searchKey,
+    String? searchValue,
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? sortKey,
+  }) async {
+    try {
+      final feedsList = await feedRemoteDatasource.listWallFeeds(
+        wallId: wallId,
+        searchKey: searchKey,
+        searchValue: searchValue,
+        page: page,
+        pageSize: pageSize,
+        sortKey: sortKey,
+      );
+
+      return right(feedsList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 }

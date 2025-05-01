@@ -268,6 +268,7 @@ void _initFeed() {
       () => WallFeedBloc(
         addFeedToWall: serviceLocator(),
         removeFeedFromWall: serviceLocator(),
+        listFeeds: serviceLocator(),
       ),
     );
 }

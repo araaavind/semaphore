@@ -109,6 +109,18 @@ class MingCute {
   /// add line Icon
   static const add_line = MingCuteIconData(0xe90d);
 
+  /// minus circle fill Icon
+  static const minus_circle_fill = MingCuteIconData(0xf046);
+
+  /// minus circle line Icon
+  static const minus_circle_line = MingCuteIconData(0xf047);
+
+  /// minus fill Icon
+  static const minus_fill = MingCuteIconData(0xf042);
+
+  /// minus line Icon
+  static const minus_line = MingCuteIconData(0xf043);
+
   /// align justify fill Icon
   static const align_justify_fill = MingCuteIconData(0xe946);
 

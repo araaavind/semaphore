@@ -5,6 +5,7 @@ import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
@@ -67,6 +68,9 @@ class HomePage extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => serviceLocator<FollowFeedBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<WallFeedBloc>(),
         ),
         BlocProvider(
           create: (_) => serviceLocator<ListItemsBloc>(),

@@ -63,6 +63,15 @@ abstract interface class FeedRemoteDatasource {
   Future<void> addFeedToWall(int feedId, int wallId);
 
   Future<void> removeFeedFromWall(int feedId, int wallId);
+
+  Future<FeedListModel> listWallFeeds({
+    required int wallId,
+    String? searchKey,
+    String? searchValue,
+    int page,
+    int pageSize,
+    String? sortKey,
+  });
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -403,6 +412,40 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
         '/walls/$wallId/feeds/$feedId',
       );
       return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<FeedListModel> listWallFeeds({
+    required int wallId,
+    String? searchKey,
+    String? searchValue,
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? sortKey,
+  }) async {
+    try {
+      Map<String, dynamic>? queryParams = {'page': page, 'page_size': pageSize};
+      if (searchKey != null && searchValue != null) {
+        queryParams[searchKey] = searchValue;
+      }
+      if (sortKey != null) {
+        queryParams['sort'] = sortKey;
+      }
+      final response = await semaphoreClient.dio.get(
+        '/walls/$wallId/feeds',
+        queryParameters: queryParams,
+      );
+      return FeedListModel.fromMap(response.data);
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {

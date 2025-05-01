@@ -84,7 +84,9 @@ class AddToWallPageContent extends StatelessWidget {
       ),
       body: BlocListener<WallFeedBloc, WallFeedState>(
         listener: (context, state) {
-          if (state is WallFeedFailure) {
+          if (state is WallFeedFailure &&
+              (state.action == WallFeedAction.add ||
+                  state.action == WallFeedAction.remove)) {
             showSnackbar(context, state.message, type: SnackbarType.failure);
           }
         },
@@ -169,21 +171,38 @@ class _WallListTileState extends State<WallListTile> {
   Widget build(BuildContext context) {
     return BlocConsumer<WallFeedBloc, WallFeedState>(
       listenWhen: (previous, current) =>
-          current is WallFeedSuccess && current.wallId == widget.wall.id,
+          current is WallFeedSuccess &&
+          (current.action == WallFeedAction.add ||
+              current.action == WallFeedAction.remove) &&
+          current.wallId == widget.wall.id,
       listener: (context, state) {
-        if (state is WallFeedSuccess && state.wallId == widget.wall.id) {
+        if (state is WallFeedSuccess &&
+            (state.action == WallFeedAction.add ||
+                state.action == WallFeedAction.remove) &&
+            state.wallId == widget.wall.id) {
           setState(() {
             isFeedInWall = !isFeedInWall;
           });
         }
       },
       buildWhen: (previous, current) =>
-          current is WallFeedLoading && current.wallId == widget.wall.id ||
-          current is WallFeedSuccess && current.wallId == widget.wall.id ||
-          current is WallFeedFailure && current.wallId == widget.wall.id,
+          current is WallFeedLoading &&
+              (current.action == WallFeedAction.add ||
+                  current.action == WallFeedAction.remove) &&
+              current.wallId == widget.wall.id ||
+          current is WallFeedSuccess &&
+              (current.action == WallFeedAction.add ||
+                  current.action == WallFeedAction.remove) &&
+              current.wallId == widget.wall.id ||
+          current is WallFeedFailure &&
+              (current.action == WallFeedAction.add ||
+                  current.action == WallFeedAction.remove) &&
+              current.wallId == widget.wall.id,
       builder: (context, state) {
-        final bool isLoading =
-            state is WallFeedLoading && state.wallId == widget.wall.id;
+        final bool isLoading = state is WallFeedLoading &&
+            (state.action == WallFeedAction.add ||
+                state.action == WallFeedAction.remove) &&
+            state.wallId == widget.wall.id;
 
         return ListTile(
           visualDensity: VisualDensity.standard,

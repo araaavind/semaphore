@@ -4,7 +4,7 @@ abstract class WallFeedEvent extends Equatable {
   const WallFeedEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class AddFeedToWallRequested extends WallFeedEvent {
@@ -26,4 +26,32 @@ class RemoveFeedFromWallRequested extends WallFeedEvent {
 
   @override
   List<Object> get props => [feedId, wallId];
+}
+
+class ListWallFeedsRequested extends WallFeedEvent {
+  final int wallId;
+  final String? searchKey;
+  final String? searchValue;
+  final int page;
+  final int pageSize;
+  final String? sortKey;
+
+  const ListWallFeedsRequested({
+    required this.wallId,
+    this.searchKey,
+    this.searchValue,
+    this.page = 1,
+    this.pageSize = ServerConstants.defaultPaginationPageSize,
+    this.sortKey,
+  });
+
+  @override
+  List<Object?> get props => [
+        wallId,
+        searchKey,
+        searchValue,
+        page,
+        pageSize,
+        sortKey,
+      ];
 }

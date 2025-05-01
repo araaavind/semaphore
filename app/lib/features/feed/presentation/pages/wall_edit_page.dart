@@ -2,12 +2,16 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
+import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
+import 'package:app/features/feed/presentation/widgets/wall_feed_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class WallEditPage extends StatefulWidget {
   final Wall wall;
@@ -24,15 +28,36 @@ class _WallEditPageState extends State<WallEditPage> {
   final titleController = TextEditingController();
   bool isEditingTitle = false;
 
+  final PagingController<int, Feed> _pagingController = PagingController(
+    firstPageKey: 1,
+    // invisibleItemsThreshold will determine how many items should be loaded
+    // after the first page is loaded (if the first page does not fill the
+    // screen, items enough to fill the page will be loaded anyway unless
+    // invisibleItemsThreshold is set to 0).
+    invisibleItemsThreshold: 1,
+  );
+
   @override
   void initState() {
     super.initState();
     titleController.text = widget.wall.name;
+    _pagingController.addPageRequestListener(
+      (pageKey) {
+        context.read<WallFeedBloc>().add(
+              ListWallFeedsRequested(
+                wallId: widget.wall.id,
+                page: pageKey,
+                pageSize: ServerConstants.defaultPaginationPageSize,
+              ),
+            );
+      },
+    );
   }
 
   @override
   void dispose() {
     titleController.dispose();
+    _pagingController.dispose();
     super.dispose();
   }
 
@@ -168,13 +193,6 @@ class _WallEditPageState extends State<WallEditPage> {
         );
       } else if (state.status == WallStatus.success &&
           state.action == WallAction.update) {
-        // Handle successful update
-        showSnackbar(
-          context,
-          'Wall name changed',
-          type: SnackbarType.info,
-        );
-
         // Refresh the wall list
         context.read<WallsBloc>().add(ListWallsRequested());
         context.pop();
@@ -198,16 +216,9 @@ class _WallEditPageState extends State<WallEditPage> {
           actions: [
             if (!widget.wall.isPrimary) // Prevent deleting primary wall
               IconButton(
-                icon: const Icon(
-                  MingCute.delete_line,
-                  color: Colors.red,
-                ),
+                icon: const Icon(MingCute.delete_line),
                 onPressed: _deleteWall,
               ),
-            IconButton(
-              icon: const Icon(MingCute.check_line),
-              onPressed: _updateWall,
-            ),
           ],
         ),
         body: Padding(
@@ -217,13 +228,41 @@ class _WallEditPageState extends State<WallEditPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _createTitleEditWidget(context),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40.0),
-                child: Button(
-                  text: 'Add Feed',
-                  onPressed: () {
-                    // Implement add feed to wall functionality
-                  },
+              const SizedBox(height: 40),
+              Expanded(
+                child: Stack(
+                  children: [
+                    _createFeedListWidget(context),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            stops: const [0.0, 0.4, 1],
+                            colors: [
+                              context.theme.colorScheme.surface,
+                              context.theme.colorScheme.surface,
+                              context.theme.colorScheme.surface.withOpacity(0),
+                            ],
+                          ),
+                        ),
+                        padding: const EdgeInsets.only(bottom: 40.0, top: 20.0),
+                        child: Button(
+                          text: 'Done',
+                          width: 120,
+                          onPressed: () {
+                            _updateWall();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -277,6 +316,67 @@ class _WallEditPageState extends State<WallEditPage> {
             });
             FocusScope.of(context).unfocus();
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _createFeedListWidget(BuildContext context) {
+    return BlocListener<WallFeedBloc, WallFeedState>(
+      listener: (context, state) {
+        if (state is WallFeedSuccess && state.action == WallFeedAction.list) {
+          if (state.feedList!.metadata.currentPage ==
+              state.feedList!.metadata.lastPage) {
+            _pagingController.appendLastPage(state.feedList!.feeds);
+          } else {
+            final nextPage = state.feedList!.metadata.currentPage + 1;
+            _pagingController.appendPage(state.feedList!.feeds, nextPage);
+          }
+        } else if (state is WallFeedFailure &&
+            state.action == WallFeedAction.list) {
+          _pagingController.error = state.message;
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: AppPagedList(
+          pagingController: _pagingController,
+          listType: PagedListType.list,
+          itemBuilder: (context, item, index) => WallFeedListTile(
+            feed: item,
+            wallId: widget.wall.id,
+            key: ValueKey(item.id),
+            onRemove: () {
+              final currentItems = _pagingController.itemList ?? [];
+              final newItems = List<Feed>.from(currentItems)..removeAt(index);
+              _pagingController.itemList = newItems;
+
+              showSnackbar(
+                context,
+                'Removed ${item.title.length > 16 ? '${item.title.substring(0, 16)}...' : item.title}',
+                type: SnackbarType.utility,
+                actionLabel: 'Undo',
+                onActionPressed: () {
+                  context.read<WallFeedBloc>().add(
+                        AddFeedToWallRequested(
+                          feedId: item.id,
+                          wallId: widget.wall.id,
+                        ),
+                      );
+                  final currentItems = _pagingController.itemList ?? [];
+                  final newItems = List<Feed>.from(currentItems)
+                    ..insert(index, item);
+                  _pagingController.itemList = newItems;
+                },
+              );
+            },
+          ),
+          firstPageErrorTitle: 'Error',
+          newPageErrorTitle: 'Error',
+          noMoreItemsErrorTitle: '',
+          noMoreItemsErrorMessage: '',
+          listEmptyErrorTitle: 'No feeds on this wall.',
+          listEmptyErrorMessage: '',
         ),
       ),
     );

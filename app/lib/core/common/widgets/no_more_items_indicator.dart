@@ -13,14 +13,6 @@ class NoMoreItemsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: context.theme.colorScheme.outline,
-              width: UIConstants.borderWidth,
-            ),
-          ),
-        ),
         padding: const EdgeInsets.all(UIConstants.pagePadding),
         child: Center(
           child: Column(
