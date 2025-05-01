@@ -36,6 +36,8 @@ type Item struct {
 	Version     int32                        `json:"version,omitempty"`
 	CreatedAt   time.Time                    `json:"created_at,omitempty"`
 	UpdatedAt   time.Time                    `json:"updated_at,omitempty"`
+
+	Feed *Feed `json:"feed,omitempty"`
 }
 
 // Person is an individual specified in a feed
@@ -222,6 +224,13 @@ func (m ItemModel) Insert(item *Item) error {
 }
 
 func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filters) ([]*Item, Metadata, error) {
+	columnMapping := sortColumnMapping{
+		"id":          "items.id",
+		"title":       "items.title",
+		"pub_date":    "items.pub_date",
+		"pub_updated": "items.pub_updated",
+		"created_at":  "items.created_at",
+	}
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), id, title, description, content, link, pub_date,
 			pub_updated, authors, guid, image_url, categories, enclosures, feed_id,
@@ -233,7 +242,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			OR $2 = ''
 		)
 		ORDER BY COALESCE(%s, updated_at) %s, id desc
-		LIMIT $3 OFFSET $4`, filters.sortColumn(), filters.sortDirection())
+		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -267,6 +276,84 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			&item.CreatedAt,
 			&item.UpdatedAt,
 		)
+		return &item, err
+	})
+	if err != nil {
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return items, metadata, nil
+}
+
+func (m ItemModel) FindAllForWall(wallID int64, title string, filters Filters) ([]*Item, Metadata, error) {
+	columnMapping := sortColumnMapping{
+		"id":          "items.id",
+		"title":       "items.title",
+		"pub_date":    "items.pub_date",
+		"pub_updated": "items.pub_updated",
+		"created_at":  "items.created_at",
+	}
+	query := fmt.Sprintf(`
+		SELECT count(*) OVER(), items.id, items.title, items.description, items.content, items.link, items.pub_date,
+			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
+			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language
+		FROM items
+		INNER JOIN feeds ON feeds.id = items.feed_id
+		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
+		WHERE wall_feeds.wall_id = $1
+		AND (
+			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
+			OR $2 = ''
+		)
+		ORDER BY COALESCE(%s, items.updated_at) %s, items.id desc
+		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []any{wallID, title, filters.limit(), filters.offset()}
+
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+	}
+
+	totalRecords := 0
+	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Item, error) {
+		var item Item
+		var feed Feed
+		err := rows.Scan(
+			&totalRecords,
+			&item.ID,
+			&item.Title,
+			&item.Description,
+			&item.Content,
+			&item.Link,
+			&item.PubDate,
+			&item.PubUpdated,
+			&item.Authors,
+			&item.GUID,
+			&item.ImageURL,
+			&item.Categories,
+			&item.Enclosures,
+			&item.FeedID,
+			&item.Version,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+			&feed.ID,
+			&feed.Title,
+			&feed.Description,
+			&feed.Link,
+			&feed.FeedLink,
+			&feed.PubDate,
+			&feed.PubUpdated,
+			&feed.FeedType,
+			&feed.Language,
+		)
+		item.Feed = &feed
 		return &item, err
 	})
 	if err != nil {

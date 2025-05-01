@@ -54,10 +54,20 @@ func calculateMetadata(totalRecords, page, pageSize int) Metadata {
 	}
 }
 
-func (f Filters) sortColumn() string {
+// sortColumnMapping is a map of sort keys to database columns.
+// It is used to map the sort keys to the correct database columns along with the table prefix if applicable.
+type sortColumnMapping map[string]string
+
+func (f Filters) sortColumn(columnMapping sortColumnMapping) string {
 	for _, safeValue := range f.SortSafeList {
 		if f.Sort == safeValue {
-			return strings.TrimPrefix(f.Sort, "-")
+			sortKey := strings.TrimPrefix(f.Sort, "-")
+			// If the sort key is in the column mapping, use the mapped column (along with the table prefix).
+			if column, ok := columnMapping[sortKey]; ok {
+				return column
+			}
+			// Else it's the column name itself
+			return sortKey
 		}
 	}
 

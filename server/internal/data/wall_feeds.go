@@ -3,6 +3,7 @@ package data
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -52,25 +53,41 @@ func (m WallFeedModel) Insert(wallFeed *WallFeed) error {
 	return nil
 }
 
-func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
-	query := `
-		SELECT feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+func (m WallFeedModel) FindFeedsForWall(wallID int64, title string, filters Filters) ([]*Feed, Metadata, error) {
+	columnMapping := sortColumnMapping{
+		"id":          "feeds.id",
+		"title":       "feeds.title",
+		"pub_date":    "feeds.pub_date",
+		"pub_updated": "feeds.pub_updated",
+	}
+	query := fmt.Sprintf(`
+		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
 			feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
 		FROM feeds
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
-		WHERE wall_feeds.wall_id = $1`
+		WHERE wall_feeds.wall_id = $1 
+		AND (
+			to_tsvector('simple', feeds.title) @@ plainto_tsquery('simple', $2)
+			OR $2 = ''
+		)
+		ORDER BY %s %s, id ASC
+		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	rows, err := m.DB.Query(ctx, query, wallID)
+	args := []any{wallID, title, filters.limit(), filters.offset()}
+
+	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
+	totalRecords := 0
 	feeds, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Feed, error) {
 		var feed Feed
-		err := rows.Scan(
+		err := row.Scan(
+			&totalRecords,
 			&feed.ID,
 			&feed.Title,
 			&feed.Description,
@@ -85,10 +102,10 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64) ([]*Feed, error) {
 		return &feed, err
 	})
 	if err != nil {
-		return nil, err
+		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
 	}
 
-	return feeds, nil
+	return feeds, calculateMetadata(totalRecords, filters.Page, filters.PageSize), nil
 }
 
 func (m WallFeedModel) DeleteFeedForWalls(feedID int64, wallIDs []int64) error {

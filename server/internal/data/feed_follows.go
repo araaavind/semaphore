@@ -29,6 +29,11 @@ type FeedFollowModel struct {
 }
 
 func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*User, Metadata, error) {
+	columnMapping := sortColumnMapping{
+		"id":        "users.id",
+		"full_name": "users.full_name",
+		"username":  "users.username",
+	}
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), users.id, users.full_name, users.username
 		FROM users
@@ -36,7 +41,7 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 		INNER JOIN feeds ON feeds.id = feed_follows.feed_id
 		WHERE feeds.id = $1
 		ORDER BY %s %s, id ASC
-		LIMIT $2 OFFSET $3`, filters.sortColumn(), filters.sortDirection())
+		LIMIT $2 OFFSET $3`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -69,6 +74,12 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 }
 
 func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed, Metadata, error) {
+	columnMapping := sortColumnMapping{
+		"id":          "feeds.id",
+		"title":       "feeds.title",
+		"pub_date":    "feeds.pub_date",
+		"pub_updated": "feeds.pub_updated",
+	}
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
 		FROM feeds
@@ -76,7 +87,7 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 		INNER JOIN users ON users.id = feed_follows.user_id
 		WHERE users.id = $1
 		ORDER BY %s %s, id ASC
-		LIMIT $2 OFFSET $3`, filters.sortColumn(), filters.sortDirection())
+		LIMIT $2 OFFSET $3`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	args := []any{userID, filters.limit(), filters.offset()}
 
