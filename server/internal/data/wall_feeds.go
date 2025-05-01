@@ -70,7 +70,7 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64, title string, filters Filt
 			to_tsvector('simple', feeds.title) @@ plainto_tsquery('simple', $2)
 			OR $2 = ''
 		)
-		ORDER BY %s %s, id ASC
+		ORDER BY %s %s, feeds.id ASC
 		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)

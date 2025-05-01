@@ -224,13 +224,6 @@ func (m ItemModel) Insert(item *Item) error {
 }
 
 func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filters) ([]*Item, Metadata, error) {
-	columnMapping := sortColumnMapping{
-		"id":          "items.id",
-		"title":       "items.title",
-		"pub_date":    "items.pub_date",
-		"pub_updated": "items.pub_updated",
-		"created_at":  "items.created_at",
-	}
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), id, title, description, content, link, pub_date,
 			pub_updated, authors, guid, image_url, categories, enclosures, feed_id,
@@ -242,7 +235,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			OR $2 = ''
 		)
 		ORDER BY COALESCE(%s, updated_at) %s, id desc
-		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
+		LIMIT $3 OFFSET $4`, filters.sortColumn(sortColumnMapping{}), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()

@@ -94,12 +94,6 @@ func (m FeedModel) Insert(feed *Feed) error {
 }
 
 func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
-	columnMapping := sortColumnMapping{
-		"id":          "feeds.id",
-		"title":       "feeds.title",
-		"pub_date":    "feeds.pub_date",
-		"pub_updated": "feeds.pub_updated",
-	}
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date,
 		pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at,
@@ -111,7 +105,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 		)
 		AND (feed_link = $2 OR $2 = '')
 		ORDER BY %s %s, id ASC
-		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
+		LIMIT $3 OFFSET $4`, filters.sortColumn(sortColumnMapping{}), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
