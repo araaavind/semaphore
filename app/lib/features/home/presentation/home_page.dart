@@ -7,7 +7,6 @@ import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -59,9 +58,6 @@ class HomePage extends StatelessWidget {
         BlocProvider(
           create: (_) => serviceLocator<WallsBloc>()..add(ListWallsRequested()),
           lazy: false,
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<WallCubit>(),
         ),
         BlocProvider(
           create: (_) => serviceLocator<SearchFeedBloc>(),

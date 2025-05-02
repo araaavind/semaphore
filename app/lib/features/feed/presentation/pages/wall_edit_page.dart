@@ -6,7 +6,6 @@ import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
 import 'package:app/features/feed/presentation/widgets/wall_feed_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -127,7 +126,7 @@ class _WallEditPageState extends State<WallEditPage> {
     if (!mounted) return;
 
     // Proceed with deletion
-    context.read<WallCubit>().deleteWall(widget.wall.id);
+    context.read<WallsBloc>().add(DeleteWallRequested(wallId: widget.wall.id));
   }
 
   Future<void> _updateWall() async {
@@ -157,15 +156,17 @@ class _WallEditPageState extends State<WallEditPage> {
     }
 
     // Update wall with new name
-    context.read<WallCubit>().updateWall(
-          widget.wall.id,
-          newName,
+    context.read<WallsBloc>().add(
+          UpdateWallRequested(
+            wallId: widget.wall.id,
+            wallName: newName,
+          ),
         );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<WallCubit, WallState>(listener: (context, state) {
+    return BlocConsumer<WallsBloc, WallsState>(listener: (context, state) {
       if (state.status == WallStatus.success &&
           state.action == WallAction.delete) {
         showSnackbar(
@@ -173,19 +174,9 @@ class _WallEditPageState extends State<WallEditPage> {
           'Wall deleted',
           type: SnackbarType.info,
         );
-
-        // Select the primary wall to navigate back to
-        final walls = context.read<WallsBloc>().state.walls;
-        context.read<WallsBloc>().add(
-              SelectWallRequested(
-                selectedWall: walls.firstWhere((element) => element.isPrimary),
-              ),
-            );
-        context.read<WallsBloc>().add(ListWallsRequested());
-        context.goNamed(RouteConstants.wallPageName);
+        context.pop();
       } else if (state.status == WallStatus.failure &&
           state.action == WallAction.delete) {
-        // Show error message
         showSnackbar(
           context,
           state.message ?? 'Failed to delete wall',
@@ -193,12 +184,9 @@ class _WallEditPageState extends State<WallEditPage> {
         );
       } else if (state.status == WallStatus.success &&
           state.action == WallAction.update) {
-        // Refresh the wall list
-        context.read<WallsBloc>().add(ListWallsRequested());
         context.pop();
       } else if (state.status == WallStatus.failure &&
           state.action == WallAction.update) {
-        // Show error message for update failure
         showSnackbar(
           context,
           state.message ?? 'Failed to update wall',
@@ -214,7 +202,7 @@ class _WallEditPageState extends State<WallEditPage> {
       return Scaffold(
         appBar: AppBar(
           actions: [
-            if (!widget.wall.isPrimary) // Prevent deleting primary wall
+            if (!widget.wall.isPrimary)
               IconButton(
                 icon: const Icon(MingCute.delete_line),
                 onPressed: _deleteWall,
@@ -367,6 +355,7 @@ class _WallEditPageState extends State<WallEditPage> {
                   final newItems = List<Feed>.from(currentItems)
                     ..insert(index, item);
                   _pagingController.itemList = newItems;
+                  context.read<WallsBloc>().add(ListWallsRequested());
                 },
               );
             },

@@ -232,15 +232,6 @@ void _initFeed() {
     )
     // Register cubits
     ..registerFactory(
-      () => WallCubit(
-        createWall: serviceLocator(),
-        updateWall: serviceLocator(),
-        deleteWall: serviceLocator(),
-        pinWall: serviceLocator(),
-        unpinWall: serviceLocator(),
-      ),
-    )
-    ..registerFactory(
       () => ScrollToTopCubit(),
     )
     // Register blocs
@@ -269,6 +260,11 @@ void _initFeed() {
     ..registerFactory(
       () => WallsBloc(
         listWalls: serviceLocator(),
+        createWall: serviceLocator(),
+        updateWall: serviceLocator(),
+        deleteWall: serviceLocator(),
+        pinWall: serviceLocator(),
+        unpinWall: serviceLocator(),
       ),
     )
     ..registerFactory(

@@ -1,6 +1,17 @@
 part of 'walls_bloc.dart';
 
-enum WallsStatus { initial, loading, success, failure }
+enum WallStatus { initial, loading, success, failure }
+
+enum WallAction {
+  list,
+  select,
+  changeFilter,
+  create,
+  update,
+  delete,
+  pin,
+  unpin,
+}
 
 enum WallSortOption {
   hot,
@@ -40,41 +51,62 @@ enum WallViewOption {
 }
 
 class WallsState extends Equatable {
-  final WallsStatus status;
+  final WallStatus status;
+  final WallAction? action;
   final List<Wall> walls;
   final Wall? currentWall;
+  final Wall? pinnedWall;
   final WallSortOption wallSort;
   final WallViewOption wallView;
   final String? message;
+  final Map<String, String>? fieldErrors;
 
   const WallsState({
-    this.status = WallsStatus.initial,
+    this.status = WallStatus.initial,
+    this.action,
     this.walls = const <Wall>[],
     this.currentWall,
+    this.pinnedWall,
     this.wallSort = WallSortOption.latest,
     this.wallView = WallViewOption.magazine,
     this.message,
+    this.fieldErrors,
   });
 
   @override
-  List<Object?> get props =>
-      [status, walls, currentWall, wallSort, wallView, message];
+  List<Object?> get props => [
+        status,
+        action,
+        walls,
+        currentWall,
+        pinnedWall,
+        wallSort,
+        wallView,
+        message,
+        fieldErrors,
+      ];
 
   WallsState copyWith({
-    WallsStatus? status,
+    WallStatus? status,
+    WallAction? action,
     List<Wall>? walls,
     Wall? currentWall,
+    Wall? pinnedWall,
     WallSortOption? wallSort,
     WallViewOption? wallView,
     String? message,
+    Map<String, String>? fieldErrors,
   }) {
     return WallsState(
       status: status ?? this.status,
+      action: action ?? this.action,
       walls: walls ?? this.walls,
       currentWall: currentWall ?? this.currentWall,
+      pinnedWall: pinnedWall ?? this.pinnedWall,
       wallSort: wallSort ?? this.wallSort,
       wallView: wallView ?? this.wallView,
       message: message ?? this.message,
+      fieldErrors: fieldErrors ?? this.fieldErrors,
     );
   }
 }

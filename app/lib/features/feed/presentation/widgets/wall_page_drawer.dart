@@ -7,7 +7,6 @@ import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -42,11 +41,11 @@ class WallPageDrawer extends StatelessWidget {
                 ),
               ),
               onTap: () async {
-                final isCreated =
-                    await context.pushNamed(RouteConstants.createWallPageName);
-                if ((isCreated as bool) == true && context.mounted) {
-                  context.read<WallsBloc>().add(ListWallsRequested());
-                }
+                final wallsBloc = context.read<WallsBloc>();
+                context.pushNamed(
+                  RouteConstants.createWallPageName,
+                  extra: wallsBloc,
+                );
               },
             ),
             controlAffinity: ListTileControlAffinity.leading,
@@ -74,109 +73,97 @@ class WallPageDrawer extends StatelessWidget {
               ),
             ),
             children: [
-              BlocListener<WallCubit, WallState>(
-                listener: (context, state) {
-                  if (state.status == WallStatus.success &&
-                      (state.action == WallAction.pin ||
-                          state.action == WallAction.unpin)) {
-                    context.read<WallsBloc>().add(ListWallsRequested());
+              BlocBuilder<WallsBloc, WallsState>(
+                builder: (context, state) {
+                  if (state.status == WallStatus.initial) {
+                    return const SizedBox.shrink();
                   }
-                },
-                child: BlocBuilder<WallsBloc, WallsState>(
-                  builder: (context, state) {
-                    if (state.status == WallsStatus.initial) {
-                      return const SizedBox.shrink();
-                    }
-                    if (state.status == WallsStatus.failure) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Text('Unable to load walls'),
-                      );
-                    }
-                    return Column(
-                      children: [
-                        ...state.walls.map(
-                          (e) => Container(
-                            decoration: e.id == state.currentWall!.id
-                                ? BoxDecoration(
-                                    color: context
-                                        .theme.colorScheme.primaryContainer,
-                                    borderRadius: BorderRadius.circular(
-                                      UIConstants.tileItemBorderRadius,
+                  if (state.status == WallStatus.failure) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text('Unable to load walls'),
+                    );
+                  }
+                  return Column(
+                    children: [
+                      ...state.walls.map(
+                        (e) => Container(
+                          decoration: e.id == state.currentWall!.id
+                              ? BoxDecoration(
+                                  color: context
+                                      .theme.colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(
+                                    UIConstants.tileItemBorderRadius,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withAlpha(20),
+                                      blurRadius: 2,
+                                      spreadRadius: 0.1,
+                                      offset: const Offset(0.5, 0.5),
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withAlpha(20),
-                                        blurRadius: 2,
-                                        spreadRadius: 0.1,
-                                        offset: const Offset(0.5, 0.5),
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                            child: ListTile(
-                              selected: e.id == state.currentWall!.id,
-                              selectedTileColor:
-                                  context.theme.colorScheme.primaryContainer,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  UIConstants.tileItemBorderRadius,
-                                ),
+                                  ],
+                                )
+                              : null,
+                          child: ListTile(
+                            selected: e.id == state.currentWall!.id,
+                            selectedTileColor:
+                                context.theme.colorScheme.primaryContainer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                UIConstants.tileItemBorderRadius,
                               ),
-                              selectedColor: context.theme.colorScheme.primary,
-                              visualDensity: VisualDensity.compact,
-                              title: Text(
-                                e.name,
-                                style: context.theme.textTheme.titleSmall
-                                    ?.copyWith(
-                                  color: context.theme.colorScheme.onSurface,
-                                  fontWeight: e.id == state.currentWall!.id
-                                      ? FontWeight.w900
-                                      : null,
-                                ),
-                              ),
-                              trailing: e.isPinned
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        context
-                                            .read<WallCubit>()
-                                            .unpinWall(e.id);
-                                      },
-                                      child: Icon(
-                                        MingCute.pin_fill,
-                                        color: context
-                                            .theme.colorScheme.onSurface
-                                            .withOpacity(0.7),
-                                      ),
-                                    )
-                                  : e.isPrimary
-                                      ? null
-                                      : GestureDetector(
-                                          onTap: () {
-                                            context
-                                                .read<WallCubit>()
-                                                .pinWall(e.id);
-                                          },
-                                          child: Icon(
-                                            MingCute.pin_line,
-                                            color: context
-                                                .theme.colorScheme.onSurface
-                                                .withOpacity(0.3),
-                                          ),
-                                        ),
-                              onTap: () {
-                                context.pop();
-                                context
-                                    .read<WallsBloc>()
-                                    .add(SelectWallRequested(selectedWall: e));
-                              },
                             ),
+                            selectedColor: context.theme.colorScheme.primary,
+                            visualDensity: VisualDensity.compact,
+                            title: Text(
+                              e.name,
+                              style:
+                                  context.theme.textTheme.titleSmall?.copyWith(
+                                color: context.theme.colorScheme.onSurface,
+                                fontWeight: e.id == state.currentWall!.id
+                                    ? FontWeight.w900
+                                    : null,
+                              ),
+                            ),
+                            trailing: e.isPinned
+                                ? GestureDetector(
+                                    onTap: () {
+                                      context.read<WallsBloc>().add(
+                                          UnpinWallRequested(wallId: e.id));
+                                    },
+                                    child: Icon(
+                                      MingCute.pin_fill,
+                                      color: context.theme.colorScheme.onSurface
+                                          .withOpacity(0.7),
+                                    ),
+                                  )
+                                : e.isPrimary
+                                    ? null
+                                    : GestureDetector(
+                                        onTap: () {
+                                          context.read<WallsBloc>().add(
+                                              PinWallRequested(wallId: e.id));
+                                        },
+                                        child: Icon(
+                                          MingCute.pin_line,
+                                          color: context
+                                              .theme.colorScheme.onSurface
+                                              .withOpacity(0.3),
+                                        ),
+                                      ),
+                            onTap: () {
+                              context.pop();
+                              context
+                                  .read<WallsBloc>()
+                                  .add(SelectWallRequested(selectedWall: e));
+                            },
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ),

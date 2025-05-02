@@ -110,7 +110,7 @@ class AddToWallPageContent extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<WallsBloc, WallsState>(
                   builder: (context, state) {
-                    if (state.status == WallsStatus.loading) {
+                    if (state.status == WallStatus.loading) {
                       return const Padding(
                         padding: EdgeInsets.all(UIConstants.pagePadding),
                         child: ShimmerLoader(
@@ -118,7 +118,7 @@ class AddToWallPageContent extends StatelessWidget {
                           type: ShimmerLoaderType.lines,
                         ),
                       );
-                    } else if (state.status == WallsStatus.failure) {
+                    } else if (state.status == WallStatus.failure) {
                       return SizedBox(
                         width: 300,
                         child: Center(

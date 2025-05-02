@@ -150,7 +150,40 @@ class _WallPageState extends State<WallPage> {
           context.theme.colorScheme.surfaceContainer.withAlpha(180),
       body: BlocConsumer<WallsBloc, WallsState>(
         listener: (context, state) {
-          if (state.status == WallsStatus.failure) {
+          if (state.status == WallStatus.success &&
+              state.action == WallAction.create) {
+            context.read<WallsBloc>().add(ListWallsRequested());
+            return;
+          } else if (state.status == WallStatus.success &&
+              state.action == WallAction.delete) {
+            // Select the primary wall to navigate back to
+            final walls = context.read<WallsBloc>().state.walls;
+            Wall? pinnedWall;
+            try {
+              pinnedWall = walls.firstWhere((element) => element.isPinned);
+            } catch (e) {
+              pinnedWall = null;
+            }
+            context.read<WallsBloc>().add(
+                  SelectWallRequested(
+                    selectedWall: pinnedWall ??
+                        walls.firstWhere((element) => element.isPrimary),
+                  ),
+                );
+            context.read<WallsBloc>().add(ListWallsRequested());
+            return;
+          } else if (state.status == WallStatus.success &&
+              state.action == WallAction.update) {
+            context.read<WallsBloc>().add(ListWallsRequested());
+            return;
+          } else if (state.status == WallStatus.success &&
+              (state.action == WallAction.pin ||
+                  state.action == WallAction.unpin)) {
+            context.read<WallsBloc>().add(ListWallsRequested());
+            return;
+          }
+
+          if (state.status == WallStatus.failure) {
             showSnackbar(context, state.message!, type: SnackbarType.failure);
             return;
           }
@@ -182,7 +215,7 @@ class _WallPageState extends State<WallPage> {
               ],
               body: Builder(
                 builder: (context) {
-                  if (state.status == WallsStatus.loading ||
+                  if (state.status == WallStatus.loading ||
                       state.currentWall == null) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(

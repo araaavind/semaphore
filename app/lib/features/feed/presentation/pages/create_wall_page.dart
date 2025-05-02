@@ -2,8 +2,7 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
-import 'package:app/features/feed/presentation/cubit/wall/wall_cubit.dart';
-import 'package:app/init_dependencies.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,8 +26,9 @@ class _CreateWallPageState extends State<CreateWallPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => serviceLocator<WallCubit>(),
+    final wallsBloc = GoRouterState.of(context).extra as WallsBloc;
+    return BlocProvider.value(
+      value: wallsBloc,
       child: Scaffold(
         appBar: AppBar(),
         body: Builder(builder: (context) {
@@ -51,7 +51,7 @@ class _CreateWallPageState extends State<CreateWallPage> {
                   ),
                   const SizedBox(height: 20),
                   Center(
-                    child: BlocConsumer<WallCubit, WallState>(
+                    child: BlocConsumer<WallsBloc, WallsState>(
                       listener: (context, state) {
                         if (state.status == WallStatus.failure &&
                             state.action == WallAction.create) {
@@ -74,7 +74,7 @@ class _CreateWallPageState extends State<CreateWallPage> {
                             state.action == WallAction.create) {
                           showSnackbar(
                             context,
-                            'Your wall has been created!',
+                            'Wall created!',
                             type: SnackbarType.info,
                           );
                           context.pop(true);
@@ -86,9 +86,11 @@ class _CreateWallPageState extends State<CreateWallPage> {
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               FocusManager.instance.primaryFocus?.unfocus();
-                              context
-                                  .read<WallCubit>()
-                                  .createWall(wallNameController.text.trim());
+                              context.read<WallsBloc>().add(
+                                    CreateWallRequested(
+                                      wallName: wallNameController.text.trim(),
+                                    ),
+                                  );
                             }
                           },
                           isLoading: state.status == WallStatus.loading &&
