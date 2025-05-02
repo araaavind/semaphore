@@ -62,6 +62,10 @@ abstract interface class FeedRepository {
 
   Future<Either<Failure, void>> removeFeedFromWall(int feedId, int wallId);
 
+  Future<Either<Failure, void>> pinWall(int wallId);
+
+  Future<Either<Failure, void>> unpinWall(int wallId);
+
   Future<Either<Failure, FeedList>> listWallFeeds({
     required int wallId,
     String? searchKey,

@@ -118,7 +118,7 @@ class _WallPageState extends State<WallPage> {
         context.read<SearchFeedBloc>().add(
               FeedSearchRequested(
                 page: pageKey,
-                pageSize: ServerConstants.defaultPaginationPageSize,
+                pageSize: 100,
                 type: ListFeedsType.followed,
               ),
             );
@@ -174,7 +174,8 @@ class _WallPageState extends State<WallPage> {
                       const Wall(
                         id: 0,
                         isPrimary: true,
-                        name: 'All feeds',
+                        name: '',
+                        isPinned: false,
                         userId: 0,
                       ),
                 ),

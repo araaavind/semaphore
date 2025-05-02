@@ -2,7 +2,7 @@ part of 'wall_cubit.dart';
 
 enum WallStatus { initial, loading, success, failure }
 
-enum WallAction { create, update, delete }
+enum WallAction { create, update, delete, pin, unpin }
 
 class WallState extends Equatable {
   final WallStatus status;

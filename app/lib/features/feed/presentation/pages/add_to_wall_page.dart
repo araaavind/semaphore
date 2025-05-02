@@ -1,4 +1,4 @@
-import 'package:app/core/common/widgets/button.dart';
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
@@ -111,10 +111,20 @@ class AddToWallPageContent extends StatelessWidget {
                 child: BlocBuilder<WallsBloc, WallsState>(
                   builder: (context, state) {
                     if (state.status == WallsStatus.loading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Padding(
+                        padding: EdgeInsets.all(UIConstants.pagePadding),
+                        child: ShimmerLoader(
+                          pageSize: 8,
+                          type: ShimmerLoaderType.lines,
+                        ),
+                      );
                     } else if (state.status == WallsStatus.failure) {
-                      return Center(
-                          child: Text(state.message ?? 'Failed to load walls'));
+                      return SizedBox(
+                        width: 300,
+                        child: Center(
+                            child:
+                                Text(state.message ?? 'Failed to load walls')),
+                      );
                     } else if (state.walls.isEmpty) {
                       return const Center(child: Text('No walls found'));
                     }

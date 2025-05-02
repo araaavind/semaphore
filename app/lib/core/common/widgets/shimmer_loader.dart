@@ -8,6 +8,7 @@ enum ShimmerLoaderType {
   text,
   magazine,
   card,
+  lines,
 }
 
 class ShimmerLoader extends StatelessWidget {
@@ -45,6 +46,8 @@ class ShimmerLoader extends StatelessWidget {
         return _buildMagazineShimmer(context);
       case ShimmerLoaderType.card:
         return _buildCardShimmer(context);
+      case ShimmerLoaderType.lines:
+        return _buildLinesShimmer(context);
     }
   }
 
@@ -139,6 +142,22 @@ class ShimmerLoader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLinesShimmer(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10.0),
+        Container(
+          width: double.infinity,
+          height: 18.0,
+          color: Colors.white,
+        ),
+        const SizedBox(height: 28.0),
+      ],
     );
   }
 }

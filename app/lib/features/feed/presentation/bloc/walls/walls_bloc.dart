@@ -40,7 +40,14 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           currentWall = walls
               .firstWhere((element) => element.id == state.currentWall!.id);
         } else {
-          currentWall = walls.firstWhere((element) => element.isPrimary);
+          Wall? pinnedWall;
+          try {
+            pinnedWall = walls.firstWhere((element) => element.isPinned);
+          } catch (e) {
+            pinnedWall = null;
+          }
+          currentWall =
+              pinnedWall ?? walls.firstWhere((element) => element.isPrimary);
         }
         emit(state.copyWith(
           status: WallsStatus.success,

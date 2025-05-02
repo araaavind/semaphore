@@ -329,4 +329,16 @@ class MingCute {
 
   /// refresh anticlockwise line
   static const refresh_anticlockwise_line = MingCuteIconData(0xf1bf);
+
+  /// pin fill
+  static const pin_fill = MingCuteIconData(0xf134);
+
+  /// pin line
+  static const pin_line = MingCuteIconData(0xf135);
+
+  /// pin 2 fill
+  static const pin_2_fill = MingCuteIconData(0xf132);
+
+  /// pin 2 line
+  static const pin_2_line = MingCuteIconData(0xf133);
 }

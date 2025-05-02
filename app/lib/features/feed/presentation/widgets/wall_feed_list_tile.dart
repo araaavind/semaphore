@@ -53,6 +53,7 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
             state.feedId == feed.id &&
             state.action == WallFeedAction.remove) {
           widget.onRemove();
+          context.read<WallsBloc>().add(ListWallsRequested());
         }
       },
       builder: (context, state) {
@@ -146,7 +147,6 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
                                 wallId: widget.wallId,
                               ),
                             );
-                        context.read<WallsBloc>().add(ListWallsRequested());
                       },
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,

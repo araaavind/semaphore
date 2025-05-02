@@ -8,6 +8,7 @@ class WallModel extends Wall {
     required super.id,
     required super.name,
     required super.isPrimary,
+    required super.isPinned,
     required super.userId,
     super.feeds,
   });
@@ -16,6 +17,7 @@ class WallModel extends Wall {
     int? id,
     String? name,
     bool? isPrimary,
+    bool? isPinned,
     int? userId,
     List<FeedModel>? feeds,
   }) {
@@ -23,6 +25,7 @@ class WallModel extends Wall {
       id: id ?? this.id,
       name: name ?? this.name,
       isPrimary: isPrimary ?? this.isPrimary,
+      isPinned: isPinned ?? this.isPinned,
       userId: userId ?? this.userId,
       feeds: feeds ?? this.feeds,
     );
@@ -33,6 +36,7 @@ class WallModel extends Wall {
       'id': id,
       'name': name,
       'is_primary': isPrimary,
+      'is_pinned': isPinned,
       'user_id': userId,
       'feeds': feeds?.map((f) => (f as FeedModel).toMap()).toList(),
     };
@@ -43,6 +47,7 @@ class WallModel extends Wall {
       id: map['id'] as int,
       name: map['name'] as String,
       isPrimary: map['is_primary'] as bool,
+      isPinned: map['is_pinned'] as bool,
       userId: map['user_id'] as int,
       feeds: map['feeds'] != null
           ? (map['feeds'] as List)

@@ -225,6 +225,28 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
+  Future<Either<Failure, void>> pinWall(int wallId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.pinWall(wallId),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> unpinWall(int wallId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.unpinWall(wallId),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, FeedListModel>> listWallFeeds({
     required int wallId,
     String? searchKey,

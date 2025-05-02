@@ -28,8 +28,10 @@ import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.da
 import 'package:app/features/feed/domain/usecases/list_followers_of_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_items.dart';
 import 'package:app/features/feed/domain/usecases/list_walls.dart';
+import 'package:app/features/feed/domain/usecases/pin_wall.dart';
 import 'package:app/features/feed/domain/usecases/remove_feed_from_wall.dart';
 import 'package:app/features/feed/domain/usecases/unfollow_feed.dart';
+import 'package:app/features/feed/domain/usecases/unpin_wall.dart';
 import 'package:app/features/feed/domain/usecases/update_wall.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';

@@ -64,6 +64,10 @@ abstract interface class FeedRemoteDatasource {
 
   Future<void> removeFeedFromWall(int feedId, int wallId);
 
+  Future<void> pinWall(int wallId);
+
+  Future<void> unpinWall(int wallId);
+
   Future<FeedListModel> listWallFeeds({
     required int wallId,
     String? searchKey,
@@ -411,6 +415,40 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       await semaphoreClient.dio.delete(
         '/walls/$wallId/feeds/$feedId',
       );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> pinWall(int wallId) async {
+    try {
+      await semaphoreClient.dio.put('/walls/$wallId/pin');
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> unpinWall(int wallId) async {
+    try {
+      await semaphoreClient.dio.put('/walls/$wallId/unpin');
       return;
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);

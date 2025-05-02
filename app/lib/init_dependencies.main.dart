@@ -220,12 +220,24 @@ void _initFeed() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => PinWall(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UnpinWall(
+        serviceLocator(),
+      ),
+    )
     // Register cubits
     ..registerFactory(
       () => WallCubit(
         createWall: serviceLocator(),
         updateWall: serviceLocator(),
         deleteWall: serviceLocator(),
+        pinWall: serviceLocator(),
+        unpinWall: serviceLocator(),
       ),
     )
     ..registerFactory(
