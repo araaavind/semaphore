@@ -16,12 +16,14 @@ import (
 var (
 	ErrDuplicateWall       = errors.New("user already owns a wall with same name")
 	ErrDeletingPrimaryWall = errors.New("cannot delete primary wall")
+	ErrDuplicatePinnedWall = errors.New("user already has another pinned wall")
 )
 
 type Wall struct {
 	ID        int64      `json:"id"`
 	Name      string     `json:"name"`
 	IsPrimary bool       `json:"is_primary"`
+	IsPinned  bool       `json:"is_pinned"`
 	UserID    int64      `json:"user_id"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
@@ -43,14 +45,14 @@ func ValidateWall(v *validator.Validator, wall *Wall) {
 
 func (m WallModel) Insert(wall *Wall) error {
 	query := `
-		INSERT INTO walls (name, is_primary, user_id)
-		VALUES ($1, $2, $3)
+		INSERT INTO walls (name, is_primary, is_pinned, user_id)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at, updated_at`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRow(ctx, query, wall.Name, wall.IsPrimary, wall.UserID).Scan(
+	err := m.DB.QueryRow(ctx, query, wall.Name, wall.IsPrimary, wall.IsPinned, wall.UserID).Scan(
 		&wall.ID,
 		&wall.CreatedAt,
 		&wall.UpdatedAt,
@@ -79,7 +81,7 @@ func (m WallModel) InsertPrimaryWall(userID int64) error {
 
 func (m WallModel) FindByID(wallID int64) (*Wall, error) {
 	query := `
-		SELECT id, name, is_primary, user_id, created_at, updated_at
+		SELECT id, name, is_primary, is_pinned, user_id, created_at, updated_at
 		FROM walls
 		WHERE id = $1`
 
@@ -91,6 +93,7 @@ func (m WallModel) FindByID(wallID int64) (*Wall, error) {
 		&wall.ID,
 		&wall.Name,
 		&wall.IsPrimary,
+		&wall.IsPinned,
 		&wall.UserID,
 		&wall.CreatedAt,
 		&wall.UpdatedAt,
@@ -108,7 +111,7 @@ func (m WallModel) FindByID(wallID int64) (*Wall, error) {
 
 func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 	query := `
-		SELECT w.id, w.name, w.is_primary, w.user_id, w.created_at, w.updated_at,
+		SELECT w.id, w.name, w.is_primary, w.is_pinned, w.user_id, w.created_at, w.updated_at,
 		COALESCE(
 			JSONB_AGG(JSONB_BUILD_OBJECT(
 				'id', f.id,
@@ -128,7 +131,8 @@ func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 		LEFT JOIN wall_feeds wf ON w.id = wf.wall_id
 		LEFT JOIN feeds f ON wf.feed_id = f.id
 		WHERE w.user_id = $1
-		GROUP BY w.id`
+		GROUP BY w.id
+		ORDER BY w.is_pinned DESC, w.is_primary DESC, w.name ASC`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -144,6 +148,7 @@ func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 			&wall.ID,
 			&wall.Name,
 			&wall.IsPrimary,
+			&wall.IsPinned,
 			&wall.UserID,
 			&wall.CreatedAt,
 			&wall.UpdatedAt,
@@ -159,7 +164,7 @@ func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 
 func (m WallModel) FindPrimaryWallForUser(userID int64) (*Wall, error) {
 	query := `
-		SELECT id, name, is_primary, user_id, created_at, updated_at
+		SELECT id, name, is_primary, is_pinned, user_id, created_at, updated_at
 		FROM walls
 		WHERE user_id = $1 AND is_primary = true
 		LIMIT 1`
@@ -172,6 +177,7 @@ func (m WallModel) FindPrimaryWallForUser(userID int64) (*Wall, error) {
 		&wall.ID,
 		&wall.Name,
 		&wall.IsPrimary,
+		&wall.IsPinned,
 		&wall.UserID,
 		&wall.CreatedAt,
 		&wall.UpdatedAt,
@@ -243,5 +249,63 @@ func (m WallModel) Delete(wallID int64) error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (m WallModel) Pin(wallID int64) error {
+	// First unpin any currently pinned walls for this user
+	query := `
+		WITH current_wall AS (
+			SELECT user_id
+			FROM walls
+			WHERE id = $1
+		),
+		update_pinned AS (
+			UPDATE walls
+			SET is_pinned = false, updated_at = NOW()
+			WHERE user_id = (SELECT user_id FROM current_wall)
+			AND is_pinned = true
+		)
+		UPDATE walls
+		SET is_pinned = true, updated_at = NOW()
+		WHERE id = $1
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows):
+			return ErrRecordNotFound
+		default:
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m WallModel) Unpin(wallID int64) error {
+	query := `
+		UPDATE walls
+		SET is_pinned = false, updated_at = NOW()
+		WHERE id = $1
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, pgx.ErrNoRows):
+			return ErrRecordNotFound
+		default:
+			return err
+		}
+	}
+
 	return nil
 }

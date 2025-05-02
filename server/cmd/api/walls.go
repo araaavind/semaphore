@@ -224,3 +224,77 @@ func (app *application) deleteWall(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (app *application) pinWall(w http.ResponseWriter, r *http.Request) {
+	wallID, err := app.readIDParam(r, "wall_id")
+	if err != nil || wallID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	wall, err := app.models.Walls.FindByID(wallID)
+	if err != nil {
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFoundResponse(w, r)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	user := app.contextGetSession(r).User
+	if wall.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	err = app.models.Walls.Pin(wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (app *application) unpinWall(w http.ResponseWriter, r *http.Request) {
+	wallID, err := app.readIDParam(r, "wall_id")
+	if err != nil || wallID < 1 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	wall, err := app.models.Walls.FindByID(wallID)
+	if err != nil {
+		if errors.Is(err, data.ErrRecordNotFound) {
+			app.notFoundResponse(w, r)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	user := app.contextGetSession(r).User
+	if wall.UserID != user.ID {
+		app.notPermittedResponse(w, r)
+		return
+	}
+
+	err = app.models.Walls.Unpin(wallID)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
