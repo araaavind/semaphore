@@ -33,11 +33,20 @@ class WallPageDrawer extends StatelessWidget {
           ExpansionTile(
             childrenPadding: const EdgeInsets.all(8.0),
             trailing: GestureDetector(
-              child: const Padding(
-                padding: EdgeInsets.only(bottom: 2.0),
-                child: Icon(
+              child: Container(
+                decoration: BoxDecoration(
+                  color:
+                      context.theme.colorScheme.surfaceContainer.withAlpha(0),
+                ),
+                padding: const EdgeInsets.only(
+                  left: 12.0,
+                  right: 2.0,
+                  top: 12.0,
+                  bottom: 14.0,
+                ),
+                child: const Icon(
                   MingCute.add_fill,
-                  size: 20,
+                  size: 22,
                 ),
               ),
               onTap: () async {
@@ -55,8 +64,8 @@ class WallPageDrawer extends StatelessWidget {
             ),
             shape: Border(
               bottom: BorderSide(
-                width: 1,
-                color: context.theme.colorScheme.outline,
+                width: 0,
+                color: context.theme.colorScheme.outline.withOpacity(0),
               ),
             ),
             collapsedShape: Border(
@@ -126,30 +135,37 @@ class WallPageDrawer extends StatelessWidget {
                                     : null,
                               ),
                             ),
-                            trailing: e.isPinned
+                            leading: e.isPinned
                                 ? GestureDetector(
                                     onTap: () {
                                       context.read<WallsBloc>().add(
                                           UnpinWallRequested(wallId: e.id));
                                     },
-                                    child: Icon(
-                                      MingCute.pin_fill,
-                                      color: context.theme.colorScheme.onSurface
-                                          .withOpacity(0.7),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Icon(
+                                        MingCute.pin_fill,
+                                        color: context
+                                            .theme.colorScheme.onSurface
+                                            .withOpacity(0.7),
+                                      ),
                                     ),
                                   )
                                 : e.isPrimary
-                                    ? null
+                                    ? const SizedBox(width: 48)
                                     : GestureDetector(
                                         onTap: () {
                                           context.read<WallsBloc>().add(
                                               PinWallRequested(wallId: e.id));
                                         },
-                                        child: Icon(
-                                          MingCute.pin_line,
-                                          color: context
-                                              .theme.colorScheme.onSurface
-                                              .withOpacity(0.3),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Icon(
+                                            MingCute.pin_line,
+                                            color: context
+                                                .theme.colorScheme.onSurface
+                                                .withOpacity(0.3),
+                                          ),
                                         ),
                                       ),
                             onTap: () {
@@ -167,46 +183,48 @@ class WallPageDrawer extends StatelessWidget {
               ),
             ],
           ),
-          ExpansionTile(
-            trailing: GestureDetector(
-              child: const Padding(
-                padding: EdgeInsets.only(bottom: 2.0),
-                child: Icon(
-                  MingCute.add_fill,
-                  size: 20,
+          if (false)
+            // ignore: dead_code
+            ExpansionTile(
+              trailing: GestureDetector(
+                child: const Padding(
+                  padding: EdgeInsets.only(bottom: 2.0),
+                  child: Icon(
+                    MingCute.add_fill,
+                    size: 20,
+                  ),
+                ),
+                onTap: () {
+                  context.goNamed('feeds');
+                },
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              childrenPadding: const EdgeInsets.all(8.0),
+              shape: Border.all(
+                width: 0,
+                color: context.theme.colorScheme.outline.withOpacity(0),
+              ),
+              collapsedShape: Border.all(
+                width: 0,
+                color: context.theme.colorScheme.outline.withOpacity(0),
+              ),
+              initiallyExpanded: true,
+              title: Text(
+                'Your feeds',
+                style: context.theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-              onTap: () {
-                context.goNamed('feeds');
-              },
-            ),
-            controlAffinity: ListTileControlAffinity.leading,
-            childrenPadding: const EdgeInsets.all(8.0),
-            shape: Border.all(
-              width: 0,
-              color: context.theme.colorScheme.outline.withOpacity(0),
-            ),
-            collapsedShape: Border.all(
-              width: 0,
-              color: context.theme.colorScheme.outline.withOpacity(0),
-            ),
-            initiallyExpanded: true,
-            title: Text(
-              'Your feeds',
-              style: context.theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w900,
+              expansionAnimationStyle: AnimationStyle(
+                curve: Curves.easeOut,
+                duration: Durations.short3,
               ),
+              children: [
+                DrawerFeedList(
+                  pagingController: _feedsPagingController,
+                ),
+              ],
             ),
-            expansionAnimationStyle: AnimationStyle(
-              curve: Curves.easeOut,
-              duration: Durations.short3,
-            ),
-            children: [
-              DrawerFeedList(
-                pagingController: _feedsPagingController,
-              ),
-            ],
-          ),
         ],
       ),
     );
