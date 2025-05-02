@@ -55,7 +55,7 @@ class WallsState extends Equatable {
   final WallAction? action;
   final List<Wall> walls;
   final Wall? currentWall;
-  final Wall? pinnedWall;
+  final int? pinnedWallId;
   final WallSortOption wallSort;
   final WallViewOption wallView;
   final String? message;
@@ -66,7 +66,7 @@ class WallsState extends Equatable {
     this.action,
     this.walls = const <Wall>[],
     this.currentWall,
-    this.pinnedWall,
+    this.pinnedWallId,
     this.wallSort = WallSortOption.latest,
     this.wallView = WallViewOption.magazine,
     this.message,
@@ -79,7 +79,7 @@ class WallsState extends Equatable {
         action,
         walls,
         currentWall,
-        pinnedWall,
+        pinnedWallId,
         wallSort,
         wallView,
         message,
@@ -91,7 +91,7 @@ class WallsState extends Equatable {
     WallAction? action,
     List<Wall>? walls,
     Wall? currentWall,
-    Wall? pinnedWall,
+    int? pinnedWallId,
     WallSortOption? wallSort,
     WallViewOption? wallView,
     String? message,
@@ -102,7 +102,7 @@ class WallsState extends Equatable {
       action: action ?? this.action,
       walls: walls ?? this.walls,
       currentWall: currentWall ?? this.currentWall,
-      pinnedWall: pinnedWall ?? this.pinnedWall,
+      pinnedWallId: pinnedWallId ?? this.pinnedWallId,
       wallSort: wallSort ?? this.wallSort,
       wallView: wallView ?? this.wallView,
       message: message ?? this.message,

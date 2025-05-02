@@ -135,39 +135,26 @@ class WallPageDrawer extends StatelessWidget {
                                     : null,
                               ),
                             ),
-                            leading: e.isPinned
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 8),
+                            leading: state.pinnedWallId != null &&
+                                    e.id == state.pinnedWallId
                                 ? GestureDetector(
                                     onTap: () {
                                       context.read<WallsBloc>().add(
                                           UnpinWallRequested(wallId: e.id));
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.all(12.0),
+                                      padding: const EdgeInsets.only(left: 16),
                                       child: Icon(
                                         MingCute.pin_fill,
                                         color: context
                                             .theme.colorScheme.onSurface
-                                            .withOpacity(0.7),
+                                            .withOpacity(0.85),
                                       ),
                                     ),
                                   )
-                                : e.isPrimary
-                                    ? const SizedBox(width: 48)
-                                    : GestureDetector(
-                                        onTap: () {
-                                          context.read<WallsBloc>().add(
-                                              PinWallRequested(wallId: e.id));
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Icon(
-                                            MingCute.pin_line,
-                                            color: context
-                                                .theme.colorScheme.onSurface
-                                                .withOpacity(0.3),
-                                          ),
-                                        ),
-                                      ),
+                                : const SizedBox.shrink(),
                             onTap: () {
                               context.pop();
                               context

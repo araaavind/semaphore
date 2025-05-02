@@ -2,8 +2,10 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/utils/show_wall_filter_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class WallPageSliverAppBarBottom extends StatelessWidget
@@ -61,6 +63,31 @@ class WallPageSliverAppBarBottom extends StatelessWidget
           ),
         ),
         actions: [
+          BlocBuilder<WallsBloc, WallsState>(
+            builder: (context, state) {
+              return SizedBox(
+                child: (!wall.isPrimary)
+                    ? (state.pinnedWallId == wall.id)
+                        ? IconButton(
+                            onPressed: () {
+                              context
+                                  .read<WallsBloc>()
+                                  .add(UnpinWallRequested(wallId: wall.id));
+                            },
+                            icon: const Icon(MingCute.pin_2_fill),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              context
+                                  .read<WallsBloc>()
+                                  .add(PinWallRequested(wallId: wall.id));
+                            },
+                            icon: const Icon(MingCute.pin_2_line),
+                          )
+                    : null,
+              );
+            },
+          ),
           if (!wall.isPrimary)
             IconButton(
               onPressed: () {

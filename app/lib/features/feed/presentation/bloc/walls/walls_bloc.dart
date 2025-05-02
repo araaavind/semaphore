@@ -62,11 +62,11 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
         ));
       case Right(value: final walls):
         Wall? currentWall;
+        Wall? pinnedWall;
         if (state.currentWall != null) {
           currentWall = walls
               .firstWhere((element) => element.id == state.currentWall!.id);
         } else {
-          Wall? pinnedWall;
           try {
             pinnedWall = walls.firstWhere((element) => element.isPinned);
           } catch (e) {
@@ -80,6 +80,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           action: WallAction.list,
           walls: walls,
           currentWall: currentWall,
+          pinnedWallId: pinnedWall?.id,
         ));
     }
   }
@@ -186,13 +187,12 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     PinWallRequested event,
     Emitter<WallsState> emit,
   ) async {
-    final prevPinnedWall = state.pinnedWall;
+    final prevPinnedWallId = state.pinnedWallId;
     // Optimistically pin the wall and undo later if fails
     emit(state.copyWith(
-      status: WallStatus.success,
+      status: WallStatus.loading,
       action: WallAction.pin,
-      pinnedWall:
-          state.walls.firstWhere((element) => element.id == event.wallId),
+      pinnedWallId: event.wallId,
     ));
     final res = await _pinWall(event.wallId);
     switch (res) {
@@ -200,15 +200,14 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
         emit(state.copyWith(
           status: WallStatus.failure,
           action: WallAction.pin,
-          pinnedWall: prevPinnedWall,
+          pinnedWallId: prevPinnedWallId,
           message: l.message,
         ));
       case Right():
         emit(state.copyWith(
           status: WallStatus.success,
           action: WallAction.pin,
-          pinnedWall:
-              state.walls.firstWhere((element) => element.id == event.wallId),
+          pinnedWallId: event.wallId,
         ));
     }
   }
@@ -217,27 +216,30 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     UnpinWallRequested event,
     Emitter<WallsState> emit,
   ) async {
-    final prevPinnedWall = state.pinnedWall;
+    final prevPinnedWallId = state.pinnedWallId;
     // Optimistically unpin the wall and undo later if fails
-    emit(state.copyWith(
-      status: WallStatus.success,
+    final newState = state.copyWith(
+      status: WallStatus.loading,
       action: WallAction.unpin,
-      pinnedWall: null,
-    ));
+      pinnedWallId: -1,
+    );
+    emit(newState);
+    print(
+        'unpinning wall, loading sent with pin null: ${newState.pinnedWallId}');
     final res = await _unpinWall(event.wallId);
     switch (res) {
       case Left(value: final l):
         emit(state.copyWith(
           status: WallStatus.failure,
           action: WallAction.unpin,
-          pinnedWall: prevPinnedWall,
+          pinnedWallId: prevPinnedWallId,
           message: l.message,
         ));
       case Right():
         emit(state.copyWith(
           status: WallStatus.success,
           action: WallAction.unpin,
-          pinnedWall: null,
+          pinnedWallId: -1,
         ));
     }
   }
