@@ -68,38 +68,7 @@ List<String> _extractBestImageUrlsFromContent(String? content) {
 
   List<Element> imgElements = document.getElementsByTagName('img');
 
-  // 1. Try to find the largest image based on dimensions with non-empty src
-  Element? largestImageElement;
-  int largestArea = 0;
-
-  for (Element imgElement in imgElements) {
-    String? widthStr = imgElement.attributes['width'];
-    String? heightStr = imgElement.attributes['height'];
-    String? src = imgElement.attributes['src'];
-
-    // Only consider images with a valid, non-empty src attribute
-    if (src != null && src.isNotEmpty) {
-      // Convert width and height to integers
-      int? width = widthStr != null ? int.tryParse(widthStr) : null;
-      int? height = heightStr != null ? int.tryParse(heightStr) : null;
-
-      // Calculate the area (width * height) if dimensions are available
-      if (width != null && height != null) {
-        int area = width * height;
-        if (area > largestArea) {
-          largestArea = area;
-          largestImageElement = imgElement;
-        }
-      }
-    }
-  }
-
-  // Return the largest image if found
-  if (largestImageElement != null) {
-    imageUrls.add(largestImageElement.attributes['src']!);
-  }
-
-  // 2. try to find images inside specific tags like "featured"
+// 1. try to find images inside specific tags like "featured"
   List<Element> featuredElements = document
       .getElementsByTagName('div')
       .where((element) => element.classes.contains('featured'))
@@ -117,13 +86,40 @@ List<String> _extractBestImageUrlsFromContent(String? content) {
     }
   }
 
-  // 3. Push remaining image elements
+  // 2. go through remaining images and sort to find largest image
+  List<Map<String, dynamic>> attributes = [];
   for (Element imgElement in imgElements) {
+    String? widthStr = imgElement.attributes['width'];
+    String? heightStr = imgElement.attributes['height'];
     String? src = imgElement.attributes['src'];
+
+    // Only consider images with a valid, non-empty src attribute
     if (src != null && src.isNotEmpty) {
-      imageUrls.add(src);
+      // Convert width and height to integers
+      int? width = widthStr != null ? int.tryParse(widthStr) : null;
+      int? height = heightStr != null ? int.tryParse(heightStr) : null;
+
+      // Calculate the area (width * height) if dimensions are available
+      if (width != null && height != null) {
+        int area = width * height;
+        attributes.add({
+          'area': area,
+          'url': src,
+        });
+      } else {
+        // priority for images with no dimensions
+        attributes.add({
+          'area': 9999999,
+          'url': src,
+        });
+      }
     }
   }
+
+  // sort to find largest image
+  attributes.sort((a, b) => b['area'].compareTo(a['area']));
+
+  imageUrls.addAll(attributes.map((e) => e['url']));
 
   return imageUrls;
 }
