@@ -2,12 +2,9 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
-import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
-import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_card.dart';
@@ -28,16 +25,6 @@ class WallPage extends StatefulWidget {
 
 class _WallPageState extends State<WallPage> {
   final PagingController<int, Item> _pagingController = PagingController(
-    firstPageKey: 1,
-    // invisibleItemsThreshold will determine how many items should be loaded
-    // after the first page is loaded (if the first page does not fill the
-    // screen, items enough to fill the page will be loaded anyway unless
-    // invisibleItemsThreshold is set to 0).
-    invisibleItemsThreshold: 1,
-  );
-
-  final PagingController<int, Feed> _drawerFeedsPagingController =
-      PagingController(
     firstPageKey: 1,
     // invisibleItemsThreshold will determine how many items should be loaded
     // after the first page is loaded (if the first page does not fill the
@@ -113,17 +100,6 @@ class _WallPageState extends State<WallPage> {
         }
       },
     );
-    _drawerFeedsPagingController.addPageRequestListener(
-      (pageKey) {
-        context.read<SearchFeedBloc>().add(
-              FeedSearchRequested(
-                page: pageKey,
-                pageSize: 100,
-                type: ListFeedsType.followed,
-              ),
-            );
-      },
-    );
 
     // Set initial shimmer loader type
     final currentWallView = context.read<WallsBloc>().state.wallView;
@@ -134,7 +110,6 @@ class _WallPageState extends State<WallPage> {
   void dispose() {
     _refreshController.dispose();
     _pagingController.dispose();
-    _drawerFeedsPagingController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -142,9 +117,7 @@ class _WallPageState extends State<WallPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: WallPageDrawer(
-        feedsPagingController: _drawerFeedsPagingController,
-      ),
+      drawer: const WallPageDrawer(),
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.60,
       drawerScrimColor:
           context.theme.colorScheme.surfaceContainer.withAlpha(180),
