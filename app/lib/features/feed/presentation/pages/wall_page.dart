@@ -187,9 +187,21 @@ class _WallPageState extends State<WallPage> {
             showSnackbar(context, state.message!, type: SnackbarType.failure);
             return;
           }
-          _pagingController.refresh();
-          _setShimmerLoaderType(state.wallView);
-          _scrollToTop(animate: false);
+
+          if (state.status == WallStatus.success &&
+              ((state.action == WallAction.select ||
+                      state.action == WallAction.changeFilter) ||
+                  (state.action == WallAction.list &&
+                      state.refreshItems == true))) {
+            _pagingController.refresh();
+            _setShimmerLoaderType(state.wallView);
+            _scrollToTop(animate: false);
+          }
+        },
+        buildWhen: (previous, current) {
+          return current.status == WallStatus.success &&
+              current.action == WallAction.list &&
+              current.refreshItems == true;
         },
         builder: (context, state) {
           return BlocListener<ScrollToTopCubit, bool>(
@@ -202,16 +214,7 @@ class _WallPageState extends State<WallPage> {
             child: NestedScrollView(
               controller: _scrollController,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                WallPageSliverAppBar(
-                  wall: state.currentWall ??
-                      const Wall(
-                        id: 0,
-                        isPrimary: true,
-                        name: '',
-                        isPinned: false,
-                        userId: 0,
-                      ),
-                ),
+                const WallPageSliverAppBar(),
               ],
               body: Builder(
                 builder: (context) {

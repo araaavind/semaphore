@@ -53,7 +53,7 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
             state.feedId == feed.id &&
             state.action == WallFeedAction.remove) {
           widget.onRemove();
-          context.read<WallsBloc>().add(ListWallsRequested());
+          context.read<WallsBloc>().add(ListWallsRequested(refreshItems: true));
         }
       },
       builder: (context, state) {

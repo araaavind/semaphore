@@ -246,6 +246,7 @@ class _WallEditPageState extends State<WallEditPage> {
                           width: 120,
                           onPressed: () {
                             _updateWall();
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           },
                         ),
                       ),
@@ -355,7 +356,9 @@ class _WallEditPageState extends State<WallEditPage> {
                   final newItems = List<Feed>.from(currentItems)
                     ..insert(index, item);
                   _pagingController.itemList = newItems;
-                  context.read<WallsBloc>().add(ListWallsRequested());
+                  context
+                      .read<WallsBloc>()
+                      .add(ListWallsRequested(refreshItems: true));
                 },
               );
             },

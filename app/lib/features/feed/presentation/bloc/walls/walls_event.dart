@@ -4,8 +4,12 @@ part of 'walls_bloc.dart';
 sealed class WallsEvent extends Equatable {}
 
 class ListWallsRequested extends WallsEvent {
+  final bool refreshItems;
+
+  ListWallsRequested({this.refreshItems = false});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [refreshItems];
 }
 
 class SelectWallRequested extends WallsEvent {

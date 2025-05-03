@@ -60,6 +60,7 @@ class WallsState extends Equatable {
   final WallViewOption wallView;
   final String? message;
   final Map<String, String>? fieldErrors;
+  final bool? refreshItems;
 
   const WallsState({
     this.status = WallStatus.initial,
@@ -71,6 +72,7 @@ class WallsState extends Equatable {
     this.wallView = WallViewOption.magazine,
     this.message,
     this.fieldErrors,
+    this.refreshItems = false,
   });
 
   @override
@@ -84,6 +86,7 @@ class WallsState extends Equatable {
         wallView,
         message,
         fieldErrors,
+        refreshItems,
       ];
 
   WallsState copyWith({
@@ -96,6 +99,7 @@ class WallsState extends Equatable {
     WallViewOption? wallView,
     String? message,
     Map<String, String>? fieldErrors,
+    bool? refreshItems,
   }) {
     return WallsState(
       status: status ?? this.status,
@@ -107,6 +111,7 @@ class WallsState extends Equatable {
       wallView: wallView ?? this.wallView,
       message: message ?? this.message,
       fieldErrors: fieldErrors ?? this.fieldErrors,
+      refreshItems: refreshItems ?? this.refreshItems,
     );
   }
 }

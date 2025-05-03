@@ -81,6 +81,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           walls: walls,
           currentWall: currentWall,
           pinnedWallId: pinnedWall?.id,
+          refreshItems: event.refreshItems,
         ));
     }
   }
@@ -218,14 +219,11 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
   ) async {
     final prevPinnedWallId = state.pinnedWallId;
     // Optimistically unpin the wall and undo later if fails
-    final newState = state.copyWith(
+    emit(state.copyWith(
       status: WallStatus.loading,
       action: WallAction.unpin,
       pinnedWallId: -1,
-    );
-    emit(newState);
-    print(
-        'unpinning wall, loading sent with pin null: ${newState.pinnedWallId}');
+    ));
     final res = await _unpinWall(event.wallId);
     switch (res) {
       case Left(value: final l):
