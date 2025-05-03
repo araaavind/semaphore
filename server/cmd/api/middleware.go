@@ -45,18 +45,25 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 		clients = make(map[string]*client)
 	)
 
-	go func() {
+	app.background(func() {
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+
 		for {
-			time.Sleep(time.Minute)
-			mu.Lock()
-			for ip, client := range clients {
-				if time.Since(client.lastSeen) > 3*time.Minute {
-					delete(clients, ip)
+			select {
+			case <-app.ctx.Done():
+				return
+			case <-ticker.C:
+				mu.Lock()
+				for ip, client := range clients {
+					if time.Since(client.lastSeen) > 3*time.Minute {
+						delete(clients, ip)
+					}
 				}
+				mu.Unlock()
 			}
-			mu.Unlock()
 		}
-	}()
+	})
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if app.config.limiter.enabled {

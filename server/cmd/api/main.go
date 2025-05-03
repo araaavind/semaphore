@@ -49,6 +49,11 @@ type config struct {
 		refreshStaleFeedsSince time.Duration
 		refreshPeriod          time.Duration
 	}
+	cleanup struct {
+		tokensCleanupPeriod        time.Duration
+		itemsCleanupPeriod         time.Duration
+		itemsCleanupBeforeDuration time.Duration
+	}
 	cors struct {
 		trustedOrigins []string
 	}
@@ -61,6 +66,8 @@ type application struct {
 	parser *gofeed.Parser
 	mailer mailer.Mailer
 	wg     sync.WaitGroup
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 func main() {
@@ -87,6 +94,10 @@ func main() {
 	flag.IntVar(&cfg.refresher.maxConcurrentRefreshes, "max-concurrent-refreshes", 5, "Maximum concurrent refreshes")
 	flag.DurationVar(&cfg.refresher.refreshStaleFeedsSince, "refresh-since", 5*time.Minute, "Refresh stale feeds since (default: 5m)")
 	flag.DurationVar(&cfg.refresher.refreshPeriod, "refresh-period", time.Minute, "Refresh feed period (default: 1m)")
+
+	flag.DurationVar(&cfg.cleanup.tokensCleanupPeriod, "tokens-cleanup-period", time.Hour*12, "Tokens cleanup period (default: 12h)")
+	flag.DurationVar(&cfg.cleanup.itemsCleanupPeriod, "items-cleanup-period", time.Hour*12, "Items cleanup period (default: 12h)")
+	flag.DurationVar(&cfg.cleanup.itemsCleanupBeforeDuration, "items-cleanup-before-duration", time.Hour*24*30, "Items cleanup before duration (default: 30d)")
 
 	flag.Func("cors-trusted-origins", "Trusted CORS origins (space separated within double quotes)", func(val string) error {
 		cfg.cors.trustedOrigins = strings.Fields(val)
@@ -143,21 +154,23 @@ func main() {
 		),
 	}
 
-	go app.KeepFeedsFresh(
-		cfg.refresher.maxConcurrentRefreshes,
-		cfg.refresher.refreshStaleFeedsSince,
-		cfg.refresher.refreshPeriod,
-	)
+	// Create a new context which is cancelled on graceful shutdown
+	app.ctx, app.cancel = context.WithCancel(context.Background())
 
-	go func() {
-		for {
-			time.Sleep(time.Hour * 12)
-			err := app.models.Tokens.DeleteExpiredTokens()
-			if err != nil {
-				logger.Error(err.Error())
-			}
-		}
-	}()
+	// Start the feed refresher in the background
+	app.background(func() {
+		app.KeepFeedsFresh()
+	})
+
+	// Start the tokens cleanup in the background
+	app.background(func() {
+		app.CleanupTokens()
+	})
+
+	// Start the items cleanup in the background
+	app.background(func() {
+		app.CleanupOldUnsavedItems()
+	})
 
 	err = app.serve()
 	if err != nil {

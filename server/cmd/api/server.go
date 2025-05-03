@@ -46,6 +46,9 @@ func (app *application) serve() error {
 			shutdownError <- err
 		}
 
+		app.logger.Info("cancelling context for background tasks")
+		app.cancel()
+
 		app.logger.Info("completing background tasks", "addr", srv.Addr)
 
 		app.wg.Wait()

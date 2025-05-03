@@ -7,40 +7,51 @@ import (
 	"github.com/aravindmathradan/semaphore/internal/data"
 )
 
-func (app *application) KeepFeedsFresh(maxConcurrentRefreshes int, refreshStaleFeedsSince, refreshPeriod time.Duration) {
+func (app *application) KeepFeedsFresh() {
 	for {
-		startTime := time.Now()
-		staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(startTime.Add(-1 * refreshStaleFeedsSince))
-		if err != nil {
-			app.logInternalError("app.models.Feeds.GetUncheckedFeedsSince failed", err)
+		select {
+		case <-app.ctx.Done():
 			return
-		}
-
-		staleFeedsChan := make(chan *data.Feed)
-		finishChan := make(chan bool)
-
-		refreshWorker := func() {
-			for feed := range staleFeedsChan {
-				app.RefreshFeed(feed)
+		default:
+			startTime := time.Now()
+			staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(startTime.Add(-1 * app.config.refresher.refreshStaleFeedsSince))
+			if err != nil {
+				app.logInternalError("app.models.Feeds.GetUncheckedFeedsSince failed", err)
+				return
 			}
-			finishChan <- true
-		}
 
-		for range maxConcurrentRefreshes {
-			app.background(refreshWorker)
-		}
+			staleFeedsChan := make(chan *data.Feed)
+			finishChan := make(chan bool)
 
-		for _, feed := range staleFeeds {
-			staleFeedsChan <- feed
-		}
-		close(staleFeedsChan)
+			refreshWorker := func() {
+				for feed := range staleFeedsChan {
+					app.RefreshFeed(feed)
+				}
+				finishChan <- true
+			}
 
-		for range maxConcurrentRefreshes {
-			<-finishChan
-		}
+			for range app.config.refresher.maxConcurrentRefreshes {
+				app.background(refreshWorker)
+			}
 
-		// sleeps until startTime + 1 min. Returns immediately if startTime + 1 min is in the past
-		time.Sleep(time.Until(startTime.Add(refreshPeriod)))
+			for _, feed := range staleFeeds {
+				staleFeedsChan <- feed
+			}
+			close(staleFeedsChan)
+
+			for range app.config.refresher.maxConcurrentRefreshes {
+				<-finishChan
+			}
+
+			timer := time.NewTimer(time.Until(startTime.Add(app.config.refresher.refreshPeriod)))
+			select {
+			case <-app.ctx.Done():
+				timer.Stop()
+				return
+			case <-timer.C:
+				// Continure with the next iteration
+			}
+		}
 	}
 }
 
