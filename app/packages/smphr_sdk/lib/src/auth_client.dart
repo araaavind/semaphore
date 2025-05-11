@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'constants.dart';
 import 'local_storage.dart';
@@ -353,5 +355,125 @@ class AuthClient {
   void _removeSession() {
     _currentSession = null;
     _currentUser = null;
+  }
+
+  /// Sign in with Google OAuth
+  ///
+  /// This method triggers the Google Sign-In flow and then exchanges the
+  /// Google ID token for a Semaphore authentication token.
+  ///
+  /// Returns the user and session upon successful authentication.
+  Future<AuthResponse> signInWithGoogle() async {
+    try {
+      // Initialize Google Sign-In
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile'],
+        clientId: Constants.googleWebClientId,
+      );
+
+      // Clear any previous sign-in state
+      try {
+        bool isSignedIn = await googleSignIn.isSignedIn();
+        if (isSignedIn) {
+          await googleSignIn.signOut();
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error checking sign-in state: $e');
+        }
+        // Continue with sign-in even if this fails
+      }
+
+      // Start the Google Sign-In flow
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        if (kDebugMode) {
+          print('Google sign-in was canceled by user or failed');
+        }
+        // User canceled the sign-in flow
+        throw SemaphoreException(
+          message: 'Google sign-in was canceled',
+          type: DioExceptionType.cancel,
+          subType: SemaphoreExceptionSubType.none,
+          responseStatusCode: 400,
+          requestOptions: RequestOptions(),
+        );
+      }
+
+      // Get authentication data from Google
+      if (kDebugMode) {
+        print('Requesting authentication tokens from Google...');
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      if (googleAuth.idToken == null) {
+        throw SemaphoreException(
+          message: 'Failed to obtain Google ID token',
+          type: DioExceptionType.badResponse,
+          subType: SemaphoreExceptionSubType.none,
+          responseStatusCode: 400,
+          requestOptions: RequestOptions(),
+        );
+      }
+
+      // Exchange Google token for Semaphore token
+      final response = await _dio.post(
+        '/tokens/google',
+        data: {
+          'id_token': googleAuth.idToken,
+        },
+      );
+
+      final authResponse = AuthResponse.fromMap(response.data);
+
+      if (authResponse.session?.token != null) {
+        await _sharedLocalStorage
+            .persistSession(jsonEncode(authResponse.session!.toJson()));
+        _saveSession(authResponse.session!);
+        _authStreamController.add(AuthStatus.authenticated);
+      }
+
+      return authResponse;
+    } on SemaphoreException catch (e) {
+      if (kDebugMode) {
+        print('SemaphoreException ${e.message}');
+      }
+      rethrow;
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('Google sign-in platform exception: ${e.toString()}');
+      }
+
+      // Error code 10 is typically a developer error related to configuration
+      if (e.code == 'sign_in_failed' && e.message?.contains('10:') == true) {
+        throw SemaphoreException(
+          message: 'Google Sign-In configuration error',
+          type: DioExceptionType.connectionError,
+          subType: SemaphoreExceptionSubType.none,
+          responseStatusCode: 400,
+          requestOptions: RequestOptions(path: '/tokens/google'),
+        );
+      }
+
+      throw SemaphoreException(
+        message: 'Google Sign-In error: ${e.message}',
+        type: DioExceptionType.connectionError,
+        subType: SemaphoreExceptionSubType.none,
+        responseStatusCode: 400,
+        requestOptions: RequestOptions(path: '/tokens/google'),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Google sign-in exception: ${e.toString()}');
+      }
+
+      throw InternalException(
+        Constants.internalServerErrorMessage,
+        statusCode: Constants.httpInternalServerErrorCode,
+      );
+    }
   }
 }

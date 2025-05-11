@@ -1,6 +1,8 @@
 class Constants {
   // HTTP Constants
   static const String defaultBaseUrl = 'http://127.0.0.1:5000/';
+  static const String googleWebClientId =
+      '311424386803-dd2249nf2l8s40ulligp8923fpcfeam1.apps.googleusercontent.com';
   static const Duration defaultConnectTimeout = Duration(seconds: 8);
   static const Duration defaultReceiveTimeout = Duration(seconds: 5);
 
