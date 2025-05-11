@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"runtime/debug"
@@ -193,4 +194,12 @@ func (app *application) background(fn func()) {
 
 		fn()
 	}()
+}
+
+func (app *application) generateRandomString(length int, chars string) (string, error) {
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = chars[rand.Intn(len(chars))]
+	}
+	return string(b), nil
 }

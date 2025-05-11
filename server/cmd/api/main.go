@@ -57,6 +57,9 @@ type config struct {
 	cors struct {
 		trustedOrigins []string
 	}
+	google struct {
+		clientID string
+	}
 }
 
 type application struct {
@@ -103,6 +106,8 @@ func main() {
 		cfg.cors.trustedOrigins = strings.Fields(val)
 		return nil
 	})
+
+	flag.StringVar(&cfg.google.clientID, "google-client-id", "", "Google OAuth web client ID")
 
 	// Create a new version boolean flag with the default value of false.
 	displayVersion := flag.Bool("version", false, "Display version and exit")

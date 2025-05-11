@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/sha256"
 	"errors"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"google.golang.org/api/idtoken"
 )
 
 const (
@@ -351,6 +353,138 @@ func (app *application) refreshAuthenticationToken(w http.ResponseWriter, r *htt
 		"authentication_token": authToken,
 		"refresh_token":        refreshToken,
 		"user":                 user,
+	}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) createGoogleAuthenticationToken(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		IDToken string `json:"id_token"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+	v.Check(validator.NotBlank(input.IDToken), "id_token", "ID token must be provided")
+
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	// Create a context with timeout for token validation
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	// Verify the ID token
+	tokenPayload, err := idtoken.Validate(ctx, input.IDToken, app.config.google.clientID)
+	if err != nil {
+		app.invalidCredentialsResponse(w, r)
+		return
+	}
+
+	var userInfo struct {
+		Email         string `json:"email"`
+		EmailVerified bool   `json:"email_verified"`
+		Name          string `json:"name"`
+	}
+
+	// Extract required claims from the verified token payload
+	userInfo.Email = tokenPayload.Claims["email"].(string)
+	userInfo.EmailVerified = tokenPayload.Claims["email_verified"].(bool)
+	userInfo.Name = tokenPayload.Claims["name"].(string)
+
+	// Ensure email is verified
+	if !userInfo.EmailVerified {
+		app.errorResponse(w, r, http.StatusUnauthorized, "This Google account is not verified")
+		return
+	}
+
+	var isNewUser bool
+	user, err := app.models.Users.GetByEmail(userInfo.Email)
+	if err != nil {
+		// If user doesn't exist, create a new one
+		if errors.Is(err, data.ErrRecordNotFound) {
+			// Generate a random username
+			username, err := app.generateRandomString(16, "abcdefghijklmnopqrstuvwxyz")
+			if err != nil {
+				app.serverErrorResponse(w, r, err)
+				return
+			}
+
+			// Create the user
+			user = &data.User{
+				Email:     userInfo.Email,
+				FullName:  userInfo.Name,
+				Username:  username,
+				Activated: true, // Google accounts with verified emails are automatically activated
+			}
+			user.Password.SetOAuthPasswordPlaceholder()
+
+			err = app.models.Users.Insert(user)
+			if err != nil {
+				app.serverErrorResponse(w, r, err)
+				return
+			}
+
+			// Add necessary permissions for the new user
+			err = app.models.Permissions.AddForUser(user.ID, "feeds:follow")
+			if err != nil {
+				app.serverErrorResponse(w, r, err)
+				return
+			}
+
+			// Create primary wall for new user
+			err = app.models.Walls.InsertPrimaryWall(user.ID)
+			if err != nil {
+				app.serverErrorResponse(w, r, err)
+				return
+			}
+			isNewUser = true
+		} else {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+	}
+
+	refreshToken, err := app.models.Tokens.New(user.ID, refreshTokenTTL, data.ScopeRefresh)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	authToken, err := app.models.Tokens.New(user.ID, authTokenTTL, data.ScopeAuthentication)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	// Update last login timestamp
+	user.LastLoginAt.Time = time.Now()
+	user.LastLoginAt.Valid = true
+	err = app.models.Users.Update(user)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	// Return the tokens and user info
+	err = app.writeJSON(w, http.StatusCreated, envelope{
+		"authentication_token": authToken,
+		"refresh_token":        refreshToken,
+		"user":                 user,
+		"is_new_user":          isNewUser,
 	}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

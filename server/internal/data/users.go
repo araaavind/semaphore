@@ -53,6 +53,12 @@ func (p *password) Set(plaintextPassword string) error {
 	return nil
 }
 
+func (p *password) SetOAuthPasswordPlaceholder() {
+	// Use a minimal valid bcrypt hash that won't match any password
+	p.hash = []byte("$2a$10$************************")
+	p.plaintext = nil
+}
+
 func (p *password) Matches(plaintextPassword string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword(p.hash, []byte(plaintextPassword))
 	if err != nil {
