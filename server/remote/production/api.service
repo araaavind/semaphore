@@ -19,7 +19,7 @@ User=smphr
 Group=smphr
 EnvironmentFile=/etc/environment
 WorkingDirectory=/home/smphr
-ExecStart=/home/smphr/api -port=5000 -dsn=${SMPHR_DSN} -env=production -smtp-host=${SMTP_HOST} -smtp-port=${SMTP_PORT} -smtp-username=${SMTP_USERNAME} -smtp-password=${SMTP_PASSWORD} -refresh-since=${REFRESH_SINCE} -refresh-period=${REFRESH_PERIOD}
+ExecStart=/home/smphr/api -port=5000 -dsn=${SMPHR_DSN} -env=production -smtp-host=${SMTP_HOST} -smtp-port=${SMTP_PORT} -smtp-username=${SMTP_USERNAME} -smtp-password=${SMTP_PASSWORD} -refresh-since=${REFRESH_SINCE} -refresh-period=${REFRESH_PERIOD} -google-client-id=${GOOGLE_CLIENT_ID}
 
 # Automatically restart the service after a 5-second wait if it exits with a non-zero 
 # exit code. If it restarts more than 5 times in 600 seconds, then the rate limit we
