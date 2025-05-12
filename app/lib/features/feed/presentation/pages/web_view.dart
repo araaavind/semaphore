@@ -1,4 +1,5 @@
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/features/feed/presentation/widgets/web_view_draggable_bottom.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -113,38 +114,52 @@ class _WebViewState extends State<WebView> {
       body: SafeArea(
         child: Stack(
           children: [
-            InAppWebView(
-              key: webViewKey,
-              initialUrlRequest: URLRequest(url: WebUri(widget.url)),
-              initialSettings: InAppWebViewSettings(
-                contentBlockers: contentBlockers,
-                algorithmicDarkeningAllowed: true,
+            // WebView content
+            Positioned.fill(
+              child: Column(
+                children: [
+                  progress < 1.0
+                      ? LinearProgressIndicator(
+                          value: progress,
+                          color: context.theme.colorScheme.primary,
+                        )
+                      : Container(),
+                  Expanded(
+                    child: InAppWebView(
+                      key: webViewKey,
+                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                      initialSettings: InAppWebViewSettings(
+                        contentBlockers: contentBlockers,
+                        algorithmicDarkeningAllowed: true,
+                      ),
+                      pullToRefreshController: pullToRefreshController,
+                      onWebViewCreated: (controller) {
+                        webViewController = controller;
+                      },
+                      onLoadStop: (controller, url) {
+                        pullToRefreshController?.endRefreshing();
+                      },
+                      onReceivedError: (controller, request, error) {
+                        pullToRefreshController?.endRefreshing();
+                      },
+                      onProgressChanged: (controller, progress) {
+                        if (progress == 100) {
+                          pullToRefreshController?.endRefreshing();
+                        }
+                        setState(() {
+                          this.progress = progress / 100;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
-              pullToRefreshController: pullToRefreshController,
-              onWebViewCreated: (controller) {
-                webViewController = controller;
-              },
-              onLoadStop: (controller, url) {
-                pullToRefreshController?.endRefreshing();
-              },
-              onReceivedError: (controller, request, error) {
-                pullToRefreshController?.endRefreshing();
-              },
-              onProgressChanged: (controller, progress) {
-                if (progress == 100) {
-                  pullToRefreshController?.endRefreshing();
-                }
-                setState(() {
-                  this.progress = progress / 100;
-                });
-              },
             ),
-            progress < 1.0
-                ? LinearProgressIndicator(
-                    value: progress,
-                    color: context.theme.colorScheme.primary,
-                  )
-                : Container(),
+
+            // Draggable bottom drawer
+            WebViewDraggableBottom(
+              webViewController: webViewController,
+            ),
           ],
         ),
       ),

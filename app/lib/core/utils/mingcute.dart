@@ -7,6 +7,60 @@ class MingCuteIconData extends IconData {
 }
 
 class MingCute {
+  /// arrow left fill
+  static const arrow_left_fill = MingCuteIconData(0xe986);
+
+  /// arrow left line
+  static const arrow_left_line = MingCuteIconData(0xe987);
+
+  /// arrow right fill
+  static const arrow_right_fill = MingCuteIconData(0xe992);
+
+  /// arrow right line
+  static const arrow_right_line = MingCuteIconData(0xe993);
+
+  /// arrow up fill
+  static const arrow_up_fill = MingCuteIconData(0xe9a2);
+
+  /// arrow up line
+  static const arrow_up_line = MingCuteIconData(0xe9a3);
+
+  /// arrow down fill
+  static const arrow_down_fill = MingCuteIconData(0xe97e);
+
+  /// arrow down line
+  static const arrow_down_line = MingCuteIconData(0xe97f);
+
+  /// bookmark fill
+  static const bookmark_fill = MingCuteIconData(0xea5a);
+
+  /// bookmark line
+  static const bookmark_line = MingCuteIconData(0xea5b);
+
+  /// bookmarks fill
+  static const bookmarks_fill = MingCuteIconData(0xea5e);
+
+  /// bookmarks line
+  static const bookmarks_line = MingCuteIconData(0xea5f);
+
+  /// bookmark add fill
+  static const bookmark_add_fill = MingCuteIconData(0xea56);
+
+  /// bookmark add line
+  static const bookmark_add_line = MingCuteIconData(0xea57);
+
+  /// bookmark edit fill
+  static const bookmark_edit_fill = MingCuteIconData(0xea58);
+
+  /// bookmark edit line
+  static const bookmark_edit_line = MingCuteIconData(0xea59);
+
+  /// bookmark remove fill
+  static const bookmark_remove_fill = MingCuteIconData(0xea5c);
+
+  /// bookmark remove line
+  static const bookmark_remove_line = MingCuteIconData(0xea5d);
+
   /// home 1 fill Icon
   static const home_1_fill = MingCuteIconData(0xeed8);
 
@@ -347,4 +401,22 @@ class MingCute {
 
   /// google line
   static const google_line = MingCuteIconData(0xee61);
+
+  /// share 2 fill
+  static const share_2_fill = MingCuteIconData(0xf28e);
+
+  /// share 2 line
+  static const share_2_line = MingCuteIconData(0xf28f);
+
+  /// share 3 fill
+  static const share_3_fill = MingCuteIconData(0xf290);
+
+  /// share 3 line
+  static const share_3_line = MingCuteIconData(0xf291);
+
+  /// share forward fill
+  static const share_forward_fill = MingCuteIconData(0xf292);
+
+  /// share forward line
+  static const share_forward_line = MingCuteIconData(0xf293);
 }

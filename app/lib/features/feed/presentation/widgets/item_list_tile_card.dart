@@ -24,20 +24,10 @@ class ItemListTileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        final String routeName = GoRouterState.of(context).topRoute!.name!;
-        if (routeName == RouteConstants.wallPageName) {
-          context.goNamed(
-            'webview',
-            queryParameters: {'url': item.link},
-          );
-        } else if (routeName == RouteConstants.feedViewPageName) {
-          context.goNamed(
-            'feed-webview',
-            queryParameters: {'url': item.link},
-            pathParameters: GoRouterState.of(context).pathParameters,
-            extra: GoRouterState.of(context).extra,
-          );
-        }
+        context.pushNamed(
+          RouteConstants.webViewPageName,
+          queryParameters: {'url': item.link},
+        );
       },
       child: Card(
         margin: EdgeInsets.zero,

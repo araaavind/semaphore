@@ -77,6 +77,7 @@ List<RouteBase> _buildRoutes() {
         _buildProfileRoute(),
       ],
     ),
+    _buildFeedWebViewRoute(),
     _buildLoginRoute(),
     _buildActivationRoute(),
     _buildResetPasswordRoute(),
@@ -85,6 +86,21 @@ List<RouteBase> _buildRoutes() {
     _buildAddToWallRoute(),
     _buildCreateWallRoute(),
   ];
+}
+
+GoRoute _buildFeedWebViewRoute() {
+  return GoRoute(
+    path: RouteConstants.webViewPagePath,
+    name: RouteConstants.webViewPageName,
+    pageBuilder: (context, state) {
+      final url = state.uri.queryParameters['url'] ?? '';
+      return SlideTransitionPage(
+        key: const ValueKey('webview'),
+        child: WebView(url: url),
+        direction: SlideDirection.rightToLeft,
+      );
+    },
+  );
 }
 
 GoRoute _buildCreateWallRoute() {
@@ -229,20 +245,6 @@ GoRoute _buildSearchFeedsRoute() {
             ),
           );
         },
-        routes: [
-          GoRoute(
-            path: RouteConstants.feedWebViewPagePath,
-            name: RouteConstants.feedWebViewPageName,
-            pageBuilder: (context, state) {
-              final url = state.uri.queryParameters['url'] ?? '';
-              return SlideTransitionPage(
-                key: const ValueKey('feed-webview'),
-                child: WebView(url: url),
-                direction: SlideDirection.rightToLeft,
-              );
-            },
-          ),
-        ],
       ),
     ],
   );
@@ -257,18 +259,6 @@ GoRoute _buildWallRoute() {
       child: const WallPage(),
     ),
     routes: [
-      GoRoute(
-        path: RouteConstants.webViewPagePath,
-        name: RouteConstants.webViewPageName,
-        pageBuilder: (context, state) {
-          final url = state.uri.queryParameters['url'] ?? '';
-          return SlideTransitionPage(
-            key: const ValueKey('view'),
-            child: WebView(url: url),
-            direction: SlideDirection.rightToLeft,
-          );
-        },
-      ),
       _buildWallEditRoute(),
     ],
   );

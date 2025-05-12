@@ -23,10 +23,8 @@ class RouteConstants {
   static const resetPasswordPageName = 'reset-password';
   static const sendResetTokenPagePath = '/send-reset-token';
   static const sendResetTokenPageName = 'send-reset-token';
-  static const webViewPagePath = 'view';
+  static const webViewPagePath = '/webview';
   static const webViewPageName = 'webview';
-  static const feedWebViewPagePath = 'view';
-  static const feedWebViewPageName = 'feed-webview';
   static const createWallPagePath = '/create-wall';
   static const createWallPageName = 'create-wall';
   static const addToWallPagePath = '/add-to-wall/:feedId';
