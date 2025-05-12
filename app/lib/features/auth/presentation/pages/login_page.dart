@@ -69,6 +69,10 @@ class _LoginPageState extends State<LoginPage> {
                 );
               }
             }
+            if (state is AuthSuccess && state.isNewUser) {
+              context.pushReplacementNamed(RouteConstants.usernamePageName,
+                  extra: {'isOAuthUser': true});
+            }
           },
           builder: (context, state) {
             if (state is AuthLoading || state is AuthSuccess) {
@@ -82,11 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const SizedBox(height: 40),
                     TitleTextSpan(isOnboarding: widget.isOnboarding),
+                    const SizedBox(height: 20),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 20),
                         AppTextField(
                           hintText: 'Username or Email',
                           controller: usernameOrEmailController,
@@ -169,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
                           },
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 30),
                         GestureDetector(
                           onTap: () {
                             context.goNamed(RouteConstants.usernamePageName);
@@ -191,6 +196,10 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 35),
+                        _buildOrDivider(context),
+                        const SizedBox(height: 35),
+                        _buildGoogleSignInButton(context),
                       ],
                     ),
                   ],
@@ -198,6 +207,85 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           },
+        ),
+      ),
+    );
+  }
+
+  String? validateFields({
+    required String jsonKey,
+    Map<String, String>? fieldErrors,
+  }) {
+    if (fieldErrors != null && fieldErrors.containsKey(jsonKey)) {
+      return fieldErrors[jsonKey];
+    }
+    return null;
+  }
+
+  Widget _buildOrDivider(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Divider(
+              color: context.theme.colorScheme.outline.withOpacity(0.8),
+              thickness: 1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'OR',
+              style: context.theme.textTheme.bodyMedium?.copyWith(
+                color: context.theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Divider(
+              color: context.theme.colorScheme.outline.withOpacity(0.8),
+              thickness: 1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoogleSignInButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.read<AuthBloc>().add(AuthGoogleLoginRequested());
+      },
+      child: Container(
+        width: 240,
+        height: 54,
+        decoration: BoxDecoration(
+          color: context.theme.colorScheme.onSurface.withAlpha(40),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            width: 1.5,
+            color: context.theme.colorScheme.outline.withOpacity(0.5),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              MingCute.google_fill,
+              color: context.theme.colorScheme.onSurface,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Continue with Google',
+              style: context.theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: context.theme.colorScheme.onSurface,
+              ),
+            ),
+          ],
         ),
       ),
     );

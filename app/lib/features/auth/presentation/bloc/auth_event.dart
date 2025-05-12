@@ -68,3 +68,19 @@ final class AuthStatusChanged extends AuthEvent {
   @override
   List<Object?> get props => [status];
 }
+
+final class AuthGoogleLoginRequested extends AuthEvent {
+  AuthGoogleLoginRequested();
+
+  @override
+  List<Object?> get props => [];
+}
+
+final class AuthUpdateUsernameRequested extends AuthEvent {
+  final String username;
+
+  AuthUpdateUsernameRequested(this.username);
+
+  @override
+  List<Object?> get props => [username];
+}

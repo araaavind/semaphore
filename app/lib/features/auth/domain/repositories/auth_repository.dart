@@ -1,6 +1,7 @@
 import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/errors/failures.dart';
+import 'package:app/features/auth/domain/entities/oauth_response.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class AuthRepository {
@@ -20,6 +21,8 @@ abstract interface class AuthRepository {
     required String password,
   });
 
+  Future<Either<Failure, OAuthResponse>> loginWithGoogle();
+
   Future<Either<Failure, void>> logout({
     LogoutScope scope = LogoutScope.local,
   });
@@ -29,4 +32,6 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, String>> sendPasswordResetToken(String email);
   Future<Either<Failure, void>> resetPassword(String token, String password);
+
+  Future<Either<Failure, void>> updateUsername(String username);
 }

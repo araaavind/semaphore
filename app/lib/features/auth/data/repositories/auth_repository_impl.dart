@@ -3,6 +3,7 @@ import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:app/core/common/models/user_model.dart';
+import 'package:app/features/auth/data/models/oauth_response_model.dart';
 import 'package:app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -71,6 +72,16 @@ class AuthRepositoryImpl implements AuthRepository {
     );
   }
 
+  @override
+  Future<Either<Failure, OAuthResponseModel>> loginWithGoogle() async {
+    try {
+      final response = await remoteDatasource.loginWithGoogle();
+      return right(response);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
   Future<Either<Failure, UserModel>> _getUser(
     Future<UserModel> Function() fn,
   ) async {
@@ -127,6 +138,15 @@ class AuthRepositoryImpl implements AuthRepository {
   ) async {
     try {
       return right(await remoteDatasource.resetPassword(token, password));
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message, fieldErrors: e.fieldErrors));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateUsername(String username) async {
+    try {
+      return right(await remoteDatasource.updateUsername(username));
     } on ServerException catch (e) {
       return left(Failure(message: e.message, fieldErrors: e.fieldErrors));
     }

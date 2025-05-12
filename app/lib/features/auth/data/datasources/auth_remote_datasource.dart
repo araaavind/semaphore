@@ -2,6 +2,7 @@ import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/common/models/user_model.dart';
+import 'package:app/features/auth/data/models/oauth_response_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
@@ -23,6 +24,8 @@ abstract interface class AuthRemoteDatasource {
     required String password,
   });
 
+  Future<OAuthResponseModel> loginWithGoogle();
+
   Future<void> logout({LogoutScope scope = LogoutScope.local});
 
   Future<String> sendActivationToken(String email);
@@ -32,6 +35,8 @@ abstract interface class AuthRemoteDatasource {
   Future<String> sendPasswordResetToken(String email);
 
   Future<void> resetPassword(String token, String password);
+
+  Future<void> updateUsername(String username);
 }
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
@@ -101,6 +106,59 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         password: password,
       ),
     );
+  }
+
+  @override
+  Future<OAuthResponseModel> loginWithGoogle() async {
+    try {
+      final response = await semaphoreClient.auth.signInWithGoogle();
+      if (response.user == null) {
+        throw const ServerException('User is null');
+      }
+      return OAuthResponseModel(
+        user: UserModel(
+          email: response.user!.email,
+          fullName: response.user!.fullName,
+          id: response.user!.id,
+          username: response.user!.username,
+          lastLoginAt: response.user!.lastLoginAt,
+          isActivated: response.user!.isActivated,
+        ),
+        isNewUser: response.isNewUser,
+      );
+    } on sp.SemaphoreException catch (e) {
+      // Return local session and keep user logged if connection fails
+      if (e.subType == sp.SemaphoreExceptionSubType.connectionFailed) {
+        if (currentSession != null &&
+            !currentSession!.isExpired &&
+            currentSession!.user != null) {
+          return OAuthResponseModel(
+            user: UserModel(
+              email: currentSession!.user!.email,
+              fullName: currentSession!.user!.fullName,
+              id: currentSession!.user!.id,
+              username: currentSession!.user!.username,
+              lastLoginAt: currentSession!.user!.lastLoginAt,
+              isActivated: currentSession!.user!.isActivated,
+            ),
+            isNewUser: false,
+          );
+        }
+      }
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint(e.toString());
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
   }
 
   Future<UserModel> _tryAuthRequest(
@@ -257,6 +315,33 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         data: {
           'token': token,
           'password': password,
+        },
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      if (e.subType == sp.SemaphoreExceptionSubType.invalidField &&
+          e.fieldErrors != null &&
+          e.fieldErrors!.isNotEmpty) {
+        throw ServerException(e.message!, fieldErrors: e.fieldErrors);
+      }
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> updateUsername(String username) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/users/username',
+        data: {
+          'username': username,
         },
       );
       return;

@@ -341,4 +341,10 @@ class MingCute {
 
   /// pin 2 line
   static const pin_2_line = MingCuteIconData(0xf133);
+
+  /// google fill
+  static const google_fill = MingCuteIconData(0xee60);
+
+  /// google line
+  static const google_line = MingCuteIconData(0xee61);
 }

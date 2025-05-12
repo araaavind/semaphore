@@ -7,6 +7,8 @@ import 'package:app/core/constants/text_constants.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
+import 'package:app/features/auth/domain/usecases/login_with_google.dart';
+import 'package:app/features/auth/domain/usecases/update_username.dart';
 import 'package:app/features/auth/domain/usecases/user_login.dart';
 import 'package:app/features/auth/domain/usecases/user_logout.dart';
 import 'package:app/features/auth/domain/usecases/user_signup.dart';
@@ -22,9 +24,11 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetCurrentUser _getCurrentUser;
   final CheckUsername _checkUsername;
+  final UpdateUsername _updateUsername;
   final UserSignup _userSignup;
   final UserLogin _userLogin;
   final UserLogout _userLogout;
+  final LoginWithGoogle _loginWithGoogle;
   final AppUserCubit _appUserCubit;
   final sp.SemaphoreClient _client;
 
@@ -33,25 +37,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({
     required GetCurrentUser getCurrentUser,
     required CheckUsername checkUsername,
+    required UpdateUsername updateUsername,
     required UserSignup userSignup,
     required UserLogin userLogin,
     required UserLogout userLogout,
+    required LoginWithGoogle loginWithGoogle,
     required AppUserCubit appUserCubit,
     required sp.SemaphoreClient client,
   })  : _getCurrentUser = getCurrentUser,
         _checkUsername = checkUsername,
+        _updateUsername = updateUsername,
         _userSignup = userSignup,
         _userLogin = userLogin,
         _userLogout = userLogout,
+        _loginWithGoogle = loginWithGoogle,
         _appUserCubit = appUserCubit,
         _client = client,
         super(AuthInitial()) {
     on<AuthCurrentUserRequested>(_onAuthCurrentUserRequested);
     on<AuthCheckUsernameRequested>(_onAuthCheckUsernameRequested);
+    on<AuthUpdateUsernameRequested>(_onUpdateUsernameRequested);
     on<AuthSignupRequested>(_onAuthSignupRequested);
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthStatusChanged>(_onAuthStatusChanged);
+    on<AuthGoogleLoginRequested>(_onAuthGoogleLoginRequested);
 
     // Listen to auth status change events from sdk
     _authenticationStatusSubscription = _client.auth.status
@@ -85,7 +95,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _appUserCubit.clearUser();
         emit(AuthInitial());
       case Right(value: final r):
-        _emitAuthSuccess(r, emit);
+        _emitAuthSuccess(r, false, emit);
     }
   }
 
@@ -150,7 +160,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       case Left(value: final l):
         emit(AuthLoginFailure(l.message, fieldErrors: l.fieldErrors));
       case Right(value: final r):
-        _emitAuthSuccess(r, emit);
+        _emitAuthSuccess(r, false, emit);
     }
   }
 
@@ -169,13 +179,58 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           _appUserCubit.clearUser();
           emit(AuthInitial());
         } else {
-          _emitAuthSuccess(event.user, emit);
+          _emitAuthSuccess(event.user, false, emit);
         }
     }
   }
 
-  void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
+  Future<void> _onAuthGoogleLoginRequested(
+    AuthGoogleLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    final res = await _loginWithGoogle();
+
+    switch (res) {
+      case Left(value: final l):
+        emit(AuthLoginFailure(l.message));
+      case Right(value: final r):
+        _emitAuthSuccess(r.user, r.isNewUser, emit);
+    }
+  }
+
+  Future<void> _onUpdateUsernameRequested(
+    AuthUpdateUsernameRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    final res = await _updateUsername(event.username);
+
+    switch (res) {
+      case Left(value: final l):
+        emit(AuthUpdateUsernameFailure(l.message, fieldErrors: l.fieldErrors));
+      case Right(value: final _):
+        if (_appUserCubit.state is AppUserLoggedIn) {
+          final currentUser = (_appUserCubit.state as AppUserLoggedIn).user;
+          _appUserCubit.setUser(User(
+            id: currentUser.id,
+            email: currentUser.email,
+            username: event.username,
+            isActivated: currentUser.isActivated,
+            fullName: currentUser.fullName,
+            lastLoginAt: currentUser.lastLoginAt,
+          ));
+        }
+        emit(AuthUpdateUsernameSuccess());
+    }
+  }
+
+  void _emitAuthSuccess(
+    User user,
+    bool isNewUser,
+    Emitter<AuthState> emit,
+  ) {
     _appUserCubit.setUser(user);
-    emit(AuthSuccess(user));
+    emit(AuthSuccess(user, isNewUser: isNewUser));
   }
 }

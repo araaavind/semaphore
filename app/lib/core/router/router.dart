@@ -164,7 +164,11 @@ GoRoute _buildLoginRoute() {
       GoRoute(
         path: RouteConstants.usernamePagePath,
         name: RouteConstants.usernamePageName,
-        builder: (context, state) => const ChooseUsernamePage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final isOAuthUser = extra != null && extra['isOAuthUser'] == true;
+          return ChooseUsernamePage(isOAuthUser: isOAuthUser);
+        },
         routes: [
           GoRoute(
             path: RouteConstants.signupPagePath,

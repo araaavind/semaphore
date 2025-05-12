@@ -12,11 +12,12 @@ final class AuthLoading extends AuthState {}
 
 final class AuthSuccess extends AuthState {
   final User user;
+  final bool isNewUser;
 
-  AuthSuccess(this.user);
+  AuthSuccess(this.user, {this.isNewUser = false});
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, isNewUser];
 }
 
 final class AuthFailure extends AuthState {
@@ -42,4 +43,10 @@ final class AuthUsernameSuccess extends AuthState {}
 
 final class AuthUsernameFailure extends AuthFailure {
   AuthUsernameFailure(super.message, {super.fieldErrors});
+}
+
+final class AuthUpdateUsernameSuccess extends AuthState {}
+
+final class AuthUpdateUsernameFailure extends AuthFailure {
+  AuthUpdateUsernameFailure(super.message, {super.fieldErrors});
 }

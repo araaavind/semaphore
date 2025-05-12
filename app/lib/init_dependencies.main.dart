@@ -84,6 +84,11 @@ void _initAuth() {
       ),
     )
     ..registerFactory(
+      () => LoginWithGoogle(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => UserLogout(
         serviceLocator(),
       ),
@@ -108,14 +113,21 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => UpdateUsername(
+        serviceLocator(),
+      ),
+    )
     // Register blocs
     ..registerLazySingleton(
       () => AuthBloc(
         getCurrentUser: serviceLocator(),
         checkUsername: serviceLocator(),
+        updateUsername: serviceLocator(),
         userSignup: serviceLocator(),
         userLogin: serviceLocator(),
         userLogout: serviceLocator(),
+        loginWithGoogle: serviceLocator(),
         appUserCubit: serviceLocator(),
         client: serviceLocator(),
       ),

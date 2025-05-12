@@ -9,7 +9,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 
 class ChooseUsernamePage extends StatefulWidget {
-  const ChooseUsernamePage({super.key});
+  final bool isOAuthUser;
+
+  const ChooseUsernamePage({
+    super.key,
+    this.isOAuthUser = false,
+  });
 
   @override
   State<ChooseUsernamePage> createState() => _ChooseUsernamePageState();
@@ -55,6 +60,24 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                 _isUsernameTaken = false;
               });
               formKey.currentState!.validate();
+            } else if (state is AuthUpdateUsernameSuccess) {
+              // For OAuth users, navigate to the wall page after username update
+              if (widget.isOAuthUser) {
+                context.goNamed(RouteConstants.wallPageName);
+              }
+            } else if (state is AuthUpdateUsernameFailure) {
+              if (state.fieldErrors != null) {
+                setState(() {
+                  _isUsernameTaken = true;
+                });
+                formKey.currentState!.validate();
+              } else {
+                showSnackbar(
+                  context,
+                  state.message,
+                  type: SnackbarType.failure,
+                );
+              }
             }
           },
           builder: (context, state) {
@@ -122,12 +145,22 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                           if (state is AuthUsernameSuccess &&
                               formKey.currentState != null &&
                               formKey.currentState!.validate()) {
-                            context.goNamed(
-                              RouteConstants.signupPageName,
-                              pathParameters: {
-                                'username': usernameController.text.trim(),
-                              },
-                            );
+                            if (widget.isOAuthUser) {
+                              // For OAuth users, update the username
+                              context.read<AuthBloc>().add(
+                                    AuthUpdateUsernameRequested(
+                                      usernameController.text.trim(),
+                                    ),
+                                  );
+                            } else {
+                              // For regular signup flow
+                              context.goNamed(
+                                RouteConstants.signupPageName,
+                                pathParameters: {
+                                  'username': usernameController.text.trim(),
+                                },
+                              );
+                            }
                           }
                         }),
                   ),
