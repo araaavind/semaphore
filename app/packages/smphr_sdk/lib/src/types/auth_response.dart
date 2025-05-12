@@ -6,10 +6,12 @@ import 'user.dart';
 class AuthResponse {
   final Session? session;
   final User? user;
+  final bool isNewUser;
 
   AuthResponse({
     this.session,
     this.user,
+    this.isNewUser = false,
   });
 
   factory AuthResponse.fromMap(Map<String, dynamic> map) {
@@ -20,6 +22,7 @@ class AuthResponse {
     return AuthResponse(
       session: session,
       user: user,
+      isNewUser: map['is_new_user'] ?? false,
     );
   }
 
