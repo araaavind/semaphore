@@ -172,9 +172,10 @@ class _WallPageState extends State<WallPage> {
           }
         },
         buildWhen: (previous, current) {
-          return current.status == WallStatus.success &&
-              current.action == WallAction.list &&
-              current.refreshItems == true;
+          return (current.status == WallStatus.success &&
+                  current.action == WallAction.list &&
+                  current.refreshItems == true) ||
+              current.action == WallAction.changeFilter;
         },
         builder: (context, state) {
           return BlocListener<ScrollToTopCubit, bool>(
