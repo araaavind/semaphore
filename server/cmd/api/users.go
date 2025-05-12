@@ -246,3 +246,59 @@ func (app *application) updateUserPassword(w http.ResponseWriter, r *http.Reques
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func (app *application) updateUsername(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Username string `json:"username"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	v := validator.New()
+
+	data.ValidateUsername(v, input.Username)
+
+	if !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	userId := app.contextGetSession(r).User.ID
+	if userId == 0 {
+		app.notFoundResponse(w, r)
+		return
+	}
+
+	user, err := app.models.Users.GetByID(userId)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	user.Username = input.Username
+
+	err = app.models.Users.Update(user)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
+		case errors.Is(err, data.ErrDuplicateUsername):
+			v.AddError("username", "A user with this username already exists")
+			app.failedValidationResponse(w, r, v.Errors)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}

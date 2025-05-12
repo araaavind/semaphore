@@ -178,7 +178,7 @@ func (m UserModel) Insert(user *User) error {
 
 func (m UserModel) GetByID(id int64) (*User, error) {
 	query := `
-		SELECT id, created_at, updated_at, full_name, username, email, activated, last_login_at, version
+		SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, last_login_at, version
 		FROM users
 		WHERE id = $1`
 
@@ -194,6 +194,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 		&user.FullName,
 		&user.Username,
 		&user.Email,
+		&user.Password.hash,
 		&user.Activated,
 		&user.LastLoginAt,
 		&user.Version,

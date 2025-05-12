@@ -69,6 +69,8 @@ func (app *application) routes() http.Handler {
 
 	authenticated := alice.New(app.requireAuthentication)
 
+	router.Handler(http.MethodPut, "/v1/users/username", authenticated.ThenFunc(app.updateUsername))
+
 	router.Handler(http.MethodDelete, "/v1/tokens/authentication", authenticated.ThenFunc(app.deleteAuthenticationToken))
 
 	router.Handler(http.MethodGet, "/v1/me", authenticated.ThenFunc(app.getCurrentUser))
