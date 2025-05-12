@@ -4,6 +4,7 @@ import 'package:app/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class WebViewDraggableBottom extends StatefulWidget {
   final InAppWebViewController? webViewController;
@@ -111,7 +112,31 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
           _buildActionButton(
             context,
             MingCute.share_2_line,
-            () {},
+            () async {
+              if (widget.webViewController != null) {
+                final url = await widget.webViewController!.getUrl();
+                if (url != null) {
+                  try {
+                    final result = await SharePlus.instance.share(
+                      ShareParams(
+                        text: 'Check out this article: ${url.toString()}',
+                      ),
+                    );
+
+                    if (result.status != ShareResultStatus.success &&
+                        context.mounted) {
+                      showSnackbar(context, 'Failed to share article',
+                          type: SnackbarType.failure);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      showSnackbar(context, 'Failed to share article',
+                          type: SnackbarType.failure);
+                    }
+                  }
+                }
+              }
+            },
           ),
           // _buildActionButton(
           //   context,
