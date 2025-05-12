@@ -232,7 +232,9 @@ class WallPageDrawer extends StatelessWidget {
             final unfollowed =
                 await context.push('/feeds/${e.id}', extra: extra);
             if ((unfollowed as bool) == true && context.mounted) {
-              context.read<WallsBloc>().add(ListWallsRequested());
+              context
+                  .read<WallsBloc>()
+                  .add(ListWallsRequested(refreshItems: true));
             }
           },
         ),
