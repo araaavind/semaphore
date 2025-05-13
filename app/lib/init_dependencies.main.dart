@@ -242,6 +242,26 @@ void _initFeed() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => SaveItem(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UnsaveItem(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetSavedItems(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => CheckUserSavedItems(
+        serviceLocator(),
+      ),
+    )
     // Register cubits
     ..registerFactory(
       () => ScrollToTopCubit(),
@@ -289,6 +309,13 @@ void _initFeed() {
         addFeedToWall: serviceLocator(),
         removeFeedFromWall: serviceLocator(),
         listFeeds: serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => SavedItemsBloc(
+        saveItem: serviceLocator(),
+        unsaveItem: serviceLocator(),
+        getSavedItems: serviceLocator(),
       ),
     );
 }

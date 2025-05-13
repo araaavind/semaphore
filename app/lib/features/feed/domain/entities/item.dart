@@ -7,6 +7,16 @@ class Author extends Equatable {
 
   const Author({required this.name, required this.email});
 
+  Author copyWith({
+    String? name,
+    String? email,
+  }) {
+    return Author(
+      name: name ?? this.name,
+      email: email ?? this.email,
+    );
+  }
+
   @override
   List<Object?> get props => [name, email];
 }
@@ -21,6 +31,18 @@ class Enclosure extends Equatable {
     required this.length,
     required this.type,
   });
+
+  Enclosure copyWith({
+    String? url,
+    int? length,
+    String? type,
+  }) {
+    return Enclosure(
+      url: url ?? this.url,
+      length: length ?? this.length,
+      type: type ?? this.type,
+    );
+  }
 
   @override
   List<Object?> get props => [url, length, type];
@@ -42,6 +64,7 @@ class Item extends Equatable {
   final List<Enclosure>? enclosures;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final bool isSaved;
 
   const Item({
     required this.id,
@@ -59,7 +82,46 @@ class Item extends Equatable {
     this.enclosures,
     required this.createdAt,
     required this.updatedAt,
+    this.isSaved = false,
   });
+
+  Item copyWith({
+    int? id,
+    String? title,
+    String? description,
+    String? link,
+    DateTime? pubDate,
+    DateTime? pubUpdated,
+    String? guid,
+    String? imageUrl,
+    Feed? feed,
+    String? content,
+    List<String>? categories,
+    List<Author>? authors,
+    List<Enclosure>? enclosures,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isSaved,
+  }) {
+    return Item(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      link: link ?? this.link,
+      pubDate: pubDate ?? this.pubDate,
+      pubUpdated: pubUpdated ?? this.pubUpdated,
+      guid: guid ?? this.guid,
+      imageUrl: imageUrl ?? this.imageUrl,
+      feed: feed ?? this.feed,
+      content: content ?? this.content,
+      categories: categories ?? this.categories,
+      authors: authors ?? this.authors,
+      enclosures: enclosures ?? this.enclosures,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isSaved: isSaved ?? this.isSaved,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -78,5 +140,6 @@ class Item extends Equatable {
         enclosures,
         createdAt,
         updatedAt,
+        isSaved,
       ];
 }

@@ -1,8 +1,7 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/entities/user.dart';
-import 'package:app/core/common/widgets/button.dart';
-import 'package:app/core/common/widgets/loader.dart';
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
@@ -48,6 +47,12 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           IconButton(
             onPressed: () {
+              context.pushNamed(RouteConstants.savedItemsPageName);
+            },
+            icon: const Icon(MingCute.bookmarks_line),
+          ),
+          IconButton(
+            onPressed: () {
               final user =
                   (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
               context.read<AuthBloc>().add(
@@ -77,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   );
                 }
-                return const Icon(MingCute.exit_fill);
+                return const Icon(MingCute.exit_line);
               },
             ),
           ),

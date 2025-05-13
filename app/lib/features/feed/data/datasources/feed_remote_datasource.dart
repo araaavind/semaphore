@@ -3,6 +3,7 @@ import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
 import 'package:app/features/feed/data/models/followers_list_model.dart';
 import 'package:app/features/feed/data/models/item_list_model.dart';
+import 'package:app/features/feed/data/models/saved_item_list_model.dart';
 import 'package:app/features/feed/data/models/wall_model.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -76,6 +77,17 @@ abstract interface class FeedRemoteDatasource {
     int pageSize,
     String? sortKey,
   });
+
+  Future<void> saveItem(int itemId);
+  Future<void> unsaveItem(int itemId);
+  Future<SavedItemListModel> getSavedItems({
+    int page,
+    int pageSize,
+    String? title,
+    String? sortKey,
+  });
+
+  Future<List<bool>> checkUserSavedItems(List<int> itemIds);
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -484,6 +496,100 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
         queryParameters: queryParams,
       );
       return FeedListModel.fromMap(response.data);
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> saveItem(int itemId) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/items/$itemId/save',
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> unsaveItem(int itemId) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/items/$itemId/unsave',
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<SavedItemListModel> getSavedItems({
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? title,
+    String? sortKey,
+  }) async {
+    try {
+      Map<String, dynamic> queryParams = {'page': page, 'page_size': pageSize};
+      if (title != null && title.isNotEmpty) {
+        queryParams['title'] = title;
+      }
+      if (sortKey != null) {
+        queryParams['sort'] = sortKey;
+      }
+
+      final response = await semaphoreClient.dio.get(
+        '/me/items/saved',
+        queryParameters: queryParams,
+      );
+      return SavedItemListModel.fromMap(response.data);
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<List<bool>> checkUserSavedItems(List<int> itemIds) async {
+    try {
+      Map<String, String> queryParams = {'ids': itemIds.join(',')};
+      final response = await semaphoreClient.dio.get(
+        '/me/items/saved/contains',
+        queryParameters: queryParams,
+      );
+      return (response.data['saved'] as List)
+          .map((isSaved) => isSaved as bool)
+          .toList();
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {

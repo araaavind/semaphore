@@ -18,6 +18,7 @@ import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/add_to_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/create_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
+import 'package:app/features/feed/presentation/pages/saved_items_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/feed/presentation/pages/web_view.dart';
 import 'package:app/features/home/presentation/home_page.dart';
@@ -85,6 +86,7 @@ List<RouteBase> _buildRoutes() {
     _buildAddFeedRoute(),
     _buildAddToWallRoute(),
     _buildCreateWallRoute(),
+    _buildSavedItemsRoute(),
   ];
 }
 
@@ -94,9 +96,12 @@ GoRoute _buildFeedWebViewRoute() {
     name: RouteConstants.webViewPageName,
     pageBuilder: (context, state) {
       final url = state.uri.queryParameters['url'] ?? '';
+      final itemId = state.uri.queryParameters['itemId'] ?? '-1';
+      final isSaved = state.uri.queryParameters['isSaved'] != null &&
+          state.uri.queryParameters['isSaved'] == 'true';
       return SlideTransitionPage(
         key: const ValueKey('webview'),
-        child: WebView(url: url),
+        child: WebView(url: url, itemId: int.parse(itemId), isSaved: isSaved),
         direction: SlideDirection.rightToLeft,
       );
     },
@@ -273,5 +278,13 @@ GoRoute _buildWallEditRoute() {
         wall: state.extra as Wall,
       );
     },
+  );
+}
+
+GoRoute _buildSavedItemsRoute() {
+  return GoRoute(
+    path: RouteConstants.savedItemsPagePath,
+    name: RouteConstants.savedItemsPageName,
+    builder: (context, state) => const SavedItemsPage(),
   );
 }

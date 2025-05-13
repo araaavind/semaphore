@@ -6,9 +6,13 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class WebView extends StatefulWidget {
   final String url;
+  final int itemId;
+  final bool isSaved;
   const WebView({
     super.key,
     required this.url,
+    required this.itemId,
+    this.isSaved = false,
   });
 
   @override
@@ -159,6 +163,8 @@ class _WebViewState extends State<WebView> {
             // Draggable bottom drawer
             WebViewDraggableBottom(
               webViewController: webViewController,
+              itemId: widget.itemId,
+              isSaved: widget.isSaved,
             ),
           ],
         ),

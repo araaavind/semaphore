@@ -103,9 +103,11 @@ class ItemModel extends Item {
     super.categories,
     super.enclosures,
     super.authors,
+    super.isSaved,
   });
 
-  ItemModel copyWith({
+  @override
+  Item copyWith({
     int? id,
     String? title,
     String? description,
@@ -114,13 +116,14 @@ class ItemModel extends Item {
     DateTime? pubDate,
     DateTime? pubUpdated,
     String? imageUrl,
-    FeedModel? feed,
+    covariant FeedModel? feed,
     String? content,
     List<String>? categories,
-    List<AuthorModel>? authors,
+    covariant List<AuthorModel>? authors,
     List<Enclosure>? enclosures,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isSaved,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -138,6 +141,7 @@ class ItemModel extends Item {
       enclosures: enclosures ?? this.enclosures,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isSaved: isSaved ?? this.isSaved,
     );
   }
 
@@ -161,6 +165,7 @@ class ItemModel extends Item {
           .toList(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'is_saved': isSaved,
     };
   }
 
@@ -196,6 +201,7 @@ class ItemModel extends Item {
           : null,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
+      isSaved: map['is_saved'] != null ? map['is_saved'] as bool : false,
     );
   }
 

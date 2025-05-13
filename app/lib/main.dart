@@ -5,6 +5,7 @@ import 'package:app/core/router/router.dart';
 import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/features/auth/presentation/cubit/reset_password/reset_password_cubit.dart';
+import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
@@ -42,6 +43,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<ScrollToTopCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<SavedItemsBloc>(),
         ),
       ],
       child: const SemaphoreApp(),

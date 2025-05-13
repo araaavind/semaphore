@@ -9,6 +9,7 @@ enum ShimmerLoaderType {
   magazine,
   card,
   lines,
+  smallmag,
 }
 
 class ShimmerLoader extends StatelessWidget {
@@ -44,6 +45,8 @@ class ShimmerLoader extends StatelessWidget {
         return _buildTextShimmer();
       case ShimmerLoaderType.magazine:
         return _buildMagazineShimmer(context);
+      case ShimmerLoaderType.smallmag:
+        return _buildSmallMagazineShimmer(context);
       case ShimmerLoaderType.card:
         return _buildCardShimmer(context);
       case ShimmerLoaderType.lines:
@@ -78,7 +81,7 @@ class ShimmerLoader extends StatelessWidget {
         children: [
           Container(
             width: 100.0,
-            height: 80.0,
+            height: 90.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
               color: Colors.white,
@@ -104,6 +107,52 @@ class ShimmerLoader extends StatelessWidget {
                 const SizedBox(height: 14.0),
                 Container(
                   width: double.infinity,
+                  height: 8.0,
+                  color: Colors.white,
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSmallMagazineShimmer(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 90.0,
+            height: 60.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 16.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4.0),
+                Container(
+                  height: 12.0,
+                  width: double.infinity,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 8.0),
+                Container(
+                  height: 10.0,
+                  width: 150.0,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 14.0),
+                Container(
+                  width: 80,
                   height: 8.0,
                   color: Colors.white,
                   margin: const EdgeInsets.only(bottom: 8.0),

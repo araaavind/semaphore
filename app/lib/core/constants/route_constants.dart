@@ -31,4 +31,6 @@ class RouteConstants {
   static const addToWallPageName = 'add-to-wall';
   static const wallEditPagePath = ':wallId/edit';
   static const wallEditPageName = 'wall-edit';
+  static const savedItemsPagePath = '/saved-items';
+  static const savedItemsPageName = 'saved-items';
 }

@@ -1,16 +1,22 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
+import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 class WebViewDraggableBottom extends StatefulWidget {
   final InAppWebViewController? webViewController;
+  final int itemId;
+  final bool isSaved;
   const WebViewDraggableBottom({
     super.key,
     this.webViewController,
+    required this.itemId,
+    this.isSaved = false,
   });
 
   @override
@@ -20,6 +26,13 @@ class WebViewDraggableBottom extends StatefulWidget {
 class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
   // Default drawer snap points
   static const List<double> snapPoints = [0.08];
+  bool isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isSaved = widget.isSaved;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,11 +151,39 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
               }
             },
           ),
-          // _buildActionButton(
-          //   context,
-          //   MingCute.bookmark_line,
-          //   () {},
-          // ),
+          BlocListener<SavedItemsBloc, SavedItemsState>(
+            listener: (context, state) {
+              if (state.status == SavedItemsStatus.failure &&
+                  (state.action == SavedItemsAction.unsave ||
+                      state.action == SavedItemsAction.save)) {
+                setState(() {
+                  // if the failed action is unsave, then set isSaved to true
+                  isSaved = state.action == SavedItemsAction.unsave;
+                });
+                showSnackbar(
+                    context,
+                    state.message ??
+                        (state.action == SavedItemsAction.unsave
+                            ? 'Failed to unsave article'
+                            : 'Failed to save article'),
+                    type: SnackbarType.failure);
+              }
+            },
+            child: _buildActionButton(
+              context,
+              isSaved ? MingCute.bookmark_fill : MingCute.bookmark_line,
+              () {
+                context.read<SavedItemsBloc>().add(
+                      isSaved
+                          ? UnsaveItemRequested(widget.itemId)
+                          : SaveItemRequested(widget.itemId),
+                    );
+                setState(() {
+                  isSaved = !isSaved;
+                });
+              },
+            ),
+          ),
         ],
       ),
     );

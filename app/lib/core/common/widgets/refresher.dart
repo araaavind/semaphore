@@ -5,6 +5,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class Refresher extends StatelessWidget {
   const Refresher({
     required this.controller,
+    this.header,
     this.onRefresh,
     this.child,
     super.key,
@@ -13,17 +14,19 @@ class Refresher extends StatelessWidget {
   final RefreshController controller;
   final void Function()? onRefresh;
   final Widget? child;
+  final Widget? header;
 
   @override
   Widget build(BuildContext context) {
     return SmartRefresher(
       controller: controller,
       onRefresh: onRefresh,
-      header: WaterDropMaterialHeader(
-        backgroundColor: context.theme.colorScheme.primary,
-        color: context.theme.colorScheme.onPrimary,
-        distance: 50.0,
-      ),
+      header: header ??
+          WaterDropMaterialHeader(
+            backgroundColor: context.theme.colorScheme.primary.withOpacity(0.8),
+            color: context.theme.colorScheme.onSurface.withOpacity(0.8),
+            distance: 50.0,
+          ),
       child: child,
     );
   }

@@ -5,13 +5,14 @@ import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-class ItemListTileMag extends StatelessWidget {
+class ItemListTileMag extends StatefulWidget {
   final Item item;
   final PagingController<int, Item> _pagingController;
   final bool isTextOnly;
@@ -23,49 +24,78 @@ class ItemListTileMag extends StatelessWidget {
   }) : _pagingController = pagingController;
 
   @override
+  State<ItemListTileMag> createState() => _ItemListTileMagState();
+}
+
+class _ItemListTileMagState extends State<ItemListTileMag> {
+  late Item _item;
+
+  @override
+  void initState() {
+    super.initState();
+    _item = widget.item;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        context.pushNamed(
-          RouteConstants.webViewPageName,
-          queryParameters: {'url': item.link},
-        );
+    return BlocListener<SavedItemsBloc, SavedItemsState>(
+      listener: (context, state) {
+        if (state.status == SavedItemsStatus.success &&
+            state.currentItemId == _item.id) {
+          setState(() {
+            _item = _item.copyWith(
+              isSaved: state.action == SavedItemsAction.save,
+            );
+          });
+        }
       },
-      splashColor: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 12.0,
-          horizontal: UIConstants.pagePadding,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isTextOnly)
-              ItemCachedImage(item: item, height: 90, width: 100),
-            if (!isTextOnly)
-              const SizedBox(width: UIConstants.tileHorizontalTitleGap),
-            Expanded(
-              child: SizedBox(
-                height: 90,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AutoSizeText(
-                      item.title[0].toUpperCase() + item.title.substring(1),
-                      style: context.theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: () {
+          context.pushNamed(
+            RouteConstants.webViewPageName,
+            queryParameters: {
+              'url': _item.link,
+              'itemId': _item.id.toString(),
+              'isSaved': _item.isSaved.toString(),
+            },
+          );
+        },
+        splashColor: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 12.0,
+            horizontal: UIConstants.pagePadding,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (!widget.isTextOnly)
+                ItemCachedImage(item: _item, height: 90, width: 100),
+              if (!widget.isTextOnly)
+                const SizedBox(width: UIConstants.tileHorizontalTitleGap),
+              Expanded(
+                child: SizedBox(
+                  height: 90,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AutoSizeText(
+                        _item.title[0].toUpperCase() + _item.title.substring(1),
+                        style: context.theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        minFontSize: 16,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      minFontSize: 16,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    _buildSubtitle(context),
-                  ],
+                      _buildSubtitle(context),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -75,12 +105,12 @@ class ItemListTileMag extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (item.feed?.title != null && item.feed!.title.isNotEmpty)
+        if (_item.feed?.title != null && _item.feed!.title.isNotEmpty)
           Flexible(
             child: InkWell(
               onTap: () async {
                 final Map<String, Object> extra = {
-                  'feed': item.feed!,
+                  'feed': _item.feed!,
                   'followFeedBlocValue':
                       BlocProvider.of<FollowFeedBloc>(context),
                   'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
@@ -89,16 +119,16 @@ class ItemListTileMag extends StatelessWidget {
                 final unfollowed = await context.pushNamed(
                   RouteConstants.feedViewPageName,
                   pathParameters: {
-                    'feedId': item.feed!.id.toString(),
+                    'feedId': _item.feed!.id.toString(),
                   },
                   extra: extra,
                 );
                 if ((unfollowed as bool) == true) {
-                  _pagingController.refresh();
+                  widget._pagingController.refresh();
                 }
               },
               child: AutoSizeText(
-                item.feed!.title,
+                _item.feed!.title,
                 style: context.theme.textTheme.bodySmall!.copyWith(
                     fontWeight: FontWeight.w300,
                     color:
@@ -109,7 +139,7 @@ class ItemListTileMag extends StatelessWidget {
               ),
             ),
           ),
-        if ((item.feed?.title != null && item.feed!.title.isNotEmpty))
+        if ((_item.feed?.title != null && _item.feed!.title.isNotEmpty))
           Text(
             '  •  ',
             style: context.theme.textTheme.bodySmall!.copyWith(
@@ -118,7 +148,7 @@ class ItemListTileMag extends StatelessWidget {
           ),
         Text(
           formatPublishedDate(
-            item.pubUpdated ?? item.pubDate ?? item.createdAt,
+            _item.pubUpdated ?? _item.pubDate ?? _item.createdAt,
           ),
           style: context.theme.textTheme.bodySmall!.copyWith(
               fontWeight: FontWeight.w300,

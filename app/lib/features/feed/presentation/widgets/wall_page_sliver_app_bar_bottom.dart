@@ -26,8 +26,12 @@ class WallPageSliverAppBarBottom extends StatelessWidget
             automaticallyImplyLeading:
                 false, // this will hide Drawer hamburger icon
             backgroundColor: context.theme.colorScheme.surfaceContainerHighest,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(24)),
+            shape: RoundedRectangleBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(24)),
+              side: BorderSide(
+                width: 0.8,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.08),
+              ),
             ),
             toolbarHeight: kToolbarHeight - 8,
             title: GestureDetector(
