@@ -107,27 +107,33 @@ class HomePage extends StatelessWidget {
                     : null,
             child: Wrap(
               children: [
-                BottomNavigationBar(
-                  currentIndex: _calculateSelectedIndex(context),
-                  onTap: (value) => _onItemTapped(value, context),
-                  iconSize: 26.0,
-                  items: const [
-                    BottomNavigationBarItem(
-                      label: 'Home',
-                      icon: Icon(MingCute.home_4_line),
-                      activeIcon: Icon(MingCute.home_4_fill),
-                    ),
-                    BottomNavigationBarItem(
-                      label: 'Search',
-                      icon: Icon(MingCute.search_line),
-                      activeIcon: Icon(MingCute.search_fill),
-                    ),
-                    BottomNavigationBarItem(
-                      label: 'Profile',
-                      icon: Icon(MingCute.user_3_line),
-                      activeIcon: Icon(MingCute.user_3_fill),
-                    ),
-                  ],
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                  child: BottomNavigationBar(
+                    currentIndex: _calculateSelectedIndex(context),
+                    onTap: (value) => _onItemTapped(value, context),
+                    iconSize: 26.0,
+                    items: const [
+                      BottomNavigationBarItem(
+                        label: 'Home',
+                        icon: Icon(MingCute.home_4_line),
+                        activeIcon: Icon(MingCute.home_4_fill),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Search',
+                        icon: Icon(MingCute.search_line),
+                        activeIcon: Icon(MingCute.search_fill),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Profile',
+                        icon: Icon(MingCute.user_3_line),
+                        activeIcon: Icon(MingCute.user_3_fill),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

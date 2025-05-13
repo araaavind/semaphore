@@ -230,6 +230,7 @@ class _WallPageState extends State<WallPage> {
                         _pagingController.refresh();
                       },
                       child: CustomScrollView(
+                        cacheExtent: 500,
                         slivers: [
                           AppPagedList<Item>(
                             pagingController: _pagingController,

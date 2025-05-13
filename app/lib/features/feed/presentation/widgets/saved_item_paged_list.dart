@@ -142,6 +142,9 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                   state.message ?? TextConstants.internalServerErrorMessage;
             }
           },
+          buildWhen: (previous, current) =>
+              previous.status != current.status &&
+              previous.action != current.action,
           builder: (context, state) {
             if (state.status == SavedItemsStatus.loading) {
               return const Expanded(
@@ -169,6 +172,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                   ),
                 ),
                 child: CustomScrollView(
+                  cacheExtent: 500,
                   slivers: [
                     AppPagedList<SavedItem>(
                       pagingController: _pagingController,

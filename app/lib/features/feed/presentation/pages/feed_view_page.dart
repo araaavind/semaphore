@@ -328,6 +328,7 @@ class _FeedViewItemsState extends State<FeedViewItems> {
           _pagingController.refresh();
         },
         child: CustomScrollView(
+          cacheExtent: 500,
           slivers: [
             AppPagedList<Item>(
               pagingController: _pagingController,
