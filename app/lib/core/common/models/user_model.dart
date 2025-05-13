@@ -10,6 +10,7 @@ class UserModel extends User {
     required super.isActivated,
     super.fullName,
     super.lastLoginAt,
+    super.profileImageURL,
   });
 
   UserModel copyWith({
@@ -19,6 +20,7 @@ class UserModel extends User {
     String? fullName,
     DateTime? lastLoginAt,
     bool? isActivated,
+    String? profileImageURL,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -27,6 +29,7 @@ class UserModel extends User {
       fullName: fullName ?? this.fullName,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       isActivated: isActivated ?? this.isActivated,
+      profileImageURL: profileImageURL ?? this.profileImageURL,
     );
   }
 
@@ -38,6 +41,7 @@ class UserModel extends User {
       'full_name': fullName,
       'last_login_at': lastLoginAt?.toIso8601String(),
       'is_activated': isActivated,
+      'profile_image_url': profileImageURL,
     };
   }
 
@@ -51,6 +55,7 @@ class UserModel extends User {
           ? DateTime.parse(map['last_login_at'] as String)
           : null,
       isActivated: map['activated'] != null ? map['activated'] as bool : false,
+      profileImageURL: map['profile_image_url'] ?? '',
     );
   }
 

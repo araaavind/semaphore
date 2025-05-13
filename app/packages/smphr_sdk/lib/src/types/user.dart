@@ -7,6 +7,7 @@ class User {
   final String? fullName;
   final DateTime? lastLoginAt;
   final bool isActivated;
+  final String? profileImageURL;
 
   User({
     required this.id,
@@ -15,6 +16,7 @@ class User {
     required this.isActivated,
     this.fullName,
     this.lastLoginAt,
+    this.profileImageURL,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class User {
       'full_name': fullName,
       'last_login_at': lastLoginAt?.toIso8601String(),
       'is_activated': isActivated,
+      'profile_image_url': profileImageURL,
     };
   }
 
@@ -38,6 +41,9 @@ class User {
           ? DateTime.parse(map['last_login_at'] as String)
           : null,
       isActivated: map['activated'] != null ? map['activated'] as bool : false,
+      profileImageURL: map['profile_image_url'] != null
+          ? map['profile_image_url'] as String
+          : null,
     );
   }
 

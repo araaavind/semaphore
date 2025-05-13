@@ -7,6 +7,7 @@ class User extends Equatable {
   final String? fullName;
   final DateTime? lastLoginAt;
   final bool isActivated;
+  final String? profileImageURL;
 
   const User({
     required this.id,
@@ -15,6 +16,7 @@ class User extends Equatable {
     required this.isActivated,
     this.fullName,
     this.lastLoginAt,
+    this.profileImageURL,
   });
 
   @override
@@ -25,5 +27,6 @@ class User extends Equatable {
         fullName,
         lastLoginAt,
         isActivated,
+        profileImageURL,
       ];
 }

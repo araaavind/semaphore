@@ -7,9 +7,11 @@ import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -96,17 +98,47 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              user.fullName ?? 'User',
-              style: context.theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            Text(
-              '@${user.username}',
-              style: context.theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w300,
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (user.profileImageURL != null &&
+                    user.profileImageURL!.isNotEmpty)
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundImage:
+                        CachedNetworkImageProvider(user.profileImageURL ?? ''),
+                  ),
+                if (user.profileImageURL != null &&
+                    user.profileImageURL!.isNotEmpty)
+                  const SizedBox(width: 16),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 240,
+                        child: AutoSizeText(
+                          user.fullName ?? 'User',
+                          style: context.theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          minFontSize: 16,
+                          maxLines: 2,
+                        ),
+                      ),
+                      Text(
+                        '@${user.username}',
+                        style: context.theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             if (!isActivated)
               Center(
