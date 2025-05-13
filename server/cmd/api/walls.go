@@ -109,7 +109,7 @@ func (app *application) listItemsForWall(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	items, metadata, err := app.models.Items.FindAllForWall(wallID, input.Title, input.Filters)
+	items, metadata, err := app.models.Items.FindAllForWall(wallID, user.ID, input.Title, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

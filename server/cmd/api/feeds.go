@@ -166,7 +166,9 @@ func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	items, metadata, err := app.models.Items.FindAllForFeeds([]int64{feed.ID}, input.Title, input.Filters)
+	user := app.contextGetSession(r).User
+
+	items, metadata, err := app.models.Items.FindAllForFeeds([]int64{feed.ID}, user.ID, input.Title, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

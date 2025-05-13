@@ -37,7 +37,8 @@ type Item struct {
 	CreatedAt   time.Time                    `json:"created_at,omitempty"`
 	UpdatedAt   time.Time                    `json:"updated_at,omitempty"`
 
-	Feed *Feed `json:"feed,omitempty"`
+	IsSaved bool  `json:"is_saved,omitempty"`
+	Feed    *Feed `json:"feed,omitempty"`
 }
 
 // Person is an individual specified in a feed
@@ -223,24 +224,30 @@ func (m ItemModel) Insert(item *Item) error {
 	return nil
 }
 
-func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filters) ([]*Item, Metadata, error) {
+func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, filters Filters) ([]*Item, Metadata, error) {
+	columnMapping := sortColumnMapping{
+		"id":       "items.id",
+		"title":    "items.title",
+		"pub_date": "items.pub_date",
+	}
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, title, description, content, link, pub_date,
-			pub_updated, authors, guid, image_url, categories, enclosures, feed_id,
-			version, created_at, updated_at
+		SELECT count(*) OVER(), items.id, items.title, items.description, items.content, items.link, items.pub_date,
+			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
+			items.version, items.created_at, items.updated_at, (si.item_id IS NOT NULL) as is_saved
 		FROM items
-		WHERE feed_id = ANY($1)
+		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $3
+		WHERE items.feed_id = ANY($1)
 		AND (
-			to_tsvector('simple', title) @@ plainto_tsquery('simple', $2)
+			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
 			OR $2 = ''
 		)
 		ORDER BY COALESCE(%s, updated_at) %s, id desc
-		LIMIT $3 OFFSET $4`, filters.sortColumn(sortColumnMapping{}), filters.sortDirection())
+		LIMIT $4 OFFSET $5`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{feedIDs, title, filters.limit(), filters.offset()}
+	args := []any{feedIDs, title, userID, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -268,6 +275,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 			&item.Version,
 			&item.CreatedAt,
 			&item.UpdatedAt,
+			&item.IsSaved,
 		)
 		return &item, err
 	})
@@ -280,7 +288,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, title string, filters Filter
 	return items, metadata, nil
 }
 
-func (m ItemModel) FindAllForWall(wallID int64, title string, filters Filters) ([]*Item, Metadata, error) {
+func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Filters) ([]*Item, Metadata, error) {
 	columnMapping := sortColumnMapping{
 		"id":          "items.id",
 		"title":       "items.title",
@@ -292,22 +300,24 @@ func (m ItemModel) FindAllForWall(wallID int64, title string, filters Filters) (
 		SELECT count(*) OVER(), items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
 			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
-			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language
+			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
+			(si.item_id IS NOT NULL) as is_saved
 		FROM items
 		INNER JOIN feeds ON feeds.id = items.feed_id
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
+		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $3
 		WHERE wall_feeds.wall_id = $1
 		AND (
 			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
 			OR $2 = ''
 		)
 		ORDER BY COALESCE(%s, items.updated_at) %s, items.id desc
-		LIMIT $3 OFFSET $4`, filters.sortColumn(columnMapping), filters.sortDirection())
+		LIMIT $4 OFFSET $5`, filters.sortColumn(columnMapping), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{wallID, title, filters.limit(), filters.offset()}
+	args := []any{wallID, title, userID, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -345,6 +355,7 @@ func (m ItemModel) FindAllForWall(wallID int64, title string, filters Filters) (
 			&feed.PubUpdated,
 			&feed.FeedType,
 			&feed.Language,
+			&item.IsSaved,
 		)
 		item.Feed = &feed
 		return &item, err
@@ -370,4 +381,46 @@ func (m ItemModel) CleanupItems(before time.Time) error {
 
 	_, err := m.DB.Exec(ctx, query, before)
 	return err
+}
+
+// GetById gets a single item by its ID
+func (m ItemModel) GetById(id int64) (*Item, error) {
+	query := `
+		SELECT id, title, description, content, link, pub_date, pub_updated,
+			authors, guid, image_url, categories, enclosures, feed_id,
+			version, created_at, updated_at
+		FROM items
+		WHERE id = $1`
+
+	var item Item
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRow(ctx, query, id).Scan(
+		&item.ID,
+		&item.Title,
+		&item.Description,
+		&item.Content,
+		&item.Link,
+		&item.PubDate,
+		&item.PubUpdated,
+		&item.Authors,
+		&item.GUID,
+		&item.ImageURL,
+		&item.Categories,
+		&item.Enclosures,
+		&item.FeedID,
+		&item.Version,
+		&item.CreatedAt,
+		&item.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	return &item, nil
 }

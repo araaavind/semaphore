@@ -21,6 +21,7 @@ type Models struct {
 	Items       ItemModel
 	Walls       WallModel
 	WallFeeds   WallFeedModel
+	SavedItems  SavedItemModel
 }
 
 func NewModels(db *pgxpool.Pool) Models {
@@ -34,5 +35,6 @@ func NewModels(db *pgxpool.Pool) Models {
 		ItemModel{DB: db},
 		WallModel{DB: db},
 		WallFeedModel{DB: db},
+		SavedItemModel{DB: db},
 	}
 }
