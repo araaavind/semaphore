@@ -35,7 +35,7 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 		"username":  "users.username",
 	}
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), users.id, users.full_name, users.username
+		SELECT count(*) OVER(), users.id, users.full_name, users.username, users.profile_image_url
 		FROM users
 		INNER JOIN feed_follows ON feed_follows.user_id = users.id
 		INNER JOIN feeds ON feeds.id = feed_follows.feed_id
@@ -61,6 +61,7 @@ func (m FeedFollowModel) GetFollowersForFeed(feedID int64, filters Filters) ([]*
 			&user.ID,
 			&user.FullName,
 			&user.Username,
+			&user.ProfileImageURL,
 		)
 		return &user, err
 	})

@@ -22,16 +22,17 @@ var (
 )
 
 type User struct {
-	ID          int64              `json:"id"`
-	CreatedAt   *time.Time         `json:"created_at,omitempty"`
-	UpdatedAt   *time.Time         `json:"updated_at,omitempty"`
-	FullName    string             `json:"full_name"`
-	Username    string             `json:"username"`
-	Email       string             `json:"email,omitempty"`
-	Password    password           `json:"-"`
-	Activated   bool               `json:"activated,omitempty"`
-	Version     int                `json:"-"`
-	LastLoginAt pgtype.Timestamptz `json:"last_login_at,omitempty"`
+	ID              int64              `json:"id"`
+	CreatedAt       *time.Time         `json:"created_at,omitempty"`
+	UpdatedAt       *time.Time         `json:"updated_at,omitempty"`
+	FullName        string             `json:"full_name"`
+	Username        string             `json:"username"`
+	Email           string             `json:"email,omitempty"`
+	ProfileImageURL pgtype.Text        `json:"profile_image_url,omitempty"`
+	Password        password           `json:"-"`
+	Activated       bool               `json:"activated,omitempty"`
+	Version         int                `json:"-"`
+	LastLoginAt     pgtype.Timestamptz `json:"last_login_at,omitempty"`
 }
 
 type password struct {
@@ -152,11 +153,11 @@ type UserModel struct {
 
 func (m UserModel) Insert(user *User) error {
 	query := `
-		INSERT INTO users (full_name, username, email, password_hash, activated) 
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO users (full_name, username, email, profile_image_url, password_hash, activated) 
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id, last_login_at, created_at, updated_at, version`
 
-	args := []any{user.FullName, user.Username, user.Email, user.Password.hash, user.Activated}
+	args := []any{user.FullName, user.Username, user.Email, user.ProfileImageURL, user.Password.hash, user.Activated}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -178,7 +179,7 @@ func (m UserModel) Insert(user *User) error {
 
 func (m UserModel) GetByID(id int64) (*User, error) {
 	query := `
-		SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, last_login_at, version
+		SELECT id, created_at, updated_at, full_name, username, email, profile_image_url, password_hash, activated, last_login_at, version
 		FROM users
 		WHERE id = $1`
 
@@ -194,6 +195,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 		&user.FullName,
 		&user.Username,
 		&user.Email,
+		&user.ProfileImageURL,
 		&user.Password.hash,
 		&user.Activated,
 		&user.LastLoginAt,
@@ -213,7 +215,7 @@ func (m UserModel) GetByID(id int64) (*User, error) {
 
 func (m UserModel) GetByEmail(email string) (*User, error) {
 	query := `
-        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, last_login_at, version
+        SELECT id, created_at, updated_at, full_name, username, email, profile_image_url, password_hash, activated, last_login_at, version
         FROM users
         WHERE email = $1`
 
@@ -229,6 +231,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 		&user.FullName,
 		&user.Username,
 		&user.Email,
+		&user.ProfileImageURL,
 		&user.Password.hash,
 		&user.Activated,
 		&user.LastLoginAt,
@@ -249,7 +252,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 
 func (m UserModel) GetByUsername(username string) (*User, error) {
 	query := `
-        SELECT id, created_at, updated_at, full_name, username, email, password_hash, activated, last_login_at, version
+        SELECT id, created_at, updated_at, full_name, username, email, profile_image_url, password_hash, activated, last_login_at, version
         FROM users
         WHERE username = $1`
 
@@ -265,6 +268,7 @@ func (m UserModel) GetByUsername(username string) (*User, error) {
 		&user.FullName,
 		&user.Username,
 		&user.Email,
+		&user.ProfileImageURL,
 		&user.Password.hash,
 		&user.Activated,
 		&user.LastLoginAt,
@@ -288,7 +292,7 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 
 	query := `
 		SELECT users.id, users.created_at, users.updated_at, users.full_name, users.username,
-		users.email, users.password_hash, users.activated, users.last_login_at, users.version
+		users.email, users.profile_image_url, users.password_hash, users.activated, users.last_login_at, users.version
 		FROM users
 		INNER JOIN tokens ON users.id = tokens.user_id
 		WHERE tokens.hash = $1
@@ -307,6 +311,7 @@ func (m UserModel) GetForToken(scope, tokenPlaintext string) (*User, error) {
 		&user.FullName,
 		&user.Username,
 		&user.Email,
+		&user.ProfileImageURL,
 		&user.Password.hash,
 		&user.Activated,
 		&user.LastLoginAt,
@@ -346,15 +351,16 @@ func (m UserModel) CountByUsername(username string) (int, error) {
 func (m UserModel) Update(user *User) error {
 	query := `
         UPDATE users 
-        SET full_name = $1, username = $2, email = $3, password_hash = $4, activated = $5, updated_at = $6,
-		last_login_at = $7, version = version + 1
-        WHERE id = $8 AND version = $9
+        SET full_name = $1, username = $2, email = $3, profile_image_url = $4, password_hash = $5, activated = $6, updated_at = $7,
+		last_login_at = $8, version = version + 1
+        WHERE id = $9 AND version = $10
         RETURNING version`
 
 	args := []any{
 		user.FullName,
 		user.Username,
 		user.Email,
+		user.ProfileImageURL,
 		user.Password.hash,
 		user.Activated,
 		time.Now(),

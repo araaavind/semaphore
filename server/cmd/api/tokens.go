@@ -9,6 +9,7 @@ import (
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5/pgtype"
 	"google.golang.org/api/idtoken"
 )
 
@@ -390,16 +391,17 @@ func (app *application) createGoogleAuthenticationToken(w http.ResponseWriter, r
 	}
 
 	var userInfo struct {
-		Email         string `json:"email"`
-		EmailVerified bool   `json:"email_verified"`
-		Name          string `json:"name"`
+		Email           string `json:"email"`
+		EmailVerified   bool   `json:"email_verified"`
+		Name            string `json:"name"`
+		ProfileImageURL string `json:"profile_image_url"`
 	}
 
 	// Extract required claims from the verified token payload
 	userInfo.Email = tokenPayload.Claims["email"].(string)
 	userInfo.EmailVerified = tokenPayload.Claims["email_verified"].(bool)
 	userInfo.Name = tokenPayload.Claims["name"].(string)
-
+	userInfo.ProfileImageURL = tokenPayload.Claims["picture"].(string)
 	// Ensure email is verified
 	if !userInfo.EmailVerified {
 		app.errorResponse(w, r, http.StatusUnauthorized, "This Google account is not verified")
@@ -424,6 +426,12 @@ func (app *application) createGoogleAuthenticationToken(w http.ResponseWriter, r
 				FullName:  userInfo.Name,
 				Username:  username,
 				Activated: true, // Google accounts with verified emails are automatically activated
+			}
+			if userInfo.ProfileImageURL != "" {
+				user.ProfileImageURL = pgtype.Text{
+					String: userInfo.ProfileImageURL,
+					Valid:  true,
+				}
 			}
 			user.Password.SetOAuthPasswordPlaceholder()
 
@@ -468,6 +476,12 @@ func (app *application) createGoogleAuthenticationToken(w http.ResponseWriter, r
 	// Update last login timestamp
 	user.LastLoginAt.Time = time.Now()
 	user.LastLoginAt.Valid = true
+	if !isNewUser && (!user.ProfileImageURL.Valid || user.ProfileImageURL.String == "") && userInfo.ProfileImageURL != "" {
+		user.ProfileImageURL = pgtype.Text{
+			String: userInfo.ProfileImageURL,
+			Valid:  true,
+		}
+	}
 	err = app.models.Users.Update(user)
 	if err != nil {
 		switch {
