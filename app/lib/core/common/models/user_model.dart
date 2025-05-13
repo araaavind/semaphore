@@ -13,7 +13,8 @@ class UserModel extends User {
     super.profileImageURL,
   });
 
-  UserModel copyWith({
+  @override
+  User copyWith({
     int? id,
     String? email,
     String? username,

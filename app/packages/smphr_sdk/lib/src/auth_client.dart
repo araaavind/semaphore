@@ -215,8 +215,6 @@ class AuthClient {
     try {
       final response = await _dio.get('/me');
 
-      print(response.data);
-
       final authResponse = AuthResponse.fromMap(response.data);
 
       return authResponse;

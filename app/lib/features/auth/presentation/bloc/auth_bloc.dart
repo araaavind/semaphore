@@ -212,14 +212,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       case Right(value: final _):
         if (_appUserCubit.state is AppUserLoggedIn) {
           final currentUser = (_appUserCubit.state as AppUserLoggedIn).user;
-          _appUserCubit.setUser(User(
-            id: currentUser.id,
-            email: currentUser.email,
-            username: event.username,
-            isActivated: currentUser.isActivated,
-            fullName: currentUser.fullName,
-            lastLoginAt: currentUser.lastLoginAt,
-          ));
+          _appUserCubit.setUser(currentUser.copyWith(username: event.username));
         }
         emit(AuthUpdateUsernameSuccess());
     }
