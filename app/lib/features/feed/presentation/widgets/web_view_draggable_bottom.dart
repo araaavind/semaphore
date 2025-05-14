@@ -132,19 +132,29 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                   try {
                     final result = await SharePlus.instance.share(
                       ShareParams(
-                        text: 'Check out this article: ${url.toString()}',
+                        text:
+                            'Hey, check this out!\n\n${url.toString()}\n\n_shared via *Semaphore* app_',
                       ),
                     );
 
                     if (result.status != ShareResultStatus.success &&
+                        result.status != ShareResultStatus.dismissed &&
                         context.mounted) {
-                      showSnackbar(context, 'Failed to share article',
-                          type: SnackbarType.failure);
+                      showSnackbar(
+                        context,
+                        'Failed to share article',
+                        type: SnackbarType.failure,
+                        bottomOffset: 64,
+                      );
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      showSnackbar(context, 'Failed to share article',
-                          type: SnackbarType.failure);
+                      showSnackbar(
+                        context,
+                        'Failed to share article',
+                        type: SnackbarType.failure,
+                        bottomOffset: 64,
+                      );
                     }
                   }
                 }
@@ -175,7 +185,8 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
               () {
                 context.read<SavedItemsBloc>().add(
                       isSaved
-                          ? UnsaveItemRequested(widget.itemId)
+                          ? UnsaveItemRequested(
+                              itemId: widget.itemId, refresh: true)
                           : SaveItemRequested(widget.itemId),
                     );
                 setState(() {

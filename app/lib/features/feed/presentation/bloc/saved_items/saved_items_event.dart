@@ -31,9 +31,13 @@ class SaveItemRequested extends SavedItemsEvent {
 
 class UnsaveItemRequested extends SavedItemsEvent {
   final int itemId;
+  final bool refresh;
 
-  UnsaveItemRequested(this.itemId);
+  UnsaveItemRequested({
+    required this.itemId,
+    this.refresh = false,
+  });
 
   @override
-  List<Object> get props => [itemId];
+  List<Object> get props => [itemId, refresh];
 }

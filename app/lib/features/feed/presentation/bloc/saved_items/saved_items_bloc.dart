@@ -117,6 +117,7 @@ class SavedItemsBloc extends Bloc<SavedItemsEvent, SavedItemsState> {
           status: SavedItemsStatus.success,
           action: SavedItemsAction.unsave,
           currentItemId: event.itemId,
+          refresh: event.refresh,
         ));
     }
   }

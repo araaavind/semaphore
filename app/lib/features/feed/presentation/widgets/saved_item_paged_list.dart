@@ -134,7 +134,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                       state.savedItemList.savedItems, nextPage);
                 }
               } else if (state.action == SavedItemsAction.save ||
-                  state.action == SavedItemsAction.unsave) {
+                  (state.action == SavedItemsAction.unsave && state.refresh)) {
                 _pagingController.refresh();
               }
             } else if (state.status == SavedItemsStatus.failure) {
@@ -165,8 +165,101 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                     pagingController: _pagingController,
                     listType: PagedListType.sliverList,
                     itemBuilder: (context, savedItem, index) {
-                      return SavedItemListTileMag(
-                        savedItem: savedItem,
+                      return Dismissible(
+                        key: Key(savedItem.item.id.toString()),
+                        onDismissed: (direction) {
+                          if (direction == DismissDirection.endToStart) {
+                            context
+                                .read<SavedItemsBloc>()
+                                .add(UnsaveItemRequested(
+                                  itemId: savedItem.item.id,
+                                  refresh: false,
+                                ));
+                          }
+                        },
+                        direction: DismissDirection.endToStart,
+                        dismissThresholds: const {
+                          DismissDirection.endToStart: 0.55,
+                        },
+                        confirmDismiss: (direction) async {
+                          return await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              contentPadding: const EdgeInsets.only(
+                                top: 36.0,
+                                left: 32.0,
+                                right: 24.0,
+                                bottom: 24.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              backgroundColor:
+                                  context.theme.colorScheme.surface,
+                              content: Text.rich(
+                                TextSpan(
+                                  style: context.theme.textTheme.bodyLarge,
+                                  children: [
+                                    const TextSpan(
+                                        text:
+                                            'Are you sure you want to remove this from saved items?'),
+                                    TextSpan(
+                                      text:
+                                          '\n\n(This action cannot be undone.)',
+                                      style: context.theme.textTheme.bodySmall!
+                                          .copyWith(
+                                        fontWeight: FontWeight.w100,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: Text(
+                                    'Cancel',
+                                    style: context.theme.textTheme.titleMedium!
+                                        .copyWith(
+                                      color:
+                                          context.theme.colorScheme.onSurface,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: Text(
+                                    'Yes',
+                                    style: context.theme.textTheme.titleMedium!
+                                        .copyWith(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        background: Container(
+                          alignment: Alignment.centerRight,
+                          color:
+                              context.theme.colorScheme.error.withOpacity(0.5),
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: Text(
+                              'Unsave',
+                              style:
+                                  context.theme.textTheme.bodyMedium!.copyWith(
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                        child: SavedItemListTileMag(
+                          savedItem: savedItem,
+                        ),
                       );
                     },
                     shimmerLoaderType: ShimmerLoaderType.smallmag,

@@ -12,6 +12,7 @@ void showSnackbar(
   required SnackbarType type,
   String? actionLabel,
   void Function()? onActionPressed,
+  double bottomOffset = 16,
 }) {
   Color backgroundColor;
   Color textColor;
@@ -89,6 +90,11 @@ void showSnackbar(
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         dismissDirection: DismissDirection.down,
+        margin: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: bottomOffset,
+        ),
         padding: EdgeInsets.symmetric(
           horizontal: 24.0,
           vertical:

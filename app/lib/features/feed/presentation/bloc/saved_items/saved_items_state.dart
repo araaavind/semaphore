@@ -10,6 +10,7 @@ class SavedItemsState extends Equatable {
   final SavedItemList savedItemList;
   final String? message;
   final int? currentItemId;
+  final bool refresh;
 
   const SavedItemsState({
     this.status = SavedItemsStatus.initial,
@@ -17,6 +18,7 @@ class SavedItemsState extends Equatable {
     this.savedItemList = const SavedItemList(),
     this.message,
     this.currentItemId,
+    this.refresh = true,
   });
 
   SavedItemsState copyWith({
@@ -25,6 +27,7 @@ class SavedItemsState extends Equatable {
     SavedItemList? savedItemList,
     String? message,
     int? currentItemId,
+    bool? refresh,
   }) {
     return SavedItemsState(
       status: status ?? this.status,
@@ -32,6 +35,7 @@ class SavedItemsState extends Equatable {
       savedItemList: savedItemList ?? this.savedItemList,
       message: message ?? this.message,
       currentItemId: currentItemId ?? this.currentItemId,
+      refresh: refresh ?? this.refresh,
     );
   }
 
@@ -42,5 +46,6 @@ class SavedItemsState extends Equatable {
         savedItemList,
         message,
         currentItemId,
+        refresh,
       ];
 }
