@@ -50,7 +50,9 @@ class _AppTextFieldState<T> extends State<AppTextField<T>> {
       decoration: InputDecoration(
         errorMaxLines: widget.errorMaxLines,
         hintText: widget.hintText,
-        hintStyle: context.theme.textTheme.bodyMedium,
+        hintStyle: context.theme.textTheme.bodyMedium!.copyWith(
+          color: context.theme.colorScheme.onSurface.withOpacity(0.65),
+        ),
         focusedBorder: widget.validBorderColor != null
             ? context.theme.inputDecorationTheme.focusedBorder!.copyWith(
                 borderSide: BorderSide(

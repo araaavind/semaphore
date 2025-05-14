@@ -113,6 +113,9 @@ abstract class AppPalette {
   static const grey = _GreyColors();
 
   static const transparent = Colors.transparent;
+
+  static const redditOrange = Color.fromARGB(255, 255, 69, 0);
+  static const rssBlue = Color.fromARGB(255, 0, 145, 255);
 }
 
 /// Alternative way to group colors in the palette.
