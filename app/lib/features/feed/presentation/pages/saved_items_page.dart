@@ -1,6 +1,6 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
-import 'package:app/core/utils/mingcute.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/widgets/saved_item_paged_list.dart';
 import 'package:flutter/material.dart';
 

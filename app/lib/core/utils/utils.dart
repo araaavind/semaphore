@@ -1,8 +1,10 @@
 export 'debouncer.dart';
 export 'format_published_date.dart';
-export 'mingcute.dart';
+export 'icons/mingcute.dart';
+export 'icons/simpleicons.dart';
 export 'print_navigation_stack.dart';
 export 'show_snackbar.dart';
 export 'stream_tranformers.dart';
 export 'string_casing_extension.dart';
+export 'rss_utils.dart';
 export 'validate_fields.dart';

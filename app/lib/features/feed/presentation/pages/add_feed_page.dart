@@ -8,11 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-enum FeedType {
-  rssUrl,
-  subreddit,
-}
-
 class AddFeedPage extends StatefulWidget {
   const AddFeedPage({super.key});
 
@@ -23,7 +18,7 @@ class AddFeedPage extends StatefulWidget {
 class _AddFeedPageState extends State<AddFeedPage> {
   final textController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  FeedType selectedFeedType = FeedType.rssUrl;
+  FeedInputType selectedFeedType = FeedInputType.url;
 
   @override
   void dispose() {
@@ -31,7 +26,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
     super.dispose();
   }
 
-  void _onFeedTypeChanged(FeedType? type) {
+  void _onFeedTypeChanged(FeedInputType? type) {
     if (type != null && type != selectedFeedType) {
       setState(() {
         selectedFeedType = type;
@@ -62,29 +57,15 @@ class _AddFeedPageState extends State<AddFeedPage> {
                         _FeedTypeSelector(
                           selectedType: selectedFeedType,
                           onTypeChanged: _onFeedTypeChanged,
-                          selectedColor: selectedFeedType == FeedType.subreddit
-                              ? AppPalette.redditOrange
-                              : AppPalette.rssBlue,
                         ),
                         const SizedBox(height: 40),
-                        _TitleTextSpan(
-                          title: selectedFeedType == FeedType.rssUrl
-                              ? 'RSS'
-                              : 'reddit',
-                          titleColor: selectedFeedType == FeedType.rssUrl
-                              ? AppPalette.rssBlue
-                              : AppPalette.redditOrange,
-                        ),
+                        _buildTitleText(context),
                         const SizedBox(height: 20),
                         AppTextField(
-                          hintText: selectedFeedType == FeedType.rssUrl
-                              ? 'Feed url'
-                              : 'r/subreddit',
+                          hintText: selectedFeedType.hintText,
                           controller: textController,
                           errorMaxLines: 2,
-                          validator: selectedFeedType == FeedType.rssUrl
-                              ? _feedUrlValidator
-                              : _subredditValidator,
+                          validator: selectedFeedType.validator,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
                         const SizedBox(height: 30),
@@ -124,15 +105,14 @@ class _AddFeedPageState extends State<AddFeedPage> {
                                         ?.unfocus();
 
                                     // Format the input based on the selected feed type
-                                    final String formattedURL =
-                                        selectedFeedType == FeedType.rssUrl
-                                            ? textController.text.trim()
-                                            : _formatSubredditToRssUrl(
-                                                textController.text.trim());
+                                    final String formattedURL = selectedFeedType
+                                        .converter(textController.text.trim());
 
-                                    context.read<AddFollowFeedBloc>().add(
-                                          AddFollowRequested(formattedURL),
-                                        );
+                                    if (context.mounted) {
+                                      context.read<AddFollowFeedBloc>().add(
+                                            AddFollowRequested(formattedURL),
+                                          );
+                                    }
                                   }
                                 },
                                 isLoading:
@@ -158,118 +138,92 @@ class _AddFeedPageState extends State<AddFeedPage> {
     );
   }
 
-  String _formatSubredditToRssUrl(String subreddit) {
-    return 'https://www.reddit.com/$subreddit.rss';
-  }
-
-  String? _feedUrlValidator(String? value) {
-    const urlPattern = r'^(https?:\/\/)?' // Optional protocol
-        r'((([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,})' // Domain name and extension
-        r'|'
-        r'((\d{1,3}\.){3}\d{1,3}))' // OR IPv4
-        r'(:\d+)?' // Optional port
-        r'(\/[-a-zA-Z0-9%_.~+]*)*' // Path
-        r'(\?[;&a-zA-Z0-9%_.~+=-]*)?' // Query string
-        r'(#[-a-zA-Z0-9_]*)?$'; // Fragment locator
-    final RegExp validCharsRegex = RegExp(urlPattern);
-    if (value!.isEmpty) {
-      return TextConstants.feedUrlBlankErrorMessage;
-    } else if (!validCharsRegex.hasMatch(value)) {
-      return TextConstants.feedUrlNotUrlErrorMessage;
-    }
-    return null;
-  }
-
-  String? _subredditValidator(value) {
-    if (value!.isEmpty) {
-      return 'Please enter a subreddit name';
-    }
-
-    // Basic validation for subreddit name
-    const subredditPattern = r'^(r\/)?[a-zA-Z0-9_]{3,21}$';
-    final RegExp validCharsRegex = RegExp(subredditPattern);
-
-    if (!validCharsRegex.hasMatch(value)) {
-      return 'Please enter a valid subreddit name (e.g., r/flutter)';
-    }
-
-    return null;
+  RichText _buildTitleText(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        text: 'add a new',
+        style: context.theme.textTheme.headlineSmall?.copyWith(
+          fontWeight: FontWeight.w100,
+        ),
+        children: [
+          TextSpan(
+            text: selectedFeedType == FeedInputType.url
+                ? ''
+                : ' ${selectedFeedType.displayName}',
+            style: context.theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: selectedFeedType.selectedColor(context),
+            ),
+          ),
+          TextSpan(
+            text: ' feed',
+            style: context.theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w100,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
 class _FeedTypeSelector extends StatelessWidget {
-  final FeedType selectedType;
-  final ValueChanged<FeedType?> onTypeChanged;
-  final Color? selectedColor;
+  final FeedInputType selectedType;
+  final ValueChanged<FeedInputType?> onTypeChanged;
 
   const _FeedTypeSelector({
     required this.selectedType,
     required this.onTypeChanged,
-    this.selectedColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
       spacing: 8.0,
-      children: [
-        ChoiceChip(
-          label: const Text('URL'),
-          selected: selectedType == FeedType.rssUrl,
-          selectedColor: selectedColor,
+      children: FeedInputType.values.map((type) {
+        final isSelected = selectedType == type;
+        return ChoiceChip(
+          label: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (!isSelected)
+                Padding(
+                  padding: EdgeInsets.only(right: type.iconPadding),
+                  child: Icon(
+                    type.icon,
+                    size: type.iconSize,
+                    color: isSelected
+                        ? type.selectedLabelColor(context)
+                        : type.labelColor(context),
+                  ),
+                ),
+              Text(type.displayName),
+            ],
+          ),
+          labelPadding: const EdgeInsets.symmetric(horizontal: 2),
+          selected: isSelected,
+          selectedColor: type.selectedColor(context).withOpacity(0.2),
           onSelected: (selected) {
             if (selected) {
-              onTypeChanged(FeedType.rssUrl);
+              onTypeChanged(type);
             }
           },
-        ),
-        ChoiceChip(
-          label: const Text('Reddit'),
-          selected: selectedType == FeedType.subreddit,
-          selectedColor: selectedColor,
-          onSelected: (selected) {
-            if (selected) {
-              onTypeChanged(FeedType.subreddit);
-            }
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _TitleTextSpan extends StatelessWidget {
-  final String title;
-  final Color? titleColor;
-  const _TitleTextSpan({
-    required this.title,
-    this.titleColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        text: 'add a new ',
-        style: context.theme.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w100,
-        ),
-        children: [
-          TextSpan(
-            text: title,
-            style: context.theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: titleColor ?? context.theme.colorScheme.onSurface,
-            ),
+          side: BorderSide(
+            color: isSelected
+                ? type.selectedColor(context).withOpacity(0.6)
+                : context.theme.colorScheme.outline,
           ),
-          TextSpan(
-            text: ' feed',
-            style: context.theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w100,
-            ),
+          labelStyle: TextStyle(
+            color: isSelected
+                ? type.selectedLabelColor(context)
+                : type.labelColor(context),
           ),
-        ],
-      ),
+          checkmarkColor: isSelected
+              ? type.selectedLabelColor(context)
+              : type.labelColor(context),
+        );
+      }).toList(),
     );
   }
 }

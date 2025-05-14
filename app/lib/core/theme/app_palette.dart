@@ -116,6 +116,7 @@ abstract class AppPalette {
 
   static const redditOrange = Color.fromARGB(255, 255, 69, 0);
   static const rssBlue = Color.fromARGB(255, 0, 145, 255);
+  static const substackOrange = Color.fromARGB(255, 255, 119, 49);
 }
 
 /// Alternative way to group colors in the palette.

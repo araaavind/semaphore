@@ -91,7 +91,7 @@ class Button extends StatelessWidget {
                 ),
               )
             : suffixIcon,
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed,
       ),
     );
   }
