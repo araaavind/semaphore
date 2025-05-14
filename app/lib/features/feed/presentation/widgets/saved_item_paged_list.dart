@@ -117,7 +117,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
           ),
         ),
         const SizedBox(height: 8),
-        BlocConsumer<SavedItemsBloc, SavedItemsState>(
+        BlocListener<SavedItemsBloc, SavedItemsState>(
           listener: (context, state) {
             if (state.status != SavedItemsStatus.loading) {
               _refreshController.refreshCompleted();
@@ -142,62 +142,48 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                   state.message ?? TextConstants.internalServerErrorMessage;
             }
           },
-          buildWhen: (previous, current) =>
-              previous.status != current.status &&
-              previous.action != current.action,
-          builder: (context, state) {
-            if (state.status == SavedItemsStatus.loading) {
-              return const Expanded(
-                child: ShimmerLoader(
-                  pageSize: 5,
-                  type: ShimmerLoaderType.smallmag,
-                ),
-              );
-            }
-            return Expanded(
-              child: Refresher(
-                controller: _refreshController,
-                onRefresh: () async {
-                  _pagingController.refresh();
-                },
-                header: ClassicHeader(
-                  refreshingIcon: SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      color:
-                          context.theme.colorScheme.onSurface.withOpacity(0.4),
-                      strokeWidth: 2,
-                    ),
+          child: Expanded(
+            child: Refresher(
+              controller: _refreshController,
+              onRefresh: () async {
+                _pagingController.refresh();
+              },
+              header: ClassicHeader(
+                refreshingIcon: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    color: context.theme.colorScheme.onSurface.withOpacity(0.4),
+                    strokeWidth: 2,
                   ),
                 ),
-                child: CustomScrollView(
-                  cacheExtent: 500,
-                  slivers: [
-                    AppPagedList<SavedItem>(
-                      pagingController: _pagingController,
-                      listType: PagedListType.sliverList,
-                      itemBuilder: (context, savedItem, index) {
-                        return SavedItemListTileMag(
-                          savedItem: savedItem,
-                        );
-                      },
-                      shimmerLoaderType: ShimmerLoaderType.smallmag,
-                      firstPageErrorTitle:
-                          TextConstants.itemListFetchErrorTitle,
-                      newPageErrorTitle: TextConstants.itemListFetchErrorTitle,
-                      noMoreItemsErrorTitle: '',
-                      noMoreItemsErrorMessage: '',
-                      listEmptyErrorTitle:
-                          TextConstants.itemListEmptyMessageTitle,
-                      listEmptyErrorMessage:
-                          'You haven\'t saved any articles yet',
-                    ),
-                  ],
-                ),
               ),
-            );
-          },
+              child: CustomScrollView(
+                cacheExtent: 500,
+                slivers: [
+                  AppPagedList<SavedItem>(
+                    pagingController: _pagingController,
+                    listType: PagedListType.sliverList,
+                    itemBuilder: (context, savedItem, index) {
+                      return SavedItemListTileMag(
+                        savedItem: savedItem,
+                      );
+                    },
+                    shimmerLoaderType: ShimmerLoaderType.smallmag,
+                    shimmerHorizontalPadding: 0,
+                    firstPageErrorTitle: TextConstants.itemListFetchErrorTitle,
+                    newPageErrorTitle: TextConstants.itemListFetchErrorTitle,
+                    noMoreItemsErrorTitle: '',
+                    noMoreItemsErrorMessage: '',
+                    listEmptyErrorTitle:
+                        TextConstants.itemListEmptyMessageTitle,
+                    listEmptyErrorMessage:
+                        'You haven\'t saved any articles yet',
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );

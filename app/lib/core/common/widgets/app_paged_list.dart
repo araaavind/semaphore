@@ -29,6 +29,7 @@ class AppPagedList<ItemType> extends StatelessWidget {
     this.loaderType = PagedListLoaderType.shimmerIndicator,
     this.shimmerLoaderType = ShimmerLoaderType.text,
     this.shrinkWrap = false,
+    this.shimmerHorizontalPadding,
     this.physics,
   }) : _pagingController = pagingController;
 
@@ -46,6 +47,7 @@ class AppPagedList<ItemType> extends StatelessWidget {
   final ShimmerLoaderType shimmerLoaderType;
   final bool shrinkWrap;
   final ScrollPhysics? physics;
+  final double? shimmerHorizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -82,30 +84,32 @@ class AppPagedList<ItemType> extends StatelessWidget {
                 onTap: _pagingController.retryLastFailedRequest,
               )
           : null,
-      newPageProgressIndicatorBuilder:
-          this.loaderType == PagedListLoaderType.shimmerIndicator
-              ? (_) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: UIConstants.pagePadding,
-                    ),
-                    child: ShimmerLoader(
-                      pageSize: 2,
-                      type: shimmerLoaderType,
-                    ),
-                  )
-              : null,
-      firstPageProgressIndicatorBuilder:
-          this.loaderType == PagedListLoaderType.shimmerIndicator
-              ? (_) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: UIConstants.pagePadding,
-                    ),
-                    child: ShimmerLoader(
-                      pageSize: ServerConstants.defaultPaginationPageSize,
-                      type: shimmerLoaderType,
-                    ),
-                  )
-              : null,
+      newPageProgressIndicatorBuilder: this.loaderType ==
+              PagedListLoaderType.shimmerIndicator
+          ? (_) => Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      this.shimmerHorizontalPadding ?? UIConstants.pagePadding,
+                ),
+                child: ShimmerLoader(
+                  pageSize: 2,
+                  type: shimmerLoaderType,
+                ),
+              )
+          : null,
+      firstPageProgressIndicatorBuilder: this.loaderType ==
+              PagedListLoaderType.shimmerIndicator
+          ? (_) => Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      this.shimmerHorizontalPadding ?? UIConstants.pagePadding,
+                ),
+                child: ShimmerLoader(
+                  pageSize: ServerConstants.defaultPaginationPageSize,
+                  type: shimmerLoaderType,
+                ),
+              )
+          : null,
       noMoreItemsIndicatorBuilder: this.showErrors
           ? (_) => NoMoreItemsIndicator(
                 title: this.noMoreItemsErrorTitle,
