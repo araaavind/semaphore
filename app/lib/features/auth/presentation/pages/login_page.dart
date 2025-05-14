@@ -78,131 +78,146 @@ class _LoginPageState extends State<LoginPage> {
             if (state is AuthLoading || state is AuthSuccess) {
               return const Loader();
             }
-            return Padding(
-              padding: const EdgeInsets.all(UIConstants.pagePadding),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 40),
-                    TitleTextSpan(isOnboarding: widget.isOnboarding),
-                    const SizedBox(height: 20),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AppTextField(
-                          hintText: 'Username or Email',
-                          controller: usernameOrEmailController,
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (_) => setState(() {
-                            fieldErrors = null;
-                          }),
-                          validator: (_) {
-                            if (fieldErrors != null &&
-                                fieldErrors!.keys.contains('username')) {
-                              return validateFields(
-                                jsonKey: 'username',
-                                fieldErrors: fieldErrors,
-                              );
-                            } else if (fieldErrors != null &&
-                                fieldErrors!.keys.contains('email')) {
-                              return validateFields(
-                                jsonKey: 'email',
-                                fieldErrors: fieldErrors,
-                              );
-                            }
-                            return validateFields(
-                              jsonKey: 'username_or_email',
-                              fieldErrors: fieldErrors,
-                            );
-                          },
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                        ),
-                        const SizedBox(height: 10),
-                        AppTextField(
-                          hintText: 'Password',
-                          controller: passwordController,
-                          keyboardType: TextInputType.visiblePassword,
-                          isPassword: true,
-                          onChanged: (_) => setState(() {
-                            fieldErrors = null;
-                          }),
-                          validator: (_) => validateFields(
-                            jsonKey: 'password',
-                            fieldErrors: fieldErrors,
-                          ),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            context.pushNamed(
-                              RouteConstants.sendResetTokenPageName,
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12),
-                            child: Align(
-                              heightFactor: 2,
-                              alignment: Alignment.centerLeft,
-                              child: RichText(
-                                text: TextSpan(
-                                  text: 'Forgot password? ',
-                                  style: context.theme.textTheme.bodyMedium
-                                      ?.copyWith(
-                                    color: context.theme.colorScheme.primary,
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(UIConstants.pagePadding),
+                child: Form(
+                  key: formKey,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TitleTextSpan(isOnboarding: widget.isOnboarding),
+                          const SizedBox(height: 20),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AppTextField(
+                                hintText: 'Username or Email',
+                                controller: usernameOrEmailController,
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (_) => setState(() {
+                                  fieldErrors = null;
+                                }),
+                                validator: (_) {
+                                  if (fieldErrors != null &&
+                                      fieldErrors!.keys.contains('username')) {
+                                    return validateFields(
+                                      jsonKey: 'username',
+                                      fieldErrors: fieldErrors,
+                                    );
+                                  } else if (fieldErrors != null &&
+                                      fieldErrors!.keys.contains('email')) {
+                                    return validateFields(
+                                      jsonKey: 'email',
+                                      fieldErrors: fieldErrors,
+                                    );
+                                  }
+                                  return validateFields(
+                                    jsonKey: 'username_or_email',
+                                    fieldErrors: fieldErrors,
+                                  );
+                                },
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                              ),
+                              const SizedBox(height: 10),
+                              AppTextField(
+                                hintText: 'Password',
+                                controller: passwordController,
+                                keyboardType: TextInputType.visiblePassword,
+                                isPassword: true,
+                                onChanged: (_) => setState(() {
+                                  fieldErrors = null;
+                                }),
+                                validator: (_) => validateFields(
+                                  jsonKey: 'password',
+                                  fieldErrors: fieldErrors,
+                                ),
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  context.pushNamed(
+                                    RouteConstants.sendResetTokenPageName,
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Align(
+                                    heightFactor: 2,
+                                    alignment: Alignment.centerLeft,
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: 'Forgot password? ',
+                                        style: context
+                                            .theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                          color:
+                                              context.theme.colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Button(
-                          text: 'Log in',
-                          width: 160,
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              context.read<AuthBloc>().add(
-                                    AuthLoginRequested(
-                                      usernameOrEmail:
-                                          usernameOrEmailController.text.trim(),
-                                      password: passwordController.text.trim(),
-                                    ),
-                                  );
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 30),
-                        GestureDetector(
-                          onTap: () {
-                            context.goNamed(RouteConstants.usernamePageName);
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                              text: 'Don\'t have an account? ',
-                              style: context.theme.textTheme.bodyMedium,
-                              children: [
-                                TextSpan(
-                                  text: 'Create one',
-                                  style: context.theme.textTheme.bodyMedium
-                                      ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: context.theme.colorScheme.primary,
+                              const SizedBox(height: 20),
+                              Button(
+                                text: 'Log in',
+                                width: 160,
+                                onPressed: () {
+                                  if (formKey.currentState!.validate()) {
+                                    context.read<AuthBloc>().add(
+                                          AuthLoginRequested(
+                                            usernameOrEmail:
+                                                usernameOrEmailController.text
+                                                    .trim(),
+                                            password:
+                                                passwordController.text.trim(),
+                                          ),
+                                        );
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 30),
+                              GestureDetector(
+                                onTap: () {
+                                  context
+                                      .goNamed(RouteConstants.usernamePageName);
+                                },
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'Don\'t have an account? ',
+                                    style: context.theme.textTheme.bodyMedium,
+                                    children: [
+                                      TextSpan(
+                                        text: 'Create one',
+                                        style: context
+                                            .theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color:
+                                              context.theme.colorScheme.primary,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(height: 35),
+                              _buildOrDivider(context),
+                              const SizedBox(height: 35),
+                              _buildGoogleSignInButton(context),
+                              const SizedBox(height: 20),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 35),
-                        _buildOrDivider(context),
-                        const SizedBox(height: 35),
-                        _buildGoogleSignInButton(context),
-                      ],
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             );
