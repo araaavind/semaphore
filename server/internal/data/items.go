@@ -370,10 +370,13 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 }
 
 func (m ItemModel) CleanupItems(before time.Time) error {
-	// TODO: add a check to see if the item is saved by any user before deleting it
 	query := `
 		DELETE FROM items
 		WHERE updated_at < $1
+		AND id NOT IN (
+			SELECT item_id FROM saved_items
+			WHERE item_id = items.id
+		)
 	`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
