@@ -12,6 +12,7 @@ import 'package:app/features/feed/presentation/widgets/followers_count.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_mag.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -79,33 +80,81 @@ class _FeedViewPageState extends State<FeedViewPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AutoSizeText(
-                              widget.feed.title.isNotEmpty
-                                  ? widget.feed.title.toTitleCase()
-                                  : 'Feed',
-                              style: context.theme.textTheme.displaySmall
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                              maxLines: 5,
-                              minFontSize:
-                                  context.theme.textTheme.titleLarge!.fontSize!,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                if (feed.imageUrl != null)
+                                  Container(
+                                    width: 64.0,
+                                    height: 64.0,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withAlpha(25),
+                                          blurRadius: 1,
+                                          spreadRadius: 0,
+                                          offset: const Offset(0.2, 0.2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: feed.imageUrl ?? '',
+                                      fit: BoxFit.contain,
+                                      cacheKey: feed.imageUrl,
+                                      placeholder: (context, url) => Icon(
+                                        Icons.public,
+                                        size: 24,
+                                        color: context
+                                            .theme.colorScheme.primaryContainer,
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(
+                                        Icons.public,
+                                        size: 24,
+                                        color: context
+                                            .theme.colorScheme.primaryContainer,
+                                      ),
+                                    ),
+                                  ),
+                                if (feed.imageUrl != null)
+                                  const SizedBox(width: 18.0),
+                                Expanded(
+                                  child: AutoSizeText(
+                                    widget.feed.title.isNotEmpty
+                                        ? widget.feed.title.toTitleCase()
+                                        : 'Feed',
+                                    style: context.theme.textTheme.displaySmall
+                                        ?.copyWith(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    maxLines: 4,
+                                    minFontSize: context
+                                        .theme.textTheme.titleMedium!.fontSize!,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 20.0),
-                            Text(
-                              widget.feed.description ?? '',
-                              style:
-                                  context.theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w400,
+                            if (feed.description != null)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10.0),
+                                child: Text(
+                                  widget.feed.description ?? '',
+                                  style: context.theme.textTheme.titleMedium
+                                      ?.copyWith(
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 12.0),
                             SelectableText(
                               widget.feed.feedLink,
                               style:
                                   context.theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: context.theme.colorScheme.tertiary,
+                                fontWeight: FontWeight.w300,
+                                color: context.theme.colorScheme.onSurface
+                                    .withOpacity(0.8),
                               ),
                               enableInteractiveSelection: true,
                               maxLines: 1,

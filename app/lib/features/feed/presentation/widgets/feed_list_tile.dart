@@ -54,9 +54,7 @@ class _FeedListTileState extends State<FeedListTile> {
         ),
       ),
       child: ListTile(
-        visualDensity: feed.description != null && feed.description!.isNotEmpty
-            ? VisualDensity.standard
-            : VisualDensity.compact,
+        visualDensity: VisualDensity.compact,
         onTap: () {
           final Map<String, Object> extra = {
             'feed': feed,
@@ -101,34 +99,45 @@ class _FeedListTileState extends State<FeedListTile> {
                 overflow: TextOverflow.ellipsis,
               )
             : null,
-        horizontalTitleGap: 10,
-        leading: feed.imageUrl != null
-            ? Container(
-                width: 22.0,
-                height: 22.0,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: CachedNetworkImage(
+        horizontalTitleGap: UIConstants.tileHorizontalTitleGap,
+        leading: Container(
+          width: 36.0,
+          height: 36.0,
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                blurRadius: 1,
+                spreadRadius: 0,
+                offset: const Offset(0.2, 0.2),
+              ),
+            ],
+          ),
+          child: feed.imageUrl != null
+              ? CachedNetworkImage(
                   imageUrl: feed.imageUrl ?? '',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   cacheKey: feed.imageUrl,
                   placeholder: (context, url) => Icon(
                     Icons.public,
-                    size: 22.0,
-                    color: context.theme.colorScheme.outline,
+                    size: 24,
+                    color: context.theme.colorScheme.primaryContainer,
                   ),
                   errorWidget: (context, url, error) => Icon(
                     Icons.public,
-                    size: 22.0,
-                    color: context.theme.colorScheme.outline,
+                    size: 24,
+                    color: context.theme.colorScheme.primaryContainer,
                   ),
-                ))
-            : Icon(
-                Icons.public,
-                size: 22.0,
-                color: context.theme.colorScheme.outline,
-              ),
+                )
+              : Icon(
+                  MingCute.rss_2_line,
+                  size: 24,
+                  color: context.theme.colorScheme.primaryContainer,
+                ),
+        ),
         trailing: BlocConsumer<FollowFeedBloc, FollowFeedState>(
           listener: (context, state) {
             if (state.status == FollowFeedStatus.failure) {
