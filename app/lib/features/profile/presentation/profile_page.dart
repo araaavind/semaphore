@@ -92,51 +92,52 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: 10.0,
           horizontal: UIConstants.pagePadding,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 24),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (user.profileImageURL != null &&
                     user.profileImageURL!.isNotEmpty)
                   CircleAvatar(
-                    radius: 28,
-                    backgroundImage:
-                        CachedNetworkImageProvider(user.profileImageURL ?? ''),
+                    radius: 48,
+                    backgroundImage: CachedNetworkImageProvider(
+                      user.profileImageURL ?? '',
+                      cacheKey: 'profile-picture',
+                    ),
                   ),
                 if (user.profileImageURL != null &&
                     user.profileImageURL!.isNotEmpty)
-                  const SizedBox(width: 16),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 240,
-                        child: AutoSizeText(
-                          user.fullName ?? 'User',
-                          style: context.theme.textTheme.titleMedium?.copyWith(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          minFontSize: 16,
-                          maxLines: 2,
+                  const SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: AutoSizeText(
+                        user.fullName ?? 'User',
+                        style: context.theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          height: 1.2,
                         ),
+                        minFontSize: 16,
+                        maxLines: 2,
                       ),
-                      Text(
-                        '@${user.username}',
-                        style: context.theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w300,
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '@${user.username}',
+                      style: context.theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w300,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
