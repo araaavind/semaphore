@@ -461,4 +461,10 @@ class MingCute {
 
   /// user 5 line Icon
   static const user_5_line = MingCuteIconData(0xf45b);
+
+  /// youtube fill
+  static const youtube_fill = MingCuteIconData(0xf512);
+
+  /// youtube line
+  static const youtube_line = MingCuteIconData(0xf513);
 }

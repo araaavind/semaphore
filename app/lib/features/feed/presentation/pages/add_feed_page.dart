@@ -19,6 +19,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
   final textController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   FeedInputType selectedFeedType = FeedInputType.url;
+  bool _isResolving = false;
 
   @override
   void dispose() {
@@ -32,6 +33,41 @@ class _AddFeedPageState extends State<AddFeedPage> {
         selectedFeedType = type;
         textController.clear();
       });
+    }
+  }
+
+  // Function to convert input to feed URL
+  Future<String> _convertToFeedUrl(String input) async {
+    // If the converter is async (like YouTube), await the result
+    if (selectedFeedType.isConverterAsync) {
+      setState(() {
+        _isResolving = true;
+      });
+      try {
+        final dynamic converterFunction = selectedFeedType.converter;
+        final result = await converterFunction(input);
+        return result;
+      } catch (e) {
+        // Show error and rethrow
+        if (mounted) {
+          showSnackbar(
+            context,
+            (e as ConverterException).message,
+            type: SnackbarType.failure,
+          );
+        }
+        rethrow;
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isResolving = false;
+          });
+        }
+      }
+    } else {
+      // For synchronous converters
+      final Function converterFunction = selectedFeedType.converter;
+      return converterFunction(input);
     }
   }
 
@@ -55,7 +91,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildTitleText(context),
-                        const SizedBox(height: 60),
+                        const SizedBox(height: 30),
                         _FeedTypeSelector(
                           selectedType: selectedFeedType,
                           onTypeChanged: _onFeedTypeChanged,
@@ -99,23 +135,33 @@ class _AddFeedPageState extends State<AddFeedPage> {
                             builder: (context, state) {
                               return Button(
                                 text: 'Add feed',
-                                onPressed: () {
-                                  if (formKey.currentState!.validate()) {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
+                                onPressed: _isResolving ||
+                                        state.status == FollowFeedStatus.loading
+                                    ? null
+                                    : () async {
+                                        if (formKey.currentState!.validate()) {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
 
-                                    // Format the input based on the selected feed type
-                                    final String formattedURL = selectedFeedType
-                                        .converter(textController.text.trim());
-
-                                    if (context.mounted) {
-                                      context.read<AddFollowFeedBloc>().add(
-                                            AddFollowRequested(formattedURL),
-                                          );
-                                    }
-                                  }
-                                },
-                                isLoading:
+                                          try {
+                                            // Format the input based on the selected feed type
+                                            final String formattedURL =
+                                                await _convertToFeedUrl(
+                                                    textController.text.trim());
+                                            if (context.mounted) {
+                                              context
+                                                  .read<AddFollowFeedBloc>()
+                                                  .add(
+                                                    AddFollowRequested(
+                                                        formattedURL),
+                                                  );
+                                            }
+                                          } catch (e) {
+                                            // Error is already handled in _convertToFeedUrl
+                                          }
+                                        }
+                                      },
+                                isLoading: _isResolving ||
                                     state.status == FollowFeedStatus.loading,
                               );
                             },
@@ -123,8 +169,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
                         ),
                         SizedBox(
                             height: (Scaffold.of(context).appBarMaxHeight ??
-                                    kToolbarHeight) +
-                                30)
+                                kToolbarHeight))
                       ],
                     ),
                   ),
@@ -141,7 +186,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
     return RichText(
       text: TextSpan(
         text: 'Add a new',
-        style: context.theme.textTheme.headlineSmall?.copyWith(
+        style: context.theme.textTheme.headlineMedium?.copyWith(
           fontWeight: FontWeight.w100,
         ),
         children: [
@@ -149,14 +194,14 @@ class _AddFeedPageState extends State<AddFeedPage> {
             text: selectedFeedType == FeedInputType.url
                 ? ''
                 : ' ${selectedFeedType.displayName}',
-            style: context.theme.textTheme.headlineSmall?.copyWith(
+            style: context.theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w800,
               color: selectedFeedType.selectedColor(context),
             ),
           ),
           TextSpan(
             text: ' feed',
-            style: context.theme.textTheme.headlineSmall?.copyWith(
+            style: context.theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.w100,
             ),
           ),

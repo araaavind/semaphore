@@ -141,3 +141,106 @@ String? _substackValidator(String? value) {
 
   return 'Not a valid Substack username or URL';
 }
+
+/// Validates a YouTube channel, user, or playlist URL/identifier
+///
+/// This function validates YouTube inputs in the formats:
+/// - youtube.com/@USERNAME (handle)
+/// - youtube.com/channel/CHANNEL_ID
+/// - youtube.com/playlist?list=PLAYLIST_ID
+/// - youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
+/// - @USERNAME (handle)
+///
+String? _youtubeValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please enter a YouTube channel handle (eg., @ChannelName), or URL';
+  }
+
+  final cleanValue = value.trim();
+
+  // Handle direct @username format
+  if (cleanValue.startsWith('@') && !cleanValue.contains('/')) {
+    final username = cleanValue.substring(1);
+    if (username.isEmpty) {
+      return 'Please enter a valid YouTube channel handle';
+    }
+
+    // Basic validation for username
+    if (!RegExp(r'^[a-zA-Z0-9_-]+$').hasMatch(username)) {
+      return 'Channel handle should only contain letters, numbers, underscores, and hyphens';
+    }
+
+    return null;
+  }
+
+  // Handle URL formats
+  var urlToCheck = cleanValue;
+  if (!urlToCheck.startsWith('http://') && !urlToCheck.startsWith('https://')) {
+    urlToCheck = 'https://$urlToCheck';
+  }
+
+  Uri? uri;
+  try {
+    uri = Uri.parse(urlToCheck);
+  } catch (e) {
+    return 'Invalid URL format';
+  }
+
+  // Check if it's a youtube.com domain or youtu.be (shortened URLs)
+  if (uri.host != 'youtube.com' &&
+      uri.host != 'www.youtube.com' &&
+      uri.host != 'youtu.be') {
+    return 'Not a valid YouTube URL or channel handle';
+  }
+
+  // Validate specific YouTube URL formats
+  if (uri.pathSegments.isEmpty) {
+    return 'Invalid YouTube URL format';
+  }
+
+  // Channel format: youtube.com/channel/CHANNEL_ID
+  if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'channel') {
+    final channelId = uri.pathSegments[1];
+    if (channelId.isEmpty) {
+      return 'Missing channel ID in URL';
+    }
+    // Basic validation for channel ID (usually starts with 'UC')
+    if (!RegExp(r'^[a-zA-Z0-9_-]{24}$').hasMatch(channelId)) {
+      return 'Invalid YouTube channel ID format';
+    }
+    return null;
+  }
+
+  // Handle format: youtube.com/@USERNAME (handle)
+  if (uri.pathSegments.isNotEmpty && uri.pathSegments[0].startsWith('@')) {
+    final username = uri.pathSegments[0].substring(1);
+    if (username.isEmpty) {
+      return 'Missing channel handle(eg., @ChannelName) in URL';
+    }
+    return null;
+  }
+
+  // Playlist format: youtube.com/playlist?list=PLAYLIST_ID
+  if (uri.pathSegments.isNotEmpty &&
+      uri.pathSegments[0] == 'playlist' &&
+      uri.queryParameters.containsKey('list')) {
+    final playlistId = uri.queryParameters['list'];
+    if (playlistId == null || playlistId.isEmpty) {
+      return 'Missing playlist ID in URL';
+    }
+    return null;
+  }
+
+  // Video with playlist: youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
+  if (uri.pathSegments.isNotEmpty &&
+      uri.pathSegments[0] == 'watch' &&
+      uri.queryParameters.containsKey('list')) {
+    final playlistId = uri.queryParameters['list'];
+    if (playlistId == null || playlistId.isEmpty) {
+      return 'Missing playlist ID in URL';
+    }
+    return null;
+  }
+
+  return 'Not a valid YouTube handle, channel, or playlist URL';
+}

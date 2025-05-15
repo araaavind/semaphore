@@ -5,6 +5,7 @@ enum FeedInputType {
   subreddit,
   medium,
   substack,
+  youtube,
 }
 
 extension FeedTypeExtension on FeedInputType {
@@ -18,6 +19,8 @@ extension FeedTypeExtension on FeedInputType {
         return 'Medium';
       case FeedInputType.substack:
         return 'Substack';
+      case FeedInputType.youtube:
+        return 'YouTube';
     }
   }
 
@@ -31,6 +34,8 @@ extension FeedTypeExtension on FeedInputType {
         return 'Medium profile/publication url';
       case FeedInputType.substack:
         return '@username or substack.com/@username';
+      case FeedInputType.youtube:
+        return 'Channel/playlist handle or url';
     }
   }
 
@@ -44,6 +49,8 @@ extension FeedTypeExtension on FeedInputType {
         return context.theme.colorScheme.onSurface;
       case FeedInputType.substack:
         return AppPalette.substackOrange;
+      case FeedInputType.youtube:
+        return AppPalette.youtubeRed;
     }
   }
 
@@ -56,6 +63,8 @@ extension FeedTypeExtension on FeedInputType {
       case FeedInputType.medium:
         return context.theme.colorScheme.onSurface;
       case FeedInputType.substack:
+        return context.theme.colorScheme.onSurface;
+      case FeedInputType.youtube:
         return context.theme.colorScheme.onSurface;
     }
   }
@@ -70,6 +79,8 @@ extension FeedTypeExtension on FeedInputType {
         return context.theme.colorScheme.onSurface;
       case FeedInputType.substack:
         return context.theme.colorScheme.onSurface;
+      case FeedInputType.youtube:
+        return context.theme.colorScheme.onSurface;
     }
   }
 
@@ -83,13 +94,15 @@ extension FeedTypeExtension on FeedInputType {
         return MingCute.medium_line;
       case FeedInputType.substack:
         return SimpleIcons.substack;
+      case FeedInputType.youtube:
+        return MingCute.youtube_line;
     }
   }
 
   double get iconSize {
     switch (this) {
       case FeedInputType.substack:
-        return 14;
+        return 12;
       default:
         return 18;
     }
@@ -98,7 +111,7 @@ extension FeedTypeExtension on FeedInputType {
   double get iconPadding {
     switch (this) {
       case FeedInputType.substack:
-        return 6;
+        return 5;
       default:
         return 4;
     }
@@ -114,10 +127,12 @@ extension FeedTypeExtension on FeedInputType {
         return _mediumUrlValidator;
       case FeedInputType.substack:
         return _substackValidator;
+      case FeedInputType.youtube:
+        return _youtubeValidator;
     }
   }
 
-  String Function(String) get converter {
+  dynamic Function(String) get converter {
     switch (this) {
       case FeedInputType.url:
         return (url) => url;
@@ -127,6 +142,18 @@ extension FeedTypeExtension on FeedInputType {
         return _convertMediumUrlToRss;
       case FeedInputType.substack:
         return _convertSubstackToRssUrl;
+      case FeedInputType.youtube:
+        return _convertYoutubeToRssUrl;
+    }
+  }
+
+  /// Indicates whether a converter is async and returns a Future
+  bool get isConverterAsync {
+    switch (this) {
+      case FeedInputType.youtube:
+        return true;
+      default:
+        return false;
     }
   }
 }

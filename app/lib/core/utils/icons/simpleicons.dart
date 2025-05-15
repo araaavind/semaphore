@@ -9,4 +9,7 @@ class SimpleIconsIconData extends IconData {
 class SimpleIcons {
   /// Substack icon
   static const substack = SimpleIconsIconData(0xf4bd);
+
+  /// YouTube icon
+  static const youtube = SimpleIconsIconData(0xf6a0);
 }

@@ -1,5 +1,13 @@
 part of 'rss.dart';
 
+// Create a single Dio instance for reuse
+final _dio = Dio();
+
+class ConverterException implements Exception {
+  final String message;
+  ConverterException(this.message);
+}
+
 /// Converts a Medium blog URL to its RSS feed URL
 ///
 /// This utility function handles various Medium URL formats including:
@@ -18,7 +26,7 @@ part of 'rss.dart';
 /// Returns the RSS feed URL or throws an exception if no feed can be found.
 String _convertMediumUrlToRss(String url) {
   if (url.isEmpty) {
-    throw Exception('URL cannot be empty');
+    throw ConverterException('URL cannot be empty');
   }
 
   // Normalize URL (add https:// if missing)
@@ -30,7 +38,7 @@ String _convertMediumUrlToRss(String url) {
   try {
     uri = Uri.parse(url.trim());
   } catch (e) {
-    throw Exception('Invalid URL format: $e');
+    throw ConverterException('Invalid URL format: $e');
   }
 
   // Handle username.medium.com format (user profile)
@@ -105,7 +113,7 @@ String _convertMediumUrlToRss(String url) {
 /// Returns the RSS feed URL for the subreddit
 String _convertSubredditToRssUrl(String subreddit) {
   if (subreddit.isEmpty) {
-    throw Exception('Subreddit cannot be empty');
+    throw ConverterException('Subreddit cannot be empty');
   }
 
   // Remove any leading or trailing whitespace
@@ -131,7 +139,7 @@ String _convertSubredditToRssUrl(String subreddit) {
 /// Returns the RSS feed URL in the format: https://username.substack.com/feed
 String _convertSubstackToRssUrl(String input) {
   if (input.isEmpty) {
-    throw Exception('Substack input cannot be empty');
+    throw ConverterException('Substack input cannot be empty');
   }
 
   final cleanInput = input.trim();
@@ -169,8 +177,119 @@ String _convertSubstackToRssUrl(String input) {
       }
     }
 
-    throw Exception('Could not extract username from Substack URL');
+    throw ConverterException('Could not extract username from Substack URL');
   } catch (e) {
-    throw Exception('Invalid Substack URL format: $e');
+    throw ConverterException('Invalid Substack URL format: $e');
+  }
+}
+
+/// Converts a YouTube URL or username to its RSS feed URL
+///
+/// This utility function handles YouTube inputs in the formats:
+/// - youtube.com/@USERNAME (handle)
+/// - youtube.com/channel/CHANNEL_ID (direct channel ID)
+/// - youtube.com/playlist?list=PLAYLIST_ID (playlist)
+/// - youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID (video in a playlist)
+/// - @USERNAME (handle)
+///
+/// Returns the RSS feed URL for the YouTube content
+Future<String> _convertYoutubeToRssUrl(String input) async {
+  if (input.isEmpty) {
+    throw ConverterException('YouTube input cannot be empty');
+  }
+
+  final cleanInput = input.trim();
+
+  // Handle direct @username format - need to resolve channel ID via API
+  if (cleanInput.startsWith('@') && !cleanInput.contains('/')) {
+    final handle = cleanInput;
+    return await _resolveYoutubeHandleToRssUrl(handle);
+  }
+
+  // Handle URL formats
+  var urlToCheck = cleanInput;
+  if (!urlToCheck.startsWith('http://') && !urlToCheck.startsWith('https://')) {
+    urlToCheck = 'https://$urlToCheck';
+  }
+
+  try {
+    final uri = Uri.parse(urlToCheck);
+
+    // Make sure it's a YouTube domain
+    if (uri.host != 'youtube.com' &&
+        uri.host != 'www.youtube.com' &&
+        uri.host != 'youtu.be') {
+      throw ConverterException('Not a valid YouTube URL');
+    }
+
+    // Channel format: youtube.com/channel/CHANNEL_ID (direct channel ID)
+    if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'channel') {
+      final channelId = uri.pathSegments[1];
+      return 'https://www.youtube.com/feeds/videos.xml?channel_id=$channelId';
+    }
+
+    // Playlist format: youtube.com/playlist?list=PLAYLIST_ID
+    // Or video within playlist: youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID
+    if ((uri.pathSegments.contains('playlist') ||
+            uri.pathSegments.contains('watch')) &&
+        uri.queryParameters.containsKey('list')) {
+      final playlistId = uri.queryParameters['list']!;
+      return 'https://www.youtube.com/feeds/videos.xml?playlist_id=$playlistId';
+    }
+
+    // Handle format: youtube.com/@USERNAME (handle)
+    if (uri.pathSegments.isNotEmpty && uri.pathSegments[0].startsWith('@')) {
+      final handle = uri.pathSegments[0];
+      return await _resolveYoutubeHandleToRssUrl(handle);
+    }
+
+    // If none of the above match and there's a standard URL, try to resolve with the API
+    throw ConverterException('Unable to determine YouTube feed type from URL');
+  } catch (e) {
+    throw ConverterException('Invalid YouTube URL format');
+  }
+}
+
+/// Resolves a YouTube handle to a channel ID using the server API
+/// and returns the RSS feed URL
+Future<String> _resolveYoutubeHandleToRssUrl(String handle) async {
+  if (!handle.startsWith('@')) {
+    throw ConverterException(
+        'Invalid YouTube handle format, must start with @');
+  }
+
+  try {
+    // Build API URL to resolve handle to channel ID
+    final apiUrl =
+        '${ServerConstants.baseUrl}${ServerConstants.youtubeChannelEndpoint}?handle=${Uri.encodeComponent(handle)}';
+
+    // Make request to our server API using the shared Dio instance
+    final response = await _dio.get(apiUrl);
+
+    // Check response status
+    if (response.statusCode == 200) {
+      // Parse the JSON response (Dio automatically parses JSON)
+      final data = response.data;
+
+      // Extract the channel ID
+      final String channelId = data['channel_id'];
+
+      if (channelId.isEmpty) {
+        throw ConverterException(
+            'Failed to add this feed. Check the input and try again');
+      }
+
+      // Return RSS feed URL with the channel ID
+      return 'https://www.youtube.com/feeds/videos.xml?channel_id=$channelId';
+    } else {
+      throw ConverterException(
+          'Failed to add this feed. Check the input and try again');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print(e);
+    }
+    throw ConverterException(
+        'Failed to add this feed. Check the input and try again');
   }
 }
