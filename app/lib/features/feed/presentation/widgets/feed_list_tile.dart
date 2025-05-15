@@ -7,6 +7,7 @@ import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -53,7 +54,9 @@ class _FeedListTileState extends State<FeedListTile> {
         ),
       ),
       child: ListTile(
-        visualDensity: VisualDensity.standard,
+        visualDensity: feed.description != null && feed.description!.isNotEmpty
+            ? VisualDensity.standard
+            : VisualDensity.compact,
         onTap: () {
           final Map<String, Object> extra = {
             'feed': feed,
@@ -72,14 +75,20 @@ class _FeedListTileState extends State<FeedListTile> {
           vertical: UIConstants.tileContentPadding,
           horizontal: UIConstants.pagePadding,
         ),
-        title: AutoSizeText(
-          feed.title.isNotEmpty ? feed.title.toTitleCase() : 'Feed',
-          style: context.theme.textTheme.bodyLarge!.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-          minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        title: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6.0,
+          children: [
+            AutoSizeText(
+              feed.title.isNotEmpty ? feed.title.toTitleCase() : 'Feed',
+              style: context.theme.textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
         subtitle: feed.description != null && feed.description!.isNotEmpty
             ? AutoSizeText(
@@ -92,7 +101,34 @@ class _FeedListTileState extends State<FeedListTile> {
                 overflow: TextOverflow.ellipsis,
               )
             : null,
-        horizontalTitleGap: UIConstants.tileHorizontalTitleGap,
+        horizontalTitleGap: 10,
+        leading: feed.imageUrl != null
+            ? Container(
+                width: 22.0,
+                height: 22.0,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: feed.imageUrl ?? '',
+                  fit: BoxFit.cover,
+                  cacheKey: feed.imageUrl,
+                  placeholder: (context, url) => Icon(
+                    Icons.public,
+                    size: 22.0,
+                    color: context.theme.colorScheme.outline,
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.public,
+                    size: 22.0,
+                    color: context.theme.colorScheme.outline,
+                  ),
+                ))
+            : Icon(
+                Icons.public,
+                size: 22.0,
+                color: context.theme.colorScheme.outline,
+              ),
         trailing: BlocConsumer<FollowFeedBloc, FollowFeedState>(
           listener: (context, state) {
             if (state.status == FollowFeedStatus.failure) {

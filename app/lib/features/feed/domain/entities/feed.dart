@@ -6,6 +6,7 @@ class Feed extends Equatable {
   final String? description;
   final String link;
   final String feedLink;
+  final String? imageUrl;
   final DateTime? pubDate;
   final DateTime? pubUpdated;
   final FeedType? feedType;
@@ -18,6 +19,7 @@ class Feed extends Equatable {
     this.description,
     required this.link,
     required this.feedLink,
+    this.imageUrl,
     this.pubDate,
     this.pubUpdated,
     this.feedType,
@@ -32,6 +34,7 @@ class Feed extends Equatable {
         description,
         link,
         feedLink,
+        imageUrl,
         pubDate,
         pubUpdated,
         feedType,
