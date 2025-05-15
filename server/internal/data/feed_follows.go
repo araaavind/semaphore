@@ -82,7 +82,8 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 		"pub_updated": "feeds.pub_updated",
 	}
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
+		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.image_url, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
 		FROM feeds
 		INNER JOIN feed_follows ON feed_follows.feed_id = feeds.id
 		INNER JOIN users ON users.id = feed_follows.user_id
@@ -110,6 +111,7 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 			&feed.Description,
 			&feed.Link,
 			&feed.FeedLink,
+			&feed.ImageURL,
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,

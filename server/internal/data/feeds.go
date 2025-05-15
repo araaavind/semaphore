@@ -25,6 +25,7 @@ type Feed struct {
 	Description   string             `json:"description"`
 	Link          string             `json:"link"`
 	FeedLink      string             `json:"feed_link"`
+	ImageURL      pgtype.Text        `json:"image_url,omitempty"`
 	PubDate       time.Time          `json:"pub_date,omitempty"`
 	PubUpdated    time.Time          `json:"pub_updated,omitempty"`
 	FeedType      string             `json:"feed_type,omitempty"`
@@ -50,10 +51,10 @@ type FeedModel struct {
 
 func (m FeedModel) Insert(feed *Feed) error {
 	query := `
-		INSERT INTO feeds (title, description, link, feed_link, pub_date, pub_updated,
+		INSERT INTO feeds (title, description, link, feed_link, image_url, pub_date, pub_updated,
 			feed_type, feed_version, language, added_by, last_fetch_at, last_failure_at,
 			last_failure)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 		RETURNING id, created_at, updated_at, version`
 
 	args := []any{
@@ -61,6 +62,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.Description,
 		feed.Link,
 		feed.FeedLink,
+		feed.ImageURL,
 		feed.PubDate,
 		feed.PubUpdated,
 		feed.FeedType,
@@ -95,7 +97,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 
 func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, title, description, link, feed_link, pub_date,
+		SELECT count(*) OVER(), id, title, description, link, feed_link, image_url, pub_date,
 		pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at,
 		version, last_fetch_at, last_failure_at, last_failure
 		FROM feeds
@@ -127,6 +129,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.Description,
 			&feed.Link,
 			&feed.FeedLink,
+			&feed.ImageURL,
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,
@@ -153,7 +156,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 
 func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	query := `
-		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type,
+		SELECT id, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type,
 		feed_version, language, added_by, created_at, updated_at, version, last_fetch_at,
 		last_failure_at, last_failure
 		FROM feeds WHERE feed_link = ANY ($1)`
@@ -169,6 +172,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 		&feed.Description,
 		&feed.Link,
 		&feed.FeedLink,
+		&feed.ImageURL,
 		&feed.PubDate,
 		&feed.PubUpdated,
 		&feed.FeedType,
@@ -200,7 +204,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	}
 
 	query := `
-		SELECT id, title, description, link, feed_link, pub_date, pub_updated, feed_type,
+		SELECT id, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type,
 		feed_version, language, added_by, created_at, updated_at, version, last_fetch_at,
 		last_failure_at, last_failure
 		FROM feeds WHERE id = $1`
@@ -216,6 +220,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		&feed.Description,
 		&feed.Link,
 		&feed.FeedLink,
+		&feed.ImageURL,
 		&feed.PubDate,
 		&feed.PubUpdated,
 		&feed.FeedType,
@@ -244,10 +249,10 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 func (m FeedModel) Update(feed *Feed) error {
 	query := `
 		UPDATE feeds
-		SET title = $1, description = $2, link = $3, feed_link = $4, pub_date = $5, pub_updated = $6,
-		feed_type = $7, feed_version = $8, language = $9, updated_at = NOW(), last_fetch_at = $10,
-		last_failure_at = $11, last_failure = $12, version = version + 1
-		WHERE id = $13 AND version = $14
+		SET title = $1, description = $2, link = $3, feed_link = $4, image_url = $5, pub_date = $6, pub_updated = $7,
+		feed_type = $8, feed_version = $9, language = $10, updated_at = NOW(), last_fetch_at = $11,
+		last_failure_at = $12, last_failure = $13, version = version + 1
+		WHERE id = $14 AND version = $15
 		RETURNING updated_at, version`
 
 	args := []any{
@@ -255,6 +260,7 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.Description,
 		feed.Link,
 		feed.FeedLink,
+		feed.ImageURL,
 		feed.PubDate,
 		feed.PubUpdated,
 		feed.FeedType,

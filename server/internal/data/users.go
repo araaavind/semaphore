@@ -122,7 +122,7 @@ func ValidatePasswordPlaintext(v *validator.Validator, password string) {
 
 func ValidateUser(v *validator.Validator, user *User) {
 	v.Check(validator.NotBlank(user.FullName), "full_name", "Full name must be provided")
-	v.Check(validator.MaxChars(user.FullName, 100), "full_name", "Full name must not be more than 100 characters long")
+	v.Check(validator.MaxChars(user.FullName, 32), "full_name", "Full name must not be more than 32 characters long")
 
 	ValidateUsername(v, user.Username)
 	ValidateEmail(v, user.Email)

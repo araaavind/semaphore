@@ -8,6 +8,7 @@ import (
 
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -100,6 +101,13 @@ func CopyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
 	feed.Description = parsedFeed.Description
 	feed.Link = parsedFeed.Link
 	feed.FeedLink = feedLink
+
+	if parsedFeed.Image != nil && parsedFeed.Image.URL != "" {
+		feed.ImageURL = pgtype.Text{
+			String: parsedFeed.Image.URL,
+			Valid:  true,
+		}
+	}
 
 	if parsedFeed.PublishedParsed != nil {
 		feed.PubDate = *parsedFeed.PublishedParsed

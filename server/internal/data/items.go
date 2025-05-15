@@ -301,7 +301,7 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
 			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
 			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
-			(si.item_id IS NOT NULL) as is_saved
+			feeds.image_url as feed_image_url, (si.item_id IS NOT NULL) as is_saved
 		FROM items
 		INNER JOIN feeds ON feeds.id = items.feed_id
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
@@ -355,6 +355,7 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 			&feed.PubUpdated,
 			&feed.FeedType,
 			&feed.Language,
+			&feed.ImageURL,
 			&item.IsSaved,
 		)
 		item.Feed = &feed
