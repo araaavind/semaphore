@@ -39,6 +39,8 @@ class _WallPageState extends State<WallPage> {
 
   ShimmerLoaderType _shimmerLoaderType = ShimmerLoaderType.text;
 
+  bool _isCollapsed = false;
+
   final ScrollController _scrollController = ScrollController();
 
   void _setShimmerLoaderType(WallViewOption wallView) {
@@ -100,6 +102,18 @@ class _WallPageState extends State<WallPage> {
         }
       },
     );
+
+    _scrollController.addListener(() {
+      if (_scrollController.offset > kToolbarHeight / 2) {
+        setState(() {
+          _isCollapsed = true;
+        });
+      } else {
+        setState(() {
+          _isCollapsed = false;
+        });
+      }
+    });
 
     // Set initial shimmer loader type
     final currentWallView = context.read<WallsBloc>().state.wallView;
@@ -188,7 +202,7 @@ class _WallPageState extends State<WallPage> {
             child: NestedScrollView(
               controller: _scrollController,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                const WallPageSliverAppBar(),
+                WallPageSliverAppBar(isCollapsed: _isCollapsed),
               ],
               body: Builder(
                 builder: (context) {

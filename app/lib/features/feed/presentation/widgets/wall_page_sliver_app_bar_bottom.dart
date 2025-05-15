@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
@@ -22,93 +24,106 @@ class WallPageSliverAppBarBottom extends StatelessWidget
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: BlocBuilder<WallsBloc, WallsState>(
         builder: (context, state) {
-          return AppBar(
-            automaticallyImplyLeading:
-                false, // this will hide Drawer hamburger icon
-            backgroundColor: context.theme.colorScheme.surfaceContainerHighest,
-            shape: RoundedRectangleBorder(
-              borderRadius: const BorderRadius.all(Radius.circular(24)),
-              side: BorderSide(
-                width: 0.8,
-                color: context.theme.colorScheme.onSurface.withOpacity(0.08),
-              ),
-            ),
-            toolbarHeight: kToolbarHeight - 8,
-            title: GestureDetector(
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 2.0),
-                    child: Icon(
-                      MingCute.right_small_fill,
-                      color: context.theme.colorScheme.onPrimaryContainer,
-                    ),
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: AppBar(
+                automaticallyImplyLeading:
+                    false, // this will hide Drawer hamburger icon
+                backgroundColor: context
+                    .theme.colorScheme.surfaceContainerHighest
+                    .withOpacity(0.85),
+
+                shape: RoundedRectangleBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(24)),
+                  side: BorderSide(
+                    width: 0.8,
+                    color:
+                        context.theme.colorScheme.onSurface.withOpacity(0.08),
                   ),
-                  const SizedBox(width: 4.0),
-                  Flexible(
-                    child: Text(
-                      state.currentWall?.name ?? '',
-                      style: context.theme.textTheme.bodyLarge?.copyWith(
-                        color: context.theme.colorScheme.onPrimaryContainer,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18.0,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ),
-                  const SizedBox(width: 12.0),
-                ],
-              ),
-            ),
-            actions: [
-              if (state.currentWall != null && !state.currentWall!.isPrimary)
-                if (state.pinnedWallId == state.currentWall!.id)
-                  IconButton(
-                    onPressed: () {
-                      context.read<WallsBloc>().add(
-                          UnpinWallRequested(wallId: state.currentWall!.id));
-                    },
-                    icon: const Icon(MingCute.pin_2_fill),
-                  )
-                else
-                  IconButton(
-                    onPressed: () {
-                      context
-                          .read<WallsBloc>()
-                          .add(PinWallRequested(wallId: state.currentWall!.id));
-                    },
-                    icon: const Icon(MingCute.pin_2_line),
-                  ),
-              if (state.currentWall != null && !state.currentWall!.isPrimary)
-                IconButton(
-                  onPressed: () {
-                    context.pushNamed(
-                      RouteConstants.wallEditPageName,
-                      pathParameters: {
-                        'wallId': state.currentWall!.id.toString()
-                      },
-                      extra: state.currentWall,
-                    );
-                  },
-                  icon: const Icon(MingCute.pencil_line),
-                  color: context.theme.colorScheme.onSurface.withOpacity(0.85),
                 ),
-              IconButton(
-                padding: const EdgeInsets.only(right: 12.0),
-                onPressed: () {
-                  showWallFilterModal(context);
-                },
-                icon: const Icon(Icons.filter_list),
-                color: context.theme.colorScheme.onSurface.withOpacity(0.85),
+                toolbarHeight: kToolbarHeight - 8,
+                title: GestureDetector(
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2.0),
+                        child: Icon(
+                          MingCute.right_small_fill,
+                          color: context.theme.colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                      const SizedBox(width: 4.0),
+                      Flexible(
+                        child: Text(
+                          state.currentWall?.name ?? '',
+                          style: context.theme.textTheme.bodyLarge?.copyWith(
+                            color: context.theme.colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18.0,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                        ),
+                      ),
+                      const SizedBox(width: 12.0),
+                    ],
+                  ),
+                ),
+                actions: [
+                  if (state.currentWall != null &&
+                      !state.currentWall!.isPrimary)
+                    if (state.pinnedWallId == state.currentWall!.id)
+                      IconButton(
+                        onPressed: () {
+                          context.read<WallsBloc>().add(UnpinWallRequested(
+                              wallId: state.currentWall!.id));
+                        },
+                        icon: const Icon(MingCute.pin_2_fill),
+                      )
+                    else
+                      IconButton(
+                        onPressed: () {
+                          context.read<WallsBloc>().add(
+                              PinWallRequested(wallId: state.currentWall!.id));
+                        },
+                        icon: const Icon(MingCute.pin_2_line),
+                      ),
+                  if (state.currentWall != null &&
+                      !state.currentWall!.isPrimary)
+                    IconButton(
+                      onPressed: () {
+                        context.pushNamed(
+                          RouteConstants.wallEditPageName,
+                          pathParameters: {
+                            'wallId': state.currentWall!.id.toString()
+                          },
+                          extra: state.currentWall,
+                        );
+                      },
+                      icon: const Icon(MingCute.pencil_line),
+                      color:
+                          context.theme.colorScheme.onSurface.withOpacity(0.85),
+                    ),
+                  IconButton(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    onPressed: () {
+                      showWallFilterModal(context);
+                    },
+                    icon: const Icon(Icons.filter_list),
+                    color:
+                        context.theme.colorScheme.onSurface.withOpacity(0.85),
+                  ),
+                ],
+                elevation: 0,
+                scrolledUnderElevation: 0,
               ),
-            ],
-            elevation: 0,
-            scrolledUnderElevation: 0,
+            ),
           );
         },
       ),

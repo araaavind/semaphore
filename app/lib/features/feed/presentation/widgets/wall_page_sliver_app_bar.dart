@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class WallPageSliverAppBar extends StatelessWidget {
+  final bool isCollapsed;
   const WallPageSliverAppBar({
     super.key,
+    required this.isCollapsed,
   });
 
   @override
@@ -36,13 +38,17 @@ class WallPageSliverAppBar extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: UIConstants.pagePadding),
-              child: Text(
-                UIConstants.appBarTitle,
-                style: context.theme.textTheme.headlineLarge!.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: context.theme.brightness == Brightness.dark
-                      ? AppPalette.brandDark
-                      : AppPalette.brand,
+              child: AnimatedOpacity(
+                opacity: isCollapsed ? 0 : 1,
+                duration: const Duration(milliseconds: 50),
+                child: Text(
+                  UIConstants.appBarTitle,
+                  style: context.theme.textTheme.headlineLarge!.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: context.theme.brightness == Brightness.dark
+                        ? AppPalette.brandDark
+                        : AppPalette.brand,
+                  ),
                 ),
               ),
             ),
