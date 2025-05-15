@@ -70,6 +70,8 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
 
+	router.HandlerFunc(http.MethodGet, "/v1/youtube/channel", app.getYouTubeChannelID)
+
 	authenticated := alice.New(app.requireAuthentication)
 
 	router.Handler(http.MethodPut, "/v1/users/username", authenticated.ThenFunc(app.updateUsername))

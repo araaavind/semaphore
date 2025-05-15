@@ -58,7 +58,8 @@ type config struct {
 		trustedOrigins []string
 	}
 	google struct {
-		clientID string
+		clientID      string
+		youtubeAPIKey string
 	}
 }
 
@@ -108,6 +109,7 @@ func main() {
 	})
 
 	flag.StringVar(&cfg.google.clientID, "google-client-id", "", "Google OAuth web client ID")
+	flag.StringVar(&cfg.google.youtubeAPIKey, "youtube-api-key", os.Getenv("YOUTUBE_API_KEY"), "YouTube Data API key")
 
 	// Create a new version boolean flag with the default value of false.
 	displayVersion := flag.Bool("version", false, "Display version and exit")
