@@ -211,7 +211,7 @@ class _TitleTextSpan extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
-        text: 'pick a ',
+        text: 'Pick a ',
         style: context.theme.textTheme.headlineMedium?.copyWith(
           fontWeight: FontWeight.w100,
         ),

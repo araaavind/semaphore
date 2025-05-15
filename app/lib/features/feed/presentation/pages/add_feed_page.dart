@@ -54,12 +54,12 @@ class _AddFeedPageState extends State<AddFeedPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _buildTitleText(context),
+                        const SizedBox(height: 60),
                         _FeedTypeSelector(
                           selectedType: selectedFeedType,
                           onTypeChanged: _onFeedTypeChanged,
                         ),
-                        const SizedBox(height: 40),
-                        _buildTitleText(context),
                         const SizedBox(height: 20),
                         AppTextField(
                           hintText: selectedFeedType.hintText,
@@ -122,10 +122,9 @@ class _AddFeedPageState extends State<AddFeedPage> {
                           ),
                         ),
                         SizedBox(
-                          height: (Scaffold.of(context).appBarMaxHeight ??
-                                  kToolbarHeight) +
-                              50,
-                        )
+                            height: (Scaffold.of(context).appBarMaxHeight ??
+                                    kToolbarHeight) +
+                                30)
                       ],
                     ),
                   ),
@@ -141,7 +140,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
   RichText _buildTitleText(BuildContext context) {
     return RichText(
       text: TextSpan(
-        text: 'add a new',
+        text: 'Add a new',
         style: context.theme.textTheme.headlineSmall?.copyWith(
           fontWeight: FontWeight.w100,
         ),

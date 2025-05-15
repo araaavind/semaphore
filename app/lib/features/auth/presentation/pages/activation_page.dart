@@ -173,7 +173,7 @@ class _TitleTextSpan extends StatelessWidget {
     return RichText(
       text: TextSpan(
         text:
-            'we\'ve sent an email containing the token to activate your account',
+            'We\'ve sent an email containing the token to activate your account',
         style: context.theme.textTheme.bodyLarge?.copyWith(
           fontWeight: FontWeight.w300,
         ),
