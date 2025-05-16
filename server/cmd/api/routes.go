@@ -22,7 +22,8 @@ GET			/me									get logged in user						auth							user with 200
 GET			/me/feeds							get feeds followed by logged in user	auth							feeds list, metadata with 200
 GET			/me/feeds/contains					check if user follows feeds				auth							boolean list with 200
 GET			/me/walls							list walls of logged in user			auth							walls list with 200
-GET			/me/items/saved					list saved items of logged in user		auth							saved items list with 200
+GET			/me/items/saved					    list saved items of logged in user		auth							saved items list with 200
+GET			/me/items/liked					    list liked items of logged in user		auth							liked items list with 200
 
 POST		/feeds								add and follow a feed					activation, feeds:write			empty response with 201
 GET			/feeds								list all feeds							-								feeds list, metadata with 200
@@ -44,6 +45,9 @@ GET			/items								list all items (from primary wall)
 GET			/items/:item_id						get a specific item
 PUT			/items/:item_id/save				save an item							auth							empty response with 201
 PUT			/items/:item_id/unsave				unsave an item							auth							empty response with 200
+PUT			/items/:item_id/like				like an item							auth							empty response with 201
+PUT			/items/:item_id/unlike				unlike an item							auth							empty response with 200
+GET			/items/:item_id/like_count			get the like count for an item			auth							like count with 200
 
 */
 
@@ -82,8 +86,10 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/me/feeds", authenticated.ThenFunc(app.listFeedsForUser))
 	router.Handler(http.MethodGet, "/v1/me/feeds/contains", authenticated.ThenFunc(app.checkIfUserFollowsFeeds))
 	router.Handler(http.MethodGet, "/v1/me/items/saved/contains", authenticated.ThenFunc(app.checkIfUserSavedItems))
+	router.Handler(http.MethodGet, "/v1/me/items/liked/contains", authenticated.ThenFunc(app.checkIfUserLikedItems))
 	router.Handler(http.MethodGet, "/v1/me/walls", authenticated.ThenFunc(app.listWalls))
 	router.Handler(http.MethodGet, "/v1/me/items/saved", authenticated.ThenFunc(app.listSavedItemsHandler))
+	router.Handler(http.MethodGet, "/v1/me/items/liked", authenticated.ThenFunc(app.listLikedItemsHandler))
 
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
@@ -97,6 +103,9 @@ func (app *application) routes() http.Handler {
 
 	router.Handler(http.MethodPut, "/v1/items/:id/save", authenticated.ThenFunc(app.saveItemHandler))
 	router.Handler(http.MethodPut, "/v1/items/:id/unsave", authenticated.ThenFunc(app.unsaveItemHandler))
+	router.Handler(http.MethodPut, "/v1/items/:id/like", authenticated.ThenFunc(app.likeItemHandler))
+	router.Handler(http.MethodPut, "/v1/items/:id/unlike", authenticated.ThenFunc(app.unlikeItemHandler))
+	router.Handler(http.MethodGet, "/v1/items/:id/like_count", authenticated.ThenFunc(app.getLikeCountHandler))
 
 	activated := authenticated.Append(app.requireActivation)
 

@@ -38,6 +38,7 @@ type Item struct {
 	UpdatedAt   time.Time                    `json:"updated_at,omitempty"`
 
 	IsSaved bool  `json:"is_saved,omitempty"`
+	IsLiked bool  `json:"is_liked,omitempty"`
 	Feed    *Feed `json:"feed,omitempty"`
 }
 
@@ -233,9 +234,11 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, 
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
-			items.version, items.created_at, items.updated_at, (si.item_id IS NOT NULL) as is_saved
+			items.version, items.created_at, items.updated_at, (si.item_id IS NOT NULL) as is_saved,
+			(li.item_id IS NOT NULL) as is_liked
 		FROM items
 		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $3
+		LEFT JOIN liked_items li ON li.item_id = items.id AND li.user_id = $3
 		WHERE items.feed_id = ANY($1)
 		AND (
 			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
@@ -276,6 +279,7 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, 
 			&item.CreatedAt,
 			&item.UpdatedAt,
 			&item.IsSaved,
+			&item.IsLiked,
 		)
 		return &item, err
 	})
@@ -301,11 +305,12 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
 			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
 			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
-			feeds.image_url as feed_image_url, (si.item_id IS NOT NULL) as is_saved
+			feeds.image_url as feed_image_url, (si.item_id IS NOT NULL) as is_saved, (li.item_id IS NOT NULL) as is_liked
 		FROM items
 		INNER JOIN feeds ON feeds.id = items.feed_id
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
 		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $3
+		LEFT JOIN liked_items li ON li.item_id = items.id AND li.user_id = $3
 		WHERE wall_feeds.wall_id = $1
 		AND (
 			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
@@ -357,6 +362,7 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 			&feed.Language,
 			&feed.ImageURL,
 			&item.IsSaved,
+			&item.IsLiked,
 		)
 		item.Feed = &feed
 		return &item, err
