@@ -26,6 +26,7 @@ class WallEditPage extends StatefulWidget {
 class _WallEditPageState extends State<WallEditPage> {
   final titleController = TextEditingController();
   bool isEditingTitle = false;
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final PagingController<int, Feed> _pagingController = PagingController(
     firstPageKey: 1,
@@ -132,21 +133,7 @@ class _WallEditPageState extends State<WallEditPage> {
   Future<void> _updateWall() async {
     final newName = titleController.text.trim();
 
-    if (newName.isEmpty) {
-      showSnackbar(
-        context,
-        'Name cannot be empty',
-        type: SnackbarType.failure,
-      );
-      return;
-    }
-
-    if (newName.length > 32) {
-      showSnackbar(
-        context,
-        'Name must be less than 32 characters long',
-        type: SnackbarType.failure,
-      );
+    if (formKey.currentState?.validate() == false) {
       return;
     }
 
@@ -166,145 +153,156 @@ class _WallEditPageState extends State<WallEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<WallsBloc, WallsState>(listener: (context, state) {
-      if (state.status == WallStatus.success &&
-          state.action == WallAction.delete) {
-        showSnackbar(
-          context,
-          'Wall deleted',
-          type: SnackbarType.info,
-        );
-        context.pop();
-      } else if (state.status == WallStatus.failure &&
-          state.action == WallAction.delete) {
-        showSnackbar(
-          context,
-          state.message ?? 'Failed to delete wall',
-          type: SnackbarType.failure,
-        );
-      } else if (state.status == WallStatus.success &&
-          state.action == WallAction.update) {
-        context.pop();
-      } else if (state.status == WallStatus.failure &&
-          state.action == WallAction.update) {
-        showSnackbar(
-          context,
-          state.message ?? 'Failed to update wall',
-          type: SnackbarType.failure,
-        );
-      }
-    }, builder: (context, state) {
-      if (state.status == WallStatus.loading &&
-          (state.action == WallAction.update ||
-              state.action == WallAction.delete)) {
-        return const Loader();
-      }
-      return Scaffold(
-        appBar: AppBar(
-          actions: [
-            if (!widget.wall.isPrimary)
-              IconButton(
-                icon: const Icon(MingCute.delete_line),
-                onPressed: _deleteWall,
-              ),
-          ],
-        ),
-        body: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _createTitleEditWidget(context),
-              const SizedBox(height: 40),
-              Expanded(
-                child: Stack(
-                  children: [
-                    _createFeedListWidget(context),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            stops: const [0.0, 0.4, 1],
-                            colors: [
-                              context.theme.colorScheme.surface,
-                              context.theme.colorScheme.surface,
-                              context.theme.colorScheme.surface.withOpacity(0),
-                            ],
-                          ),
-                        ),
-                        padding: const EdgeInsets.only(bottom: 40.0, top: 20.0),
-                        child: Button(
-                          text: 'Done',
-                          width: 120,
-                          onPressed: () {
-                            _updateWall();
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+    return BlocConsumer<WallsBloc, WallsState>(
+      listener: (context, state) {
+        if (state.status == WallStatus.success &&
+            state.action == WallAction.delete) {
+          showSnackbar(
+            context,
+            'Wall deleted',
+            type: SnackbarType.info,
+          );
+          context.pop();
+        } else if (state.status == WallStatus.failure &&
+            state.action == WallAction.delete) {
+          showSnackbar(
+            context,
+            state.message ?? 'Failed to delete wall',
+            type: SnackbarType.failure,
+          );
+        } else if (state.status == WallStatus.success &&
+            state.action == WallAction.update) {
+          context.pop();
+        } else if (state.status == WallStatus.failure &&
+            state.action == WallAction.update) {
+          showSnackbar(
+            context,
+            state.message ?? 'Failed to update wall',
+            type: SnackbarType.failure,
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state.status == WallStatus.loading &&
+            (state.action == WallAction.update ||
+                state.action == WallAction.delete)) {
+          return const Loader();
+        }
+        return Scaffold(
+          appBar: AppBar(
+            actions: [
+              if (!widget.wall.isPrimary)
+                IconButton(
+                  icon: const Icon(MingCute.delete_line),
+                  onPressed: _deleteWall,
                 ),
-              ),
             ],
           ),
-        ),
-      );
-    });
+          body: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _createTitleEditWidget(context),
+                const SizedBox(height: 40),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      _createFeedListWidget(context),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              stops: const [0.0, 0.4, 1],
+                              colors: [
+                                context.theme.colorScheme.surface,
+                                context.theme.colorScheme.surface,
+                                context.theme.colorScheme.surface
+                                    .withOpacity(0),
+                              ],
+                            ),
+                          ),
+                          padding:
+                              const EdgeInsets.only(bottom: 40.0, top: 20.0),
+                          child: Button(
+                            text: 'Done',
+                            width: 120,
+                            onPressed: () {
+                              _updateWall();
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _createTitleEditWidget(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              width: 1,
-              color: context.theme.colorScheme.onSurface.withOpacity(0.75),
+    return Form(
+      key: formKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                width: 1,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.75),
+              ),
             ),
           ),
-        ),
-        child: TextField(
-          style: context.theme.textTheme.headlineLarge!.copyWith(
-            fontSize: titleController.text.length > 32 ? 24 : 28,
-            fontWeight: FontWeight.w900,
+          child: TextFormField(
+            style: context.theme.textTheme.headlineLarge!.copyWith(
+              fontSize: titleController.text.length > 32 ? 24 : 28,
+              fontWeight: FontWeight.w900,
+            ),
+            validator: _wallNameValidator,
+            maxLines: 3,
+            minLines: 1,
+            textAlign: TextAlign.center,
+            controller: titleController,
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+            ),
+            textInputAction: TextInputAction.done,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            onChanged: (_) {
+              setState(() {
+                isEditingTitle = true;
+              });
+            },
+            onFieldSubmitted: (_) {
+              setState(() {
+                isEditingTitle = false;
+              });
+              FocusScope.of(context).unfocus();
+            },
+            onTapOutside: (_) {
+              setState(() {
+                isEditingTitle = false;
+              });
+              FocusScope.of(context).unfocus();
+            },
           ),
-          maxLines: 3,
-          minLines: 1,
-          textAlign: TextAlign.center,
-          controller: titleController,
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-          ),
-          textInputAction: TextInputAction.done,
-          onChanged: (_) {
-            setState(() {
-              isEditingTitle = true;
-            });
-          },
-          onSubmitted: (_) {
-            setState(() {
-              isEditingTitle = false;
-            });
-            FocusScope.of(context).unfocus();
-          },
-          onTapOutside: (_) {
-            setState(() {
-              isEditingTitle = false;
-            });
-            FocusScope.of(context).unfocus();
-          },
         ),
       ),
     );
@@ -373,4 +371,15 @@ class _WallEditPageState extends State<WallEditPage> {
       ),
     );
   }
+}
+
+String? _wallNameValidator(value) {
+  if (value.isEmpty) {
+    return 'Name cannot be empty';
+  }
+
+  if (value.length > 32) {
+    return 'Maximum 32 characters allowed';
+  }
+  return null;
 }
