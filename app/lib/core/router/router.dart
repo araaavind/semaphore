@@ -84,6 +84,7 @@ List<RouteBase> _buildRoutes() {
     _buildAddFeedRoute(),
     _buildAddToWallRoute(),
     _buildCreateWallRoute(),
+    _buildWallEditRoute(),
     _buildSavedItemsRoute(),
   ];
 }
@@ -250,9 +251,6 @@ GoRoute _buildWallRoute() {
       key: const ValueKey('wall'),
       child: const WallPage(),
     ),
-    routes: [
-      _buildWallEditRoute(),
-    ],
   );
 }
 
