@@ -3,7 +3,6 @@ import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -27,6 +26,9 @@ class _ProfilePageState extends State<ProfilePage>
   bool isActivated = false;
   late User user;
   late TabController _tabController;
+  final double _expandedHeight = 180.0;
+  final ScrollController _scrollController = ScrollController();
+  bool _isCollapsed = false;
 
   @override
   void initState() {
@@ -34,12 +36,74 @@ class _ProfilePageState extends State<ProfilePage>
     user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
     isActivated = user.isActivated;
     _tabController = TabController(length: 2, vsync: this);
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.hasClients) {
+      if (_scrollController.offset > (_expandedHeight * 0.6) && !_isCollapsed) {
+        setState(() {
+          _isCollapsed = true;
+        });
+      } else if (_scrollController.offset <= (_expandedHeight * 0.6) &&
+          _isCollapsed) {
+        setState(() {
+          _isCollapsed = false;
+        });
+      }
+    }
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  List<Widget> _buildActions(BuildContext context, User user) {
+    return [
+      IconButton(
+        onPressed: () {
+          context.pushNamed(RouteConstants.savedItemsPageName);
+        },
+        icon: const Icon(MingCute.bookmarks_line),
+      ),
+      IconButton(
+        onPressed: () {
+          context.read<AuthBloc>().add(
+                AuthLogoutRequested(
+                  user: user,
+                  scope: LogoutScope.local,
+                ),
+              );
+        },
+        icon: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthFailure) {
+              showSnackbar(
+                context,
+                state.message,
+                type: SnackbarType.failure,
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state is AuthLoading) {
+              return const SizedBox(
+                height: 14,
+                width: 14,
+                child: Loader(
+                  strokeWidth: 2,
+                ),
+              );
+            }
+            return const Icon(MingCute.exit_line);
+          },
+        ),
+      ),
+    ];
   }
 
   @override
@@ -47,142 +111,123 @@ class _ProfilePageState extends State<ProfilePage>
     final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          UIConstants.appBarTitle,
-          style: context.theme.textTheme.headlineSmall!.copyWith(
-            fontWeight: FontWeight.w900,
-            color: context.theme.brightness == Brightness.dark
-                ? AppPalette.brandDark
-                : AppPalette.brand,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.pushNamed(RouteConstants.savedItemsPageName);
-            },
-            icon: const Icon(MingCute.bookmarks_line),
-          ),
-          IconButton(
-            onPressed: () {
-              final user =
-                  (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
-              context.read<AuthBloc>().add(
-                    AuthLogoutRequested(
-                      user: user,
-                      scope: LogoutScope.local,
-                    ),
-                  );
-            },
-            icon: BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) {
-                if (state is AuthFailure) {
-                  showSnackbar(
-                    context,
-                    state.message,
-                    type: SnackbarType.failure,
-                  );
-                }
-              },
-              builder: (context, state) {
-                if (state is AuthLoading) {
-                  return const SizedBox(
-                    height: 14,
-                    width: 14,
-                    child: Loader(
-                      strokeWidth: 2,
-                    ),
-                  );
-                }
-                return const Icon(MingCute.exit_line);
-              },
-            ),
-          ),
-        ],
-      ),
       body: NestedScrollView(
+        controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: UIConstants.pagePadding,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        if (user.profileImageURL != null &&
-                            user.profileImageURL!.isNotEmpty)
-                          CircleAvatar(
-                            radius: 36,
-                            backgroundImage: CachedNetworkImageProvider(
-                              user.profileImageURL ?? '',
-                              cacheKey: 'profile-picture',
-                            ),
-                          ),
-                        if (user.profileImageURL != null &&
-                            user.profileImageURL!.isNotEmpty)
-                          const SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
+            SliverAppBar(
+              pinned: true,
+              floating: false,
+              expandedHeight: _expandedHeight,
+              elevation: 0,
+              title: _isCollapsed
+                  ? Text(
+                      user.fullName?.split(' ').first ?? user.username,
+                      style: context.theme.textTheme.titleMedium?.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    )
+                  : null,
+              actions: _buildActions(context, user),
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.0, 0.9],
+                      colors: [
+                        context.theme.colorScheme.surfaceContainer,
+                        context.theme.colorScheme.surface,
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: UIConstants.pagePadding,
+                    ),
+                    child: SafeArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 80),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              AutoSizeText(
-                                user.fullName ?? 'User',
-                                style: context.theme.textTheme.titleMedium
-                                    ?.copyWith(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  height: 1.2,
+                              if (user.profileImageURL != null &&
+                                  user.profileImageURL!.isNotEmpty)
+                                CircleAvatar(
+                                  radius: 36,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    user.profileImageURL ?? '',
+                                    cacheKey: 'profile-picture',
+                                  ),
                                 ),
-                                minFontSize: 16,
-                                maxLines: 2,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '@${user.username}',
-                                style: context.theme.textTheme.titleSmall
-                                    ?.copyWith(
-                                  fontWeight: FontWeight.w300,
+                              if (user.profileImageURL != null &&
+                                  user.profileImageURL!.isNotEmpty)
+                                const SizedBox(width: 20),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    AutoSizeText(
+                                      user.fullName ?? 'User',
+                                      style: context.theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.2,
+                                      ),
+                                      minFontSize: 16,
+                                      maxLines: 2,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '@${user.username}',
+                                      style: context.theme.textTheme.titleSmall
+                                          ?.copyWith(
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                    if (!isActivated)
-                      Center(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: UIConstants.elementGap),
-                            Button(
-                              text: 'Activate your account',
-                              width: double.infinity,
-                              backgroundColor:
-                                  context.theme.colorScheme.primaryContainer,
-                              textColor: context.theme.colorScheme.primary,
-                              onPressed: () async {
-                                final routeSuccess = await context.push(
-                                    RouteConstants.activationPagePath) as bool;
-                                if (routeSuccess) {
-                                  setState(() {
-                                    isActivated = true;
-                                  });
-                                }
-                              },
+                          if (!isActivated)
+                            Center(
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                      height: UIConstants.elementGap),
+                                  Button(
+                                    text: 'Activate your account',
+                                    width: double.infinity,
+                                    backgroundColor: context
+                                        .theme.colorScheme.primaryContainer,
+                                    textColor:
+                                        context.theme.colorScheme.primary,
+                                    onPressed: () async {
+                                      final routeSuccess = await context.push(
+                                              RouteConstants.activationPagePath)
+                                          as bool;
+                                      if (routeSuccess) {
+                                        setState(() {
+                                          isActivated = true;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                        ],
                       ),
-                    const SizedBox(height: 32),
-                  ],
+                    ),
+                  ),
                 ),
               ),
             ),
