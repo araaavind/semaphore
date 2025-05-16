@@ -62,6 +62,16 @@ class _ProfilePageState extends State<ProfilePage>
     super.dispose();
   }
 
+  // Method to handle logout
+  void _handleLogout(BuildContext context, User user) {
+    context.read<AuthBloc>().add(
+          AuthLogoutRequested(
+            user: user,
+            scope: LogoutScope.local,
+          ),
+        );
+  }
+
   List<Widget> _buildActions(BuildContext context, User user) {
     return [
       IconButton(
@@ -70,38 +80,57 @@ class _ProfilePageState extends State<ProfilePage>
         },
         icon: const Icon(MingCute.bookmarks_line),
       ),
-      IconButton(
-        onPressed: () {
-          context.read<AuthBloc>().add(
-                AuthLogoutRequested(
-                  user: user,
-                  scope: LogoutScope.local,
-                ),
-              );
+      BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthFailure) {
+            showSnackbar(
+              context,
+              state.message,
+              type: SnackbarType.failure,
+            );
+          }
         },
-        icon: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state is AuthFailure) {
-              showSnackbar(
-                context,
-                state.message,
-                type: SnackbarType.failure,
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state is AuthLoading) {
-              return const SizedBox(
-                height: 14,
-                width: 14,
-                child: Loader(
-                  strokeWidth: 2,
+        builder: (context, state) {
+          if (state is AuthLoading) {
+            return const SizedBox(
+              height: 48,
+              width: 48,
+              child: Center(
+                child: SizedBox(
+                  height: 14,
+                  width: 14,
+                  child: Loader(
+                    strokeWidth: 2,
+                  ),
                 ),
-              );
-            }
-            return const Icon(MingCute.exit_line);
-          },
-        ),
+              ),
+            );
+          }
+          return PopupMenuButton<String>(
+            icon: const Icon(MingCute.more_2_fill),
+            onSelected: (value) {
+              if (value == 'logout') {
+                _handleLogout(context, user);
+              }
+            },
+            offset: const Offset(-18, 52),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    const Icon(MingCute.exit_line, size: 20),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Logout',
+                      style: context.theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     ];
   }
@@ -152,22 +181,24 @@ class _ProfilePageState extends State<ProfilePage>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 80),
+                          const SizedBox(height: 72),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               if (user.profileImageURL != null &&
                                   user.profileImageURL!.isNotEmpty)
-                                CircleAvatar(
-                                  radius: 36,
-                                  backgroundImage: CachedNetworkImageProvider(
-                                    user.profileImageURL ?? '',
-                                    cacheKey: 'profile-picture',
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 20.0,
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 36,
+                                    backgroundImage: CachedNetworkImageProvider(
+                                      user.profileImageURL ?? '',
+                                      cacheKey: 'profile-picture',
+                                    ),
                                   ),
                                 ),
-                              if (user.profileImageURL != null &&
-                                  user.profileImageURL!.isNotEmpty)
-                                const SizedBox(width: 20),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -107,95 +107,86 @@ class _WallListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: context.theme.colorScheme.onSurface.withOpacity(0.1),
-          ),
+    return ListTile(
+      visualDensity: VisualDensity.standard,
+      title: Text(
+        wall.name,
+        style: context.theme.textTheme.bodyLarge!.copyWith(
+          fontWeight: FontWeight.w600,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
-      child: ListTile(
-        visualDensity: VisualDensity.standard,
-        title: Text(
-          wall.name,
-          style: context.theme.textTheme.bodyLarge!.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: UIConstants.tileContentPadding,
-          horizontal: UIConstants.pagePadding,
-        ),
-        splashColor: Colors.transparent,
-        trailing: Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 16.0,
-          children: [
-            SizedBox(
-              child: pinnedWallId != null && wall.id == pinnedWallId
-                  ? GestureDetector(
-                      onTap: () {
-                        context
-                            .read<WallsBloc>()
-                            .add(UnpinWallRequested(wallId: wall.id));
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 0),
-                        child: Icon(
-                          MingCute.pin_2_fill,
-                          color: context.theme.colorScheme.onSurface
-                              .withOpacity(0.85),
-                        ),
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: UIConstants.tileContentPadding,
+        horizontal: UIConstants.pagePadding,
+      ),
+      splashColor: Colors.transparent,
+      trailing: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 16.0,
+        children: [
+          SizedBox(
+            child: pinnedWallId != null && wall.id == pinnedWallId
+                ? GestureDetector(
+                    onTap: () {
+                      context
+                          .read<WallsBloc>()
+                          .add(UnpinWallRequested(wallId: wall.id));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.only(left: 0),
+                      child: Icon(
+                        MingCute.pin_2_fill,
+                        color: context.theme.colorScheme.onSurface
+                            .withOpacity(0.85),
                       ),
-                    )
-                  : wall.isPrimary
-                      ? null
-                      : GestureDetector(
-                          onTap: () {
-                            context
-                                .read<WallsBloc>()
-                                .add(PinWallRequested(wallId: wall.id));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.only(left: 0),
-                            child: Icon(
-                              MingCute.pin_line,
-                              color: context.theme.colorScheme.onSurface
-                                  .withOpacity(0.85),
-                            ),
+                    ),
+                  )
+                : wall.isPrimary
+                    ? null
+                    : GestureDetector(
+                        onTap: () {
+                          context
+                              .read<WallsBloc>()
+                              .add(PinWallRequested(wallId: wall.id));
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(left: 0),
+                          child: Icon(
+                            MingCute.pin_line,
+                            color: context.theme.colorScheme.onSurface
+                                .withOpacity(0.85),
                           ),
                         ),
-            ),
-            if (!wall.isPrimary)
-              GestureDetector(
-                onTap: () {
-                  context.pushNamed(
-                    RouteConstants.wallEditPageName,
-                    pathParameters: {'wallId': wall.id.toString()},
-                    extra: wall,
-                  );
-                },
-                child: Icon(
-                  MingCute.pencil_line,
-                  color: context.theme.colorScheme.onSurface.withOpacity(0.85),
-                ),
+                      ),
+          ),
+          if (!wall.isPrimary)
+            GestureDetector(
+              onTap: () {
+                context.pushNamed(
+                  RouteConstants.wallEditPageName,
+                  pathParameters: {'wallId': wall.id.toString()},
+                  extra: wall,
+                );
+              },
+              child: Icon(
+                MingCute.pencil_line,
+                color: context.theme.colorScheme.onSurface.withOpacity(0.85),
               ),
-          ],
-        ),
-        onTap: () {
-          context.read<WallsBloc>().add(
-                SelectWallRequested(selectedWall: wall),
-              );
-          context.pushNamed(
-            RouteConstants.wallPageName,
-            extra: context.read<WallsBloc>(),
-          );
-        },
+            ),
+        ],
       ),
+      onTap: () {
+        context.read<WallsBloc>().add(
+              SelectWallRequested(selectedWall: wall),
+            );
+        context.pushNamed(
+          RouteConstants.wallPageName,
+          extra: context.read<WallsBloc>(),
+        );
+      },
     );
   }
 }
