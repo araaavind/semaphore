@@ -17,6 +17,7 @@ import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 import 'features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
 import 'features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
@@ -71,6 +72,9 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<SavedItemsBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<LikedItemsBloc>(),
         ),
       ],
       child: const SemaphoreApp(),

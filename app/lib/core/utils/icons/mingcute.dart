@@ -174,6 +174,12 @@ class MingCute {
   /// google line
   static const google_line = MingCuteIconData(0xee61);
 
+  /// heart fill
+  static const heart_fill = MingCuteIconData(0xeeae);
+
+  /// heart line
+  static const heart_line = MingCuteIconData(0xeeb3);
+
   /// home 1 fill Icon
   static const home_1_fill = MingCuteIconData(0xeed8);
 

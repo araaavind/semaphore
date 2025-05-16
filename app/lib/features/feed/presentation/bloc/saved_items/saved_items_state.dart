@@ -18,7 +18,7 @@ class SavedItemsState extends Equatable {
     this.savedItemList = const SavedItemList(),
     this.message,
     this.currentItemId,
-    this.refresh = true,
+    this.refresh = false,
   });
 
   SavedItemsState copyWith({

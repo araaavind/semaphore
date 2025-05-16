@@ -3,10 +3,11 @@ import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
 import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
+import 'package:app/features/feed/data/models/followers_list_model.dart';
+import 'package:app/features/feed/data/models/item_list_model.dart';
+import 'package:app/features/feed/data/models/liked_item_list_model.dart';
 import 'package:app/features/feed/data/models/saved_item_list_model.dart';
-import 'package:app/features/feed/domain/entities/followers_list.dart';
-import 'package:app/features/feed/domain/entities/item_list.dart';
-import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/data/models/wall_model.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:fpdart/fpdart.dart';
@@ -108,7 +109,7 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Either<Failure, FollowersList>> listFollowersOfFeed({
+  Future<Either<Failure, FollowersListModel>> listFollowersOfFeed({
     required int feedId,
     String? searchKey,
     String? searchValue,
@@ -132,7 +133,7 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Either<Failure, ItemList>> listItems({
+  Future<Either<Failure, ItemListModel>> listItems({
     required int parentId,
     required ListItemsParentType parentType,
     String? searchKey,
@@ -158,7 +159,7 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Either<Failure, List<Wall>>> listWalls() async {
+  Future<Either<Failure, List<WallModel>>> listWalls() async {
     try {
       final wallsList = await feedRemoteDatasource.listWalls();
       return right(wallsList);
@@ -179,7 +180,8 @@ class FeedRepositoryImpl implements FeedRepository {
   }
 
   @override
-  Future<Either<Failure, Wall>> updateWall(int wallId, String wallName) async {
+  Future<Either<Failure, WallModel>> updateWall(
+      int wallId, String wallName) async {
     try {
       final updatedWall = await feedRemoteDatasource.updateWall(
         wallId,
@@ -318,6 +320,69 @@ class FeedRepositoryImpl implements FeedRepository {
     try {
       return right(
         await feedRemoteDatasource.checkUserSavedItems(itemIds),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> likeItem(int itemId) async {
+    try {
+      await feedRemoteDatasource.likeItem(itemId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> unlikeItem(int itemId) async {
+    try {
+      await feedRemoteDatasource.unlikeItem(itemId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, LikedItemListModel>> getLikedItems({
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? title,
+    String? sortKey,
+  }) async {
+    try {
+      final likedItems = await feedRemoteDatasource.getLikedItems(
+        page: page,
+        pageSize: pageSize,
+        title: title,
+        sortKey: sortKey,
+      );
+      return right(likedItems);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<bool>>> checkUserLikedItems(
+      List<int> itemIds) async {
+    try {
+      return right(
+        await feedRemoteDatasource.checkUserLikedItems(itemIds),
+      );
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> getLikeCount(int itemId) async {
+    try {
+      return right(
+        await feedRemoteDatasource.getLikeCount(itemId),
       );
     } on ServerException catch (e) {
       return left(Failure(message: e.message));

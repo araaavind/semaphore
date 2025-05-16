@@ -3,6 +3,7 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
+import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -36,17 +37,33 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SavedItemsBloc, SavedItemsState>(
-      listener: (context, state) {
-        if (state.status == SavedItemsStatus.success &&
-            state.currentItemId == _item.id) {
-          setState(() {
-            _item = _item.copyWith(
-              isSaved: state.action == SavedItemsAction.save,
-            );
-          });
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<SavedItemsBloc, SavedItemsState>(
+          listener: (context, state) {
+            if (state.status == SavedItemsStatus.success &&
+                state.currentItemId == _item.id) {
+              setState(() {
+                _item = _item.copyWith(
+                  isSaved: state.action == SavedItemsAction.save,
+                );
+              });
+            }
+          },
+        ),
+        BlocListener<LikedItemsBloc, LikedItemsState>(
+          listener: (context, state) {
+            if (state.status == LikedItemsStatus.success &&
+                state.currentItemId == _item.id) {
+              setState(() {
+                _item = _item.copyWith(
+                  isLiked: state.action == LikedItemsAction.like,
+                );
+              });
+            }
+          },
+        ),
+      ],
       child: InkWell(
         onTap: () {
           context.pushNamed(
@@ -55,6 +72,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
               'url': _item.link,
               'itemId': _item.id.toString(),
               'isSaved': _item.isSaved.toString(),
+              'isLiked': _item.isLiked.toString(),
             },
           );
         },

@@ -8,11 +8,13 @@ class WebView extends StatefulWidget {
   final String url;
   final int itemId;
   final bool isSaved;
+  final bool isLiked;
   const WebView({
     super.key,
     required this.url,
     required this.itemId,
     this.isSaved = false,
+    this.isLiked = false,
   });
 
   @override
@@ -165,6 +167,7 @@ class _WebViewState extends State<WebView> {
               webViewController: webViewController,
               itemId: widget.itemId,
               isSaved: widget.isSaved,
+              isLiked: widget.isLiked,
             ),
           ],
         ),

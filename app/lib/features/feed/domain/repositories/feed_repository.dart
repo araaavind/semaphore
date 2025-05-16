@@ -2,6 +2,7 @@ import 'package:app/core/errors/failures.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/entities/followers_list.dart';
 import 'package:app/features/feed/domain/entities/item_list.dart';
+import 'package:app/features/feed/domain/entities/liked_item_list.dart';
 import 'package:app/features/feed/domain/entities/saved_item_list.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
@@ -88,4 +89,19 @@ abstract interface class FeedRepository {
   });
 
   Future<Either<Failure, List<bool>>> checkUserSavedItems(List<int> itemIds);
+
+  Future<Either<Failure, void>> likeItem(int itemId);
+
+  Future<Either<Failure, void>> unlikeItem(int itemId);
+
+  Future<Either<Failure, LikedItemList>> getLikedItems({
+    int page,
+    int pageSize,
+    String? title,
+    String? sortKey,
+  });
+
+  Future<Either<Failure, List<bool>>> checkUserLikedItems(List<int> itemIds);
+
+  Future<Either<Failure, int>> getLikeCount(int itemId);
 }

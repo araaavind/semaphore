@@ -3,6 +3,7 @@ import 'package:app/core/errors/exceptions.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
 import 'package:app/features/feed/data/models/followers_list_model.dart';
 import 'package:app/features/feed/data/models/item_list_model.dart';
+import 'package:app/features/feed/data/models/liked_item_list_model.dart';
 import 'package:app/features/feed/data/models/saved_item_list_model.dart';
 import 'package:app/features/feed/data/models/wall_model.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
@@ -88,6 +89,17 @@ abstract interface class FeedRemoteDatasource {
   });
 
   Future<List<bool>> checkUserSavedItems(List<int> itemIds);
+
+  Future<void> likeItem(int itemId);
+  Future<void> unlikeItem(int itemId);
+  Future<LikedItemListModel> getLikedItems({
+    int page,
+    int pageSize,
+    String? title,
+    String? sortKey,
+  });
+  Future<List<bool>> checkUserLikedItems(List<int> itemIds);
+  Future<int> getLikeCount(int itemId);
 }
 
 class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
@@ -590,6 +602,119 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       return (response.data['saved'] as List)
           .map((isSaved) => isSaved as bool)
           .toList();
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> likeItem(int itemId) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/items/$itemId/like',
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<void> unlikeItem(int itemId) async {
+    try {
+      await semaphoreClient.dio.put(
+        '/items/$itemId/unlike',
+      );
+      return;
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<LikedItemListModel> getLikedItems({
+    int page = 1,
+    int pageSize = ServerConstants.defaultPaginationPageSize,
+    String? title,
+    String? sortKey,
+  }) async {
+    try {
+      Map<String, dynamic> queryParams = {'page': page, 'page_size': pageSize};
+      if (title != null && title.isNotEmpty) {
+        queryParams['title'] = title;
+      }
+      if (sortKey != null) {
+        queryParams['sort'] = sortKey;
+      }
+
+      final response = await semaphoreClient.dio.get(
+        '/me/items/liked',
+        queryParameters: queryParams,
+      );
+      return LikedItemListModel.fromMap(response.data);
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<List<bool>> checkUserLikedItems(List<int> itemIds) async {
+    try {
+      Map<String, String> queryParams = {'ids': itemIds.join(',')};
+      final response = await semaphoreClient.dio.get(
+        '/me/items/liked/contains',
+        queryParameters: queryParams,
+      );
+      return (response.data['liked'] as List)
+          .map((isLiked) => isLiked as bool)
+          .toList();
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
+
+  @override
+  Future<int> getLikeCount(int itemId) async {
+    try {
+      final response = await semaphoreClient.dio.get(
+        '/items/$itemId/like_count',
+      );
+      return response.data['like_count'] as int;
     } on sp.SemaphoreException catch (e) {
       throw ServerException(e.message!);
     } on sp.InternalException catch (e) {

@@ -1,6 +1,7 @@
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
+import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,11 +13,13 @@ class WebViewDraggableBottom extends StatefulWidget {
   final InAppWebViewController? webViewController;
   final int itemId;
   final bool isSaved;
+  final bool isLiked;
   const WebViewDraggableBottom({
     super.key,
     this.webViewController,
     required this.itemId,
     this.isSaved = false,
+    this.isLiked = false,
   });
 
   @override
@@ -27,11 +30,13 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
   // Default drawer snap points
   static const List<double> snapPoints = [0.08];
   bool isSaved = false;
+  bool isLiked = false;
 
   @override
   void initState() {
     super.initState();
     isSaved = widget.isSaved;
+    isLiked = widget.isLiked;
   }
 
   @override
@@ -112,12 +117,68 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
             context.pop();
           },
         ),
-        _buildActionButton(
-          context,
-          MingCute.refresh_1_line,
-          () {
-            widget.webViewController?.reload();
+        BlocListener<LikedItemsBloc, LikedItemsState>(
+          listener: (context, state) {
+            if (state.status == LikedItemsStatus.failure &&
+                (state.action == LikedItemsAction.unlike ||
+                    state.action == LikedItemsAction.like)) {
+              setState(() {
+                // if the failed action is unlike, then set isLiked to true
+                isLiked = state.action == LikedItemsAction.unlike;
+              });
+            }
           },
+          child: _buildActionButton(
+            context,
+            isLiked ? MingCute.heart_fill : MingCute.heart_line,
+            () {
+              context.read<LikedItemsBloc>().add(
+                    isLiked
+                        ? UnlikeItemRequested(
+                            itemId: widget.itemId,
+                            refresh: true,
+                          )
+                        : LikeItemRequested(widget.itemId),
+                  );
+              setState(() {
+                isLiked = !isLiked;
+              });
+            },
+          ),
+        ),
+        BlocListener<SavedItemsBloc, SavedItemsState>(
+          listener: (context, state) {
+            if (state.status == SavedItemsStatus.failure &&
+                (state.action == SavedItemsAction.unsave ||
+                    state.action == SavedItemsAction.save)) {
+              setState(() {
+                // if the failed action is unsave, then set isSaved to true
+                isSaved = state.action == SavedItemsAction.unsave;
+              });
+              showSnackbar(
+                  context,
+                  state.message ??
+                      (state.action == SavedItemsAction.unsave
+                          ? 'Failed to unsave article'
+                          : 'Failed to save article'),
+                  type: SnackbarType.failure);
+            }
+          },
+          child: _buildActionButton(
+            context,
+            isSaved ? MingCute.bookmark_fill : MingCute.bookmark_line,
+            () {
+              context.read<SavedItemsBloc>().add(
+                    isSaved
+                        ? UnsaveItemRequested(
+                            itemId: widget.itemId, refresh: true)
+                        : SaveItemRequested(widget.itemId),
+                  );
+              setState(() {
+                isSaved = !isSaved;
+              });
+            },
+          ),
         ),
         _buildActionButton(
           context,
@@ -158,40 +219,6 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
             }
           },
         ),
-        BlocListener<SavedItemsBloc, SavedItemsState>(
-          listener: (context, state) {
-            if (state.status == SavedItemsStatus.failure &&
-                (state.action == SavedItemsAction.unsave ||
-                    state.action == SavedItemsAction.save)) {
-              setState(() {
-                // if the failed action is unsave, then set isSaved to true
-                isSaved = state.action == SavedItemsAction.unsave;
-              });
-              showSnackbar(
-                  context,
-                  state.message ??
-                      (state.action == SavedItemsAction.unsave
-                          ? 'Failed to unsave article'
-                          : 'Failed to save article'),
-                  type: SnackbarType.failure);
-            }
-          },
-          child: _buildActionButton(
-            context,
-            isSaved ? MingCute.bookmark_fill : MingCute.bookmark_line,
-            () {
-              context.read<SavedItemsBloc>().add(
-                    isSaved
-                        ? UnsaveItemRequested(
-                            itemId: widget.itemId, refresh: true)
-                        : SaveItemRequested(widget.itemId),
-                  );
-              setState(() {
-                isSaved = !isSaved;
-              });
-            },
-          ),
-        ),
       ],
     );
   }
@@ -204,7 +231,7 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Icon(
           icon,
           size: 24,

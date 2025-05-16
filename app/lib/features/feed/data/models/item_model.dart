@@ -12,6 +12,7 @@ class AuthorModel extends Author {
   @override
   List<Object?> get props => [name, email];
 
+  @override
   AuthorModel copyWith({
     String? name,
     String? email,
@@ -52,6 +53,7 @@ class EnclosureModel extends Enclosure {
   @override
   List<Object?> get props => [url, length, type];
 
+  @override
   EnclosureModel copyWith({
     String? url,
     int? length,
@@ -104,6 +106,7 @@ class ItemModel extends Item {
     super.enclosures,
     super.authors,
     super.isSaved,
+    super.isLiked,
   });
 
   @override
@@ -124,6 +127,7 @@ class ItemModel extends Item {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSaved,
+    bool? isLiked,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -142,6 +146,7 @@ class ItemModel extends Item {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSaved: isSaved ?? this.isSaved,
+      isLiked: isLiked ?? this.isLiked,
     );
   }
 
@@ -166,6 +171,7 @@ class ItemModel extends Item {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'is_saved': isSaved,
+      'is_liked': isLiked,
     };
   }
 
@@ -202,6 +208,7 @@ class ItemModel extends Item {
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
       isSaved: map['is_saved'] != null ? map['is_saved'] as bool : false,
+      isLiked: map['is_liked'] != null ? map['is_liked'] as bool : false,
     );
   }
 

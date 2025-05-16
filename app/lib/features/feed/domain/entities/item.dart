@@ -65,6 +65,7 @@ class Item extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSaved;
+  final bool isLiked;
 
   const Item({
     required this.id,
@@ -83,6 +84,7 @@ class Item extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.isSaved = false,
+    this.isLiked = false,
   });
 
   Item copyWith({
@@ -102,6 +104,7 @@ class Item extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSaved,
+    bool? isLiked,
   }) {
     return Item(
       id: id ?? this.id,
@@ -120,6 +123,7 @@ class Item extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSaved: isSaved ?? this.isSaved,
+      isLiked: isLiked ?? this.isLiked,
     );
   }
 
@@ -141,5 +145,6 @@ class Item extends Equatable {
         createdAt,
         updatedAt,
         isSaved,
+        isLiked,
       ];
 }

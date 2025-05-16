@@ -98,9 +98,16 @@ GoRoute _buildFeedWebViewRoute() {
       final itemId = state.uri.queryParameters['itemId'] ?? '-1';
       final isSaved = state.uri.queryParameters['isSaved'] != null &&
           state.uri.queryParameters['isSaved'] == 'true';
+      final isLiked = state.uri.queryParameters['isLiked'] != null &&
+          state.uri.queryParameters['isLiked'] == 'true';
       return SlideTransitionPage(
         key: const ValueKey('webview'),
-        child: WebView(url: url, itemId: int.parse(itemId), isSaved: isSaved),
+        child: WebView(
+          url: url,
+          itemId: int.parse(itemId),
+          isSaved: isSaved,
+          isLiked: isLiked,
+        ),
         direction: SlideDirection.rightToLeft,
       );
     },

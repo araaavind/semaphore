@@ -262,6 +262,31 @@ void _initFeed() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => LikeItem(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => UnlikeItem(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetLikedItems(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => CheckUserLikedItems(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => GetLikeCount(
+        serviceLocator(),
+      ),
+    )
     // Register cubits
     ..registerFactory(
       () => ScrollToTopCubit(),
@@ -316,6 +341,12 @@ void _initFeed() {
         saveItem: serviceLocator(),
         unsaveItem: serviceLocator(),
         getSavedItems: serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => LikedItemsBloc(
+        likeItem: serviceLocator(),
+        unlikeItem: serviceLocator(),
       ),
     );
 }
