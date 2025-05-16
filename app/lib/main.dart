@@ -16,6 +16,11 @@ import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
+import 'features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+import 'features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+import 'features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
+import 'features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
+import 'features/feed/presentation/bloc/walls/walls_bloc.dart';
 
 import 'core/theme/theme.dart';
 
@@ -40,6 +45,26 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<ResetPasswordCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<WallsBloc>()
+            ..add(ListWallsRequested(refreshItems: true)),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<SearchFeedBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => serviceLocator<AddFollowFeedBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => serviceLocator<FollowFeedBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<WallFeedBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => serviceLocator<ListItemsBloc>(),
         ),
         BlocProvider(
           create: (_) => serviceLocator<ScrollToTopCubit>(),

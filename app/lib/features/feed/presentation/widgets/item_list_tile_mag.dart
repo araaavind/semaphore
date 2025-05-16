@@ -3,8 +3,6 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
-import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -111,9 +109,6 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
               onTap: () async {
                 final Map<String, Object> extra = {
                   'feed': _item.feed!,
-                  'followFeedBlocValue':
-                      BlocProvider.of<FollowFeedBloc>(context),
-                  'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
                   'isFollowed': true,
                 };
                 final unfollowed = await context.pushNamed(

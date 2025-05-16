@@ -22,14 +22,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class FeedViewPage extends StatefulWidget {
   final Feed feed;
-  final FollowFeedBloc followFeedBlocValue;
-  final ListItemsBloc listItemsBlocValue;
   final bool isFollowed;
   const FeedViewPage({
     super.key,
     required this.feed,
-    required this.followFeedBlocValue,
-    required this.listItemsBlocValue,
     required this.isFollowed,
   });
 
@@ -50,253 +46,245 @@ class _FeedViewPageState extends State<FeedViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider.value(
-          value: widget.followFeedBlocValue,
-        ),
-        BlocProvider.value(
-          value: widget.listItemsBlocValue,
-        ),
-      ],
-      child: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) {
-          if (didPop) return;
-          context.pop(!isFollowed);
-        },
-        child: Scaffold(
-          appBar: AppBar(),
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverList(
-                  delegate: SliverChildListDelegate(
-                    [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: UIConstants.pagePadding,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                if (feed.imageUrl != null)
-                                  Container(
-                                    width: 64.0,
-                                    height: 64.0,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withAlpha(25),
-                                          blurRadius: 1,
-                                          spreadRadius: 0,
-                                          offset: const Offset(0.2, 0.2),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        context.pop(!isFollowed);
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: UIConstants.pagePadding,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (feed.imageUrl != null)
+                                Container(
+                                  width: 64.0,
+                                  height: 64.0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withAlpha(25),
+                                        blurRadius: 1,
+                                        spreadRadius: 0,
+                                        offset: const Offset(0.2, 0.2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: CachedNetworkImage(
+                                    imageUrl: feed.imageUrl ?? '',
+                                    fit: BoxFit.contain,
+                                    cacheKey: feed.imageUrl,
+                                    placeholder: (context, url) => Icon(
+                                      Icons.public,
+                                      size: 24,
+                                      color: context
+                                          .theme.colorScheme.primaryContainer,
+                                    ),
+                                    errorWidget: (context, url, error) => Icon(
+                                      Icons.public,
+                                      size: 24,
+                                      color: context
+                                          .theme.colorScheme.primaryContainer,
+                                    ),
+                                  ),
+                                ),
+                              if (feed.imageUrl != null)
+                                const SizedBox(width: 18.0),
+                              Expanded(
+                                child: AutoSizeText(
+                                  widget.feed.title.isNotEmpty
+                                      ? widget.feed.title.toTitleCase()
+                                      : 'Feed',
+                                  style: context.theme.textTheme.displaySmall
+                                      ?.copyWith(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 4,
+                                  minFontSize: context
+                                      .theme.textTheme.titleMedium!.fontSize!,
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (feed.description != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 10.0),
+                              child: Text(
+                                widget.feed.description ?? '',
+                                style: context.theme.textTheme.titleMedium
+                                    ?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          SelectableText(
+                            widget.feed.feedLink,
+                            style:
+                                context.theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w300,
+                              color: context.theme.colorScheme.onSurface
+                                  .withOpacity(0.8),
+                            ),
+                            enableInteractiveSelection: true,
+                            maxLines: 1,
+                          ),
+                          const SizedBox(height: 12.0),
+                          BlocProvider(
+                            create: (context) =>
+                                serviceLocator<ListFollowersBloc>(),
+                            child: FollowersCount(feed: feed),
+                          ),
+                          const SizedBox(height: 12.0),
+                          BlocConsumer<FollowFeedBloc, FollowFeedState>(
+                            listener: (context, state) {
+                              if (state.status == FollowFeedStatus.failure) {
+                                showSnackbar(
+                                  context,
+                                  state.message!,
+                                  type: SnackbarType.failure,
+                                );
+                              }
+                              if (state.feedId == widget.feed.id &&
+                                  (state.status == FollowFeedStatus.followed ||
+                                      state.status ==
+                                          FollowFeedStatus.unfollowed)) {
+                                setState(() {
+                                  isFollowed = !isFollowed;
+                                });
+                              }
+                            },
+                            builder: (context, state) {
+                              var buttonText = 'Follow';
+                              var action = FollowUnfollowAction.follow;
+                              if (isFollowed) {
+                                buttonText = 'Unfollow';
+                                action = FollowUnfollowAction.unfollow;
+                              }
+                              return isFollowed
+                                  ? Row(
+                                      children: [
+                                        Flexible(
+                                          child: Button(
+                                            text: buttonText,
+                                            textColor: context
+                                                .theme.colorScheme.onSurface,
+                                            width: double.infinity,
+                                            filled: !isFollowed,
+                                            onPressed: () {
+                                              context
+                                                  .read<FollowFeedBloc>()
+                                                  .add(
+                                                    FollowUnfollowRequested(
+                                                      feed.id,
+                                                      action: action,
+                                                    ),
+                                                  );
+                                            },
+                                            isLoading: state.feedId ==
+                                                    feed.id &&
+                                                state.status ==
+                                                    FollowFeedStatus.loading,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12.0),
+                                        Flexible(
+                                          child: Button(
+                                            text: 'Add to walls',
+                                            width: double.infinity,
+                                            filled: true,
+                                            onPressed: () async {
+                                              final result =
+                                                  await context.pushNamed(
+                                                RouteConstants
+                                                    .addToWallPageName,
+                                                pathParameters: {
+                                                  'feedId': feed.id.toString()
+                                                },
+                                              );
+                                              if (result
+                                                      is Map<String, dynamic> &&
+                                                  context.mounted) {
+                                                if (result['unfollow'] ==
+                                                    true) {
+                                                  context
+                                                      .read<FollowFeedBloc>()
+                                                      .add(
+                                                        FollowUnfollowRequested(
+                                                          feed.id,
+                                                          action:
+                                                              FollowUnfollowAction
+                                                                  .unfollow,
+                                                        ),
+                                                      );
+                                                }
+                                                if (result['listUpdated'] ==
+                                                    true) {
+                                                  context.read<WallsBloc>().add(
+                                                        ListWallsRequested(
+                                                          refreshItems: true,
+                                                        ),
+                                                      );
+                                                }
+                                              }
+                                            },
+                                          ),
                                         ),
                                       ],
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: feed.imageUrl ?? '',
-                                      fit: BoxFit.contain,
-                                      cacheKey: feed.imageUrl,
-                                      placeholder: (context, url) => Icon(
-                                        Icons.public,
-                                        size: 24,
-                                        color: context
-                                            .theme.colorScheme.primaryContainer,
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(
-                                        Icons.public,
-                                        size: 24,
-                                        color: context
-                                            .theme.colorScheme.primaryContainer,
-                                      ),
-                                    ),
-                                  ),
-                                if (feed.imageUrl != null)
-                                  const SizedBox(width: 18.0),
-                                Expanded(
-                                  child: AutoSizeText(
-                                    widget.feed.title.isNotEmpty
-                                        ? widget.feed.title.toTitleCase()
-                                        : 'Feed',
-                                    style: context.theme.textTheme.displaySmall
-                                        ?.copyWith(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    maxLines: 4,
-                                    minFontSize: context
-                                        .theme.textTheme.titleMedium!.fontSize!,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (feed.description != null)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10.0),
-                                child: Text(
-                                  widget.feed.description ?? '',
-                                  style: context.theme.textTheme.titleMedium
-                                      ?.copyWith(
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            SelectableText(
-                              widget.feed.feedLink,
+                                    )
+                                  : Button(
+                                      text: buttonText,
+                                      filled: !isFollowed,
+                                      width: double.infinity,
+                                      onPressed: () {
+                                        context.read<FollowFeedBloc>().add(
+                                              FollowUnfollowRequested(
+                                                feed.id,
+                                                action: action,
+                                              ),
+                                            );
+                                      },
+                                      isLoading: state.feedId == feed.id &&
+                                          state.status ==
+                                              FollowFeedStatus.loading,
+                                    );
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+                          if (feed.pubUpdated != null)
+                            Text(
+                              'Last published on ${DateFormat('d MMM, yyyy').format(feed.pubUpdated!)}',
                               style:
-                                  context.theme.textTheme.titleMedium?.copyWith(
+                                  context.theme.textTheme.bodyMedium!.copyWith(
                                 fontWeight: FontWeight.w300,
-                                color: context.theme.colorScheme.onSurface
-                                    .withOpacity(0.8),
                               ),
-                              enableInteractiveSelection: true,
-                              maxLines: 1,
                             ),
-                            const SizedBox(height: 12.0),
-                            BlocProvider(
-                              create: (context) =>
-                                  serviceLocator<ListFollowersBloc>(),
-                              child: FollowersCount(feed: feed),
-                            ),
-                            const SizedBox(height: 12.0),
-                            BlocConsumer<FollowFeedBloc, FollowFeedState>(
-                              listener: (context, state) {
-                                if (state.status == FollowFeedStatus.failure) {
-                                  showSnackbar(
-                                    context,
-                                    state.message!,
-                                    type: SnackbarType.failure,
-                                  );
-                                }
-                                if (state.feedId == widget.feed.id &&
-                                    (state.status ==
-                                            FollowFeedStatus.followed ||
-                                        state.status ==
-                                            FollowFeedStatus.unfollowed)) {
-                                  setState(() {
-                                    isFollowed = !isFollowed;
-                                  });
-                                }
-                              },
-                              builder: (context, state) {
-                                var buttonText = 'Follow';
-                                var action = FollowUnfollowAction.follow;
-                                if (isFollowed) {
-                                  buttonText = 'Unfollow';
-                                  action = FollowUnfollowAction.unfollow;
-                                }
-                                return isFollowed
-                                    ? Row(
-                                        children: [
-                                          Flexible(
-                                            child: Button(
-                                              text: buttonText,
-                                              textColor: context
-                                                  .theme.colorScheme.onSurface,
-                                              width: double.infinity,
-                                              filled: !isFollowed,
-                                              onPressed: () {
-                                                context
-                                                    .read<FollowFeedBloc>()
-                                                    .add(
-                                                      FollowUnfollowRequested(
-                                                        feed.id,
-                                                        action: action,
-                                                      ),
-                                                    );
-                                              },
-                                              isLoading: state.feedId ==
-                                                      feed.id &&
-                                                  state.status ==
-                                                      FollowFeedStatus.loading,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 12.0),
-                                          Flexible(
-                                            child: Button(
-                                              text: 'Add to walls',
-                                              width: double.infinity,
-                                              filled: true,
-                                              onPressed: () async {
-                                                final result =
-                                                    await context.pushNamed(
-                                                  RouteConstants
-                                                      .addToWallPageName,
-                                                  pathParameters: {
-                                                    'feedId': feed.id.toString()
-                                                  },
-                                                  extra: {
-                                                    'wallsBloc': BlocProvider
-                                                        .of<WallsBloc>(context),
-                                                  },
-                                                );
-                                                if (result is Map<String,
-                                                        dynamic> &&
-                                                    result['unfollow'] ==
-                                                        true) {
-                                                  if (context.mounted) {
-                                                    context
-                                                        .read<FollowFeedBloc>()
-                                                        .add(
-                                                          FollowUnfollowRequested(
-                                                            feed.id,
-                                                            action:
-                                                                FollowUnfollowAction
-                                                                    .unfollow,
-                                                          ),
-                                                        );
-                                                  }
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Button(
-                                        text: buttonText,
-                                        filled: !isFollowed,
-                                        width: double.infinity,
-                                        onPressed: () {
-                                          context.read<FollowFeedBloc>().add(
-                                                FollowUnfollowRequested(
-                                                  feed.id,
-                                                  action: action,
-                                                ),
-                                              );
-                                        },
-                                        isLoading: state.feedId == feed.id &&
-                                            state.status ==
-                                                FollowFeedStatus.loading,
-                                      );
-                              },
-                            ),
-                            const SizedBox(height: 16.0),
-                            if (feed.pubUpdated != null)
-                              Text(
-                                'Last published on ${DateFormat('d MMM, yyyy').format(feed.pubUpdated!)}',
-                                style: context.theme.textTheme.bodyMedium!
-                                    .copyWith(
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                            const SizedBox(height: 8.0),
-                          ],
-                        ),
+                          const SizedBox(height: 8.0),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ];
-            },
-            body: FeedViewItems(feedId: feed.id),
-          ),
+              ),
+            ];
+          },
+          body: FeedViewItems(feedId: feed.id),
         ),
       ),
     );

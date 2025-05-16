@@ -2,8 +2,6 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
-import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -225,12 +223,12 @@ class WallPageDrawer extends StatelessWidget {
           onTap: () async {
             final Map<String, Object> extra = {
               'feed': e,
-              'followFeedBlocValue': BlocProvider.of<FollowFeedBloc>(context),
-              'listItemsBlocValue': BlocProvider.of<ListItemsBloc>(context),
               'isFollowed': true,
             };
-            final unfollowed =
-                await context.push('/feeds/${e.id}', extra: extra);
+            final unfollowed = await context.pushNamed(
+                RouteConstants.feedViewPageName,
+                pathParameters: {'feedId': e.id.toString()},
+                extra: extra);
             if ((unfollowed as bool) == true && context.mounted) {
               context
                   .read<WallsBloc>()

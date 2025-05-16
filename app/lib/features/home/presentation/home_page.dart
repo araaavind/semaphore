@@ -2,13 +2,7 @@ import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
-import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
-import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -41,8 +35,7 @@ class HomePage extends StatelessWidget {
     if (routeName == RouteConstants.wallPageName) {
       return 0;
     }
-    if (routeName == RouteConstants.searchFeedsPageName ||
-        routeName == RouteConstants.feedViewPageName) {
+    if (routeName == RouteConstants.searchFeedsPageName) {
       return 1;
     }
     if (routeName == RouteConstants.profilePageName) {
@@ -53,90 +46,68 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => serviceLocator<WallsBloc>()
-            ..add(ListWallsRequested(refreshItems: true)),
-          lazy: false,
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<SearchFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (context) => serviceLocator<FollowFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<WallFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<ListItemsBloc>(),
-        ),
-      ],
-      child: BlocListener<NetworkCubit, NetworkState>(
-        listener: (context, state) {
-          switch (state.status) {
-            case NetworkStatus.connected:
-              showSnackbar(
-                context,
-                TextConstants.networkConnectedMessage,
-                type: SnackbarType.success,
-              );
-            case NetworkStatus.disconnected:
-              showSnackbar(
-                context,
-                TextConstants.networkDisconnectedMessage,
-                type: SnackbarType.failure,
-              );
-          }
-        },
-        child: Scaffold(
-          body: child,
-          bottomNavigationBar: Container(
-            height: 54,
-            decoration:
-                (context.theme.colorScheme.brightness == Brightness.dark)
-                    ? BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: context.theme.colorScheme.outline,
-                            width: UIConstants.borderWidth,
-                          ),
-                        ),
-                      )
-                    : null,
-            child: Wrap(
-              children: [
-                Theme(
-                  data: Theme.of(context).copyWith(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
+    return BlocListener<NetworkCubit, NetworkState>(
+      listener: (context, state) {
+        switch (state.status) {
+          case NetworkStatus.connected:
+            showSnackbar(
+              context,
+              TextConstants.networkConnectedMessage,
+              type: SnackbarType.success,
+            );
+          case NetworkStatus.disconnected:
+            showSnackbar(
+              context,
+              TextConstants.networkDisconnectedMessage,
+              type: SnackbarType.failure,
+            );
+        }
+      },
+      child: Scaffold(
+        body: child,
+        bottomNavigationBar: Container(
+          height: 54,
+          decoration: (context.theme.colorScheme.brightness == Brightness.dark)
+              ? BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: context.theme.colorScheme.outline,
+                      width: UIConstants.borderWidth,
+                    ),
                   ),
-                  child: BottomNavigationBar(
-                    currentIndex: _calculateSelectedIndex(context),
-                    onTap: (value) => _onItemTapped(value, context),
-                    iconSize: 26.0,
-                    items: const [
-                      BottomNavigationBarItem(
-                        label: 'Home',
-                        icon: Icon(MingCute.home_4_line),
-                        activeIcon: Icon(MingCute.home_4_fill),
-                      ),
-                      BottomNavigationBarItem(
-                        label: 'Search',
-                        icon: Icon(MingCute.search_line),
-                        activeIcon: Icon(MingCute.search_fill),
-                      ),
-                      BottomNavigationBarItem(
-                        label: 'Profile',
-                        icon: Icon(MingCute.user_3_line),
-                        activeIcon: Icon(MingCute.user_3_fill),
-                      ),
-                    ],
-                  ),
+                )
+              : null,
+          child: Wrap(
+            children: [
+              Theme(
+                data: Theme.of(context).copyWith(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
-              ],
-            ),
+                child: BottomNavigationBar(
+                  currentIndex: _calculateSelectedIndex(context),
+                  onTap: (value) => _onItemTapped(value, context),
+                  iconSize: 26.0,
+                  items: const [
+                    BottomNavigationBarItem(
+                      label: 'Home',
+                      icon: Icon(MingCute.home_4_line),
+                      activeIcon: Icon(MingCute.home_4_fill),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Search',
+                      icon: Icon(MingCute.search_line),
+                      activeIcon: Icon(MingCute.search_fill),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Profile',
+                      icon: Icon(MingCute.user_3_line),
+                      activeIcon: Icon(MingCute.user_3_fill),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

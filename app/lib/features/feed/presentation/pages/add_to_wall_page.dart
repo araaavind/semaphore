@@ -3,7 +3,6 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
-import 'package:app/init_dependencies.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,36 +11,17 @@ import 'package:go_router/go_router.dart';
 import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/core/utils/utils.dart';
 
-class AddToWallPage extends StatelessWidget {
+class AddToWallPage extends StatefulWidget {
   final int feedId;
-  final WallsBloc wallsBloc;
 
-  const AddToWallPage({
-    super.key,
-    required this.feedId,
-    required this.wallsBloc,
-  });
+  const AddToWallPage({super.key, required this.feedId});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => serviceLocator<WallFeedBloc>(),
-        ),
-        BlocProvider.value(
-          value: wallsBloc..add(ListWallsRequested()),
-        ),
-      ],
-      child: AddToWallPageContent(feedId: feedId),
-    );
-  }
+  State<AddToWallPage> createState() => _AddToWallPageState();
 }
 
-class AddToWallPageContent extends StatelessWidget {
-  final int feedId;
-
-  const AddToWallPageContent({super.key, required this.feedId});
+class _AddToWallPageState extends State<AddToWallPage> {
+  bool listUpdated = false;
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +115,15 @@ class AddToWallPageContent extends StatelessWidget {
                         if (wall.isPrimary) {
                           return const SizedBox.shrink();
                         }
-                        return WallListTile(wall: wall, feedId: feedId);
+                        return WallListTile(
+                          wall: wall,
+                          feedId: widget.feedId,
+                          onListUpdated: (isFeedInWall) {
+                            setState(() {
+                              listUpdated = isFeedInWall;
+                            });
+                          },
+                        );
                       },
                     );
                   },
@@ -145,7 +133,7 @@ class AddToWallPageContent extends StatelessWidget {
               Button(
                 text: 'Done',
                 onPressed: () {
-                  context.pop({"unfollow": false});
+                  context.pop({"unfollow": false, "listUpdated": listUpdated});
                 },
               ),
               const SizedBox(height: 40.0),
@@ -160,8 +148,14 @@ class AddToWallPageContent extends StatelessWidget {
 class WallListTile extends StatefulWidget {
   final Wall wall;
   final int feedId;
+  final Function(bool) onListUpdated;
 
-  const WallListTile({super.key, required this.wall, required this.feedId});
+  const WallListTile({
+    super.key,
+    required this.wall,
+    required this.feedId,
+    required this.onListUpdated,
+  });
 
   @override
   State<WallListTile> createState() => _WallListTileState();
@@ -193,6 +187,7 @@ class _WallListTileState extends State<WallListTile> {
           setState(() {
             isFeedInWall = !isFeedInWall;
           });
+          widget.onListUpdated(true);
         }
       },
       buildWhen: (previous, current) =>

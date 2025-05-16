@@ -68,26 +68,6 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
           ),
           child: ListTile(
             visualDensity: VisualDensity.standard,
-            onTap: () async {
-              // final Map<String, Object> extra = {
-              //   'feed': feed,
-              //   'followFeedBlocValue':
-              //       BlocProvider.of<FollowFeedBloc>(context),
-              //   'listItemsBlocValue':
-              //       BlocProvider.of<ListItemsBloc>(context),
-              //   'isFollowed': true,
-              // };
-              // final unfollowed = await context.pushNamed(
-              //   RouteConstants.feedViewPageName,
-              //   pathParameters: {'feedId': feed.id.toString()},
-              //   extra: extra,
-              // );
-              // if (unfollowed != null && unfollowed == true) {
-              //   setState(() {
-              //     isRemoved = true;
-              //   });
-              // }
-            },
             splashColor: Colors.transparent,
             contentPadding: const EdgeInsets.symmetric(
               vertical: UIConstants.tileContentPadding,

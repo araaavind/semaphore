@@ -11,9 +11,6 @@ import 'package:app/features/auth/presentation/pages/send_reset_token_page.dart'
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
-import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/add_to_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/create_wall_page.dart';
@@ -78,6 +75,7 @@ List<RouteBase> _buildRoutes() {
         _buildProfileRoute(),
       ],
     ),
+    _buildFeedViewRoute(),
     _buildFeedWebViewRoute(),
     _buildLoginRoute(),
     _buildActivationRoute(),
@@ -122,14 +120,8 @@ GoRoute _buildAddToWallRoute() {
     name: RouteConstants.addToWallPageName,
     builder: (context, state) {
       final feedId = int.parse(state.pathParameters['feedId'] ?? '0');
-      final extra = state.extra as Map<String, dynamic>?;
-      final wallsBloc = extra?['wallsBloc'] as WallsBloc?;
 
-      if (wallsBloc == null) {
-        throw Exception('WallsBloc is required for AddToWallPage');
-      }
-
-      return AddToWallPage(feedId: feedId, wallsBloc: wallsBloc);
+      return AddToWallPage(feedId: feedId);
     },
   );
 }
@@ -227,31 +219,26 @@ GoRoute _buildSearchFeedsRoute() {
         child: SearchFeedsPage(isOnboarding: isOnboarding),
       );
     },
-    routes: [
-      GoRoute(
-        path: RouteConstants.feedViewPagePath,
-        name: RouteConstants.feedViewPageName,
-        pageBuilder: (context, state) {
-          final extra = state.extra as Map<String, Object>;
-          final feed = extra['feed'] as Feed;
-          final followFeedBlocValue =
-              extra['followFeedBlocValue'] as FollowFeedBloc;
-          final listItemsBlocValue =
-              extra['listItemsBlocValue'] as ListItemsBloc;
-          final isFollowed = extra['isFollowed'] as bool;
-          return SlideTransitionPage(
-            key: const ValueKey(RouteConstants.feedViewPageName),
-            direction: SlideDirection.rightToLeft,
-            child: FeedViewPage(
-              feed: feed,
-              followFeedBlocValue: followFeedBlocValue,
-              listItemsBlocValue: listItemsBlocValue,
-              isFollowed: isFollowed,
-            ),
-          );
-        },
-      ),
-    ],
+  );
+}
+
+GoRoute _buildFeedViewRoute() {
+  return GoRoute(
+    path: RouteConstants.feedViewPagePath,
+    name: RouteConstants.feedViewPageName,
+    pageBuilder: (context, state) {
+      final extra = state.extra as Map<String, Object>;
+      final feed = extra['feed'] as Feed;
+      final isFollowed = extra['isFollowed'] as bool;
+      return SlideTransitionPage(
+        key: const ValueKey(RouteConstants.feedViewPageName),
+        direction: SlideDirection.rightToLeft,
+        child: FeedViewPage(
+          feed: feed,
+          isFollowed: isFollowed,
+        ),
+      );
+    },
   );
 }
 

@@ -26,89 +26,88 @@ class _CreateWallPageState extends State<CreateWallPage> {
 
   @override
   Widget build(BuildContext context) {
-    final wallsBloc = GoRouterState.of(context).extra as WallsBloc;
-    return BlocProvider.value(
-      value: wallsBloc,
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Builder(builder: (context) {
-          return Padding(
-            padding: const EdgeInsets.all(UIConstants.pagePadding),
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const _TitleTextSpan(),
-                  const SizedBox(height: 20),
-                  AppTextField(
-                    hintText: 'Wall name',
-                    controller: wallNameController,
-                    errorMaxLines: 2,
-                    validator: _wallNameControllerValidator,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: BlocConsumer<WallsBloc, WallsState>(
-                      listener: (context, state) {
-                        if (state.status == WallStatus.failure &&
-                            state.action == WallAction.create) {
-                          if (state.fieldErrors != null &&
-                              state.fieldErrors!['name'] != null) {
-                            showSnackbar(
-                              context,
-                              state.fieldErrors!['name']!,
-                              type: SnackbarType.failure,
-                            );
-                          } else {
-                            showSnackbar(
-                              context,
-                              state.message!,
-                              type: SnackbarType.failure,
-                            );
-                          }
-                        }
-                        if (state.status == WallStatus.success &&
-                            state.action == WallAction.create) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Builder(builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(UIConstants.pagePadding),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const _TitleTextSpan(),
+                const SizedBox(height: 20),
+                AppTextField(
+                  hintText: 'Wall name',
+                  controller: wallNameController,
+                  errorMaxLines: 2,
+                  validator: _wallNameControllerValidator,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: BlocConsumer<WallsBloc, WallsState>(
+                    listener: (context, state) {
+                      if (state.status == WallStatus.failure &&
+                          state.action == WallAction.create) {
+                        if (state.fieldErrors != null &&
+                            state.fieldErrors!['name'] != null) {
                           showSnackbar(
                             context,
-                            'Wall created!',
-                            type: SnackbarType.info,
+                            state.fieldErrors!['name']!,
+                            type: SnackbarType.failure,
                           );
-                          context.pop(true);
+                        } else {
+                          showSnackbar(
+                            context,
+                            state.message!,
+                            type: SnackbarType.failure,
+                          );
                         }
-                      },
-                      builder: (context, state) {
-                        return Button(
-                          text: 'Create',
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              context.read<WallsBloc>().add(
-                                    CreateWallRequested(
-                                      wallName: wallNameController.text.trim(),
-                                    ),
-                                  );
-                            }
-                          },
-                          isLoading: state.status == WallStatus.loading &&
-                              state.action == WallAction.create,
+                      }
+                      if (state.status == WallStatus.success &&
+                          state.action == WallAction.create) {
+                        showSnackbar(
+                          context,
+                          'Wall created!',
+                          type: SnackbarType.info,
                         );
-                      },
-                    ),
+                        context.read<WallsBloc>().add(
+                              ListWallsRequested(refreshItems: false),
+                            );
+                        context.pop(true);
+                      }
+                    },
+                    builder: (context, state) {
+                      return Button(
+                        text: 'Create',
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            context.read<WallsBloc>().add(
+                                  CreateWallRequested(
+                                    wallName: wallNameController.text.trim(),
+                                  ),
+                                );
+                          }
+                        },
+                        isLoading: state.status == WallStatus.loading &&
+                            state.action == WallAction.create,
+                      );
+                    },
                   ),
-                  SizedBox(
-                    height:
-                        Scaffold.of(context).appBarMaxHeight ?? kToolbarHeight,
-                  )
-                ],
-              ),
+                ),
+                SizedBox(
+                  height:
+                      Scaffold.of(context).appBarMaxHeight ?? kToolbarHeight,
+                )
+              ],
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 

@@ -5,7 +5,7 @@ class RouteConstants {
   static const wallPageName = 'wall';
   static const searchFeedsPagePath = '/feeds';
   static const searchFeedsPageName = 'feeds';
-  static const feedViewPagePath = ':feedId';
+  static const feedViewPagePath = '/feed/:feedId';
   static const feedViewPageName = 'feed';
   static const addFeedPagePath = '/add-feed';
   static const addFeedPageName = 'add-feed';

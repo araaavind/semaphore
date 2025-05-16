@@ -5,7 +5,6 @@ import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
-import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/feed_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -127,9 +126,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                           RouteConstants.addToWallPageName,
                           pathParameters: {
                             'feedId': result['feedId'].toString()
-                          },
-                          extra: {
-                            'wallsBloc': BlocProvider.of<WallsBloc>(context),
                           },
                         );
                       },
