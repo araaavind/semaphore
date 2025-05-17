@@ -105,7 +105,7 @@ class _ProfileFeedListState extends State<ProfileFeedList> {
               ),
               child: ShimmerLoader(
                 pageSize: 2,
-                type: ShimmerLoaderType.lines,
+                type: ShimmerLoaderType.feedmag,
               ),
             ),
             firstPageProgressIndicatorBuilder: (_) => const Padding(
@@ -114,7 +114,7 @@ class _ProfileFeedListState extends State<ProfileFeedList> {
               ),
               child: ShimmerLoader(
                 pageSize: ServerConstants.defaultPaginationPageSize,
-                type: ShimmerLoaderType.lines,
+                type: ShimmerLoaderType.feedmag,
               ),
             ),
             noItemsFoundIndicatorBuilder: (_) => const Center(

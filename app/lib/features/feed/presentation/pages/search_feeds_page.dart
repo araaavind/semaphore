@@ -229,6 +229,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                     pagingController: _pagingController,
                     index: index,
                   ),
+                  shimmerLoaderType: ShimmerLoaderType.feedmag,
                   firstPageErrorTitle: TextConstants.feedListFetchErrorTitle,
                   newPageErrorTitle: TextConstants.feedListFetchErrorTitle,
                   noMoreItemsErrorTitle:

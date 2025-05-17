@@ -17,6 +17,8 @@ void showWallFilterModal(BuildContext context) {
     showDragHandle: false,
     isScrollControlled: true,
     barrierColor: context.theme.colorScheme.surfaceContainer.withAlpha(180),
+    shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.zero)),
     builder: (context) {
       return BlocBuilder<WallsBloc, WallsState>(
         buildWhen: (previous, current) {
@@ -145,7 +147,7 @@ void showWallFilterModal(BuildContext context) {
 Widget _buildSectionTitle(String title) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 12.0),
-    child: Text(
+            child: Text(
       title,
       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
     ),

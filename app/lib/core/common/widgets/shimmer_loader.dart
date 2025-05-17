@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -10,6 +12,7 @@ enum ShimmerLoaderType {
   card,
   lines,
   smallmag,
+  feedmag,
 }
 
 class ShimmerLoader extends StatelessWidget {
@@ -47,6 +50,8 @@ class ShimmerLoader extends StatelessWidget {
         return _buildMagazineShimmer(context);
       case ShimmerLoaderType.smallmag:
         return _buildSmallMagazineShimmer(context);
+      case ShimmerLoaderType.feedmag:
+        return _buildFeedMagazineShimmer(context);
       case ShimmerLoaderType.card:
         return _buildCardShimmer(context);
       case ShimmerLoaderType.lines:
@@ -158,6 +163,61 @@ class ShimmerLoader extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 8.0),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeedMagazineShimmer(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 36.0,
+            height: 36.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4.0),
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 18.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8.0),
+                Container(
+                  height: 14.0,
+                  width: Random().nextDouble() * 150 + 120,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 14.0),
+                Container(
+                  width: double.infinity,
+                  height: 6.0,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 4.0),
+                Container(
+                  width: Random().nextDouble() * 150 + 40,
+                  height: 6.0,
+                  color: Colors.white,
+                  margin: const EdgeInsets.only(bottom: 8.0),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 18.0),
+          Container(
+            width: 24.0,
+            height: 24.0,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
             ),
           ),
         ],
