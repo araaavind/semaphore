@@ -112,6 +112,9 @@ abstract class AppPalette {
   // Grey
   static const grey = _GreyColors();
 
+  static const likedRed = Colors.red;
+  static const savedAmber = Color.fromARGB(255, 244, 136, 93);
+
   static const transparent = Colors.transparent;
 
   static const redditOrange = Color.fromARGB(255, 255, 69, 0);

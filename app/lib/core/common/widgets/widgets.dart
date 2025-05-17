@@ -6,4 +6,5 @@ export 'new_page_error_indicator.dart';
 export 'no_more_items_indicator.dart';
 export 'refresher.dart';
 export 'app_text_field.dart';
+export 'animated_icon_button.dart';
 export 'app_paged_list.dart';

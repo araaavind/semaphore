@@ -121,9 +121,9 @@ String _convertSubredditToRssUrl(String subreddit) {
 
   // Handle subreddit with or without 'r/' prefix
   if (!cleanSubreddit.startsWith('r/') && !cleanSubreddit.startsWith('/r/')) {
-    return 'https://www.reddit.com/r/${cleanSubreddit}.rss';
+    return 'https://www.reddit.com/r/$cleanSubreddit.rss';
   } else {
-    return 'https://www.reddit.com/${cleanSubreddit}.rss';
+    return 'https://www.reddit.com/$cleanSubreddit.rss';
   }
 }
 

@@ -1,5 +1,7 @@
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
@@ -112,132 +114,159 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
       children: [
         _buildActionButton(
           context,
-          MingCute.arrow_left_line,
+          Icons.arrow_back_sharp,
           () {
             context.pop();
           },
         ),
-        BlocListener<LikedItemsBloc, LikedItemsState>(
-          listener: (context, state) {
-            if (state.status == LikedItemsStatus.failure &&
-                (state.action == LikedItemsAction.unlike ||
-                    state.action == LikedItemsAction.like)) {
-              setState(() {
-                // if the failed action is unlike, then set isLiked to true
-                isLiked = state.action == LikedItemsAction.unlike;
-              });
-            }
-          },
-          child: _buildActionButton(
-            context,
-            isLiked ? MingCute.heart_fill : MingCute.heart_line,
-            () {
-              context.read<LikedItemsBloc>().add(
-                    isLiked
-                        ? UnlikeItemRequested(
-                            itemId: widget.itemId,
-                            refresh: true,
-                          )
-                        : LikeItemRequested(widget.itemId),
-                  );
-              setState(() {
-                isLiked = !isLiked;
-              });
-            },
-          ),
-        ),
-        BlocListener<SavedItemsBloc, SavedItemsState>(
-          listener: (context, state) {
-            if (state.status == SavedItemsStatus.failure &&
-                (state.action == SavedItemsAction.unsave ||
-                    state.action == SavedItemsAction.save)) {
-              setState(() {
-                // if the failed action is unsave, then set isSaved to true
-                isSaved = state.action == SavedItemsAction.unsave;
-              });
-              showSnackbar(
-                  context,
-                  state.message ??
-                      (state.action == SavedItemsAction.unsave
-                          ? 'Failed to unsave article'
-                          : 'Failed to save article'),
-                  type: SnackbarType.failure);
-            }
-          },
-          child: _buildActionButton(
-            context,
-            isSaved ? MingCute.bookmark_fill : MingCute.bookmark_line,
-            () {
-              context.read<SavedItemsBloc>().add(
-                    isSaved
-                        ? UnsaveItemRequested(
-                            itemId: widget.itemId, refresh: true)
-                        : SaveItemRequested(widget.itemId),
-                  );
-              setState(() {
-                isSaved = !isSaved;
-              });
-            },
-          ),
-        ),
-        _buildActionButton(
-          context,
-          MingCute.share_2_line,
-          () async {
-            if (widget.webViewController != null) {
-              final url = await widget.webViewController!.getUrl();
-              if (url != null) {
-                try {
-                  final result = await SharePlus.instance.share(
-                    ShareParams(
-                      text:
-                          'Hey, check this out!\n\n${url.toString()}\n\n_shared via *Semaphore* app_',
-                    ),
-                  );
+        _buildLikeButton(context),
+        _buildSaveButton(context),
+        _buildShareButton(context),
+      ],
+    );
+  }
 
-                  if (result.status != ShareResultStatus.success &&
-                      result.status != ShareResultStatus.dismissed &&
-                      context.mounted) {
-                    showSnackbar(
-                      context,
-                      'Failed to share article',
-                      type: SnackbarType.failure,
-                      bottomOffset: 64,
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    showSnackbar(
-                      context,
-                      'Failed to share article',
-                      type: SnackbarType.failure,
-                      bottomOffset: 64,
-                    );
-                  }
-                }
+  Widget _buildShareButton(BuildContext context) {
+    return _buildActionButton(
+      context,
+      animateOnTap: false,
+      MingCute.share_2_line,
+      iconSize: 25,
+      extraPaddingBottom: 1,
+      () async {
+        if (widget.webViewController != null) {
+          final url = await widget.webViewController!.getUrl();
+          if (url != null) {
+            try {
+              final result = await SharePlus.instance.share(
+                ShareParams(
+                  text:
+                      'Hey, check this out!\n\n${url.toString()}\n\n_shared via *Semaphore* app_',
+                ),
+              );
+
+              if (result.status != ShareResultStatus.success &&
+                  result.status != ShareResultStatus.dismissed &&
+                  context.mounted) {
+                showSnackbar(
+                  context,
+                  'Failed to share article',
+                  type: SnackbarType.failure,
+                  bottomOffset: 64,
+                );
+              }
+            } catch (e) {
+              if (context.mounted) {
+                showSnackbar(
+                  context,
+                  'Failed to share article',
+                  type: SnackbarType.failure,
+                  bottomOffset: 64,
+                );
               }
             }
-          },
-        ),
-      ],
+          }
+        }
+      },
+    );
+  }
+
+  Widget _buildSaveButton(BuildContext context) {
+    return BlocListener<SavedItemsBloc, SavedItemsState>(
+      listener: (context, state) {
+        if (state.status == SavedItemsStatus.failure &&
+            (state.action == SavedItemsAction.unsave ||
+                state.action == SavedItemsAction.save)) {
+          setState(() {
+            // if the failed action is unsave, then set isSaved to true
+            isSaved = state.action == SavedItemsAction.unsave;
+          });
+          showSnackbar(
+              context,
+              state.message ??
+                  (state.action == SavedItemsAction.unsave
+                      ? 'Failed to unsave article'
+                      : 'Failed to save article'),
+              type: SnackbarType.failure);
+        }
+      },
+      child: _buildActionButton(
+        context,
+        isSaved ? MingCute.bookmark_fill : MingCute.bookmark_line,
+        iconSize: 24.5,
+        iconColor: isSaved ? AppPalette.savedAmber : null,
+        extraPaddingBottom: 1,
+        () {
+          context.read<SavedItemsBloc>().add(
+                isSaved
+                    ? UnsaveItemRequested(itemId: widget.itemId, refresh: true)
+                    : SaveItemRequested(widget.itemId),
+              );
+          setState(() {
+            isSaved = !isSaved;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildLikeButton(BuildContext context) {
+    return BlocListener<LikedItemsBloc, LikedItemsState>(
+      listener: (context, state) {
+        if (state.status == LikedItemsStatus.failure &&
+            (state.action == LikedItemsAction.unlike ||
+                state.action == LikedItemsAction.like)) {
+          setState(() {
+            // if the failed action is unlike, then set isLiked to true
+            isLiked = state.action == LikedItemsAction.unlike;
+          });
+        }
+      },
+      child: _buildActionButton(
+        context,
+        isLiked ? Icons.favorite : Icons.favorite_border,
+        () {
+          context.read<LikedItemsBloc>().add(
+                isLiked
+                    ? UnlikeItemRequested(
+                        itemId: widget.itemId,
+                        refresh: true,
+                      )
+                    : LikeItemRequested(widget.itemId),
+              );
+          setState(() {
+            isLiked = !isLiked;
+          });
+        },
+        iconColor: isLiked ? Colors.red : null,
+      ),
     );
   }
 
   Widget _buildActionButton(
     BuildContext context,
     IconData icon,
-    VoidCallback onPressed,
-  ) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Icon(
-          icon,
-          size: 24,
-          color: context.theme.colorScheme.onSurface.withOpacity(0.9),
-        ),
+    VoidCallback onPressed, {
+    Color? iconColor,
+    double? iconSize,
+    bool animateOnTap = true,
+    double? extraPaddingBottom,
+  }) {
+    return AnimatedIconButton(
+      icon: Icon(
+        icon,
+        size: iconSize ?? 26,
+        color: iconColor?.withOpacity(0.9) ??
+            context.theme.colorScheme.onSurface.withOpacity(0.9),
       ),
+      padding: EdgeInsets.only(
+        bottom: 14 + (extraPaddingBottom ?? 0),
+        left: 24,
+        right: 24,
+        top: 16,
+      ),
+      onPressed: onPressed,
+      animateOnTap: animateOnTap,
     );
   }
 }

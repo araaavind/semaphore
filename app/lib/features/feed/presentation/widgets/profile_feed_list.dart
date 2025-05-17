@@ -1,16 +1,11 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
-import 'package:app/core/utils/utils.dart';
-import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/feed_list_tile.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -135,91 +130,6 @@ class _ProfileFeedListState extends State<ProfileFeedList> {
           padding: const EdgeInsets.only(top: 12.0),
         ),
       ),
-    );
-  }
-}
-
-class _FeedListTile extends StatelessWidget {
-  final Feed feed;
-
-  const _FeedListTile({required this.feed});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      visualDensity: VisualDensity.standard,
-      title: Text(
-        feed.title.isNotEmpty ? feed.title.toTitleCase() : 'Feed',
-        style: context.theme.textTheme.bodyLarge!.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: feed.description != null && feed.description!.isNotEmpty
-          ? Text(
-              feed.description!,
-              style: context.theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w300,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            )
-          : null,
-      leading: Container(
-        width: 36.0,
-        height: 36.0,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(25),
-              blurRadius: 1,
-              spreadRadius: 0,
-              offset: const Offset(0.2, 0.2),
-            ),
-          ],
-        ),
-        child: feed.imageUrl != null
-            ? CachedNetworkImage(
-                imageUrl: feed.imageUrl ?? '',
-                fit: BoxFit.contain,
-                cacheKey: feed.imageUrl,
-                placeholder: (context, url) => Icon(
-                  Icons.public,
-                  size: 24,
-                  color: context.theme.colorScheme.primaryContainer,
-                ),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.public,
-                  size: 24,
-                  color: context.theme.colorScheme.primaryContainer,
-                ),
-              )
-            : Icon(
-                Icons.rss_feed,
-                size: 24,
-                color: context.theme.colorScheme.primaryContainer,
-              ),
-      ),
-      contentPadding: const EdgeInsets.symmetric(
-        vertical: UIConstants.tileContentPadding,
-        horizontal: UIConstants.pagePadding,
-      ),
-      splashColor: Colors.transparent,
-      onTap: () {
-        final Map<String, Object> extra = {
-          'feed': feed,
-          'isFollowed': true,
-        };
-        context.pushNamed(
-          RouteConstants.feedViewPageName,
-          pathParameters: {'feedId': feed.id.toString()},
-          extra: extra,
-        );
-      },
     );
   }
 }
