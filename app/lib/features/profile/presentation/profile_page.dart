@@ -147,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage>
             SliverAppBar(
               pinned: true,
               floating: false,
-              expandedHeight: _expandedHeight,
+              expandedHeight: _expandedHeight + (isActivated ? 0 : 36),
               elevation: 0,
               title: _isCollapsed
                   ? Text(
@@ -229,30 +229,26 @@ class _ProfilePageState extends State<ProfilePage>
                             ],
                           ),
                           if (!isActivated)
-                            Center(
-                              child: Column(
-                                children: [
-                                  const SizedBox(
-                                      height: UIConstants.elementGap),
-                                  Button(
-                                    text: 'Activate your account',
-                                    width: double.infinity,
-                                    backgroundColor: context
-                                        .theme.colorScheme.primaryContainer,
-                                    textColor:
-                                        context.theme.colorScheme.primary,
-                                    onPressed: () async {
-                                      final routeSuccess = await context.push(
-                                              RouteConstants.activationPagePath)
-                                          as bool;
-                                      if (routeSuccess) {
-                                        setState(() {
-                                          isActivated = true;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ],
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 20.0,
+                              ),
+                              child: Button(
+                                text: 'Activate your account',
+                                width: double.infinity,
+                                backgroundColor:
+                                    context.theme.colorScheme.primaryContainer,
+                                textColor: context.theme.colorScheme.primary,
+                                onPressed: () async {
+                                  final routeSuccess = await context.push(
+                                          RouteConstants.activationPagePath)
+                                      as bool;
+                                  if (routeSuccess) {
+                                    setState(() {
+                                      isActivated = true;
+                                    });
+                                  }
+                                },
                               ),
                             ),
                         ],

@@ -411,7 +411,7 @@ class AuthClient {
 
       if (googleAuth.idToken == null) {
         throw SemaphoreException(
-          message: 'Failed to obtain Google ID token',
+          message: 'Failed to login with Google',
           type: DioExceptionType.badResponse,
           subType: SemaphoreExceptionSubType.none,
           responseStatusCode: 400,
@@ -459,7 +459,7 @@ class AuthClient {
       }
 
       throw SemaphoreException(
-        message: 'Google Sign-In error: ${e.message}',
+        message: 'Failed to login with Google',
         type: DioExceptionType.connectionError,
         subType: SemaphoreExceptionSubType.none,
         responseStatusCode: 400,

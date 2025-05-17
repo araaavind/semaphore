@@ -48,9 +48,7 @@ void main() async {
           create: (_) => serviceLocator<ResetPasswordCubit>(),
         ),
         BlocProvider(
-          create: (_) => serviceLocator<WallsBloc>()
-            ..add(ListWallsRequested(refreshItems: true)),
-          lazy: false,
+          create: (_) => serviceLocator<WallsBloc>(),
         ),
         BlocProvider(
           create: (_) => serviceLocator<SearchFeedBloc>(),
