@@ -1,3 +1,4 @@
+import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
@@ -99,6 +100,9 @@ class _WallPageState extends State<WallPage> {
                   pageSize: ServerConstants.defaultPaginationPageSize,
                 ),
               );
+        } else {
+          _pagingController.error =
+              'No wall selected. Check your internet connection or try again later.';
         }
       },
     );
@@ -135,155 +139,147 @@ class _WallPageState extends State<WallPage> {
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.60,
       drawerScrimColor:
           context.theme.colorScheme.surfaceContainer.withAlpha(180),
-      body: BlocConsumer<WallsBloc, WallsState>(
-        listener: (context, state) {
-          if (state.status == WallStatus.success &&
-              state.action == WallAction.create) {
-            context.read<WallsBloc>().add(ListWallsRequested());
-            return;
-          } else if (state.status == WallStatus.success &&
-              state.action == WallAction.delete) {
-            // Select the primary wall to navigate back to
-            final walls = context.read<WallsBloc>().state.walls;
-            Wall? pinnedWall;
-            try {
-              pinnedWall = walls.firstWhere((element) => element.isPinned);
-            } catch (e) {
-              pinnedWall = null;
-            }
-            context.read<WallsBloc>().add(
-                  SelectWallRequested(
-                    selectedWall: pinnedWall ??
-                        walls.firstWhere((element) => element.isPrimary),
-                  ),
-                );
-            context.read<WallsBloc>().add(ListWallsRequested());
-            return;
-          } else if (state.status == WallStatus.success &&
-              state.action == WallAction.update) {
-            context.read<WallsBloc>().add(ListWallsRequested());
-            return;
-          } else if (state.status == WallStatus.success &&
-              (state.action == WallAction.pin ||
-                  state.action == WallAction.unpin)) {
-            context.read<WallsBloc>().add(ListWallsRequested());
-            return;
-          }
-
-          if (state.status == WallStatus.failure) {
-            showSnackbar(context, state.message!, type: SnackbarType.failure);
-            return;
-          }
-
-          if (state.status == WallStatus.success &&
-              ((state.action == WallAction.select ||
-                      state.action == WallAction.changeFilter) ||
-                  (state.action == WallAction.list &&
-                      state.refreshItems == true))) {
-            _pagingController.refresh();
-            _setShimmerLoaderType(state.wallView);
-            _scrollToTop(animate: false);
-          }
-        },
-        buildWhen: (previous, current) {
-          return (current.status == WallStatus.success &&
-                  current.action == WallAction.list &&
-                  current.refreshItems == true) ||
-              current.action == WallAction.changeFilter;
-        },
-        builder: (context, state) {
-          return BlocListener<ScrollToTopCubit, bool>(
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<NetworkCubit, NetworkState>(
+            listener: (context, state) {
+              if (state.status == NetworkStatus.connected) {
+                final currentWall = context.read<WallsBloc>().state.currentWall;
+                if (currentWall == null) {
+                  context
+                      .read<WallsBloc>()
+                      .add(ListWallsRequested(refreshItems: true));
+                } else {
+                  _pagingController.retryLastFailedRequest();
+                }
+              }
+            },
+          ),
+          BlocListener<ScrollToTopCubit, bool>(
             listener: (context, state) {
               if (state) {
                 _scrollToTop(animate: true);
                 context.read<ScrollToTopCubit>().scrollToTopCompleted();
               }
             },
-            child: NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                WallPageSliverAppBar(isCollapsed: _isCollapsed),
-              ],
-              body: Builder(
-                builder: (context) {
-                  if (state.status == WallStatus.loading ||
-                      state.currentWall == null) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: UIConstants.pagePadding,
-                      ),
-                      child: ShimmerLoader(
-                        pageSize: 12,
-                        type: _shimmerLoaderType,
+          ),
+          BlocListener<WallsBloc, WallsState>(
+            listener: (context, state) {
+              if (state.status == WallStatus.success &&
+                  state.action == WallAction.create) {
+                context.read<WallsBloc>().add(ListWallsRequested());
+                return;
+              } else if (state.status == WallStatus.success &&
+                  state.action == WallAction.delete) {
+                // Select the primary wall to navigate back to
+                final walls = context.read<WallsBloc>().state.walls;
+                Wall? pinnedWall;
+                try {
+                  pinnedWall = walls.firstWhere((element) => element.isPinned);
+                } catch (e) {
+                  pinnedWall = null;
+                }
+                context.read<WallsBloc>().add(
+                      SelectWallRequested(
+                        selectedWall: pinnedWall ??
+                            walls.firstWhere((element) => element.isPrimary),
                       ),
                     );
-                  }
-                  return BlocListener<ListItemsBloc, ListItemsState>(
-                    listener: (context, state) {
-                      if (state.status != ListItemsStatus.loading) {
-                        _refreshController.refreshCompleted();
-                      }
-                      if (state.status == ListItemsStatus.success) {
-                        if (state.itemList.metadata.currentPage ==
-                            state.itemList.metadata.lastPage) {
-                          _pagingController
-                              .appendLastPage(state.itemList.items);
-                        } else {
-                          final nextPage =
-                              state.itemList.metadata.currentPage + 1;
-                          _pagingController.appendPage(
-                              state.itemList.items, nextPage);
-                        }
-                      } else if (state.status == ListItemsStatus.failure) {
-                        _pagingController.error = state.message;
-                      }
-                    },
-                    child: Refresher(
-                      controller: _refreshController,
-                      onRefresh: () async {
-                        _pagingController.refresh();
-                      },
-                      child: CustomScrollView(
-                        cacheExtent: 500,
-                        slivers: [
-                          AppPagedList<Item>(
-                            pagingController: _pagingController,
-                            listType: PagedListType.sliverList,
-                            itemBuilder: (context, item, index) =>
-                                state.wallView == WallViewOption.card
-                                    ? ItemListTileCard(
-                                        item: item,
-                                        pagingController: _pagingController,
-                                      )
-                                    : ItemListTileMag(
-                                        item: item,
-                                        pagingController: _pagingController,
-                                        isTextOnly: state.wallView ==
-                                            WallViewOption.text,
-                                      ),
-                            shimmerLoaderType: _shimmerLoaderType,
-                            firstPageErrorTitle:
-                                TextConstants.itemListFetchErrorTitle,
-                            newPageErrorTitle:
-                                TextConstants.itemListFetchErrorTitle,
-                            noMoreItemsErrorTitle:
-                                TextConstants.itemListNoMoreItemsErrorTitle,
-                            noMoreItemsErrorMessage:
-                                TextConstants.itemListNoMoreItemsErrorMessage,
-                            listEmptyErrorTitle:
-                                TextConstants.itemListEmptyMessageTitle,
-                            listEmptyErrorMessage:
-                                TextConstants.itemListEmptyFollowMessageMessage,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+                context.read<WallsBloc>().add(ListWallsRequested());
+                return;
+              } else if (state.status == WallStatus.success &&
+                  state.action == WallAction.update) {
+                context.read<WallsBloc>().add(ListWallsRequested());
+                return;
+              } else if (state.status == WallStatus.success &&
+                  (state.action == WallAction.pin ||
+                      state.action == WallAction.unpin)) {
+                context.read<WallsBloc>().add(ListWallsRequested());
+                return;
+              }
+
+              if (state.status == WallStatus.failure) {
+                showSnackbar(context, state.message!,
+                    type: SnackbarType.failure);
+                return;
+              }
+
+              if (state.status == WallStatus.success &&
+                  ((state.action == WallAction.select ||
+                          state.action == WallAction.changeFilter) ||
+                      (state.action == WallAction.list &&
+                          state.refreshItems == true))) {
+                _pagingController.refresh();
+                _setShimmerLoaderType(state.wallView);
+                _scrollToTop(animate: false);
+              }
+            },
+          ),
+          BlocListener<ListItemsBloc, ListItemsState>(
+            listener: (context, state) {
+              if (state.status != ListItemsStatus.loading) {
+                _refreshController.refreshCompleted();
+              }
+              if (state.status == ListItemsStatus.success) {
+                if (state.itemList.metadata.currentPage ==
+                    state.itemList.metadata.lastPage) {
+                  _pagingController.appendLastPage(state.itemList.items);
+                } else {
+                  final nextPage = state.itemList.metadata.currentPage + 1;
+                  _pagingController.appendPage(state.itemList.items, nextPage);
+                }
+              } else if (state.status == ListItemsStatus.failure) {
+                _pagingController.error = state.message;
+              }
+            },
+          ),
+        ],
+        child: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            WallPageSliverAppBar(isCollapsed: _isCollapsed),
+          ],
+          body: Refresher(
+            controller: _refreshController,
+            onRefresh: () async {
+              _pagingController.refresh();
+            },
+            child: CustomScrollView(
+              cacheExtent: 500,
+              slivers: [
+                AppPagedList<Item>(
+                  pagingController: _pagingController,
+                  listType: PagedListType.sliverList,
+                  itemBuilder: (context, item, index) {
+                    final wallView = context.read<WallsBloc>().state.wallView;
+                    if (wallView == WallViewOption.card) {
+                      return ItemListTileCard(
+                        item: item,
+                        pagingController: _pagingController,
+                      );
+                    } else {
+                      return ItemListTileMag(
+                        item: item,
+                        pagingController: _pagingController,
+                        isTextOnly: wallView == WallViewOption.text,
+                      );
+                    }
+                  },
+                  shimmerLoaderType: _shimmerLoaderType,
+                  firstPageErrorTitle: TextConstants.itemListFetchErrorTitle,
+                  newPageErrorTitle: TextConstants.itemListFetchErrorTitle,
+                  noMoreItemsErrorTitle:
+                      TextConstants.itemListNoMoreItemsErrorTitle,
+                  noMoreItemsErrorMessage:
+                      TextConstants.itemListNoMoreItemsErrorMessage,
+                  listEmptyErrorTitle: TextConstants.itemListEmptyMessageTitle,
+                  listEmptyErrorMessage:
+                      TextConstants.itemListEmptyFollowMessageMessage,
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
