@@ -10,6 +10,7 @@ import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_card.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_mag.dart';
+import 'package:app/features/feed/presentation/widgets/item_list_tile_text.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_drawer.dart';
 import 'package:app/features/feed/presentation/widgets/wall_page_sliver_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -252,17 +253,28 @@ class _WallPageState extends State<WallPage> {
                   listType: PagedListType.sliverList,
                   itemBuilder: (context, item, index) {
                     final wallView = context.read<WallsBloc>().state.wallView;
-                    if (wallView == WallViewOption.card) {
-                      return ItemListTileCard(
-                        item: item,
-                        pagingController: _pagingController,
-                      );
-                    } else {
-                      return ItemListTileMag(
-                        item: item,
-                        pagingController: _pagingController,
-                        isTextOnly: wallView == WallViewOption.text,
-                      );
+                    switch (wallView) {
+                      case WallViewOption.card:
+                        return ItemListTileCard(
+                          item: item,
+                          pagingController: _pagingController,
+                        );
+                      case WallViewOption.magazine:
+                        return ItemListTileMag(
+                          item: item,
+                          pagingController: _pagingController,
+                          isTextOnly: wallView == WallViewOption.text,
+                        );
+                      case WallViewOption.text:
+                        return ItemListTileText(
+                          item: item,
+                          pagingController: _pagingController,
+                        );
+                      default:
+                        return ItemListTileMag(
+                          item: item,
+                          pagingController: _pagingController,
+                        );
                     }
                   },
                   shimmerLoaderType: _shimmerLoaderType,
