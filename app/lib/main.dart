@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/router/router.dart';
 import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
-import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/features/auth/presentation/cubit/reset_password/reset_password_cubit.dart';
-import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:app/init_dependencies.dart';
@@ -16,12 +14,6 @@ import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
-import 'features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
-import 'features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
-import 'features/feed/presentation/bloc/list_items/list_items_bloc.dart';
-import 'features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
-import 'features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
-import 'features/feed/presentation/bloc/walls/walls_bloc.dart';
 
 import 'core/theme/theme.dart';
 
@@ -46,33 +38,6 @@ void main() async {
         ),
         BlocProvider(
           create: (_) => serviceLocator<ResetPasswordCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<WallsBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<SearchFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (context) => serviceLocator<AddFollowFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (context) => serviceLocator<FollowFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<WallFeedBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<ListItemsBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<ScrollToTopCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<SavedItemsBloc>(),
-        ),
-        BlocProvider(
-          create: (_) => serviceLocator<LikedItemsBloc>(),
         ),
       ],
       child: const SemaphoreApp(),

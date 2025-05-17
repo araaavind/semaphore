@@ -43,7 +43,7 @@ class WallPageSliverAppBar extends StatelessWidget {
                 duration: const Duration(milliseconds: 50),
                 child: Text(
                   UIConstants.appBarTitle,
-                  style: context.theme.textTheme.headlineLarge!.copyWith(
+                  style: context.theme.textTheme.headlineMedium!.copyWith(
                     fontWeight: FontWeight.w800,
                     color: context.theme.brightness == Brightness.dark
                         ? AppPalette.brandDark
@@ -57,7 +57,7 @@ class WallPageSliverAppBar extends StatelessWidget {
       ),
       toolbarHeight: 0,
       collapsedHeight: 8,
-      expandedHeight: kToolbarHeight * 2.25,
+      expandedHeight: kToolbarHeight * 2.2,
       bottom: const WallPageSliverAppBarBottom(),
       elevation: 0,
       scrolledUnderElevation: 0,

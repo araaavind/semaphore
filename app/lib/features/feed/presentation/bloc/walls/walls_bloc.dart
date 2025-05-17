@@ -59,7 +59,11 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     ListWallsRequested event,
     Emitter<WallsState> emit,
   ) async {
-    emit(state.copyWith(status: WallStatus.loading, action: WallAction.list));
+    emit(state.copyWith(
+      status: WallStatus.loading,
+      action: WallAction.list,
+      refreshItems: event.refreshItems,
+    ));
     final wallsRes = await _listWalls(NoParams());
 
     switch (wallsRes) {
@@ -68,6 +72,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           status: WallStatus.failure,
           action: WallAction.list,
           message: l.message,
+          refreshItems: event.refreshItems,
         ));
       case Right(value: final walls):
         Wall? currentWall;
@@ -177,6 +182,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     Emitter<WallsState> emit,
   ) {
     emit(state.copyWith(
+      status: WallStatus.success,
       currentWall: event.selectedWall,
       action: WallAction.select,
     ));
@@ -187,6 +193,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     Emitter<WallsState> emit,
   ) {
     emit(state.copyWith(
+      status: WallStatus.success,
       wallSort: event.wallSort,
       wallView: event.wallView,
       action: WallAction.changeFilter,

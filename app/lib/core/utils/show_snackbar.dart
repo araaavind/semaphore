@@ -12,7 +12,7 @@ void showSnackbar(
   required SnackbarType type,
   String? actionLabel,
   void Function()? onActionPressed,
-  double bottomOffset = 16,
+  double bottomOffset = kToolbarHeight + 8,
 }) {
   Color backgroundColor;
   Color textColor;

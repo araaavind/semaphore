@@ -1,3 +1,4 @@
+import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
@@ -182,6 +183,15 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                           DismissDirection.endToStart: 0.55,
                         },
                         confirmDismiss: (direction) async {
+                          if (context.read<NetworkCubit>().state.status ==
+                              NetworkStatus.disconnected) {
+                            showSnackbar(
+                              context,
+                              'No internet connection',
+                              type: SnackbarType.failure,
+                            );
+                            return false;
+                          }
                           return await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(

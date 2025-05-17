@@ -23,7 +23,8 @@ class WallPageDrawer extends StatelessWidget {
         builder: (context, state) {
           if (state.status == WallStatus.initial) {
             return const SizedBox.shrink();
-          } else if (state.status == WallStatus.failure) {
+          } else if (state.action == WallAction.list &&
+              state.status == WallStatus.failure) {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -53,10 +54,8 @@ class WallPageDrawer extends StatelessWidget {
                     ),
                   ),
                   onTap: () async {
-                    final wallsBloc = context.read<WallsBloc>();
                     context.pushNamed(
                       RouteConstants.createWallPageName,
-                      extra: wallsBloc,
                     );
                   },
                 ),

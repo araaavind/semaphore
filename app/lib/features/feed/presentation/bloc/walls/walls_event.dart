@@ -6,7 +6,7 @@ sealed class WallsEvent extends Equatable {}
 class ListWallsRequested extends WallsEvent {
   final bool refreshItems;
 
-  ListWallsRequested({this.refreshItems = false});
+  ListWallsRequested({required this.refreshItems});
 
   @override
   List<Object?> get props => [refreshItems];

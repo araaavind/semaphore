@@ -1,0 +1,8 @@
+export 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';

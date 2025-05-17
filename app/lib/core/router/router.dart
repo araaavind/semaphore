@@ -1,4 +1,5 @@
 import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/router/transitions/fade_transition_page.dart';
@@ -11,6 +12,7 @@ import 'package:app/features/auth/presentation/pages/send_reset_token_page.dart'
 import 'package:app/features/auth/presentation/pages/signup_page.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
+import 'package:app/features/feed/presentation/bloc/blocs.dart';
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/add_to_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/create_wall_page.dart';
@@ -22,6 +24,7 @@ import 'package:app/features/home/presentation/home_page.dart';
 import 'package:app/features/profile/presentation/profile_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_edit_page.dart';
+import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -66,26 +69,62 @@ String? _redirectLogic(BuildContext context, GoRouterState state) {
 List<RouteBase> _buildRoutes() {
   return [
     ShellRoute(
-      builder: (context, state, child) {
-        return HomePage(child: child);
-      },
-      routes: <RouteBase>[
-        _buildWallRoute(),
-        _buildSearchFeedsRoute(),
-        _buildProfileRoute(),
+      builder: (context, state, child) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => serviceLocator<WallsBloc>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<SearchFeedBloc>(),
+          ),
+          BlocProvider(
+            create: (context) => serviceLocator<AddFollowFeedBloc>(),
+          ),
+          BlocProvider(
+            create: (context) => serviceLocator<FollowFeedBloc>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<WallFeedBloc>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<ListItemsBloc>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<ScrollToTopCubit>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<SavedItemsBloc>(),
+          ),
+          BlocProvider(
+            create: (_) => serviceLocator<LikedItemsBloc>(),
+          ),
+        ],
+        child: Scaffold(body: child),
+      ),
+      routes: [
+        ShellRoute(
+          builder: (context, state, child) {
+            return HomePage(child: child);
+          },
+          routes: <RouteBase>[
+            _buildWallRoute(),
+            _buildSearchFeedsRoute(),
+            _buildProfileRoute(),
+          ],
+        ),
+        _buildFeedViewRoute(),
+        _buildFeedWebViewRoute(),
+        _buildAddFeedRoute(),
+        _buildAddToWallRoute(),
+        _buildCreateWallRoute(),
+        _buildWallEditRoute(),
+        _buildSavedItemsRoute(),
       ],
     ),
-    _buildFeedViewRoute(),
-    _buildFeedWebViewRoute(),
     _buildLoginRoute(),
     _buildActivationRoute(),
     _buildResetPasswordRoute(),
     _buildSendResetTokenRoute(),
-    _buildAddFeedRoute(),
-    _buildAddToWallRoute(),
-    _buildCreateWallRoute(),
-    _buildWallEditRoute(),
-    _buildSavedItemsRoute(),
   ];
 }
 

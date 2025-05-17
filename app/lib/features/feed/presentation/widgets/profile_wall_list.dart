@@ -16,7 +16,9 @@ class ProfileWallList extends StatelessWidget {
       listener: (context, state) {
         if (state.status == WallStatus.success &&
             state.action == WallAction.create) {
-          context.read<WallsBloc>().add(ListWallsRequested());
+          context
+              .read<WallsBloc>()
+              .add(ListWallsRequested(refreshItems: false));
           return;
         } else if (state.status == WallStatus.success &&
             state.action == WallAction.delete) {
@@ -34,16 +36,22 @@ class ProfileWallList extends StatelessWidget {
                       walls.firstWhere((element) => element.isPrimary),
                 ),
               );
-          context.read<WallsBloc>().add(ListWallsRequested());
+          context
+              .read<WallsBloc>()
+              .add(ListWallsRequested(refreshItems: false));
           return;
         } else if (state.status == WallStatus.success &&
             state.action == WallAction.update) {
-          context.read<WallsBloc>().add(ListWallsRequested());
+          context
+              .read<WallsBloc>()
+              .add(ListWallsRequested(refreshItems: false));
           return;
         } else if (state.status == WallStatus.success &&
             (state.action == WallAction.pin ||
                 state.action == WallAction.unpin)) {
-          context.read<WallsBloc>().add(ListWallsRequested());
+          context
+              .read<WallsBloc>()
+              .add(ListWallsRequested(refreshItems: false));
           return;
         }
 
