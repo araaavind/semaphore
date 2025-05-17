@@ -45,6 +45,11 @@ Future<void> _initSharedPrefs() async {
   serviceLocator.registerLazySingleton<SharedPreferencesWithCache>(
     () => prefsWithCache,
   );
+
+  // Register user preferences service
+  serviceLocator.registerLazySingleton(
+    () => UserPreferencesService(prefsWithCache),
+  );
 }
 
 void _initAuth() {
@@ -322,6 +327,7 @@ void _initFeed() {
         deleteWall: serviceLocator(),
         pinWall: serviceLocator(),
         unpinWall: serviceLocator(),
+        userPreferencesService: serviceLocator(),
       ),
     )
     ..registerFactory(

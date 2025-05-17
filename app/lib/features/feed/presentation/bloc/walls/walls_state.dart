@@ -11,6 +11,7 @@ enum WallAction {
   delete,
   pin,
   unpin,
+  savePreference,
 }
 
 enum WallSortOption {

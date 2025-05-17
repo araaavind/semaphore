@@ -1,4 +1,5 @@
 import 'package:app/core/usecase/usecase.dart';
+import 'package:app/core/utils/user_preferences_service.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/domain/usecases/create_wall.dart';
 import 'package:app/features/feed/domain/usecases/delete_wall.dart';
@@ -21,6 +22,7 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
   final DeleteWall _deleteWall;
   final PinWall _pinWall;
   final UnpinWall _unpinWall;
+  final UserPreferencesService _userPreferencesService;
 
   WallsBloc({
     required ListWalls listWalls,
@@ -29,12 +31,14 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     required DeleteWall deleteWall,
     required PinWall pinWall,
     required UnpinWall unpinWall,
+    required UserPreferencesService userPreferencesService,
   })  : _listWalls = listWalls,
         _createWall = createWall,
         _updateWall = updateWall,
         _deleteWall = deleteWall,
         _pinWall = pinWall,
         _unpinWall = unpinWall,
+        _userPreferencesService = userPreferencesService,
         super(const WallsState()) {
     on<ListWallsRequested>(_onListWalls);
     on<SelectWallRequested>(_onSelectWall);
@@ -44,6 +48,11 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     on<DeleteWallRequested>(_onDeleteWall);
     on<PinWallRequested>(_onPinWall);
     on<UnpinWallRequested>(_onUnpinWall);
+    on<LoadDefaultPreferences>(_onLoadDefaultPreferences);
+    on<SaveAsDefaultPreference>(_onSaveAsDefaultPreference);
+
+    // Load default preferences on initialization
+    add(LoadDefaultPreferences());
   }
 
   void _onListWalls(
@@ -240,5 +249,35 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           pinnedWallId: -1,
         ));
     }
+  }
+
+  void _onLoadDefaultPreferences(
+    LoadDefaultPreferences event,
+    Emitter<WallsState> emit,
+  ) {
+    final defaultSort = _userPreferencesService.getDefaultWallSort();
+    final defaultView = _userPreferencesService.getDefaultWallView();
+
+    emit(state.copyWith(
+      wallSort: defaultSort ?? state.wallSort,
+      wallView: defaultView ?? state.wallView,
+    ));
+  }
+
+  void _onSaveAsDefaultPreference(
+    SaveAsDefaultPreference event,
+    Emitter<WallsState> emit,
+  ) async {
+    if (event.sortOption != null) {
+      await _userPreferencesService.setDefaultWallSort(event.sortOption!);
+    }
+
+    if (event.viewOption != null) {
+      await _userPreferencesService.setDefaultWallView(event.viewOption!);
+    }
+
+    emit(state.copyWith(
+      action: WallAction.savePreference,
+    ));
   }
 }

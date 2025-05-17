@@ -79,3 +79,21 @@ class UnpinWallRequested extends WallsEvent {
   @override
   List<Object?> get props => [wallId];
 }
+
+class LoadDefaultPreferences extends WallsEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class SaveAsDefaultPreference extends WallsEvent {
+  final WallSortOption? sortOption;
+  final WallViewOption? viewOption;
+
+  SaveAsDefaultPreference({
+    this.sortOption,
+    this.viewOption,
+  });
+
+  @override
+  List<Object?> get props => [sortOption, viewOption];
+}

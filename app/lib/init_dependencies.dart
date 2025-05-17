@@ -56,6 +56,7 @@ import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
+import 'package:app/core/utils/user_preferences_service.dart';
 
 import 'features/auth/domain/usecases/reset_password.dart';
 import 'features/auth/presentation/cubit/reset_password/reset_password_cubit.dart';
