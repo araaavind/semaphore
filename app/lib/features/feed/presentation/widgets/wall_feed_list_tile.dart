@@ -1,3 +1,4 @@
+import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
@@ -120,13 +121,81 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
                         color: context.theme.colorScheme.onSurface
                             .withOpacity(0.70),
                       ),
-                      onPressed: () {
-                        context.read<WallFeedBloc>().add(
-                              RemoveFeedFromWallRequested(
-                                feedId: feed.id,
-                                wallId: widget.wallId,
+                      onPressed: () async {
+                        if (context.read<NetworkCubit>().state.status ==
+                            NetworkStatus.disconnected) {
+                          showSnackbar(
+                            context,
+                            'No internet connection',
+                            type: SnackbarType.failure,
+                          );
+                          return;
+                        }
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            contentPadding: const EdgeInsets.only(
+                              top: 36.0,
+                              left: 32.0,
+                              right: 24.0,
+                              bottom: 24.0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            backgroundColor: context.theme.colorScheme.surface,
+                            content: Text.rich(
+                              TextSpan(
+                                style: context.theme.textTheme.bodyLarge,
+                                children: [
+                                  const TextSpan(
+                                      text:
+                                          'Are you sure you want to remove this feed from the wall?'),
+                                  TextSpan(
+                                    text: '\n\n(This action cannot be undone.)',
+                                    style: context.theme.textTheme.bodySmall!
+                                        .copyWith(
+                                      fontWeight: FontWeight.w100,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            );
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: Text(
+                                  'Cancel',
+                                  style: context.theme.textTheme.titleMedium!
+                                      .copyWith(
+                                    color: context.theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                child: Text(
+                                  'Yes',
+                                  style: context.theme.textTheme.titleMedium!
+                                      .copyWith(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirm == true && context.mounted) {
+                          context.read<WallFeedBloc>().add(
+                                RemoveFeedFromWallRequested(
+                                  feedId: feed.id,
+                                  wallId: widget.wallId,
+                                ),
+                              );
+                        }
                       },
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,

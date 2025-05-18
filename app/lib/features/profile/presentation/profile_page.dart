@@ -264,8 +264,8 @@ class _ProfilePageState extends State<ProfilePage>
                 TabBar(
                   controller: _tabController,
                   tabs: const [
-                    Tab(text: 'Walls'),
                     Tab(text: 'Feeds'),
+                    Tab(text: 'Walls'),
                   ],
                   labelStyle: context.theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
@@ -287,8 +287,8 @@ class _ProfilePageState extends State<ProfilePage>
         body: TabBarView(
           controller: _tabController,
           children: const [
-            ProfileWallList(),
             ProfileFeedList(),
+            ProfileWallList(),
           ],
         ),
       ),

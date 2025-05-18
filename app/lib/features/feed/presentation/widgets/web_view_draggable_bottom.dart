@@ -152,7 +152,6 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                   context,
                   'Failed to share article',
                   type: SnackbarType.failure,
-                  bottomOffset: 64,
                 );
               }
             } catch (e) {
@@ -161,7 +160,6 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                   context,
                   'Failed to share article',
                   type: SnackbarType.failure,
-                  bottomOffset: 64,
                 );
               }
             }

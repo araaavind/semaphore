@@ -337,28 +337,6 @@ class _WallEditPageState extends State<WallEditPage> {
               final currentItems = _pagingController.itemList ?? [];
               final newItems = List<Feed>.from(currentItems)..removeAt(index);
               _pagingController.itemList = newItems;
-
-              showSnackbar(
-                context,
-                'Removed ${item.title.length > 16 ? '${item.title.substring(0, 16)}...' : item.title}',
-                type: SnackbarType.utility,
-                actionLabel: 'Undo',
-                onActionPressed: () {
-                  context.read<WallFeedBloc>().add(
-                        AddFeedToWallRequested(
-                          feedId: item.id,
-                          wallId: widget.wall.id,
-                        ),
-                      );
-                  final currentItems = _pagingController.itemList ?? [];
-                  final newItems = List<Feed>.from(currentItems)
-                    ..insert(index, item);
-                  _pagingController.itemList = newItems;
-                  context
-                      .read<WallsBloc>()
-                      .add(ListWallsRequested(refreshItems: true));
-                },
-              );
             },
           ),
           firstPageErrorTitle: 'Error',
