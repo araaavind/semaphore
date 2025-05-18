@@ -284,6 +284,13 @@ class AuthClient {
           queryParameters: {'scope': scope.name},
         );
       } on SemaphoreException catch (e) {
+        // Don't prevent logout in local scope even if there's error
+        if (scope == SignOutScope.local) {
+          await _sharedLocalStorage.removeSession();
+          _removeSession();
+          _authStreamController.add(AuthStatus.unauthenticated);
+          return;
+        }
         if (kDebugMode) {
           print('SemaphoreException $e.message');
         }
@@ -303,6 +310,13 @@ class AuthClient {
         }
         rethrow;
       } catch (e) {
+        // Don't prevent logout in local scope even if there's error
+        if (scope == SignOutScope.local) {
+          await _sharedLocalStorage.removeSession();
+          _removeSession();
+          _authStreamController.add(AuthStatus.unauthenticated);
+          return;
+        }
         if (kDebugMode) {
           print('Unknown exception $e.toString()');
         }
