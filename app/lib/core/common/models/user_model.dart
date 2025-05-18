@@ -41,7 +41,7 @@ class UserModel extends User {
       'username': username,
       'full_name': fullName,
       'last_login_at': lastLoginAt?.toIso8601String(),
-      'is_activated': isActivated,
+      'activated': isActivated,
       'profile_image_url': profileImageURL,
     };
   }

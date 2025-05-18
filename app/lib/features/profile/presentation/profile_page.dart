@@ -195,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     radius: 36,
                                     backgroundImage: CachedNetworkImageProvider(
                                       user.profileImageURL ?? '',
-                                      cacheKey: 'profile-picture',
+                                      cacheKey: user.email,
                                     ),
                                   ),
                                 ),

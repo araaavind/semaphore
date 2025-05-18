@@ -60,7 +60,6 @@ class ErrorInterceptor extends Interceptor {
               if (e is SemaphoreException) {
                 err = e;
               } else {
-                print('63 error ${err.response}');
                 err = SemaphoreException(
                   subType: SemaphoreExceptionSubType.none,
                   message: Constants.internalServerErrorMessage,
@@ -107,7 +106,6 @@ class ErrorInterceptor extends Interceptor {
             responseStatusCode: 403,
           );
         } else {
-          print('110 error ${err.response}');
           err = SemaphoreException(
             message: Constants.internalServerErrorMessage,
             responseStatusCode: err.response?.statusCode,
@@ -123,7 +121,6 @@ class ErrorInterceptor extends Interceptor {
         }
         break;
       default:
-        print('125 error ${err.response}');
         err = SemaphoreException(
           message: Constants.internalServerErrorMessage,
           requestOptions: err.requestOptions,
