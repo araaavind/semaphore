@@ -13,11 +13,11 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ItemListTileMag extends StatefulWidget {
   final Item item;
-  final PagingController<int, Item> _pagingController;
+  final PagingController<String, Item> _pagingController;
   final bool isTextOnly;
   const ItemListTileMag({
     required this.item,
-    required PagingController<int, Item> pagingController,
+    required PagingController<String, Item> pagingController,
     this.isTextOnly = false,
     super.key,
   }) : _pagingController = pagingController;

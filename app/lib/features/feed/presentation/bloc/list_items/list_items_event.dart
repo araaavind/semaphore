@@ -13,18 +13,18 @@ class ListItemsRequested extends ListItemsEvent {
   final ListItemsParentType parentType;
   final String? searchKey;
   final String? searchValue;
-  final int page;
+  final String after;
   final int pageSize;
-  final String? sortKey;
+  final String? sortMode;
 
   ListItemsRequested({
     required this.parentId,
     required this.parentType,
     this.searchKey,
     this.searchValue,
-    this.page = 1,
+    this.after = '',
     this.pageSize = ServerConstants.defaultPaginationPageSize,
-    this.sortKey,
+    this.sortMode,
   });
 
   @override
@@ -34,8 +34,8 @@ class ListItemsRequested extends ListItemsEvent {
       parentType,
       searchKey,
       searchValue,
-      page,
+      after,
       pageSize,
-      sortKey,
+      sortMode,
     ]);
 }

@@ -47,9 +47,9 @@ abstract interface class FeedRepository {
     required ListItemsParentType parentType,
     String? searchKey,
     String? searchValue,
-    int page,
+    String after,
     int pageSize,
-    String? sortKey,
+    String? sortMode,
   });
 
   Future<Either<Failure, List<Wall>>> listWalls();

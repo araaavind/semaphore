@@ -1,7 +1,7 @@
 import 'package:app/core/common/entities/paginated_list.dart';
 import 'package:app/core/common/entities/user.dart';
 
-class FollowersList extends PaginatedList {
+class FollowersList extends OffsetBasedList {
   final List<User> users;
   const FollowersList({
     this.users = const <User>[],

@@ -5,16 +5,16 @@ import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
-class ListItemsParams extends PaginationParams {
+class ListItemsParams extends CursorParams {
   final int parentId;
   final ListItemsParentType parentType;
 
   ListItemsParams({
     super.searchKey,
     super.searchValue,
-    super.page,
+    super.after,
     super.pageSize,
-    super.sortKey,
+    super.sortMode,
     required this.parentId,
     required this.parentType,
   });
@@ -31,9 +31,9 @@ class ListItems implements Usecase<ItemList, ListItemsParams> {
       parentType: params.parentType,
       searchKey: params.searchKey,
       searchValue: params.searchValue,
-      page: params.page,
+      after: params.after,
       pageSize: params.pageSize,
-      sortKey: params.sortKey,
+      sortMode: params.sortMode,
     );
   }
 }

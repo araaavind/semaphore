@@ -23,3 +23,19 @@ class PaginationParams {
     this.sortKey,
   });
 }
+
+class CursorParams {
+  final String? searchKey;
+  final String? searchValue;
+  final String after;
+  final int pageSize;
+  final String? sortMode;
+
+  CursorParams({
+    this.searchKey,
+    this.searchValue,
+    this.after = '',
+    this.pageSize = ServerConstants.defaultPaginationPageSize,
+    this.sortMode,
+  });
+}

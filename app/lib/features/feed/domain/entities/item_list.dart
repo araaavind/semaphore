@@ -1,7 +1,7 @@
 import 'package:app/core/common/entities/paginated_list.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 
-class ItemList extends PaginatedList {
+class ItemList extends CursorBasedList {
   final List<Item> items;
   const ItemList({
     this.items = const <Item>[],

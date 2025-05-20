@@ -162,7 +162,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
               child: CustomScrollView(
                 cacheExtent: 500,
                 slivers: [
-                  AppPagedList<SavedItem>(
+                  AppPagedList(
                     pagingController: _pagingController,
                     listType: PagedListType.sliverList,
                     itemBuilder: (context, savedItem, index) {

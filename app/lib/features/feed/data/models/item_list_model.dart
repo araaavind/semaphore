@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:app/core/common/models/pagination_metadata_model.dart';
+import 'package:app/core/common/models/cursor_metadata_model.dart';
 import 'package:app/features/feed/data/models/item_model.dart';
 import 'package:app/features/feed/domain/entities/item_list.dart';
 
 class ItemListModel extends ItemList {
   const ItemListModel({
     required List<ItemModel> items,
-    required PaginationMetadataModel metadata,
+    required CursorMetadataModel metadata,
   }) : super(
           items: items,
           metadata: metadata,
@@ -15,11 +15,11 @@ class ItemListModel extends ItemList {
 
   ItemListModel copyWith({
     List<ItemModel>? items,
-    PaginationMetadataModel? metadata,
+    CursorMetadataModel? metadata,
   }) {
     return ItemListModel(
       items: items ?? this.items.cast<ItemModel>(),
-      metadata: metadata ?? this.metadata as PaginationMetadataModel,
+      metadata: metadata ?? this.metadata as CursorMetadataModel,
     );
   }
 
@@ -28,7 +28,7 @@ class ItemListModel extends ItemList {
       items: (map['items'] as List)
           .map((item) => ItemModel.fromMap(item))
           .toList(),
-      metadata: PaginationMetadataModel.fromMap(
+      metadata: CursorMetadataModel.fromMap(
         map['metadata'] as Map<String, dynamic>,
       ),
     );

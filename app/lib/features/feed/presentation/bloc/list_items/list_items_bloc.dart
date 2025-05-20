@@ -32,8 +32,8 @@ class ListItemsBloc extends Bloc<ListItemsEvent, ListItemsState> {
         parentType: event.parentType,
         searchKey: event.searchKey,
         searchValue: event.searchValue,
-        sortKey: event.sortKey,
-        page: event.page,
+        sortMode: event.sortMode,
+        after: event.after,
         pageSize: event.pageSize,
       ),
     );

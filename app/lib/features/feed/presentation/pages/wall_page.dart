@@ -220,8 +220,8 @@ class _WallPageItems extends StatefulWidget {
 }
 
 class __WallPageItemsState extends State<_WallPageItems> {
-  final PagingController<int, Item> _pagingController = PagingController(
-    firstPageKey: 1,
+  final PagingController<String, Item> _pagingController = PagingController(
+    firstPageKey: '',
     // invisibleItemsThreshold will determine how many items should be loaded
     // after the first page is loaded (if the first page does not fill the
     // screen, items enough to fill the page will be loaded anyway unless
@@ -262,7 +262,7 @@ class __WallPageItemsState extends State<_WallPageItems> {
               ListItemsRequested(
                 parentId: wallState.currentWall!.id,
                 parentType: ListItemsParentType.wall,
-                page: pageKey,
+                after: pageKey,
                 pageSize: ServerConstants.defaultPaginationPageSize,
               ),
             );
@@ -288,12 +288,14 @@ class __WallPageItemsState extends State<_WallPageItems> {
           _refreshController.refreshCompleted();
         }
         if (state.status == ListItemsStatus.success) {
-          if (state.itemList.metadata.currentPage ==
-              state.itemList.metadata.lastPage) {
+          if (state.itemList.metadata.nextCursor == '' &&
+              state.itemList.metadata.hasMore == false) {
             _pagingController.appendLastPage(state.itemList.items);
           } else {
-            final nextPage = state.itemList.metadata.currentPage + 1;
-            _pagingController.appendPage(state.itemList.items, nextPage);
+            _pagingController.appendPage(
+              state.itemList.items,
+              state.itemList.metadata.nextCursor,
+            );
           }
         } else if (state.status == ListItemsStatus.failure) {
           _pagingController.error = state.message;
@@ -307,7 +309,7 @@ class __WallPageItemsState extends State<_WallPageItems> {
         child: CustomScrollView(
           cacheExtent: 500,
           slivers: [
-            AppPagedList<Item>(
+            AppPagedList<String, Item>(
               pagingController: _pagingController,
               listType: PagedListType.sliverList,
               itemBuilder: (context, item, index) {

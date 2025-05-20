@@ -13,10 +13,10 @@ typedef ItemWidgetBuilder<ItemType> = Widget Function(
   int index,
 );
 
-class AppPagedList<ItemType> extends StatelessWidget {
+class AppPagedList<PageKeyType, ItemType> extends StatelessWidget {
   const AppPagedList({
     super.key,
-    required PagingController<int, ItemType> pagingController,
+    required PagingController<PageKeyType, ItemType> pagingController,
     required this.listType,
     required this.itemBuilder,
     this.firstPageErrorTitle = 'Failed to load items',
@@ -33,7 +33,7 @@ class AppPagedList<ItemType> extends StatelessWidget {
     this.physics,
   }) : _pagingController = pagingController;
 
-  final PagingController<int, ItemType> _pagingController;
+  final PagingController<PageKeyType, ItemType> _pagingController;
   final PagedListType listType;
   final ItemWidgetBuilder<ItemType> itemBuilder;
   final String firstPageErrorTitle;
@@ -59,7 +59,7 @@ class AppPagedList<ItemType> extends StatelessWidget {
         physics: this.physics,
       );
     }
-    return PagedSliverList<int, ItemType>(
+    return PagedSliverList<PageKeyType, ItemType>(
       pagingController: _pagingController,
       builderDelegate: appPagedChildBuilderDelegate(),
     );

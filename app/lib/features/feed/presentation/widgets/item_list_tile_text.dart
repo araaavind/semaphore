@@ -12,10 +12,10 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ItemListTileText extends StatefulWidget {
   final Item item;
-  final PagingController<int, Item> _pagingController;
+  final PagingController<String, Item> _pagingController;
   const ItemListTileText({
     required this.item,
-    required PagingController<int, Item> pagingController,
+    required PagingController<String, Item> pagingController,
     super.key,
   }) : _pagingController = pagingController;
 

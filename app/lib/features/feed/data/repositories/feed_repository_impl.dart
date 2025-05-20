@@ -138,9 +138,9 @@ class FeedRepositoryImpl implements FeedRepository {
     required ListItemsParentType parentType,
     String? searchKey,
     String? searchValue,
-    int page = 1,
+    String after = '',
     int pageSize = ServerConstants.defaultPaginationPageSize,
-    String? sortKey,
+    String? sortMode,
   }) async {
     try {
       final itemsList = await feedRemoteDatasource.listItems(
@@ -148,9 +148,9 @@ class FeedRepositoryImpl implements FeedRepository {
         parentType: parentType,
         searchKey: searchKey,
         searchValue: searchValue,
-        page: page,
+        after: after,
         pageSize: pageSize,
-        sortKey: sortKey,
+        sortMode: sortMode,
       );
       return right(itemsList);
     } on ServerException catch (e) {

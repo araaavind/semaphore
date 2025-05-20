@@ -2,7 +2,7 @@ import 'package:app/core/common/entities/paginated_list.dart';
 
 import 'feed.dart';
 
-class FeedList extends PaginatedList {
+class FeedList extends OffsetBasedList {
   final List<Feed> feeds;
   const FeedList({
     this.feeds = const <Feed>[],
