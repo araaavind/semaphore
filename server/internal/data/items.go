@@ -55,6 +55,12 @@ type Enclosure struct {
 	Type   string `json:"type,omitempty"`
 }
 
+// Cursor for sorting items by "new"
+type sortByNewCursor struct {
+	PubDate pgtype.Timestamptz
+	ID      int64
+}
+
 type ItemModel struct {
 	DB *pgxpool.Pool
 }
@@ -225,14 +231,18 @@ func (m ItemModel) Insert(item *Item) error {
 	return nil
 }
 
-func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, filters Filters) ([]*Item, Metadata, error) {
-	columnMapping := sortColumnMapping{
-		"id":       "items.id",
-		"title":    "items.title",
-		"pub_date": "items.pub_date",
+func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+	switch cursorFilters.SortMode {
+	case SortModeNew:
+		return m.findAllForFeedsByNew(feedIDs, userID, title, cursorFilters)
+	default:
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), ErrUnsupportedSortMode
 	}
-	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), items.id, items.title, items.description, items.content, items.link, items.pub_date,
+}
+
+func (m ItemModel) findAllForFeedsByNew(feedIDs []int64, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+	query := `
+		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
 			items.version, items.created_at, items.updated_at, (si.item_id IS NOT NULL) as is_saved,
 			(li.item_id IS NOT NULL) as is_liked
@@ -243,25 +253,40 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, 
 		AND (
 			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
 			OR $2 = ''
-		)
-		ORDER BY COALESCE(%s, updated_at) %s, id desc
-		LIMIT $4 OFFSET $5`, filters.sortColumn(columnMapping), filters.sortDirection())
+		)`
+
+	args := []any{feedIDs, title, userID}
+
+	if cursorFilters.After != "" {
+		var cursor sortByNewCursor
+		err := decodeCursor(cursorFilters.After, &cursor)
+		if err != nil {
+			return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
+		}
+		query += `
+			AND (COALESCE(items.pub_date, items.updated_at), items.id) < ($4, $5)
+		`
+		args = append(args, cursor.PubDate, cursor.ID)
+	}
+	query += fmt.Sprintf(`
+		ORDER BY COALESCE(items.pub_date, items.updated_at) DESC, items.id DESC
+		LIMIT $%d
+	`, len(args)+1)
+	args = append(args, cursorFilters.PageSize)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{feedIDs, title, userID, filters.limit(), filters.offset()}
-
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
 	}
 
-	totalRecords := 0
+	var lastID int64
+	var lastPubDate pgtype.Timestamptz
 	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Item, error) {
 		var item Item
 		err := rows.Scan(
-			&totalRecords,
 			&item.ID,
 			&item.Title,
 			&item.Description,
@@ -281,27 +306,35 @@ func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, 
 			&item.IsSaved,
 			&item.IsLiked,
 		)
+		lastID = item.ID
+		lastPubDate = item.PubDate
 		return &item, err
 	})
 	if err != nil {
-		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
 	}
 
-	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+	nextCursor := sortByNewCursor{
+		PubDate: lastPubDate,
+		ID:      lastID,
+	}
+	metadata := calculateCursorMetadata(nextCursor, cursorFilters.PageSize, len(items) == cursorFilters.PageSize)
 
 	return items, metadata, nil
 }
 
-func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Filters) ([]*Item, Metadata, error) {
-	columnMapping := sortColumnMapping{
-		"id":          "items.id",
-		"title":       "items.title",
-		"pub_date":    "items.pub_date",
-		"pub_updated": "items.pub_updated",
-		"created_at":  "items.created_at",
+func (m ItemModel) FindAllForWall(wallID, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+	switch cursorFilters.SortMode {
+	case SortModeNew:
+		return m.findAllForWallByNew(wallID, userID, title, cursorFilters)
+	default:
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), ErrUnsupportedSortMode
 	}
-	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), items.id, items.title, items.description, items.content, items.link, items.pub_date,
+}
+
+func (m ItemModel) findAllForWallByNew(wallID, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+	query := `
+		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
 			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
 			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
@@ -316,25 +349,40 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
 			OR $2 = ''
 		)
-		ORDER BY COALESCE(%s, items.updated_at) %s, items.id desc
-		LIMIT $4 OFFSET $5`, filters.sortColumn(columnMapping), filters.sortDirection())
+	`
+	args := []any{wallID, title, userID}
+
+	if cursorFilters.After != "" {
+		var cursor sortByNewCursor
+		err := decodeCursor(cursorFilters.After, &cursor)
+		if err != nil {
+			return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
+		}
+		query += `
+			AND (COALESCE(items.pub_date, items.updated_at), items.id) < ($4, $5)
+		`
+		args = append(args, cursor.PubDate, cursor.ID)
+	}
+	query += fmt.Sprintf(`
+		ORDER BY COALESCE(items.pub_date, items.updated_at) DESC, items.id DESC
+		LIMIT $%d
+	`, len(args)+1)
+	args = append(args, cursorFilters.PageSize)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{wallID, title, userID, filters.limit(), filters.offset()}
-
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
 	}
 
-	totalRecords := 0
+	var lastID int64
+	var lastPubDate pgtype.Timestamptz
 	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Item, error) {
 		var item Item
 		var feed Feed
 		err := rows.Scan(
-			&totalRecords,
 			&item.ID,
 			&item.Title,
 			&item.Description,
@@ -365,13 +413,19 @@ func (m ItemModel) FindAllForWall(wallID, userID int64, title string, filters Fi
 			&item.IsLiked,
 		)
 		item.Feed = &feed
+		lastID = item.ID
+		lastPubDate = item.PubDate
 		return &item, err
 	})
 	if err != nil {
-		return nil, getEmptyMetadata(filters.Page, filters.PageSize), err
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
 	}
 
-	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+	nextCursor := sortByNewCursor{
+		PubDate: lastPubDate,
+		ID:      lastID,
+	}
+	metadata := calculateCursorMetadata(nextCursor, cursorFilters.PageSize, len(items) == cursorFilters.PageSize)
 
 	return items, metadata, nil
 }

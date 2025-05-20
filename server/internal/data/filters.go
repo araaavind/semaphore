@@ -1,10 +1,20 @@
 package data
 
 import (
+	"bytes"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/aravindmathradan/semaphore/internal/validator"
+)
+
+var (
+	ErrInvalidCursor       = errors.New("invalid cursor")
+	ErrUnsupportedSortMode = errors.New("unsupported sort mode")
 )
 
 type Filters struct {
@@ -90,4 +100,124 @@ func (f Filters) limit() int {
 
 func (f Filters) offset() int {
 	return (f.Page - 1) * f.PageSize
+}
+
+/// Cursor based pagination
+
+type SortMode string
+
+const (
+	SortModeNew SortMode = "new"
+)
+
+type CursorFilters struct {
+	After    string
+	PageSize int
+	SortMode SortMode
+}
+
+type CursorMetadata struct {
+	PageSize   int    `json:"page_size"`
+	NextCursor string `json:"next_cursor"`
+	HasMore    bool   `json:"has_more"`
+}
+
+func ValidateCursorFilters(v *validator.Validator, f CursorFilters) {
+	v.Check(f.PageSize > 0, "page_size", "Page size must be greater than zero")
+	v.Check(f.PageSize <= 100, "page_size", "Page size must be a maximum of 100")
+	v.Check(validator.PermittedValue(f.SortMode, SortModeNew), "sort_mode", "Invalid sort mode. Available sort modes: new")
+}
+
+func getEmptyCursorMetadata(pageSize int) CursorMetadata {
+	return CursorMetadata{
+		PageSize:   pageSize,
+		NextCursor: "",
+		HasMore:    false,
+	}
+}
+
+func calculateCursorMetadata(nextCursor any, pageSize int, hasMore bool) CursorMetadata {
+	if nextCursor == "" || !hasMore {
+		return getEmptyCursorMetadata(pageSize)
+	}
+
+	return CursorMetadata{
+		PageSize:   pageSize,
+		NextCursor: encodeCursor(nextCursor),
+		HasMore:    hasMore,
+	}
+}
+
+func encodeCursor(c any) string {
+	b, err := json.Marshal(c)
+	if err != nil {
+		panic(err)
+	}
+	return base64.URLEncoding.EncodeToString(b)
+}
+
+func decodeCursor(s string, c any) error {
+	b, err := base64.URLEncoding.DecodeString(s)
+	if err != nil {
+		return err
+	}
+	dec := json.NewDecoder(bytes.NewReader(b))
+	dec.DisallowUnknownFields()
+
+	err = dec.Decode(c)
+	if err != nil {
+		var syntaxError *json.SyntaxError
+		var unmarshalTypeError *json.UnmarshalTypeError
+		var invalidUnmarshalError *json.InvalidUnmarshalError
+
+		switch {
+		case errors.As(err, &syntaxError):
+			return ErrInvalidCursor
+
+		// In some circumstances Decode() may also return an io.ErrUnexpectedEOF error
+		// for syntax errors in the JSON. So we check for this using errors.Is() and
+		// return a generic error message. There is an open issue regarding this at
+		// https://github.com/golang/go/issues/25956.
+		case errors.Is(err, io.ErrUnexpectedEOF):
+			return ErrInvalidCursor
+
+		// *json.UnmarshalTypeError errors occur when the JSON value is the wrong type for
+		// the target destination.
+		case errors.As(err, &unmarshalTypeError):
+			if unmarshalTypeError.Field != "" {
+				return ErrInvalidCursor
+			}
+			return ErrInvalidCursor
+
+		// An io.EOF error will be returned by Decode() if the request body is empty.
+		case errors.Is(err, io.EOF):
+			return ErrInvalidCursor
+
+		// If the JSON contains a field which cannot be mapped to the target destination
+		// then Decode() will now return an error message in the format "json: unknown
+		// field "<name>"".
+		case strings.HasPrefix(err.Error(), "json: unknown field "):
+			return ErrInvalidCursor
+
+		// A json.InvalidUnmarshalError error will be returned if we pass something
+		// that is not a non-nil pointer to Decode(). We catch this and panic,
+		// rather than returning an error to our handler.
+		case errors.As(err, &invalidUnmarshalError):
+			panic(err)
+
+		default:
+			return err
+		}
+	}
+
+	// Call Decode() again, using a pointer to an empty anonymous struct as the
+	// destination. If the request body only contained a single JSON value this will
+	// return an io.EOF error. So if we get anything else, we know that there is
+	// additional data in the request body and we return our own custom error message.
+	err = dec.Decode(&struct{}{})
+	if !errors.Is(err, io.EOF) {
+		return ErrInvalidCursor
+	}
+
+	return nil
 }

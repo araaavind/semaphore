@@ -147,19 +147,19 @@ func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request)
 
 	var input struct {
 		Title string
-		data.Filters
+		data.CursorFilters
 	}
 
 	v := validator.New()
 	qs := r.URL.Query()
 
 	input.Title = app.readString(qs, "title", "")
-	input.Page = app.readInt(qs, "page", 1, v)
+	input.After = app.readString(qs, "after", "")
 	input.PageSize = app.readInt(qs, "page_size", 16, v)
-	input.Sort = app.readString(qs, "sort", "-pub_date")
-	input.SortSafeList = []string{"id", "title", "pub_date", "-id", "-title", "-pub_date"}
+	input.SortMode = data.SortMode(app.readString(qs, "sort_mode", string(data.SortModeNew)))
 
-	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+	data.ValidateCursorFilters(v, input.CursorFilters)
+	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
 	}
@@ -176,8 +176,18 @@ func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request)
 
 	user := app.contextGetSession(r).User
 
-	items, metadata, err := app.models.Items.FindAllForFeeds([]int64{feed.ID}, user.ID, input.Title, input.Filters)
+	items, metadata, err := app.models.Items.FindAllForFeeds([]int64{feed.ID}, user.ID, input.Title, input.CursorFilters)
 	if err != nil {
+		if errors.Is(err, data.ErrInvalidCursor) {
+			v.AddError("after", "invalid cursor")
+			app.failedValidationResponse(w, r, v.Errors)
+			return
+		}
+		if errors.Is(err, data.ErrUnsupportedSortMode) {
+			v.AddError("sort_mode", "unsupported sort mode")
+			app.failedValidationResponse(w, r, v.Errors)
+			return
+		}
 		app.serverErrorResponse(w, r, err)
 		return
 	}
