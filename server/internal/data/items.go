@@ -37,9 +37,10 @@ type Item struct {
 	CreatedAt   time.Time                    `json:"created_at,omitempty"`
 	UpdatedAt   time.Time                    `json:"updated_at,omitempty"`
 
-	IsSaved bool  `json:"is_saved,omitempty"`
-	IsLiked bool  `json:"is_liked,omitempty"`
-	Feed    *Feed `json:"feed,omitempty"`
+	IsSaved bool    `json:"is_saved,omitempty"`
+	IsLiked bool    `json:"is_liked,omitempty"`
+	Score   float64 `json:"score,omitempty"`
+	Feed    *Feed   `json:"feed,omitempty"`
 }
 
 // Person is an individual specified in a feed
@@ -55,10 +56,20 @@ type Enclosure struct {
 	Type   string `json:"type,omitempty"`
 }
 
+type ItemScore struct {
+	ItemID int64
+	Score  float64
+}
+
 // Cursor for sorting items by "new"
 type sortByNewCursor struct {
 	PubDate pgtype.Timestamptz
 	ID      int64
+}
+
+type sortByScoreCursor struct {
+	ID    int64
+	Score float64
 }
 
 type ItemModel struct {
@@ -231,16 +242,7 @@ func (m ItemModel) Insert(item *Item) error {
 	return nil
 }
 
-func (m ItemModel) FindAllForFeeds(feedIDs []int64, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
-	switch cursorFilters.SortMode {
-	case SortModeNew:
-		return m.findAllForFeedsByNew(feedIDs, userID, title, cursorFilters)
-	default:
-		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), ErrUnsupportedSortMode
-	}
-}
-
-func (m ItemModel) findAllForFeedsByNew(feedIDs []int64, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+func (m ItemModel) FindAllForFeedsByNew(feedIDs []int64, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
 	query := `
 		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
@@ -318,21 +320,17 @@ func (m ItemModel) findAllForFeedsByNew(feedIDs []int64, userID int64, title str
 		PubDate: lastPubDate,
 		ID:      lastID,
 	}
-	metadata := calculateCursorMetadata(nextCursor, cursorFilters.PageSize, len(items) == cursorFilters.PageSize)
+	metadata := calculateCursorMetadata(
+		nextCursor,
+		cursorFilters.PageSize,
+		len(items) == cursorFilters.PageSize,
+		cursorFilters.SessionID,
+	)
 
 	return items, metadata, nil
 }
 
-func (m ItemModel) FindAllForWall(wallID, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
-	switch cursorFilters.SortMode {
-	case SortModeNew:
-		return m.findAllForWallByNew(wallID, userID, title, cursorFilters)
-	default:
-		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), ErrUnsupportedSortMode
-	}
-}
-
-func (m ItemModel) findAllForWallByNew(wallID, userID int64, title string, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+func (m ItemModel) FindAllForWallByNew(wallID, userID int64, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
 	query := `
 		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
@@ -342,15 +340,11 @@ func (m ItemModel) findAllForWallByNew(wallID, userID int64, title string, curso
 		FROM items
 		INNER JOIN feeds ON feeds.id = items.feed_id
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
-		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $3
-		LEFT JOIN liked_items li ON li.item_id = items.id AND li.user_id = $3
+		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $2
+		LEFT JOIN liked_items li ON li.item_id = items.id AND li.user_id = $2
 		WHERE wall_feeds.wall_id = $1
-		AND (
-			to_tsvector('simple', items.title) @@ plainto_tsquery('simple', $2)
-			OR $2 = ''
-		)
 	`
-	args := []any{wallID, title, userID}
+	args := []any{wallID, userID}
 
 	if cursorFilters.After != "" {
 		var cursor sortByNewCursor
@@ -359,7 +353,7 @@ func (m ItemModel) findAllForWallByNew(wallID, userID int64, title string, curso
 			return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
 		}
 		query += `
-			AND (COALESCE(items.pub_date, items.updated_at), items.id) < ($4, $5)
+			AND (COALESCE(items.pub_date, items.updated_at), items.id) < ($3, $4)
 		`
 		args = append(args, cursor.PubDate, cursor.ID)
 	}
@@ -425,29 +419,192 @@ func (m ItemModel) findAllForWallByNew(wallID, userID int64, title string, curso
 		PubDate: lastPubDate,
 		ID:      lastID,
 	}
-	metadata := calculateCursorMetadata(nextCursor, cursorFilters.PageSize, len(items) == cursorFilters.PageSize)
+	metadata := calculateCursorMetadata(
+		nextCursor,
+		cursorFilters.PageSize,
+		len(items) == cursorFilters.PageSize,
+		cursorFilters.SessionID,
+	)
 
 	return items, metadata, nil
 }
 
-func (m ItemModel) CleanupItems(before time.Time) error {
-	query := `
-		DELETE FROM items
-		WHERE updated_at < $1
-		AND id NOT IN (
-			SELECT item_id FROM saved_items
-			WHERE item_id = items.id
+func (m ItemModel) FindByScore(itemScores []*ItemScore, userID int64, cursorFilters CursorFilters) ([]*Item, CursorMetadata, error) {
+	// itemScores is already sorted by score in descending order
+	// We use the cursor to find the start and end indices of the items to fetch
+
+	start := 0
+	var cursor sortByScoreCursor
+	if cursorFilters.After != "" {
+		// If cursor is provided, decode it to get the previous item's score and ID
+		err := decodeCursor(cursorFilters.After, &cursor)
+		if err != nil {
+			return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
+		}
+
+		// Find the start index of the items to fetch next
+		for _, itemScore := range itemScores {
+			start++
+			if itemScore.Score > cursor.Score ||
+				(itemScore.Score == cursor.Score && itemScore.ItemID > cursor.ID) {
+				continue
+			} else {
+				break
+			}
+		}
+	}
+
+	// end is the end index of the items to fetch next
+	// If end index is greater than the number of items, set it to the last item
+	end := min(start+cursorFilters.PageSize, len(itemScores))
+
+	slice := itemScores[start:end]
+
+	// Get the IDs of the items to fetch next
+	ids := make([]int64, len(slice))
+	for i, itemScore := range slice {
+		ids[i] = itemScore.ItemID
+	}
+
+	// GetByItemIDs function does not guarantee the order of the items
+	unorderedItems, err := m.GetByItemIDs(ids, userID)
+	if err != nil {
+		return nil, getEmptyCursorMetadata(cursorFilters.PageSize), err
+	}
+
+	itemMap := make(map[int64]*Item)
+	for _, item := range unorderedItems {
+		itemMap[item.ID] = item
+	}
+
+	// Create a new items variable for ordering the items according to itemScores
+	// Also add the score to the items
+	items := make([]*Item, len(slice))
+	for i, itemScore := range slice {
+		items[i] = itemMap[itemScore.ItemID]
+		items[i].Score = itemScore.Score
+	}
+
+	// Provide the next cursor to the client
+	nextCursor := sortByScoreCursor{
+		ID:    slice[len(slice)-1].ItemID,
+		Score: slice[len(slice)-1].Score,
+	}
+
+	return items, calculateCursorMetadata(
+		nextCursor,
+		cursorFilters.PageSize,
+		len(items) == cursorFilters.PageSize,
+		cursorFilters.SessionID,
+	), nil
+}
+
+func (m ItemModel) CalculateHotItemScoresForWall(wallID, userID int64, snapshotSize int) ([]*ItemScore, error) {
+	scoreCalculation := buildHotItemsScoreCalculationQuery("lc.like_count", "sc.save_count", "items.pub_date")
+	query := fmt.Sprintf(`
+		WITH ranked_items AS (
+			SELECT items.id as item_id, %s as score
+			FROM items
+			INNER JOIN feeds ON feeds.id = items.feed_id
+			INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
+			LEFT JOIN (
+				SELECT item_id, COUNT(*) as save_count FROM saved_items GROUP BY item_id
+			) sc ON sc.item_id = items.id
+			LEFT JOIN (
+				SELECT item_id, COUNT(*) as like_count FROM liked_items GROUP BY item_id
+			) lc ON lc.item_id = items.id
+			WHERE wall_feeds.wall_id = $1
 		)
+		SELECT *
+		FROM ranked_items
+		ORDER BY score DESC, item_id DESC
+		LIMIT $2
+	`, scoreCalculation)
+	args := []any{wallID, snapshotSize}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	itemScores, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*ItemScore, error) {
+		var itemScore ItemScore
+		err := row.Scan(&itemScore.ItemID, &itemScore.Score)
+		return &itemScore, err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return itemScores, nil
+}
+
+func (m ItemModel) GetByItemIDs(ids []int64, userID int64) ([]*Item, error) {
+	query := `
+		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
+			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
+			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
+			feeds.image_url as feed_image_url, (si.item_id IS NOT NULL) as is_saved, (li.item_id IS NOT NULL) as is_liked
+		FROM items
+		INNER JOIN feeds ON feeds.id = items.feed_id
+		LEFT JOIN saved_items si ON si.item_id = items.id AND si.user_id = $2
+		LEFT JOIN liked_items li ON li.item_id = items.id AND li.user_id = $2
+		WHERE items.id = ANY($1)
 	`
+	args := []any{ids, userID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	_, err := m.DB.Exec(ctx, query, before)
-	return err
+	rows, err := m.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (*Item, error) {
+		var item Item
+		var feed Feed
+		err := row.Scan(
+			&item.ID,
+			&item.Title,
+			&item.Description,
+			&item.Content,
+			&item.Link,
+			&item.PubDate,
+			&item.PubUpdated,
+			&item.Authors,
+			&item.GUID,
+			&item.ImageURL,
+			&item.Categories,
+			&item.Enclosures,
+			&item.FeedID,
+			&item.Version,
+			&item.CreatedAt,
+			&item.UpdatedAt,
+			&feed.ID,
+			&feed.Title,
+			&feed.Description,
+			&feed.Link,
+			&feed.FeedLink,
+			&feed.PubDate,
+			&feed.PubUpdated,
+			&feed.FeedType,
+			&feed.Language,
+			&feed.ImageURL,
+			&item.IsSaved,
+			&item.IsLiked,
+		)
+		item.Feed = &feed
+		return &item, err
+	})
+
+	return items, err
 }
 
-// GetById gets a single item by its ID
 func (m ItemModel) GetById(id int64) (*Item, error) {
 	query := `
 		SELECT id, title, description, content, link, pub_date, pub_updated,
@@ -487,4 +644,21 @@ func (m ItemModel) GetById(id int64) (*Item, error) {
 	}
 
 	return &item, nil
+}
+
+func (m ItemModel) CleanupItems(before time.Time) error {
+	query := `
+		DELETE FROM items
+		WHERE updated_at < $1
+		AND id NOT IN (
+			SELECT item_id FROM saved_items
+			WHERE item_id = items.id
+		)
+	`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, before)
+	return err
 }

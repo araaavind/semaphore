@@ -157,6 +157,7 @@ func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request)
 	input.After = app.readString(qs, "after", "")
 	input.PageSize = app.readInt(qs, "page_size", 16, v)
 	input.SortMode = data.SortMode(app.readString(qs, "sort_mode", string(data.SortModeNew)))
+	input.SortSafeList = []data.SortMode{data.SortModeNew}
 
 	data.ValidateCursorFilters(v, input.CursorFilters)
 	if !v.Valid() {
@@ -176,15 +177,10 @@ func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request)
 
 	user := app.contextGetSession(r).User
 
-	items, metadata, err := app.models.Items.FindAllForFeeds([]int64{feed.ID}, user.ID, input.Title, input.CursorFilters)
+	items, metadata, err := app.models.Items.FindAllForFeedsByNew([]int64{feed.ID}, user.ID, input.Title, input.CursorFilters)
 	if err != nil {
 		if errors.Is(err, data.ErrInvalidCursor) {
 			v.AddError("after", "invalid cursor")
-			app.failedValidationResponse(w, r, v.Errors)
-			return
-		}
-		if errors.Is(err, data.ErrUnsupportedSortMode) {
-			v.AddError("sort_mode", "unsupported sort mode")
 			app.failedValidationResponse(w, r, v.Errors)
 			return
 		}

@@ -13,8 +13,7 @@ import (
 )
 
 var (
-	ErrInvalidCursor       = errors.New("invalid cursor")
-	ErrUnsupportedSortMode = errors.New("unsupported sort mode")
+	ErrInvalidCursor = errors.New("invalid cursor")
 )
 
 type Filters struct {
@@ -108,15 +107,19 @@ type SortMode string
 
 const (
 	SortModeNew SortMode = "new"
+	SortModeHot SortMode = "hot"
 )
 
 type CursorFilters struct {
-	After    string
-	PageSize int
-	SortMode SortMode
+	SessionID    string
+	After        string
+	PageSize     int
+	SortMode     SortMode
+	SortSafeList []SortMode
 }
 
 type CursorMetadata struct {
+	SessionID  string `json:"session_id,omitempty"`
 	PageSize   int    `json:"page_size"`
 	NextCursor string `json:"next_cursor"`
 	HasMore    bool   `json:"has_more"`
@@ -125,23 +128,25 @@ type CursorMetadata struct {
 func ValidateCursorFilters(v *validator.Validator, f CursorFilters) {
 	v.Check(f.PageSize > 0, "page_size", "Page size must be greater than zero")
 	v.Check(f.PageSize <= 100, "page_size", "Page size must be a maximum of 100")
-	v.Check(validator.PermittedValue(f.SortMode, SortModeNew), "sort_mode", "Invalid sort mode. Available sort modes: new")
+	v.Check(validator.PermittedValue(f.SortMode, f.SortSafeList...), "sort_mode", "Invalid sort mode")
 }
 
 func getEmptyCursorMetadata(pageSize int) CursorMetadata {
 	return CursorMetadata{
+		SessionID:  "",
 		PageSize:   pageSize,
 		NextCursor: "",
 		HasMore:    false,
 	}
 }
 
-func calculateCursorMetadata(nextCursor any, pageSize int, hasMore bool) CursorMetadata {
+func calculateCursorMetadata(nextCursor any, pageSize int, hasMore bool, sessionID string) CursorMetadata {
 	if nextCursor == "" || !hasMore {
 		return getEmptyCursorMetadata(pageSize)
 	}
 
 	return CursorMetadata{
+		SessionID:  sessionID,
 		PageSize:   pageSize,
 		NextCursor: encodeCursor(nextCursor),
 		HasMore:    hasMore,
