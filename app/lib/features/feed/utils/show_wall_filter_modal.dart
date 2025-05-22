@@ -88,13 +88,13 @@ void showWallFilterModal(BuildContext context) {
                           isSelected: WallSortOption.latest == selectedWallSort,
                           isDefault: defaultSort == WallSortOption.latest,
                         ),
-                        _buildOptionItem(
-                          context: context,
-                          option: WallSortOption.top,
-                          icon: Icons.bar_chart,
-                          isSelected: WallSortOption.top == selectedWallSort,
-                          isDefault: defaultSort == WallSortOption.top,
-                        ),
+                        // _buildOptionItem(
+                        //   context: context,
+                        //   option: WallSortOption.top,
+                        //   icon: Icons.bar_chart,
+                        //   isSelected: WallSortOption.top == selectedWallSort,
+                        //   isDefault: defaultSort == WallSortOption.top,
+                        // ),
                         Divider(
                           thickness: 0.5,
                           color: context.theme.colorScheme.outline,
@@ -147,7 +147,7 @@ void showWallFilterModal(BuildContext context) {
 Widget _buildSectionTitle(String title) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Text(
+    child: Text(
       title,
       style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
     ),

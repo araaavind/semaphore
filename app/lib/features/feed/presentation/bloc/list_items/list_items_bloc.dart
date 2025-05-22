@@ -35,6 +35,7 @@ class ListItemsBloc extends Bloc<ListItemsEvent, ListItemsState> {
         sortMode: event.sortMode,
         after: event.after,
         pageSize: event.pageSize,
+        sessionId: event.sessionId,
       ),
     );
 

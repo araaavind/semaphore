@@ -258,12 +258,23 @@ class __WallPageItemsState extends State<_WallPageItems> {
     final wallState = context.read<WallsBloc>().state;
     _pagingController.addPageRequestListener(
       (pageKey) {
+        // sessionId will be null for sortMode: latest(new)
+        String? sessionId;
+        // pageKey will be empty string '' for first load and refreshes
+        // in those cases, sessionId should be null to create new session
+        // else, copy sessionId from the previous response
+        if (pageKey != '') {
+          sessionId =
+              context.read<ListItemsBloc>().state.itemList.metadata.sessionId;
+        }
         context.read<ListItemsBloc>().add(
               ListItemsRequested(
                 parentId: wallState.currentWall!.id,
                 parentType: ListItemsParentType.wall,
                 after: pageKey,
+                sortMode: wallState.wallSort.code,
                 pageSize: ServerConstants.defaultPaginationPageSize,
+                sessionId: sessionId,
               ),
             );
       },

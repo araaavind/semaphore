@@ -7,17 +7,20 @@ class CursorMetadataModel extends CursorMetadata {
     required super.pageSize,
     required super.nextCursor,
     required super.hasMore,
+    super.sessionId,
   });
 
   CursorMetadataModel copyWith({
     int? pageSize,
     String? nextCursor,
     bool? hasMore,
+    String? sessionId,
   }) {
     return CursorMetadataModel(
       pageSize: pageSize ?? this.pageSize,
       nextCursor: nextCursor ?? this.nextCursor,
       hasMore: hasMore ?? this.hasMore,
+      sessionId: sessionId ?? this.sessionId,
     );
   }
 
@@ -26,6 +29,7 @@ class CursorMetadataModel extends CursorMetadata {
       pageSize: map['page_size'] as int,
       nextCursor: map['next_cursor'] as String,
       hasMore: map['has_more'] as bool,
+      sessionId: map['session_id'] as String?,
     );
   }
 

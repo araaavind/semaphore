@@ -20,7 +20,8 @@ class UserPreferencesService {
   /// Returns null if no default is set
   WallSortOption? getDefaultWallSort() {
     final sortName = _preferences.getString(_defaultWallSortKey);
-    if (sortName == null) return null;
+    // If no default is set, return hot sort option
+    if (sortName == null) return WallSortOption.hot;
 
     try {
       return WallSortOption.values.firstWhere(
@@ -40,7 +41,8 @@ class UserPreferencesService {
   /// Returns null if no default is set
   WallViewOption? getDefaultWallView() {
     final viewName = _preferences.getString(_defaultWallViewKey);
-    if (viewName == null) return null;
+    // If no default is set, return magazine view option
+    if (viewName == null) return WallViewOption.magazine;
 
     try {
       return WallViewOption.values.firstWhere(

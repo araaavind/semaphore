@@ -141,6 +141,7 @@ class FeedRepositoryImpl implements FeedRepository {
     String after = '',
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortMode,
+    String? sessionId,
   }) async {
     try {
       final itemsList = await feedRemoteDatasource.listItems(
@@ -151,6 +152,7 @@ class FeedRepositoryImpl implements FeedRepository {
         after: after,
         pageSize: pageSize,
         sortMode: sortMode,
+        sessionId: sessionId,
       );
       return right(itemsList);
     } on ServerException catch (e) {

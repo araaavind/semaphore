@@ -16,7 +16,7 @@ class ListItemsRequested extends ListItemsEvent {
   final String after;
   final int pageSize;
   final String? sortMode;
-
+  final String? sessionId;
   ListItemsRequested({
     required this.parentId,
     required this.parentType,
@@ -25,6 +25,7 @@ class ListItemsRequested extends ListItemsEvent {
     this.after = '',
     this.pageSize = ServerConstants.defaultPaginationPageSize,
     this.sortMode,
+    this.sessionId,
   });
 
   @override
@@ -37,5 +38,6 @@ class ListItemsRequested extends ListItemsEvent {
       after,
       pageSize,
       sortMode,
+      sessionId,
     ]);
 }

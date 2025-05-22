@@ -30,6 +30,7 @@ class CursorParams {
   final String after;
   final int pageSize;
   final String? sortMode;
+  final String? sessionId;
 
   CursorParams({
     this.searchKey,
@@ -37,5 +38,6 @@ class CursorParams {
     this.after = '',
     this.pageSize = ServerConstants.defaultPaginationPageSize,
     this.sortMode,
+    this.sessionId,
   });
 }

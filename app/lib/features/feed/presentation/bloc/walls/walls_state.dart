@@ -16,9 +16,7 @@ enum WallAction {
 
 enum WallSortOption {
   hot,
-  latest,
-  trending,
-  top;
+  latest;
 
   String get name {
     switch (this) {
@@ -26,10 +24,15 @@ enum WallSortOption {
         return 'Hot';
       case WallSortOption.latest:
         return 'Latest';
-      case WallSortOption.trending:
-        return 'Trending';
-      case WallSortOption.top:
-        return 'Top';
+    }
+  }
+
+  String get code {
+    switch (this) {
+      case WallSortOption.hot:
+        return 'hot';
+      case WallSortOption.latest:
+        return 'new';
     }
   }
 }
@@ -69,7 +72,7 @@ class WallsState extends Equatable {
     this.walls = const <Wall>[],
     this.currentWall,
     this.pinnedWallId,
-    this.wallSort = WallSortOption.latest,
+    this.wallSort = WallSortOption.hot,
     this.wallView = WallViewOption.magazine,
     this.message,
     this.fieldErrors,

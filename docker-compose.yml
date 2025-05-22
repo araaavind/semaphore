@@ -37,6 +37,16 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-vol:/data
+    networks:
+      - backend
+    command: redis-server --appendonly yes
+
     # The commented out section below is an example of how to define a PostgreSQL
     # database that your application can use. `depends_on` tells Docker Compose to
     # start the database before your application. The `db-data` volume persists the
@@ -71,5 +81,6 @@ services:
 volumes:
   db-vol:
   test-vol:
+  redis-vol:
 networks:
   backend:

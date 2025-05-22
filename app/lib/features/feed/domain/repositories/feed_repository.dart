@@ -50,6 +50,7 @@ abstract interface class FeedRepository {
     String after,
     int pageSize,
     String? sortMode,
+    String? sessionId,
   });
 
   Future<Either<Failure, List<Wall>>> listWalls();

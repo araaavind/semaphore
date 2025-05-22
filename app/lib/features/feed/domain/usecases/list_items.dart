@@ -15,6 +15,7 @@ class ListItemsParams extends CursorParams {
     super.after,
     super.pageSize,
     super.sortMode,
+    super.sessionId,
     required this.parentId,
     required this.parentType,
   });
@@ -34,6 +35,7 @@ class ListItems implements Usecase<ItemList, ListItemsParams> {
       after: params.after,
       pageSize: params.pageSize,
       sortMode: params.sortMode,
+      sessionId: params.sessionId,
     );
   }
 }

@@ -52,6 +52,7 @@ abstract interface class FeedRemoteDatasource {
     String after,
     int pageSize,
     String? sortMode,
+    String? sessionId,
   });
 
   Future<List<WallModel>> listWalls();
@@ -302,6 +303,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
     String after = '',
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortMode,
+    String? sessionId,
   }) async {
     try {
       Map<String, dynamic>? queryParams = {
@@ -313,6 +315,9 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       }
       if (sortMode != null) {
         queryParams['sort_mode'] = sortMode;
+      }
+      if (sessionId != null) {
+        queryParams['session_id'] = sessionId;
       }
       String url;
       if (parentType == ListItemsParentType.wall) {
