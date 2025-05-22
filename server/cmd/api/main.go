@@ -12,11 +12,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aravindmathradan/semaphore/internal/cache"
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/mailer"
 	"github.com/aravindmathradan/semaphore/internal/vcs"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/mmcdole/gofeed"
+	"github.com/redis/go-redis/v9"
 )
 
 var (
@@ -31,6 +33,11 @@ type config struct {
 		maxOpenConns int
 		maxIdleConns int
 		maxIdleTime  time.Duration
+	}
+	redis struct {
+		dsn      string
+		db       int
+		poolSize int
 	}
 	smtp struct {
 		host     string
@@ -67,6 +74,7 @@ type application struct {
 	config config
 	logger *slog.Logger
 	models data.Models
+	cache  cache.Cache
 	parser *gofeed.Parser
 	mailer mailer.Mailer
 	wg     sync.WaitGroup
@@ -85,6 +93,9 @@ func main() {
 	flag.IntVar(&cfg.db.maxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
 	flag.DurationVar(&cfg.db.maxIdleTime, "db-max-idle-time", 15*time.Minute, "PostgreSQL max connection idle time (default: 15m)")
 
+	flag.StringVar(&cfg.redis.dsn, "redis-dsn", os.Getenv("REDIS_DSN"), "Redis connection string")
+	flag.IntVar(&cfg.redis.db, "redis-db", 0, "Redis database number")
+	flag.IntVar(&cfg.redis.poolSize, "redis-pool-size", 10, "Redis connection pool size")
 	flag.StringVar(&cfg.smtp.host, "smtp-host", "sandbox.smtp.mailtrap.io", "SMTP host")
 	flag.IntVar(&cfg.smtp.port, "smtp-port", 2525, "SMTP port")
 	flag.StringVar(&cfg.smtp.username, "smtp-username", "", "SMTP username")
@@ -134,6 +145,15 @@ func main() {
 
 	logger.Info("database connection pool established")
 
+	rdb, err := initRedis(cfg)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+	defer rdb.Close()
+
+	logger.Info("redis connection pool established")
+
 	expvar.NewString("version").Set(version)
 	expvar.Publish("goroutines", expvar.Func(func() any {
 		return runtime.NumGoroutine()
@@ -141,6 +161,10 @@ func main() {
 
 	expvar.Publish("database", expvar.Func(func() any {
 		return db.Stat()
+	}))
+
+	expvar.Publish("redis", expvar.Func(func() any {
+		return rdb.PoolStats()
 	}))
 
 	expvar.Publish("timestamp", expvar.Func(func() any {
@@ -151,6 +175,7 @@ func main() {
 		config: cfg,
 		logger: logger,
 		models: data.NewModels(db),
+		cache:  cache.NewRedisCache(rdb),
 		parser: gofeed.NewParser(),
 		mailer: mailer.New(
 			cfg.smtp.host,
@@ -210,4 +235,25 @@ func openDB(cfg config) (*pgxpool.Pool, error) {
 	}
 
 	return db, nil
+}
+
+func initRedis(cfg config) (*redis.Client, error) {
+	options, err := redis.ParseURL(cfg.redis.dsn)
+	if err != nil {
+		return nil, err
+	}
+	options.DB = cfg.redis.db
+	options.PoolSize = cfg.redis.poolSize
+
+	rdb := redis.NewClient(options)
+
+	// Test Redis connection
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		return nil, err
+	}
+
+	return rdb, nil
 }
