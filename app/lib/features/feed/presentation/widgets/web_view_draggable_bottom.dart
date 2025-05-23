@@ -1,6 +1,5 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';

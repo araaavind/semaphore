@@ -29,6 +29,7 @@ class _ProfilePageState extends State<ProfilePage>
   final double _expandedHeight = 180.0;
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -72,6 +73,94 @@ class _ProfilePageState extends State<ProfilePage>
         );
   }
 
+  // Build the right side drawer
+  Widget _buildEndDrawer(BuildContext context, User user) {
+    return Drawer(
+      elevation: 6.0,
+      backgroundColor: context.theme.colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(0)),
+      ),
+      shadowColor: Colors.black.withAlpha(160),
+      width: MediaQuery.of(context).size.width * 0.6,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            left: 24.0,
+            right: 24.0,
+            top: 24.0,
+            bottom: 16.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Wrap(
+                alignment: WrapAlignment.start,
+                crossAxisAlignment: WrapCrossAlignment.start,
+                children: [
+                  Text(
+                    'Settings',
+                    style: context.theme.textTheme.titleLarge?.copyWith(
+                      color: context.theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 36),
+                  Divider(color: context.theme.colorScheme.outline),
+                  const SizedBox(height: 36),
+                ],
+              ),
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthFailure) {
+                    showSnackbar(
+                      context,
+                      state.message,
+                      type: SnackbarType.failure,
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  if (state is AuthLoading) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16.0),
+                        child: Loader(strokeWidth: 2),
+                      ),
+                    );
+                  }
+                  return ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        UIConstants.inputBorderRadius,
+                      ),
+                    ),
+                    leading: const Icon(
+                      MingCute.exit_line,
+                      color: Colors.red,
+                    ),
+                    title: Text(
+                      'Logout',
+                      style: context.theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.red,
+                      ),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                    visualDensity: VisualDensity.compact,
+                    onTap: () {
+                      Navigator.of(context).pop(); // Close drawer
+                      _handleLogout(context, user);
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Widget> _buildActions(BuildContext context, User user) {
     return [
       IconButton(
@@ -80,56 +169,10 @@ class _ProfilePageState extends State<ProfilePage>
         },
         icon: const Icon(MingCute.bookmarks_line),
       ),
-      BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthFailure) {
-            showSnackbar(
-              context,
-              state.message,
-              type: SnackbarType.failure,
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is AuthLoading) {
-            return const SizedBox(
-              height: 48,
-              width: 48,
-              child: Center(
-                child: SizedBox(
-                  height: 14,
-                  width: 14,
-                  child: Loader(
-                    strokeWidth: 2,
-                  ),
-                ),
-              ),
-            );
-          }
-          return PopupMenuButton<String>(
-            icon: const Icon(MingCute.more_2_fill),
-            onSelected: (value) {
-              if (value == 'logout') {
-                _handleLogout(context, user);
-              }
-            },
-            offset: const Offset(-18, 52),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'logout',
-                child: Row(
-                  children: [
-                    const Icon(MingCute.exit_line, size: 20),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Logout',
-                      style: context.theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          );
+      IconButton(
+        icon: const Icon(MingCute.more_2_fill),
+        onPressed: () {
+          _scaffoldKey.currentState?.openEndDrawer();
         },
       ),
     ];
@@ -140,6 +183,10 @@ class _ProfilePageState extends State<ProfilePage>
     final user = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
 
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: _buildEndDrawer(context, user),
+      drawerScrimColor:
+          context.theme.colorScheme.surfaceContainer.withAlpha(180),
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
