@@ -79,6 +79,24 @@ class MingCute {
   /// bookmark remove line
   static const bookmark_remove_line = MingCuteIconData(0xea5d);
 
+  /// brush 2 fill
+  static const brush_2_fill = MingCuteIconData(0xeaa2);
+
+  /// brush 2 line
+  static const brush_2_line = MingCuteIconData(0xeaa3);
+
+  /// brush 3 fill
+  static const brush_3_fill = MingCuteIconData(0xeaa4);
+
+  /// brush 3 line
+  static const brush_3_line = MingCuteIconData(0xeaa5);
+
+  /// brush fill
+  static const brush_fill = MingCuteIconData(0xeaa6);
+
+  /// brush line
+  static const brush_line = MingCuteIconData(0xeaa7);
+
   /// check fill
   static const check_fill = MingCuteIconData(0xeb54);
 
@@ -287,6 +305,36 @@ class MingCute {
 
   /// more 2 line
   static const more_2_line = MingCuteIconData(0xf067);
+
+  /// paint 2 fill
+  static const paint_2_fill = MingCuteIconData(0xf0c6);
+
+  /// paint 2 line
+  static const paint_2_line = MingCuteIconData(0xf0c7);
+
+  /// paint brush ai fill
+  static const paint_brush_ai_fill = MingCuteIconData(0xf0c8);
+
+  /// paint brush ai line
+  static const paint_brush_ai_line = MingCuteIconData(0xf0c9);
+
+  /// paint brush fill
+  static const paint_brush_fill = MingCuteIconData(0xf0ca);
+
+  /// paint brush line
+  static const paint_brush_line = MingCuteIconData(0xf0cb);
+
+  /// paint fill
+  static const paint_fill = MingCuteIconData(0xf0cc);
+
+  /// paint line
+  static const paint_line = MingCuteIconData(0xf0cd);
+
+  /// palette fill
+  static const palette_fill = MingCuteIconData(0xf0d4);
+
+  /// palette line
+  static const palette_line = MingCuteIconData(0xf0d5);
 
   /// pencil fill Icon
   static const pencil_fill = MingCuteIconData(0xf10a);

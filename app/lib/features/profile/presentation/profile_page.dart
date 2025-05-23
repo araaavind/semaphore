@@ -8,6 +8,7 @@ import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/profile_feed_list.dart';
 import 'package:app/features/feed/presentation/widgets/profile_wall_list.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage>
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
       shadowColor: Colors.black.withAlpha(160),
-      width: MediaQuery.of(context).size.width * 0.6,
+      width: MediaQuery.of(context).size.width * 0.65,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(
@@ -99,14 +100,8 @@ class _ProfilePageState extends State<ProfilePage>
                 alignment: WrapAlignment.start,
                 crossAxisAlignment: WrapCrossAlignment.start,
                 children: [
-                  Text(
-                    'Settings',
-                    style: context.theme.textTheme.titleLarge?.copyWith(
-                      color: context.theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 36),
-                  Divider(color: context.theme.colorScheme.outline),
+                  const SizedBox(height: 16),
+                  _buildThemeSelector(context),
                   const SizedBox(height: 36),
                 ],
               ),
@@ -146,6 +141,7 @@ class _ProfilePageState extends State<ProfilePage>
                       ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                    horizontalTitleGap: 12,
                     visualDensity: VisualDensity.compact,
                     onTap: () {
                       Navigator.of(context).pop(); // Close drawer
@@ -336,6 +332,120 @@ class _ProfilePageState extends State<ProfilePage>
           children: const [
             ProfileFeedList(),
             ProfileWallList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Build the theme selector section
+  Widget _buildThemeSelector(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          children: [
+            const Icon(MingCute.paint_2_line),
+            const SizedBox(width: 12),
+            Text(
+              'Theme',
+              style: context.theme.textTheme.titleMedium?.copyWith(
+                color: context.theme.colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildThemeOption(
+                context,
+                'Light',
+                Icons.light_mode_outlined,
+                AdaptiveThemeMode.light,
+              ),
+              _buildThemeOption(
+                context,
+                'Dark',
+                Icons.dark_mode_outlined,
+                AdaptiveThemeMode.dark,
+              ),
+              _buildThemeOption(
+                context,
+                'System',
+                Icons.settings_suggest_outlined,
+                AdaptiveThemeMode.system,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Build each theme option tile
+  Widget _buildThemeOption(
+    BuildContext context,
+    String title,
+    IconData icon,
+    AdaptiveThemeMode themeMode,
+  ) {
+    final currentMode = AdaptiveTheme.of(context).mode;
+    final isSelected = currentMode == themeMode;
+
+    return InkWell(
+      onTap: () {
+        switch (themeMode) {
+          case AdaptiveThemeMode.light:
+            AdaptiveTheme.of(context).setLight();
+            break;
+          case AdaptiveThemeMode.dark:
+            AdaptiveTheme.of(context).setDark();
+            break;
+          case AdaptiveThemeMode.system:
+            AdaptiveTheme.of(context).setSystem();
+            break;
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? context.theme.colorScheme.primaryContainer
+              : context.theme.colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(UIConstants.inputBorderRadius),
+          border: Border.all(
+            color: isSelected
+                ? context.theme.colorScheme.primary.withOpacity(0.85)
+                : context.theme.colorScheme.outline.withOpacity(0.65),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected
+                  ? context.theme.colorScheme.onPrimaryContainer
+                  : context.theme.colorScheme.onSurface,
+            ),
+            // const SizedBox(width: 8),
+            // Text(
+            //   title,
+            //   style: context.theme.textTheme.bodyMedium?.copyWith(
+            //     color: isSelected
+            //         ? context.theme.colorScheme.onPrimaryContainer
+            //         : context.theme.colorScheme.onSurface,
+            //     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            //   ),
+            // ),
           ],
         ),
       ),
