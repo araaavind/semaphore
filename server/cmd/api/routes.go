@@ -57,6 +57,11 @@ func (app *application) routes() http.Handler {
 	router.NotFound = http.HandlerFunc(app.notFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
+	// Serve privacy policy html file
+	router.Handler(http.MethodGet, "/privacy-policy", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./public/html/privacy-policy.html")
+	}))
+
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheck)
 
