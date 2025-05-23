@@ -57,7 +57,10 @@ class _WallPageState extends State<WallPage> {
   void initState() {
     super.initState();
 
-    context.read<WallsBloc>().add(ListWallsRequested(refreshItems: true));
+    final wallState = context.read<WallsBloc>().state;
+    if (wallState.status == WallStatus.initial) {
+      context.read<WallsBloc>().add(ListWallsRequested(refreshItems: true));
+    }
 
     _scrollController.addListener(() {
       if (_scrollController.offset > kToolbarHeight / 2) {
