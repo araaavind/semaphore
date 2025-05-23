@@ -59,6 +59,7 @@ func (app *application) routes() http.Handler {
 
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
 	router.HandlerFunc(http.MethodGet, "/privacy-policy", app.privacyPolicy)
+	router.HandlerFunc(http.MethodGet, "/account-deletion", app.accountDeletion)
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheck)
 
 	router.HandlerFunc(http.MethodPost, "/v1/users", app.registerUser)
