@@ -45,7 +45,7 @@ class AppTheme {
         fontSize: 12,
       ),
       selectedItemColor: AppColorScheme.lightColorScheme.onSurface,
-      selectedIconTheme: const IconThemeData(size: 28.0),
+      selectedIconTheme: const IconThemeData(size: 26.5),
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 13,
@@ -104,7 +104,7 @@ class AppTheme {
         fontSize: 12,
       ),
       selectedItemColor: AppColorScheme.darkColorScheme.onSurface,
-      selectedIconTheme: const IconThemeData(size: 28.0),
+      selectedIconTheme: const IconThemeData(size: 26.5),
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 13,

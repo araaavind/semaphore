@@ -61,10 +61,10 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                       Flexible(
                         child: Text(
                           state.currentWall?.name ?? '',
-                          style: context.theme.textTheme.bodyLarge?.copyWith(
+                          style: context.theme.textTheme.bodySmall?.copyWith(
                             color: context.theme.colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18.0,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16.0,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.fade,

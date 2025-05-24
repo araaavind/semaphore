@@ -65,49 +65,52 @@ class HomePage extends StatelessWidget {
       },
       child: Scaffold(
         body: child,
-        bottomNavigationBar: Container(
-          height: 54,
-          decoration: (context.theme.colorScheme.brightness == Brightness.dark)
-              ? BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color: context.theme.colorScheme.outline,
-                      width: UIConstants.borderWidth,
-                    ),
+        bottomNavigationBar: SafeArea(
+          child: Container(
+            height: 54,
+            decoration:
+                (context.theme.colorScheme.brightness == Brightness.dark)
+                    ? BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: context.theme.colorScheme.outline,
+                            width: UIConstants.borderWidth,
+                          ),
+                        ),
+                      )
+                    : null,
+            child: Wrap(
+              children: [
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                   ),
-                )
-              : null,
-          child: Wrap(
-            children: [
-              Theme(
-                data: Theme.of(context).copyWith(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
+                  child: BottomNavigationBar(
+                    currentIndex: _calculateSelectedIndex(context),
+                    onTap: (value) => _onItemTapped(value, context),
+                    iconSize: 26.0,
+                    items: const [
+                      BottomNavigationBarItem(
+                        label: 'Home',
+                        icon: Icon(MingCute.home_4_line),
+                        activeIcon: Icon(MingCute.home_4_fill),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Search',
+                        icon: Icon(MingCute.search_line),
+                        activeIcon: Icon(MingCute.search_fill),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Profile',
+                        icon: Icon(MingCute.user_3_line),
+                        activeIcon: Icon(MingCute.user_3_fill),
+                      ),
+                    ],
+                  ),
                 ),
-                child: BottomNavigationBar(
-                  currentIndex: _calculateSelectedIndex(context),
-                  onTap: (value) => _onItemTapped(value, context),
-                  iconSize: 26.0,
-                  items: const [
-                    BottomNavigationBarItem(
-                      label: 'Home',
-                      icon: Icon(MingCute.home_4_line),
-                      activeIcon: Icon(MingCute.home_4_fill),
-                    ),
-                    BottomNavigationBarItem(
-                      label: 'Search',
-                      icon: Icon(MingCute.search_line),
-                      activeIcon: Icon(MingCute.search_fill),
-                    ),
-                    BottomNavigationBarItem(
-                      label: 'Profile',
-                      icon: Icon(MingCute.user_3_line),
-                      activeIcon: Icon(MingCute.user_3_fill),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
