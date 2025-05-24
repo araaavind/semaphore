@@ -58,6 +58,7 @@ func (app *application) routes() http.Handler {
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
+	router.HandlerFunc(http.MethodGet, "/user-agreement", app.userAgreement)
 	router.HandlerFunc(http.MethodGet, "/privacy-policy", app.privacyPolicy)
 	router.HandlerFunc(http.MethodGet, "/account-deletion", app.accountDeletion)
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheck)
