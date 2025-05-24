@@ -60,10 +60,6 @@ class ProfileWallList extends StatelessWidget {
           return;
         }
       },
-      buildWhen: (previous, current) {
-        return current.status == WallStatus.success &&
-            current.action == WallAction.list;
-      },
       builder: (context, state) {
         if (state.status == WallStatus.initial) {
           return const SizedBox.shrink();
