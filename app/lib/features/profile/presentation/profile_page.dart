@@ -320,7 +320,7 @@ class _ProfilePageState extends State<ProfilePage>
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: context.theme.colorScheme.onSurface,
                   dividerColor:
-                      context.theme.colorScheme.onSurface.withOpacity(0.1),
+                      context.theme.colorScheme.onSurface.withAlpha(25),
                 ),
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               ),
@@ -421,8 +421,8 @@ class _ProfilePageState extends State<ProfilePage>
           borderRadius: BorderRadius.circular(UIConstants.inputBorderRadius),
           border: Border.all(
             color: isSelected
-                ? context.theme.colorScheme.primary.withOpacity(0.85)
-                : context.theme.colorScheme.outline.withOpacity(0.65),
+                ? context.theme.colorScheme.primary.withAlpha(217)
+                : context.theme.colorScheme.outline.withAlpha(166),
             width: 1.5,
           ),
         ),

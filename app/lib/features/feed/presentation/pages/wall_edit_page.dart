@@ -225,8 +225,7 @@ class _WallEditPageState extends State<WallEditPage> {
                               colors: [
                                 context.theme.colorScheme.surface,
                                 context.theme.colorScheme.surface,
-                                context.theme.colorScheme.surface
-                                    .withOpacity(0),
+                                context.theme.colorScheme.surface.withAlpha(0),
                               ],
                             ),
                           ),
@@ -264,7 +263,7 @@ class _WallEditPageState extends State<WallEditPage> {
             border: Border(
               bottom: BorderSide(
                 width: 1,
-                color: context.theme.colorScheme.onSurface.withOpacity(0.75),
+                color: context.theme.colorScheme.onSurface.withAlpha(191),
               ),
             ),
           ),

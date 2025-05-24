@@ -144,8 +144,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                 _item.feed!.title,
                 style: context.theme.textTheme.bodySmall!.copyWith(
                     fontWeight: FontWeight.w300,
-                    color:
-                        context.theme.colorScheme.onSurface.withOpacity(0.7)),
+                    color: context.theme.colorScheme.onSurface.withAlpha(178)),
                 maxLines: 1,
                 overflow: TextOverflow.fade,
                 softWrap: false,
@@ -157,7 +156,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
             '  •  ',
             style: context.theme.textTheme.bodySmall!.copyWith(
                 fontWeight: FontWeight.w300,
-                color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
+                color: context.theme.colorScheme.onSurface.withAlpha(178)),
           ),
         Text(
           formatPublishedDate(
@@ -165,7 +164,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
           ),
           style: context.theme.textTheme.bodySmall!.copyWith(
               fontWeight: FontWeight.w300,
-              color: context.theme.colorScheme.onSurface.withOpacity(0.7)),
+              color: context.theme.colorScheme.onSurface.withAlpha(178)),
         ),
       ],
     );

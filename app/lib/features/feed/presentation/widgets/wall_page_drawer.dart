@@ -67,13 +67,13 @@ class WallPageDrawer extends StatelessWidget {
                 shape: Border(
                   bottom: BorderSide(
                     width: 0,
-                    color: context.theme.colorScheme.outline.withOpacity(0),
+                    color: context.theme.colorScheme.outline.withAlpha(0),
                   ),
                 ),
                 collapsedShape: Border(
                   bottom: BorderSide(
                     width: 0,
-                    color: context.theme.colorScheme.outline.withOpacity(0),
+                    color: context.theme.colorScheme.outline.withAlpha(0),
                   ),
                 ),
                 initiallyExpanded: true,
@@ -102,11 +102,11 @@ class WallPageDrawer extends StatelessWidget {
                 childrenPadding: const EdgeInsets.all(8.0),
                 shape: Border.all(
                   width: 0,
-                  color: context.theme.colorScheme.outline.withOpacity(0),
+                  color: context.theme.colorScheme.outline.withAlpha(0),
                 ),
                 collapsedShape: Border.all(
                   width: 0,
-                  color: context.theme.colorScheme.outline.withOpacity(0),
+                  color: context.theme.colorScheme.outline.withAlpha(0),
                 ),
                 initiallyExpanded: true,
                 title: Text(
@@ -179,8 +179,8 @@ class WallPageDrawer extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 0),
                       child: Icon(
                         MingCute.pin_fill,
-                        color: context.theme.colorScheme.onSurface
-                            .withOpacity(0.85),
+                        color:
+                            context.theme.colorScheme.onSurface.withAlpha(217),
                       ),
                     ),
                   )

@@ -154,7 +154,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(
-                    color: context.theme.colorScheme.onSurface.withOpacity(0.4),
+                    color: context.theme.colorScheme.onSurface.withAlpha(102),
                     strokeWidth: 2,
                   ),
                 ),
@@ -254,8 +254,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                         },
                         background: Container(
                           alignment: Alignment.centerRight,
-                          color:
-                              context.theme.colorScheme.error.withOpacity(0.5),
+                          color: context.theme.colorScheme.error.withAlpha(127),
                           child: Padding(
                             padding: const EdgeInsets.only(right: 16),
                             child: Text(

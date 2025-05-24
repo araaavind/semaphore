@@ -244,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Expanded(
             child: Divider(
-              color: context.theme.colorScheme.outline.withOpacity(0.8),
+              color: context.theme.colorScheme.outline.withAlpha(204),
               thickness: 1,
             ),
           ),
@@ -253,13 +253,13 @@ class _LoginPageState extends State<LoginPage> {
             child: Text(
               'OR',
               style: context.theme.textTheme.bodyMedium?.copyWith(
-                color: context.theme.colorScheme.onSurface.withOpacity(0.6),
+                color: context.theme.colorScheme.onSurface.withAlpha(153),
               ),
             ),
           ),
           Expanded(
             child: Divider(
-              color: context.theme.colorScheme.outline.withOpacity(0.8),
+              color: context.theme.colorScheme.outline.withAlpha(204),
               thickness: 1,
             ),
           ),
@@ -281,7 +281,7 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             width: 1.5,
-            color: context.theme.colorScheme.outline.withOpacity(0.5),
+            color: context.theme.colorScheme.outline.withAlpha(127),
           ),
         ),
         child: Row(

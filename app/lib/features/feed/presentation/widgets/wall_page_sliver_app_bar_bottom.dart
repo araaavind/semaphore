@@ -33,14 +33,13 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                     false, // this will hide Drawer hamburger icon
                 backgroundColor: context
                     .theme.colorScheme.surfaceContainerHighest
-                    .withOpacity(0.85),
+                    .withAlpha(217),
 
                 shape: RoundedRectangleBorder(
                   borderRadius: const BorderRadius.all(Radius.circular(24)),
                   side: BorderSide(
                     width: 0.8,
-                    color:
-                        context.theme.colorScheme.onSurface.withOpacity(0.08),
+                    color: context.theme.colorScheme.onSurface.withAlpha(20),
                   ),
                 ),
                 toolbarHeight: kToolbarHeight - 8,
@@ -107,8 +106,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                         );
                       },
                       icon: const Icon(MingCute.pencil_line),
-                      color:
-                          context.theme.colorScheme.onSurface.withOpacity(0.85),
+                      color: context.theme.colorScheme.onSurface.withAlpha(217),
                     ),
                   IconButton(
                     padding: const EdgeInsets.only(right: 12.0),
@@ -116,8 +114,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                       showWallFilterModal(context);
                     },
                     icon: const Icon(Icons.filter_list),
-                    color:
-                        context.theme.colorScheme.onSurface.withOpacity(0.85),
+                    color: context.theme.colorScheme.onSurface.withAlpha(217),
                   ),
                 ],
                 elevation: 0,

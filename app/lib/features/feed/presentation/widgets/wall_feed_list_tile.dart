@@ -105,8 +105,7 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
                       size: 18.0,
                       lineWidth: 3.0,
                       duration: const Duration(milliseconds: 400),
-                      color:
-                          context.theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: context.theme.colorScheme.onSurface.withAlpha(178),
                     ),
                   )
                 : Container(
@@ -118,8 +117,8 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
                         MingCute.minus_circle_line,
                         size: 24.0,
                         weight: 0.4,
-                        color: context.theme.colorScheme.onSurface
-                            .withOpacity(0.70),
+                        color:
+                            context.theme.colorScheme.onSurface.withAlpha(178),
                       ),
                       onPressed: () async {
                         if (context.read<NetworkCubit>().state.status ==

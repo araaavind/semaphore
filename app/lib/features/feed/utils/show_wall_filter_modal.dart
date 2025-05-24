@@ -167,26 +167,26 @@ Widget _buildOptionItem<T>({
       icon,
       color: isSelected
           ? context.theme.colorScheme.onPrimaryContainer
-          : context.theme.colorScheme.onSurface.withOpacity(0.6),
+          : context.theme.colorScheme.onSurface.withAlpha(153),
     ),
     title: Text(
       (option as dynamic).name,
       style: TextStyle(
           color: isSelected
               ? context.theme.colorScheme.onPrimaryContainer
-              : context.theme.colorScheme.onSurface.withOpacity(0.6)),
+              : context.theme.colorScheme.onSurface.withAlpha(153)),
     ),
     trailing: isDefault
         ? Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: context.theme.colorScheme.primary.withOpacity(0.15),
+              color: context.theme.colorScheme.primary.withAlpha(38),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               'Default',
               style: TextStyle(
-                color: context.theme.colorScheme.primary.withOpacity(0.8),
+                color: context.theme.colorScheme.primary.withAlpha(204),
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),

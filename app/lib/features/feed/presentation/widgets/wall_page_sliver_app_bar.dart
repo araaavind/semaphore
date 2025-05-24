@@ -26,8 +26,8 @@ class WallPageSliverAppBar extends StatelessWidget {
             colors: [
               context.theme.colorScheme.surfaceContainer,
               context.theme.brightness == Brightness.dark
-                  ? context.theme.colorScheme.surface.withOpacity(0)
-                  : context.theme.colorScheme.surface.withOpacity(0),
+                  ? context.theme.colorScheme.surface.withAlpha(0)
+                  : context.theme.colorScheme.surface.withAlpha(0),
             ],
           ),
         ),
@@ -62,8 +62,7 @@ class WallPageSliverAppBar extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor:
-            context.theme.colorScheme.surfaceContainer.withOpacity(0),
+        statusBarColor: context.theme.colorScheme.surfaceContainer.withAlpha(0),
         statusBarIconBrightness: context.theme.brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,

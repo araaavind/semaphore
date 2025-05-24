@@ -48,7 +48,7 @@ class _FeedViewPageState extends State<FeedViewPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         context.pop(!isFollowed);
       },
@@ -140,7 +140,7 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                 context.theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w300,
                               color: context.theme.colorScheme.onSurface
-                                  .withOpacity(0.8),
+                                  .withAlpha(204),
                             ),
                             enableInteractiveSelection: true,
                             maxLines: 1,

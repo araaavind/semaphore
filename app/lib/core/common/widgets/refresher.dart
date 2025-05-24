@@ -23,8 +23,8 @@ class Refresher extends StatelessWidget {
       onRefresh: onRefresh,
       header: header ??
           WaterDropMaterialHeader(
-            backgroundColor: context.theme.colorScheme.primary.withOpacity(0.8),
-            color: context.theme.colorScheme.onSurface.withOpacity(0.8),
+            backgroundColor: context.theme.colorScheme.primary.withAlpha(204),
+            color: context.theme.colorScheme.onSurface.withAlpha(204),
             distance: 50.0,
           ),
       child: child,

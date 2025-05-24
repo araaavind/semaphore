@@ -82,7 +82,7 @@ class SavedItemListTileMag extends StatelessWidget {
               style: context.theme.textTheme.bodySmall!.copyWith(
                 fontSize: 11,
                 fontWeight: FontWeight.w300,
-                color: context.theme.colorScheme.onSurface.withOpacity(0.7),
+                color: context.theme.colorScheme.onSurface.withAlpha(178),
                 height: 1.3,
               ),
               minFontSize: 11,
@@ -98,7 +98,7 @@ class SavedItemListTileMag extends StatelessWidget {
             style: context.theme.textTheme.bodySmall!.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w300,
-              color: context.theme.colorScheme.onSurface.withOpacity(0.7),
+              color: context.theme.colorScheme.onSurface.withAlpha(178),
               height: 1.3,
             ),
           ),
@@ -111,7 +111,7 @@ class SavedItemListTileMag extends StatelessWidget {
           style: context.theme.textTheme.bodySmall!.copyWith(
             fontSize: 12,
             fontWeight: FontWeight.w300,
-            color: context.theme.colorScheme.onSurface.withOpacity(0.7),
+            color: context.theme.colorScheme.onSurface.withAlpha(178),
             height: 1.3,
           ),
         ),

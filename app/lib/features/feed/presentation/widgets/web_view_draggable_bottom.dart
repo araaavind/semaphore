@@ -54,7 +54,7 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
             color: context.theme.colorScheme.surface,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha(25),
                 blurRadius: 3,
                 spreadRadius: 0,
                 offset: const Offset(0.5, 0.5),
@@ -253,8 +253,8 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
       icon: Icon(
         icon,
         size: iconSize ?? 26,
-        color: iconColor?.withOpacity(0.9) ??
-            context.theme.colorScheme.onSurface.withOpacity(0.9),
+        color: iconColor?.withAlpha(229) ??
+            context.theme.colorScheme.onSurface.withAlpha(229),
       ),
       padding: EdgeInsets.only(
         bottom: 14 + (extraPaddingBottom ?? 0),

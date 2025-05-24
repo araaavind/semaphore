@@ -147,8 +147,8 @@ class _WallListTile extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 0),
                       child: Icon(
                         MingCute.pin_2_fill,
-                        color: context.theme.colorScheme.onSurface
-                            .withOpacity(0.85),
+                        color:
+                            context.theme.colorScheme.onSurface.withAlpha(217),
                       ),
                     ),
                   )
@@ -165,7 +165,7 @@ class _WallListTile extends StatelessWidget {
                           child: Icon(
                             MingCute.pin_line,
                             color: context.theme.colorScheme.onSurface
-                                .withOpacity(0.85),
+                                .withAlpha(217),
                           ),
                         ),
                       ),
@@ -181,7 +181,7 @@ class _WallListTile extends StatelessWidget {
               },
               child: Icon(
                 MingCute.pencil_line,
-                color: context.theme.colorScheme.onSurface.withOpacity(0.85),
+                color: context.theme.colorScheme.onSurface.withAlpha(217),
               ),
             ),
         ],

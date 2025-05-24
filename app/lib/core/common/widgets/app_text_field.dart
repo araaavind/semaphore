@@ -51,7 +51,7 @@ class _AppTextFieldState<T> extends State<AppTextField<T>> {
         errorMaxLines: widget.errorMaxLines,
         hintText: widget.hintText,
         hintStyle: context.theme.textTheme.bodyMedium!.copyWith(
-          color: context.theme.colorScheme.onSurface.withOpacity(0.65),
+          color: context.theme.colorScheme.onSurface.withAlpha(166),
         ),
         focusedBorder: widget.validBorderColor != null
             ? context.theme.inputDecorationTheme.focusedBorder!.copyWith(
@@ -68,12 +68,12 @@ class _AppTextFieldState<T> extends State<AppTextField<T>> {
                         ? Icon(
                             MingCute.eye_line,
                             color: context.theme.colorScheme.onSurface
-                                .withOpacity(0.65),
+                                .withAlpha(166),
                           )
                         : Icon(
                             MingCute.eye_close_line,
                             color: context.theme.colorScheme.onSurface
-                                .withOpacity(0.30),
+                                .withAlpha(76),
                           ),
                     onPressed: _togglePasswordVisibility,
                   )

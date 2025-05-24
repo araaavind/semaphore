@@ -244,7 +244,7 @@ class _FeedTypeSelector extends StatelessWidget {
           ),
           labelPadding: const EdgeInsets.symmetric(horizontal: 2),
           selected: isSelected,
-          selectedColor: type.selectedColor(context).withOpacity(0.2),
+          selectedColor: type.selectedColor(context).withAlpha(51),
           onSelected: (selected) {
             if (selected) {
               onTypeChanged(type);
@@ -252,7 +252,7 @@ class _FeedTypeSelector extends StatelessWidget {
           },
           side: BorderSide(
             color: isSelected
-                ? type.selectedColor(context).withOpacity(0.6)
+                ? type.selectedColor(context).withAlpha(153)
                 : context.theme.colorScheme.outline,
           ),
           labelStyle: TextStyle(
