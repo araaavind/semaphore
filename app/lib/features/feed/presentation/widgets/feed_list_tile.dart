@@ -209,7 +209,7 @@ class _FeedListTileState extends State<FeedListTile> {
                         duration: const Duration(milliseconds: 300),
                         child: isFollowed
                             ? Icon(
-                                MingCute.check_circle_fill,
+                                MingCute.check_circle_line,
                                 size: 28.0,
                                 weight: 0.4,
                                 color: context.theme.colorScheme.primary,

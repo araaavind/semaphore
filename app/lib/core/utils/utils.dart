@@ -8,3 +8,4 @@ export 'stream_tranformers.dart';
 export 'string_casing_extension.dart';
 export 'rss/rss.dart';
 export 'validate_fields.dart';
+export 'url_launcher.dart';

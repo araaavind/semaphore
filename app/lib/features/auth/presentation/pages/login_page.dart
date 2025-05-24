@@ -4,6 +4,7 @@ import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -212,6 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                               const SizedBox(height: 35),
                               _buildGoogleSignInButton(context),
                               const SizedBox(height: 20),
+                              _buildPolicyLinks(context),
                             ],
                           ),
                         ],
@@ -299,6 +301,47 @@ class _LoginPageState extends State<LoginPage> {
                 fontWeight: FontWeight.w500,
                 color: context.theme.colorScheme.onSurface,
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPolicyLinks(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          text: 'By continuing, you agree to our ',
+          style: context.theme.textTheme.bodySmall?.copyWith(
+            color: context.theme.colorScheme.onSurface.withAlpha(160),
+            height: 1.5,
+          ),
+          children: [
+            TextSpan(
+              text: 'User Agreement',
+              style: context.theme.textTheme.bodySmall?.copyWith(
+                color: context.theme.colorScheme.secondary.withAlpha(180),
+                fontWeight: FontWeight.bold,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  launchUrlInBrowser(ServerConstants.userAgreementUrl);
+                },
+            ),
+            const TextSpan(text: ' and acknowledge that you understand the '),
+            TextSpan(
+              text: 'Privacy Policy',
+              style: context.theme.textTheme.bodySmall?.copyWith(
+                color: context.theme.colorScheme.secondary.withAlpha(180),
+                fontWeight: FontWeight.bold,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  launchUrlInBrowser(ServerConstants.privacyPolicyUrl);
+                },
             ),
           ],
         ),

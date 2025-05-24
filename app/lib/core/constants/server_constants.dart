@@ -1,6 +1,10 @@
 class ServerConstants {
   // static const String baseUrl = 'http://192.168.29.67:5000/v1';
   static const String baseUrl = 'https://smphr.aravindunnikrishnan.in/v1';
+  static const String baseWebUrl = 'https://smphr.aravindunnikrishnan.in';
+  static const String privacyPolicyUrl = '$baseWebUrl/privacy-policy';
+  static const String userAgreementUrl = '$baseWebUrl/user-agreement';
+  static const String accountDeletionUrl = '$baseWebUrl/account-deletion';
   static const String youtubeChannelEndpoint = '/youtube/channel';
   static String persistSessionKey =
       'sm-${Uri.parse(baseUrl).host.split(".").first}-session';
