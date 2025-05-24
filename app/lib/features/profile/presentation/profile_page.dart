@@ -89,7 +89,6 @@ class _ProfilePageState extends State<ProfilePage>
           padding: const EdgeInsets.only(
             left: 24.0,
             right: 24.0,
-            top: 24.0,
             bottom: 16.0,
           ),
           child: Column(
@@ -100,9 +99,12 @@ class _ProfilePageState extends State<ProfilePage>
                 alignment: WrapAlignment.start,
                 crossAxisAlignment: WrapCrossAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
                   _buildThemeSelector(context),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 100),
+                  Divider(
+                    color: context.theme.colorScheme.outline.withAlpha(180),
+                  ),
+                  _buildAboutTile(context),
                 ],
               ),
               BlocConsumer<AuthBloc, AuthState>(
@@ -136,9 +138,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                     title: Text(
                       'Logout',
-                      style: context.theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.red,
-                      ),
+                      style: context.theme.textTheme.titleMedium,
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                     horizontalTitleGap: 12,
@@ -340,51 +340,51 @@ class _ProfilePageState extends State<ProfilePage>
 
   // Build the theme selector section
   Widget _buildThemeSelector(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          children: [
-            const Icon(MingCute.paint_2_line),
-            const SizedBox(width: 12),
-            Text(
-              'Theme',
-              style: context.theme.textTheme.titleMedium?.copyWith(
-                color: context.theme.colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Center(
-          child: Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            spacing: 8,
-            runSpacing: 8,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
             children: [
-              _buildThemeOption(
-                context,
-                'Light',
-                Icons.light_mode_outlined,
-                AdaptiveThemeMode.light,
-              ),
-              _buildThemeOption(
-                context,
-                'Dark',
-                Icons.dark_mode_outlined,
-                AdaptiveThemeMode.dark,
-              ),
-              _buildThemeOption(
-                context,
-                'System',
-                Icons.settings_suggest_outlined,
-                AdaptiveThemeMode.system,
+              const Icon(MingCute.paint_2_line, color: Colors.pink),
+              const SizedBox(width: 12),
+              Text(
+                'Theme',
+                style: context.theme.textTheme.titleMedium,
               ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 24),
+          Center(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildThemeOption(
+                  context,
+                  'Light',
+                  Icons.light_mode_outlined,
+                  AdaptiveThemeMode.light,
+                ),
+                _buildThemeOption(
+                  context,
+                  'Dark',
+                  Icons.dark_mode_outlined,
+                  AdaptiveThemeMode.dark,
+                ),
+                _buildThemeOption(
+                  context,
+                  'System',
+                  Icons.settings_suggest_outlined,
+                  AdaptiveThemeMode.system,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -451,6 +451,34 @@ class _ProfilePageState extends State<ProfilePage>
       ),
     );
   }
+}
+
+Widget _buildAboutTile(BuildContext context) {
+  return InkWell(
+    onTap: () {
+      Navigator.of(context).pop(); // Close drawer first
+      context.pushNamed(
+          RouteConstants.aboutPageName); // Navigate to the about page
+    },
+    borderRadius: BorderRadius.circular(UIConstants.inputBorderRadius),
+    child: Padding(
+      padding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Icon(MingCute.heart_line,
+              color: context.theme.brightness == Brightness.dark
+                  ? Colors.amber
+                  : Colors.amber.shade700),
+          const SizedBox(width: 12),
+          Text(
+            'About Semaphore',
+            style: context.theme.textTheme.titleMedium,
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // Custom delegate for persistent tab bar

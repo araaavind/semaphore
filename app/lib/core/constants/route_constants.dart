@@ -17,6 +17,8 @@ class RouteConstants {
   static const signupPageName = 'signup';
   static const profilePagePath = '/profile';
   static const profilePageName = 'profile';
+  static const aboutPagePath = '/profile/about';
+  static const aboutPageName = 'about';
   static const activationPagePath = '/activate';
   static const activationPageName = 'activate';
   static const resetPasswordPagePath = '/reset-password';

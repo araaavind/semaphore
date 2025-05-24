@@ -54,6 +54,7 @@ import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smphr_sdk/smphr_sdk.dart';
 import 'package:app/core/utils/user_preferences_service.dart';

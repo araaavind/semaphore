@@ -21,6 +21,7 @@ import 'package:app/features/feed/presentation/pages/saved_items_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
 import 'package:app/features/feed/presentation/pages/web_view.dart';
 import 'package:app/features/home/presentation/home_page.dart';
+import 'package:app/features/profile/presentation/about_page.dart';
 import 'package:app/features/profile/presentation/profile_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_edit_page.dart';
@@ -119,6 +120,7 @@ List<RouteBase> _buildRoutes() {
         _buildCreateWallRoute(),
         _buildWallEditRoute(),
         _buildSavedItemsRoute(),
+        _buildAboutRoute(),
       ],
     ),
     _buildLoginRoute(),
@@ -317,5 +319,13 @@ GoRoute _buildSavedItemsRoute() {
     path: RouteConstants.savedItemsPagePath,
     name: RouteConstants.savedItemsPageName,
     builder: (context, state) => const SavedItemsPage(),
+  );
+}
+
+GoRoute _buildAboutRoute() {
+  return GoRoute(
+    path: RouteConstants.aboutPagePath,
+    name: RouteConstants.aboutPageName,
+    builder: (context, state) => const AboutPage(),
   );
 }

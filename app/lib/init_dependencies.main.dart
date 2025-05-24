@@ -12,6 +12,10 @@ Future<void> initDependencies() async {
   // Core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => NetworkCubit());
+
+  serviceLocator.registerSingletonAsync<PackageInfo>(
+    () => PackageInfo.fromPlatform(),
+  );
 }
 
 void _setConfig() {
