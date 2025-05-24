@@ -1,5 +1,3 @@
-library semaphore;
-
 export 'src/semaphore.dart';
 export 'src/semaphore_client.dart';
 export 'src/local_storage.dart';

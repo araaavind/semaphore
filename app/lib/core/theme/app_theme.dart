@@ -61,7 +61,7 @@ class AppTheme {
       errorBorder: _border(color: AppColorScheme.lightColorScheme.error),
     ),
     textTheme: AppTextTheme.lightTextTheme,
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: AppColorScheme.lightColorScheme.surfaceContainerLow,
       barrierColor:
           AppColorScheme.lightColorScheme.surfaceContainerLow.withAlpha(160),
@@ -120,7 +120,7 @@ class AppTheme {
       errorBorder: _border(color: AppColorScheme.darkColorScheme.error),
     ),
     textTheme: AppTextTheme.darkTextTheme,
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: AppColorScheme.darkColorScheme.surfaceContainerLow,
       barrierColor:
           AppColorScheme.darkColorScheme.surfaceContainerLow.withAlpha(160),

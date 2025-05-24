@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "923444687614",
+    "project_id": "semaphore-291fe",
+    "storage_bucket": "semaphore-291fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923444687614:android:33c8da03a35874de2eebaf",
+        "android_client_info": {
+          "package_name": "io.smphr.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyfdaEw-K3PFo8U8Wgw21QAjU86BAGwoU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
