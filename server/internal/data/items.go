@@ -433,6 +433,10 @@ func (m ItemModel) FindByScore(itemScores []*ItemScore, userID int64, cursorFilt
 	// itemScores is already sorted by score in descending order
 	// We use the cursor to find the start and end indices of the items to fetch
 
+	if len(itemScores) == 0 {
+		return []*Item{}, getEmptyCursorMetadata(cursorFilters.PageSize), nil
+	}
+
 	start := 0
 	var cursor sortByScoreCursor
 	if cursorFilters.After != "" {
