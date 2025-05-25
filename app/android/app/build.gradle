@@ -71,6 +71,12 @@ android {
         storeFile file('smphrprofilekey.jks')
         storePassword 'android'
       }
+      release {
+        keyAlias 'androiduploadkey'
+        keyPassword 'android'
+        storeFile file('smphruploadkey.jks')
+        storePassword 'android'
+      }
     }
 
     buildTypes {
@@ -81,6 +87,9 @@ android {
         }
         profile {
           signingConfig = signingConfigs.profile
+        }
+        release {
+          signingConfig = signingConfigs.release
         }
     }
 }
