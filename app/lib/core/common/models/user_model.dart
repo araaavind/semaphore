@@ -11,6 +11,7 @@ class UserModel extends User {
     super.fullName,
     super.lastLoginAt,
     super.profileImageURL,
+    super.isAdmin,
   });
 
   @override
@@ -22,6 +23,7 @@ class UserModel extends User {
     DateTime? lastLoginAt,
     bool? isActivated,
     String? profileImageURL,
+    bool? isAdmin,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -31,6 +33,7 @@ class UserModel extends User {
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       isActivated: isActivated ?? this.isActivated,
       profileImageURL: profileImageURL ?? this.profileImageURL,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 
@@ -43,6 +46,7 @@ class UserModel extends User {
       'last_login_at': lastLoginAt?.toIso8601String(),
       'activated': isActivated,
       'profile_image_url': profileImageURL,
+      'is_admin': isAdmin,
     };
   }
 
@@ -57,6 +61,7 @@ class UserModel extends User {
           : null,
       isActivated: map['activated'] != null ? map['activated'] as bool : false,
       profileImageURL: map['profile_image_url'] ?? '',
+      isAdmin: map['is_admin'] != null ? map['is_admin'] as bool : null,
     );
   }
 

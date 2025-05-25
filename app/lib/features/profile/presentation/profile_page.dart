@@ -4,6 +4,7 @@ import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/profile_feed_list.dart';
@@ -193,12 +194,28 @@ class _ProfilePageState extends State<ProfilePage>
               expandedHeight: _expandedHeight + (isActivated ? 0 : 36),
               elevation: 0,
               title: _isCollapsed
-                  ? Text(
-                      user.fullName?.split(' ').first ?? user.username,
-                      style: context.theme.textTheme.titleMedium?.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          user.fullName?.split(' ').first ?? user.username,
+                          style: context.theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (user.isAdmin == true)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Icon(
+                              Icons.shield_outlined,
+                              color: context.theme.brightness == Brightness.dark
+                                  ? Colors.green
+                                  : Colors.green.shade600,
+                              size: 18,
+                            ),
+                          ),
+                      ],
                     )
                   : null,
               actions: _buildActions(context, user),
@@ -247,16 +264,59 @@ class _ProfilePageState extends State<ProfilePage>
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    AutoSizeText(
-                                      user.fullName ?? 'User',
-                                      style: context.theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w700,
-                                        height: 1.2,
-                                      ),
-                                      minFontSize: 16,
-                                      maxLines: 2,
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          child: AutoSizeText(
+                                            user.fullName ?? 'User',
+                                            style: context
+                                                .theme.textTheme.titleMedium
+                                                ?.copyWith(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w700,
+                                              height: 1.2,
+                                            ),
+                                            minFontSize: 16,
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                        if (user.isAdmin == true)
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: context
+                                                  .theme.colorScheme.onSurface
+                                                  .withAlpha(20),
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                UIConstants.inputBorderRadius,
+                                              ),
+                                              border: Border.all(
+                                                color:
+                                                    context.theme.brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.green
+                                                        : Colors.green.shade600,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              'Admin',
+                                              style: context
+                                                  .theme.textTheme.titleSmall
+                                                  ?.copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                color:
+                                                    context.theme.brightness ==
+                                                            Brightness.dark
+                                                        ? Colors.green
+                                                        : Colors.green.shade600,
+                                              ),
+                                            ),
+                                          )
+                                      ],
                                     ),
                                     const SizedBox(height: 4),
                                     Text(

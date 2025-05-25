@@ -8,6 +8,7 @@ class User extends Equatable {
   final DateTime? lastLoginAt;
   final bool isActivated;
   final String? profileImageURL;
+  final bool? isAdmin;
 
   const User({
     required this.id,
@@ -17,6 +18,7 @@ class User extends Equatable {
     this.fullName,
     this.lastLoginAt,
     this.profileImageURL,
+    this.isAdmin,
   });
 
   User copyWith({
@@ -27,6 +29,7 @@ class User extends Equatable {
     DateTime? lastLoginAt,
     bool? isActivated,
     String? profileImageURL,
+    bool? isAdmin,
   }) {
     return User(
       id: id ?? this.id,
@@ -36,6 +39,7 @@ class User extends Equatable {
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       isActivated: isActivated ?? this.isActivated,
       profileImageURL: profileImageURL ?? this.profileImageURL,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 
@@ -48,5 +52,6 @@ class User extends Equatable {
         lastLoginAt,
         isActivated,
         profileImageURL,
+        isAdmin,
       ];
 }

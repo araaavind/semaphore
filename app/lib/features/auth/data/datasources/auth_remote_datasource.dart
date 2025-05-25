@@ -124,6 +124,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
           lastLoginAt: response.user!.lastLoginAt,
           isActivated: response.user!.isActivated,
           profileImageURL: response.user!.profileImageURL,
+          isAdmin: response.user!.isAdmin,
         ),
         isNewUser: response.isNewUser,
       );
@@ -142,6 +143,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
               lastLoginAt: currentSession!.user!.lastLoginAt,
               isActivated: currentSession!.user!.isActivated,
               profileImageURL: currentSession!.user!.profileImageURL,
+              isAdmin: currentSession!.user!.isAdmin,
             ),
             isNewUser: false,
           );
@@ -178,6 +180,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
         lastLoginAt: response.user!.lastLoginAt,
         isActivated: response.user!.isActivated,
         profileImageURL: response.user!.profileImageURL,
+        isAdmin: response.user!.isAdmin,
       );
     } on sp.SemaphoreException catch (e) {
       // Return local session and keep user logged if connection fails
@@ -193,6 +196,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
             lastLoginAt: currentSession!.user!.lastLoginAt,
             isActivated: currentSession!.user!.isActivated,
             profileImageURL: currentSession!.user!.profileImageURL,
+            isAdmin: currentSession!.user!.isAdmin,
           );
         }
       }

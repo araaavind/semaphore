@@ -15,9 +15,11 @@ class AuthResponse {
   });
 
   factory AuthResponse.fromMap(Map<String, dynamic> map) {
-    final user = map['user'] != null
+    User? user = map['user'] != null
         ? User.fromMap(map['user'] as Map<String, dynamic>)
         : null;
+    final isAdmin = map['is_admin'] as bool? ?? null;
+    user = user?.copyWith(isAdmin: isAdmin);
     final session = Session.fromResponse(map);
     return AuthResponse(
       session: session,
