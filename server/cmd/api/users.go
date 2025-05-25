@@ -59,7 +59,7 @@ func (app *application) registerUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.models.Permissions.AddForUser(user.ID, "feeds:follow")
+	err = app.models.Permissions.AddForUser(user.ID, data.PermissionFeedsFollow)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -140,7 +140,7 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = app.models.Permissions.AddForUser(user.ID, "feeds:write")
+	err = app.models.Permissions.AddForUser(user.ID, data.PermissionFeedsWrite)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
@@ -156,9 +156,9 @@ func (app *application) activateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getCurrentUser(w http.ResponseWriter, r *http.Request) {
-	user := app.contextGetSession(r).User
+	session := app.contextGetSession(r)
 
-	err := app.writeJSON(w, http.StatusOK, envelope{"user": user}, nil)
+	err := app.writeJSON(w, http.StatusOK, envelope{"user": session.User, "is_admin": session.IsAdmin}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

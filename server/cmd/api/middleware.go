@@ -157,6 +157,15 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 			return
 		}
 
+		permissions, err := app.models.Permissions.GetAllForUser(session.User.ID)
+		if err != nil {
+			app.serverErrorResponse(w, r, err)
+			return
+		}
+
+		session.Permissions = permissions
+		session.IsAdmin = permissions.Includes(data.PermissionAllAdmin)
+
 		r = app.contextSetSession(r, session)
 		next.ServeHTTP(w, r)
 	})
@@ -189,13 +198,7 @@ func (app *application) requireActivation(next http.Handler) http.Handler {
 
 func (app *application) requirePermission(code string, next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session := app.contextGetSession(r)
-
-		permissions, err := app.models.Permissions.GetAllForUser(session.User.ID)
-		if err != nil {
-			app.serverErrorResponse(w, r, err)
-			return
-		}
+		permissions := app.contextGetSession(r).Permissions
 
 		if !permissions.Includes(code) {
 			app.notPermittedResponse(w, r)

@@ -106,10 +106,19 @@ func (app *application) createAuthenticationToken(w http.ResponseWriter, r *http
 		return
 	}
 
+	permissions, err := app.models.Permissions.GetAllForUser(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+	isAdmin := permissions.Includes(data.PermissionAllAdmin)
+
 	err = app.writeJSON(w, http.StatusCreated, envelope{
 		"authentication_token": authToken,
 		"refresh_token":        refreshToken,
 		"user":                 user,
+		"permissions":          permissions,
+		"is_admin":             isAdmin,
 	}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
@@ -442,7 +451,7 @@ func (app *application) createGoogleAuthenticationToken(w http.ResponseWriter, r
 			}
 
 			// Add necessary permissions for the new user
-			err = app.models.Permissions.AddForUser(user.ID, "feeds:follow")
+			err = app.models.Permissions.AddForUser(user.ID, data.PermissionFeedsFollow, data.PermissionFeedsWrite)
 			if err != nil {
 				app.serverErrorResponse(w, r, err)
 				return
@@ -493,12 +502,20 @@ func (app *application) createGoogleAuthenticationToken(w http.ResponseWriter, r
 		return
 	}
 
+	permissions, err := app.models.Permissions.GetAllForUser(user.ID)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+	isAdmin := permissions.Includes(data.PermissionAllAdmin)
+
 	// Return the tokens and user info
 	err = app.writeJSON(w, http.StatusCreated, envelope{
 		"authentication_token": authToken,
 		"refresh_token":        refreshToken,
 		"user":                 user,
 		"is_new_user":          isNewUser,
+		"is_admin":             isAdmin,
 	}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)

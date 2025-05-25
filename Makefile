@@ -80,13 +80,17 @@ vendor:
 # BUILD
 # ==================================================================================== #
 
-## build/api: build the cmd/api application for local machine and linux/amd64
-.PHONY: build/api
-build/api:
+## build/server: build the cmd/server application for local machine and linux/amd64
+.PHONY: build/server
+build/server:
 	@echo 'Building cmd/api for local machine...'
 	cd server && go build -ldflags='-s -w' -o=./bin/local/api ./cmd/api
 	@echo 'Building cmd/api for deployment in linux/amd64...'
 	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/api ./cmd/api
+	@echo 'Building cmd/tools/makeadmin for local machine...'
+	cd server && go build -ldflags='-s -w' -o=./bin/local/tools/makeadmin ./cmd/tools/makeadmin
+	@echo 'Building cmd/tools/makeadmin for deployment in linux/amd64...'
+	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/tools/makeadmin ./cmd/tools/makeadmin
 
 # ==================================================================================== #
 # PRODUCTION
@@ -112,6 +116,7 @@ production/deploy/api:
         fi
 	@echo 'Deploying api server on production...'
 	rsync -P ./server/bin/linux_amd64/api smphr@${production_host_ip}:~
+	rsync -rP --delete ./server/bin/linux_amd64/tools smphr@${production_host_ip}:~
 	rsync -rP --delete ./server/migrations smphr@${production_host_ip}:~
 	rsync -P ./server/remote/production/api.service smphr@${production_host_ip}:~
 	rsync -P ./server/remote/production/Caddyfile smphr@${production_host_ip}:~

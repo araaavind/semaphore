@@ -11,8 +11,10 @@ import (
 )
 
 type Session struct {
-	User  *User
-	Token *Token
+	IsAdmin     bool
+	User        *User
+	Token       *Token
+	Permissions Permissions
 }
 
 type SessionModel struct {

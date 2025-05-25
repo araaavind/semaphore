@@ -4,6 +4,7 @@ import (
 	"expvar"
 	"net/http"
 
+	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 )
@@ -95,8 +96,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/me/items/liked", authenticated.ThenFunc(app.listLikedItemsHandler))
 
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
-	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.followFeed)))
-	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission("feeds:follow", app.unfollowFeed)))
+	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission(data.PermissionFeedsFollow, app.followFeed)))
+	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission(data.PermissionFeedsFollow, app.unfollowFeed)))
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/items", authenticated.ThenFunc(app.listItemsForFeed))
 
 	router.Handler(http.MethodPut, "/v1/walls/:wall_id/feeds/:feed_id", authenticated.ThenFunc(app.addFeedToWall))
@@ -118,7 +119,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodPut, "/v1/walls/:wall_id/pin", activated.ThenFunc(app.pinWall))
 	router.Handler(http.MethodPut, "/v1/walls/:wall_id/unpin", activated.ThenFunc(app.unpinWall))
 
-	router.Handler(http.MethodPost, "/v1/feeds", activated.ThenFunc(app.requirePermission("feeds:write", app.addAndFollowFeed)))
+	router.Handler(http.MethodPost, "/v1/feeds", activated.ThenFunc(app.requirePermission(data.PermissionFeedsWrite, app.addAndFollowFeed)))
 
 	standard := alice.New(app.metrics, app.recoverPanic, app.enableCORS, app.rateLimit, app.authenticate)
 	return standard.Then(router)

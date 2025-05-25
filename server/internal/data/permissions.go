@@ -2,21 +2,29 @@ package data
 
 import (
 	"context"
+	"errors"
+	"strconv"
+	"strings"
 	"time"
 
+	"slices"
+
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+const (
+	PermissionAllAdmin    = "all:admin" // permission to administerate all resources
+	PermissionFeedsRead   = "feeds:read"
+	PermissionFeedsWrite  = "feeds:write"
+	PermissionFeedsFollow = "feeds:follow"
 )
 
 type Permissions []string
 
 func (p Permissions) Includes(code string) bool {
-	for i := range p {
-		if code == p[i] {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(p, code)
 }
 
 type PermissionModel struct {
@@ -32,7 +40,56 @@ func (m PermissionModel) AddForUser(userID int64, codes ...string) error {
 	defer cancel()
 
 	_, err := m.DB.Exec(ctx, query, userID, codes)
-	return err
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == strconv.Itoa(23505) && strings.Contains(pgErr.ConstraintName, "user_permissions_pkey") {
+				return ErrUniqueConstraint
+			}
+		}
+		return err
+	}
+	return nil
+}
+
+func (m PermissionModel) RemoveForUser(userID int64, permissions ...string) error {
+	query := `
+		DELETE FROM user_permissions
+		WHERE user_id = $1 AND permission_id = ANY(
+			SELECT id FROM permissions WHERE code = ANY($2)
+		)`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	result, err := m.DB.Exec(ctx, query, userID, permissions)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected := result.RowsAffected()
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
+	return nil
+}
+
+func (m PermissionModel) CreateIfNotExists(codes ...string) error {
+	query := `
+		INSERT INTO permissions (code)
+		SELECT new_code FROM UNNEST($1::text[]) AS t(new_code)
+		ON CONFLICT DO NOTHING`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query, codes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (m PermissionModel) GetAllForUser(userID int64) (Permissions, error) {
