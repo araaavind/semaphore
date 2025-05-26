@@ -4,11 +4,14 @@ import 'package:app/features/feed/domain/entities/followers_list.dart';
 import 'package:app/features/feed/domain/entities/item_list.dart';
 import 'package:app/features/feed/domain/entities/liked_item_list.dart';
 import 'package:app/features/feed/domain/entities/saved_item_list.dart';
+import 'package:app/features/feed/domain/entities/topic.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class FeedRepository {
+  Future<Either<Failure, List<Topic>>> listTopics();
+
   Future<Either<Failure, FeedList>> listAllFeeds({
     String? searchKey,
     String? searchValue,

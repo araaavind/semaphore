@@ -248,7 +248,6 @@ class __WallPageItemsState extends State<_WallPageItems> {
           _shimmerLoaderType = ShimmerLoaderType.text;
           break;
         case WallViewOption.magazine:
-        default:
           _shimmerLoaderType = ShimmerLoaderType.magazine;
           break;
       }
@@ -342,11 +341,6 @@ class __WallPageItemsState extends State<_WallPageItems> {
                     );
                   case WallViewOption.text:
                     return ItemListTileText(
-                      item: item,
-                      pagingController: _pagingController,
-                    );
-                  default:
-                    return ItemListTileMag(
                       item: item,
                       pagingController: _pagingController,
                     );

@@ -172,6 +172,11 @@ void _initFeed() {
     )
     // Register usecases
     ..registerFactory(
+      () => ListTopics(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
       () => ListFeeds(
         serviceLocator(),
       ),
@@ -301,6 +306,11 @@ void _initFeed() {
       () => ScrollToTopCubit(),
     )
     // Register blocs
+    ..registerFactory(
+      () => TopicsBloc(
+        listTopics: serviceLocator(),
+      ),
+    )
     ..registerFactory(
       () => SearchFeedBloc(
         checkUserFollowsFeeds: serviceLocator(),

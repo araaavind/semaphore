@@ -7,6 +7,7 @@ import 'package:app/features/feed/data/models/followers_list_model.dart';
 import 'package:app/features/feed/data/models/item_list_model.dart';
 import 'package:app/features/feed/data/models/liked_item_list_model.dart';
 import 'package:app/features/feed/data/models/saved_item_list_model.dart';
+import 'package:app/features/feed/data/models/topic_model.dart';
 import 'package:app/features/feed/data/models/wall_model.dart';
 import 'package:app/features/feed/domain/repositories/feed_repository.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
@@ -16,6 +17,16 @@ class FeedRepositoryImpl implements FeedRepository {
   FeedRemoteDatasource feedRemoteDatasource;
 
   FeedRepositoryImpl(this.feedRemoteDatasource);
+
+  @override
+  Future<Either<Failure, List<TopicModel>>> listTopics() async {
+    try {
+      final topicsList = await feedRemoteDatasource.listTopics();
+      return right(topicsList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 
   @override
   Future<Either<Failure, FeedListModel>> listAllFeeds({

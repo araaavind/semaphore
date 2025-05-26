@@ -35,6 +35,7 @@ import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds_for_current_user.dart';
 import 'package:app/features/feed/domain/usecases/list_followers_of_feed.dart';
 import 'package:app/features/feed/domain/usecases/list_items.dart';
+import 'package:app/features/feed/domain/usecases/list_topics.dart';
 import 'package:app/features/feed/domain/usecases/list_walls.dart';
 import 'package:app/features/feed/domain/usecases/pin_wall.dart';
 import 'package:app/features/feed/domain/usecases/remove_feed_from_wall.dart';
@@ -49,6 +50,7 @@ import 'package:app/features/feed/presentation/bloc/list_followers/list_follower
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
+import 'package:app/features/feed/presentation/bloc/topics/topics_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';

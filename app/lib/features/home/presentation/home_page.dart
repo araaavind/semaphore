@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
         }
         break;
       case 1:
-        context.goNamed(RouteConstants.searchFeedsPageName);
+        context.goNamed(RouteConstants.explorePageName);
         break;
       case 2:
         context.goNamed(RouteConstants.profilePageName);
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
     if (routeName == RouteConstants.wallPageName) {
       return 0;
     }
-    if (routeName == RouteConstants.searchFeedsPageName) {
+    if (routeName == RouteConstants.explorePageName) {
       return 1;
     }
     if (routeName == RouteConstants.profilePageName) {

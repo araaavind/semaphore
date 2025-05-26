@@ -5,12 +5,15 @@ import 'package:app/features/feed/data/models/followers_list_model.dart';
 import 'package:app/features/feed/data/models/item_list_model.dart';
 import 'package:app/features/feed/data/models/liked_item_list_model.dart';
 import 'package:app/features/feed/data/models/saved_item_list_model.dart';
+import 'package:app/features/feed/data/models/topic_model.dart';
 import 'package:app/features/feed/data/models/wall_model.dart';
 import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smphr_sdk/smphr_sdk.dart' as sp;
 
 abstract interface class FeedRemoteDatasource {
+  Future<List<TopicModel>> listTopics();
+
   Future<FeedListModel> listAllFeeds({
     String? searchKey,
     String? searchValue,
@@ -107,6 +110,25 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   sp.SemaphoreClient semaphoreClient;
 
   FeedRemoteDatasourceImpl(this.semaphoreClient);
+
+  @override
+  Future<List<TopicModel>> listTopics() async {
+    try {
+      final response = await semaphoreClient.dio.get('/topics');
+      return (response.data['topics'] as List)
+          .map((topic) => TopicModel.fromMap(topic))
+          .toList();
+    } on sp.SemaphoreException catch (e) {
+      throw ServerException(e.message!);
+    } on sp.InternalException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Unknown exception $e.toString()');
+      }
+      throw const ServerException(TextConstants.internalServerErrorMessage);
+    }
+  }
 
   @override
   Future<FeedListModel> listAllFeeds({

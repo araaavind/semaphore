@@ -6,3 +6,4 @@ export 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.d
 export 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
 export 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 export 'package:app/features/feed/presentation/bloc/list_followers/list_followers_bloc.dart';
+export 'package:app/features/feed/presentation/bloc/topics/topics_bloc.dart';
