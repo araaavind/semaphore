@@ -382,7 +382,7 @@ class _ProfilePageState extends State<ProfilePage>
                   dividerColor:
                       context.theme.colorScheme.onSurface.withAlpha(25),
                 ),
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                backgroundColor: context.theme.colorScheme.surface,
               ),
             ),
           ];
@@ -564,6 +564,7 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(_SliverTabBarDelegate oldDelegate) {
-    return false;
+    return backgroundColor != oldDelegate.backgroundColor ||
+        _tabBar != oldDelegate._tabBar;
   }
 }
