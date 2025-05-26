@@ -41,6 +41,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Title    string
 		FeedLink string
+		TopicID  int64
 		data.Filters
 	}
 
@@ -50,6 +51,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 
 	input.Title = app.readString(qs, "title", "")
 	input.FeedLink = app.readString(qs, "feed_link", "")
+	input.TopicID = int64(app.readInt(qs, "topic_id", -1, v))
 	input.Page = app.readInt(qs, "page", 1, v)
 	input.PageSize = app.readInt(qs, "page_size", 16, v)
 	input.Sort = app.readString(qs, "sort", "pub_date")
@@ -60,7 +62,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feeds, metadata, err := app.models.Feeds.FindAll(input.Title, input.FeedLink, input.Filters)
+	feeds, metadata, err := app.models.Feeds.FindAll(input.Title, input.FeedLink, input.TopicID, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

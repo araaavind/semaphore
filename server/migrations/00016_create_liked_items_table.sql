@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS liked_items (
     PRIMARY KEY (user_id, item_id)
 );
 
-CREATE INDEX liked_items_user_id_idx ON liked_items (user_id);
-CREATE INDEX liked_items_item_id_idx ON liked_items (item_id);
+CREATE INDEX IF NOT EXISTS liked_items_user_id_idx ON liked_items (user_id);
+CREATE INDEX IF NOT EXISTS liked_items_item_id_idx ON liked_items (item_id);
 -- +goose StatementEnd
 
 -- +goose Down

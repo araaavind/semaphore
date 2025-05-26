@@ -1,0 +1,2005 @@
+[
+  {
+    "code": "advertising",
+    "name": "Advertising",
+    "featured": true,
+    "keywords": [
+      "Marketing",
+      "Advertising",
+      "Branding",
+      "Ad",
+      "Sales",
+      "Digital Advertising",
+      "Digital Marketing"
+    ],
+    "sub_topics": ["digimarketing", "branding", "marketresearch"]
+  },
+  {
+    "code": "aerospace",
+    "name": "Aerospace",
+    "featured": true,
+    "keywords": [
+      "Aviation",
+      "Space",
+      "SpaceX",
+      "NASA",
+      "Spacecraft",
+      "Satellites",
+      "Space Travel",
+      "Space Exploration",
+      "ISRO",
+      "Astrophysics",
+      "Astronomy"
+    ],
+    "sub_topics": ["aviation", "spacetravel"]
+  },
+  {
+    "code": "agriculture",
+    "name": "Agriculture",
+    "featured": true,
+    "keywords": [
+      "Agriculture",
+      "Farming",
+      "Crops",
+      "Farm",
+      "Agricultural Technology",
+      "Agricultural Science",
+      "Agricultural Engineering",
+      "Agricultural Economics",
+      "Agricultural Policy"
+    ]
+  },
+  {
+    "code": "ai",
+    "name": "Artificial Intelligence",
+    "featured": true,
+    "keywords": [
+      "Artificial Intelligence",
+      "AI",
+      "Machine Learning",
+      "Deep Learning",
+      "LLMs",
+      "NLP",
+      "ChatGPT",
+      "Generative AI",
+      "Prompt Engineering",
+      "AI Models",
+      "AI Agents",
+      "Agentic AI",
+      "MCP Protocol"
+    ],
+    "sub_topics": [
+      "llms",
+      "machinelearning",
+      "deeplearning",
+      "ainews",
+      "datascience",
+      "aiagents",
+      "promptengineering",
+      "aiethics",
+      "generativeai",
+      "autonomousvehicles",
+      "aiart"
+    ]
+  },
+  {
+    "code": "architecture",
+    "name": "Architecture",
+    "featured": true,
+    "keywords": [
+      "Architecture",
+      "Building",
+      "Construction",
+      "Design",
+      "Interior Design",
+      "Urban Planning",
+      "Urban Design",
+      "Urban Planning",
+      "Urban Design",
+      "Architect",
+      "Architectural"
+    ],
+    "sub_topics": [
+      "interiordesign",
+      "urbanplanning",
+      "sustarch",
+      "landscapearch",
+      "archhistory",
+      "archmovements",
+      "archlit"
+    ]
+  },
+  {
+    "code": "art",
+    "name": "Art",
+    "featured": true,
+    "keywords": [
+      "Art",
+      "Design",
+      "Painting",
+      "Sculpture",
+      "Drawing",
+      "Artistic",
+      "Creativity",
+      "Art Gallery",
+      "NFT",
+      "AI art",
+      "Digital Art"
+    ],
+    "sub_topics": [
+      "digitalart",
+      "arthistory",
+      "abstractart",
+      "modernart",
+      "comicart",
+      "aiart",
+      "nfts"
+    ]
+  },
+  {
+    "code": "astrophysics",
+    "name": "Astrophysics",
+    "featured": true,
+    "keywords": [
+      "Astrophysics",
+      "Space",
+      "Cosmos",
+      "Universe",
+      "Stars",
+      "Galaxies",
+      "Black Holes",
+      "Astronomy",
+      "Telescopes"
+    ],
+    "sub_topics": ["spacetravel"]
+  },
+  {
+    "code": "automobiles",
+    "name": "Automobiles",
+    "featured": true,
+    "keywords": [
+      "Automobiles",
+      "Cars",
+      "Vehicles",
+      "Automotive",
+      "Automotive Industry",
+      "Automotive Engineering",
+      "Automotive Design",
+      "Supercars",
+      "EVs",
+      "Electric Vehicles",
+      "Racing",
+      "Formula 1",
+      "Bikes",
+      "Motorsports",
+      "Auto Show",
+      "Auto Expo"
+    ],
+    "sub_topics": [
+      "cars",
+      "bikes",
+      "superhypercars",
+      "evs",
+      "autonomousvehicles",
+      "vintagevehicles",
+      "automotivehistory",
+      "motorsports",
+      "automotivedesign"
+    ]
+  },
+  {
+    "code": "business",
+    "name": "Business",
+    "featured": true,
+    "keywords": [
+      "Business",
+      "Entrepreneurship",
+      "Startups",
+      "Venture Capital",
+      "Investing",
+      "Finance",
+      "Economics",
+      "Marketing",
+      "Sales",
+      "Management",
+      "Leadership",
+      "Entrepreneur"
+    ],
+    "sub_topics": [
+      "businessnews",
+      "entrepreneurship",
+      "startups",
+      "vcfunding",
+      "businessmodels",
+      "startupnews",
+      "finance",
+      "economics",
+      "marketing",
+      "management",
+      "leadership"
+    ]
+  },
+  {
+    "code": "comics",
+    "name": "Comics",
+    "featured": true,
+    "keywords": [
+      "Comics",
+      "Graphic Novels",
+      "Superheroes",
+      "Marvel",
+      "DC",
+      "Comic Books",
+      "Comic Con",
+      "Anime",
+      "Manga"
+    ],
+    "sub_topics": [
+      "superheroes",
+      "marveldc",
+      "animemanga",
+      "comiccon",
+      "comicbooks",
+      "indiecomics",
+      "webcomics",
+      "comicart"
+    ]
+  },
+  {
+    "code": "compsci",
+    "name": "Computer Science",
+    "featured": true,
+    "keywords": [
+      "Computer Science",
+      "Programming",
+      "Software Development",
+      "Artificial Intelligence",
+      "Blockchain",
+      "Web3",
+      "Theoretical Computer Science",
+      "Computer Architecture",
+      "Computer Networks",
+      "Quantum Computing"
+    ],
+    "sub_topics": [
+      "algorithms",
+      "blockchain",
+      "internetofthings",
+      "computerhistory",
+      "theoreticalcs",
+      "computerarchitecture",
+      "computernetworks",
+      "quantumcomputing",
+      "ai",
+      "llms",
+      "machinelearning",
+      "deeplearning",
+      "datascience"
+    ]
+  },
+  {
+    "code": "cryptocurrency",
+    "name": "Cryptocurrency",
+    "featured": true,
+    "keywords": [
+      "Cryptocurrency",
+      "Blockchain",
+      "Web3",
+      "DeFi",
+      "Bitcoin",
+      "Ethereum",
+      "Smart Contracts",
+      "NFTs"
+    ],
+    "sub_topics": [
+      "blockchain",
+      "nfts",
+      "defi",
+      "bitandaltcoins",
+      "cryptocurrencymining",
+      "cryptonews",
+      "cryptotrading"
+    ]
+  },
+  {
+    "code": "culture",
+    "name": "Culture",
+    "featured": true,
+    "keywords": [
+      "Culture",
+      "Pop culture",
+      "Music",
+      "Art",
+      "Lifestyle",
+      "Festivals",
+      "Traditions",
+      "Heritage"
+    ],
+    "sub_topics": [
+      "popculture",
+      "cultex",
+      "theater",
+      "music",
+      "art",
+      "movietv",
+      "literature"
+    ]
+  },
+  {
+    "code": "cybersecurity",
+    "name": "Cybersecurity",
+    "featured": true,
+    "keywords": [
+      "Cybersecurity",
+      "Information Security",
+      "Network Security",
+      "Data Privacy",
+      "Hacking",
+      "Malware",
+      "Encryption",
+      "Firewalls"
+    ],
+    "sub_topics": [
+      "netsec",
+      "dataprivacy",
+      "ethicalhacking",
+      "bughunting",
+      "cybersecuritynews",
+      "cryptography"
+    ]
+  },
+  {
+    "code": "design",
+    "name": "Design",
+    "featured": true,
+    "keywords": [
+      "Design",
+      "UI/UX",
+      "Graphic Design",
+      "Web Design",
+      "Product Design",
+      "Interior Design",
+      "Fashion Design",
+      "Architecture",
+      "Art",
+      "Photography",
+      "Illustration",
+      "Typography"
+    ],
+    "sub_topics": [
+      "uiux",
+      "graphicdesign",
+      "productdesign",
+      "industrialdesign",
+      "fashiondesign",
+      "designhistory",
+      "designnews",
+      "designawards",
+      "packagingdesign",
+      "interiordesign",
+      "architecture",
+      "automotivedesign"
+    ]
+  },
+  {
+    "code": "economics",
+    "name": "Economics",
+    "featured": true,
+    "keywords": [
+      "Economics",
+      "Finance",
+      "Money",
+      "Economic Policy",
+      "Budget",
+      "Inflation",
+      "GDP",
+      "Markets"
+    ],
+    "sub_topics": [
+      "microeconomics",
+      "macroeconomics",
+      "internationaleconomics",
+      "economicsnews",
+      "finance"
+    ]
+  },
+  {
+    "code": "education",
+    "name": "Education",
+    "featured": true,
+    "keywords": [
+      "Education",
+      "Learning",
+      "Teaching",
+      "School",
+      "University",
+      "EdTech",
+      "Online Learning",
+      "Pedagogy",
+      "Curriculum"
+    ],
+    "sub_topics": []
+  },
+  {
+    "code": "entrepreneurship",
+    "name": "Entrepreneurship",
+    "featured": true,
+    "keywords": [
+      "Entrepreneurship",
+      "Startups",
+      "Business",
+      "Innovation",
+      "Venture Capital",
+      "Leadership",
+      "Risk Taking",
+      "Incubators"
+    ],
+    "sub_topics": ["startups", "vcfunding", "businessmodels", "startupnews"]
+  },
+  {
+    "code": "environment",
+    "name": "Environment",
+    "featured": true,
+    "keywords": [
+      "Environment",
+      "Climate Change",
+      "Climate Crisis",
+      "Climate Action",
+      "Nature",
+      "Wildlife",
+      "Ocean",
+      "Ecology",
+      "Forests"
+    ],
+    "sub_topics": [
+      "climatechange",
+      "sustainability",
+      "renewableenergy",
+      "environmentnews",
+      "earthscience"
+    ]
+  },
+  {
+    "code": "fashion",
+    "name": "Fashion",
+    "featured": true,
+    "keywords": [
+      "Fashion",
+      "Clothing",
+      "Style",
+      "Design",
+      "Runway",
+      "Accessories",
+      "Shoes",
+      "Bags",
+      "Jewelry",
+      "Watches"
+    ],
+    "sub_topics": [
+      "luxuryfashion",
+      "streeturban",
+      "sustainablefashion",
+      "fashionphotography",
+      "fashionstyling",
+      "fashionhistory",
+      "fashiontrends",
+      "fashiondesign"
+    ]
+  },
+  {
+    "code": "finance",
+    "name": "Finance",
+    "featured": true,
+    "keywords": [
+      "Finance",
+      "Economics",
+      "Money",
+      "Investing",
+      "Stocks",
+      "Bonds",
+      "Mutual Funds",
+      "Trading",
+      "Investment",
+      "Financial Markets"
+    ],
+    "sub_topics": [
+      "investandpm",
+      "financialmarkets",
+      "financenews",
+      "personalfinance",
+      "trading",
+      "fintech",
+      "riskmanagement",
+      "insurance",
+      "cfandib",
+      "accountingandreporting",
+      "assetwealthmgmt",
+      "vcfunding"
+    ]
+  },
+  {
+    "code": "food",
+    "name": "Food and Drinks",
+    "featured": true,
+    "keywords": [
+      "Food",
+      "Cooking",
+      "Recipes",
+      "Restaurants",
+      "Culinary",
+      "Cuisine",
+      "Food Culture",
+      "Gastronomy",
+      "Wine",
+      "Diet",
+      "Nutrition",
+      "Veganism"
+    ],
+    "sub_topics": [
+      "culinaryarts",
+      "worldcuisines",
+      "veganism",
+      "celebritychefs",
+      "bakingpastry",
+      "nutritiondiet",
+      "foodculthist",
+      "drinks",
+      "foodphotography",
+      "recipes",
+      "foodtravel"
+    ]
+  },
+  {
+    "code": "gaming",
+    "name": "Gaming",
+    "featured": true,
+    "keywords": [
+      "Gaming",
+      "Video Games",
+      "Esports",
+      "PC Gaming",
+      "Console Gaming",
+      "Mobile Gaming",
+      "Game Development",
+      "Streaming"
+    ],
+    "sub_topics": [
+      "mobilegaming",
+      "pcgaming",
+      "consolegaming",
+      "arvrxr",
+      "gamestreaming",
+      "gamedev",
+      "indiegames",
+      "gamingsetups"
+    ]
+  },
+  {
+    "code": "health",
+    "name": "Health & Wellness",
+    "featured": true,
+    "keywords": [
+      "Health",
+      "Wellness",
+      "Fitness",
+      "Mental Health",
+      "Nutrition",
+      "Exercise",
+      "Meditation",
+      "Yoga",
+      "Self-care"
+    ],
+    "sub_topics": [
+      "fitness",
+      "nutritiondiet",
+      "womenhealth",
+      "mentalhealth",
+      "chronicdiseases",
+      "healthtech",
+      "healthpolicy",
+      "publichealth"
+    ]
+  },
+  {
+    "code": "history",
+    "name": "History",
+    "featured": true,
+    "keywords": [
+      "History",
+      "Ancient History",
+      "World History",
+      "Historical Events",
+      "Civilizations",
+      "Archaeology"
+    ],
+    "sub_topics": [
+      "ancienthistory",
+      "medievalhistory",
+      "modernhistory",
+      "archhistory",
+      "arthistory",
+      "automotivehistory",
+      "computerhistory",
+      "literaryhistory",
+      "filmhistory",
+      "musichistory"
+    ]
+  },
+  {
+    "code": "law",
+    "name": "Law",
+    "featured": true,
+    "keywords": [
+      "Law",
+      "Legal",
+      "Justice",
+      "Court",
+      "Legislation",
+      "Human Rights",
+      "Crime",
+      "Lawyer"
+    ],
+    "sub_topics": [
+      "criminalcivillaw",
+      "internationalhumanrights",
+      "commercialcorplaw",
+      "constitutionaladminlaw"
+    ]
+  },
+  {
+    "code": "lgbtqplus",
+    "name": "LGBTQ+",
+    "featured": true,
+    "keywords": [
+      "LGBTQ+",
+      "Queer",
+      "Pride",
+      "Gender Identity",
+      "Sexual Orientation",
+      "Equality",
+      "Advocacy"
+    ],
+    "sub_topics": ["lgbtqnews", "lgbtqhistory", "lgbtqrights", "queerculture"]
+  },
+  {
+    "code": "literature",
+    "name": "Reading & Writing",
+    "featured": true,
+    "keywords": [
+      "Literature",
+      "Books",
+      "Reading",
+      "Novels",
+      "Poetry",
+      "Fiction",
+      "Non-fiction",
+      "Authors",
+      "Writing"
+    ],
+    "sub_topics": [
+      "literarycriticism",
+      "literaryhistory",
+      "poetry",
+      "fiction",
+      "nonfiction",
+      "historicallit",
+      "mythandfolklore",
+      "comicbooks",
+      "webcomics",
+      "archlit",
+      "screenwriting"
+    ]
+  },
+  {
+    "code": "lifestyle",
+    "name": "Lifestyle",
+    "featured": true,
+    "keywords": [
+      "Lifestyle",
+      "Hobbies",
+      "Travel",
+      "Fashion",
+      "Food",
+      "Home",
+      "Relationships",
+      "Personal Development"
+    ],
+    "sub_topics": [
+      "travel",
+      "fashion",
+      "food",
+      "home",
+      "relationships",
+      "personaldevelopment"
+    ]
+  },
+  {
+    "code": "management",
+    "name": "Management",
+    "featured": true,
+    "keywords": [
+      "Management",
+      "Leadership",
+      "Project Management",
+      "Business Management",
+      "Team Management",
+      "Strategy"
+    ],
+    "sub_topics": [
+      "projectmanagement",
+      "hrmanagement",
+      "strategicmanagement",
+      "opsmanagement",
+      "supplychain",
+      "leadership",
+      "business"
+    ]
+  },
+  {
+    "code": "marketing",
+    "name": "Marketing",
+    "featured": true,
+    "keywords": [
+      "Marketing",
+      "Advertising",
+      "Branding",
+      "Ad",
+      "Sales",
+      "Digital Advertising",
+      "Digital Marketing"
+    ],
+    "sub_topics": ["digimarketing", "branding", "marketresearch", "advertising"]
+  },
+  {
+    "code": "mathematics",
+    "name": "Mathematics",
+    "featured": true,
+    "keywords": [
+      "Mathematics",
+      "Math",
+      "Algebra",
+      "Calculus",
+      "Geometry",
+      "Statistics",
+      "Logic"
+    ]
+  },
+  {
+    "code": "medicine",
+    "name": "Medicine",
+    "featured": true,
+    "keywords": [
+      "Medicine",
+      "Healthcare",
+      "Medical Science",
+      "Doctors",
+      "Hospitals",
+      "Pharmaceuticals",
+      "Research"
+    ],
+    "sub_topics": [
+      "medicalscience",
+      "clinicalmedicine",
+      "publichealth",
+      "healthpolicy",
+      "psychologyresearch"
+    ]
+  },
+  {
+    "code": "movietv",
+    "name": "Movies & TV",
+    "featured": true,
+    "keywords": [
+      "Movies",
+      "TV",
+      "Netflix",
+      "OTT",
+      "Streaming",
+      "Series",
+      "Documentaries",
+      "Podcasts"
+    ],
+    "sub_topics": [
+      "tvseries",
+      "cinema",
+      "filmproduction",
+      "screenwriting",
+      "filmhistory",
+      "filmfestivals",
+      "filmartists",
+      "entertainmentnews"
+    ]
+  },
+  {
+    "code": "music",
+    "name": "Music",
+    "featured": true,
+    "keywords": [
+      "Music",
+      "Songs",
+      "Artists",
+      "Genres",
+      "Concerts",
+      "Albums",
+      "Streaming",
+      "Instruments"
+    ],
+    "sub_topics": [
+      "musichistory",
+      "musictheory",
+      "musicproduction",
+      "musicartists",
+      "instruments",
+      "musicfestivals",
+      "entertainmentnews"
+    ]
+  },
+  {
+    "code": "news",
+    "name": "News",
+    "featured": true,
+    "keywords": [
+      "News",
+      "Current Events",
+      "World News",
+      "Local News",
+      "Politics",
+      "Business News",
+      "Breaking News",
+      "Journalism"
+    ],
+    "sub_topics": [
+      "worldnews",
+      "ainews",
+      "businessnews",
+      "cryptonews",
+      "cybersecuritynews",
+      "economicsnews",
+      "financenews",
+      "environmentnews",
+      "startupnews",
+      "lgbtqnews",
+      "entertainmentnews",
+      "sportsnews",
+      "technews"
+    ]
+  },
+  {
+    "code": "photography",
+    "name": "Photography",
+    "featured": true,
+    "keywords": [
+      "Photography",
+      "Photos",
+      "Cameras",
+      "Editing",
+      "Portraits",
+      "Landscape",
+      "Street Photography"
+    ],
+    "sub_topics": [
+      "photographyhistory",
+      "photographyequipment",
+      "editing",
+      "mobiography",
+      "streetphotography",
+      "landscapephotography",
+      "portraitphotography",
+      "naturephotography",
+      "wildlifephotography",
+      "sportsphotography",
+      "eventphotography",
+      "weddingphotography",
+      "productphotography",
+      "foodphotography",
+      "fashionphotography",
+      "travelphotography"
+    ]
+  },
+  {
+    "code": "physics",
+    "name": "Physics",
+    "featured": true,
+    "keywords": [
+      "Physics",
+      "Quantum Physics",
+      "Astrophysics",
+      "Mechanics",
+      "Thermodynamics",
+      "Relativity",
+      "Particles"
+    ],
+    "sub_topics": ["quantumphysics", "astrophysics", "nuclearphysics"]
+  },
+  {
+    "code": "productivity",
+    "name": "Productivity",
+    "featured": true,
+    "keywords": [
+      "Productivity",
+      "Time Management",
+      "Efficiency",
+      "Goal Setting",
+      "Habits",
+      "Organization",
+      "GTD"
+    ]
+  },
+  {
+    "code": "psychology",
+    "name": "Psychology",
+    "featured": true,
+    "keywords": [
+      "Psychology",
+      "Mental Health",
+      "Behavior",
+      "Cognition",
+      "Therapy",
+      "Neuroscience",
+      "Social Psychology"
+    ],
+    "sub_topics": ["psychologyresearch", "mentalhealth"]
+  },
+  {
+    "code": "science",
+    "name": "Science",
+    "featured": true,
+    "keywords": [
+      "Science",
+      "Biology",
+      "Chemistry",
+      "Physics",
+      "Astronomy",
+      "Research",
+      "Technology",
+      "Discovery",
+      "Innovation"
+    ],
+    "sub_topics": [
+      "biology",
+      "chemistry",
+      "earthscience",
+      "physics",
+      "aerospace",
+      "astrophysics",
+      "compsci",
+      "medicalscience",
+      "mathematics"
+    ]
+  },
+  {
+    "code": "softdev",
+    "name": "Software Development",
+    "featured": true,
+    "keywords": [
+      "Software Development",
+      "Programming",
+      "Coding",
+      "Web Development",
+      "Mobile Development",
+      "DevOps",
+      "Agile",
+      "Software Engineering"
+    ],
+    "sub_topics": [
+      "webdevelopment",
+      "mobiledevelopment",
+      "devops",
+      "cloudcomputing",
+      "systemdesign",
+      "engineeringblogs",
+      "ai",
+      "arvrxr",
+      "gamedev"
+    ]
+  },
+  {
+    "code": "sports",
+    "name": "Sports",
+    "featured": true,
+    "keywords": [
+      "Sports",
+      "Football",
+      "Basketball",
+      "Soccer",
+      "Olympics",
+      "Athletics",
+      "Fitness",
+      "Cricket",
+      "Tennis",
+      "Games",
+      "Formula 1"
+    ],
+    "sub_topics": [
+      "soccer",
+      "cricket",
+      "basketball",
+      "tennis",
+      "baseball",
+      "rugby",
+      "golf",
+      "hockey",
+      "athletics",
+      "motorsports",
+      "othersports",
+      "sportsnews"
+    ]
+  },
+  {
+    "code": "technology",
+    "name": "Technology",
+    "featured": true,
+    "keywords": [
+      "Technology",
+      "Tech",
+      "Innovation",
+      "Gadgets",
+      "Software",
+      "Hardware",
+      "AI",
+      "Internet",
+      "Future Tech"
+    ],
+    "sub_topics": [
+      "technews",
+      "productlaunches",
+      "futuretech",
+      "techreviews",
+      "techjobs",
+      "ai",
+      "arvrxr",
+      "cryptocurrency",
+      "startupnews"
+    ]
+  },
+  {
+    "code": "travel",
+    "name": "Travel",
+    "featured": true,
+    "keywords": [
+      "Travel",
+      "Tourism",
+      "Vacation",
+      "Adventure",
+      "Destinations",
+      "Backpacking",
+      "Culture",
+      "Flights",
+      "Hotels"
+    ],
+    "sub_topics": [
+      "budgettravel",
+      "solotravel",
+      "travelblogs",
+      "travelphotography",
+      "travelvideos",
+      "travelguides",
+      "adventuretravel",
+      "ecotravel",
+      "foodtravel"
+    ]
+  },
+
+  {
+    "code": "digimarketing",
+    "name": "Digital Marketing"
+  },
+  {
+    "code": "branding",
+    "name": "Branding"
+  },
+  {
+    "code": "marketresearch",
+    "name": "Market Research"
+  },
+  {
+    "code": "aviation",
+    "name": "Aviation"
+  },
+  {
+    "code": "spacetravel",
+    "name": "Space Travel"
+  },
+  {
+    "code": "interiordesign",
+    "name": "Interior Design"
+  },
+  {
+    "code": "urbanplanning",
+    "name": "Urban Planning"
+  },
+  {
+    "code": "sustarch",
+    "name": "Sustainable Architecture"
+  },
+  {
+    "code": "landscapearch",
+    "name": "Landscape Architecture"
+  },
+  {
+    "code": "archhistory",
+    "name": "Architecture History"
+  },
+  {
+    "code": "archmovements",
+    "name": "Architectural Movements"
+  },
+  {
+    "code": "archlit",
+    "name": "Architectural Literature"
+  },
+  {
+    "code": "digitalart",
+    "name": "Digital Art"
+  },
+  {
+    "code": "arthistory",
+    "name": "Art History"
+  },
+  {
+    "code": "abstractart",
+    "name": "Abstract Art"
+  },
+  {
+    "code": "modernart",
+    "name": "Modern Art"
+  },
+  {
+    "code": "llms",
+    "name": "LLMs"
+  },
+  {
+    "code": "machinelearning",
+    "name": "Machine Learning"
+  },
+  {
+    "code": "deeplearning",
+    "name": "Deep Learning"
+  },
+  {
+    "code": "ainews",
+    "name": "AI News"
+  },
+  {
+    "code": "datascience",
+    "name": "Data Science"
+  },
+  {
+    "code": "aiagents",
+    "name": "AI Agents"
+  },
+  {
+    "code": "promptengineering",
+    "name": "Prompt Engineering"
+  },
+  {
+    "code": "aiethics",
+    "name": "AI Ethics"
+  },
+  {
+    "code": "aiart",
+    "name": "AI Art"
+  },
+  {
+    "code": "generativeai",
+    "name": "Generative AI"
+  },
+  {
+    "code": "cars",
+    "name": "Cars"
+  },
+  {
+    "code": "bikes",
+    "name": "Bikes"
+  },
+  {
+    "code": "superhypercars",
+    "name": "Super & Hyper cars"
+  },
+  {
+    "code": "evs",
+    "name": "Electric Vehicles"
+  },
+  {
+    "code": "autonomousvehicles",
+    "name": "Autonomous Vehicles"
+  },
+  {
+    "code": "vintagevehicles",
+    "name": "Vintage Vehicles"
+  },
+  {
+    "code": "automotivehistory",
+    "name": "Automotive History"
+  },
+  {
+    "code": "businessnews",
+    "name": "Business News"
+  },
+  {
+    "code": "superheroes",
+    "name": "Superheroes"
+  },
+  {
+    "code": "marveldc",
+    "name": "Marvel & DC"
+  },
+  {
+    "code": "animemanga",
+    "name": "Anime & Manga"
+  },
+  {
+    "code": "comiccon",
+    "name": "Comic Con"
+  },
+  {
+    "code": "comicbooks",
+    "name": "Comic Books"
+  },
+  {
+    "code": "indiecomics",
+    "name": "Indie Comics"
+  },
+  {
+    "code": "webcomics",
+    "name": "Webcomics"
+  },
+  {
+    "code": "comicart",
+    "name": "Comic Art"
+  },
+  {
+    "code": "algorithms",
+    "name": "Algorithms"
+  },
+  {
+    "code": "blockchain",
+    "name": "Blockchain"
+  },
+  {
+    "code": "internetofthings",
+    "name": "Internet of Things"
+  },
+  {
+    "code": "computerhistory",
+    "name": "Computer History"
+  },
+  {
+    "code": "theoreticalcs",
+    "name": "Theoretical Computer Science"
+  },
+  {
+    "code": "computerarchitecture",
+    "name": "Computer Architecture"
+  },
+  {
+    "code": "computernetworks",
+    "name": "Computer Networks"
+  },
+  {
+    "code": "quantumcomputing",
+    "name": "Quantum Computing"
+  },
+  {
+    "code": "blockchain",
+    "name": "Blockchain"
+  },
+  {
+    "code": "nfts",
+    "name": "NFTs"
+  },
+  {
+    "code": "defi",
+    "name": "DeFi"
+  },
+  {
+    "code": "bitandaltcoins",
+    "name": "Bitcoin & Altcoins"
+  },
+  {
+    "code": "cryptocurrencymining",
+    "name": "Cryptocurrency Mining"
+  },
+  {
+    "code": "cryptonews",
+    "name": "Cryptocurrency News"
+  },
+  {
+    "code": "cryptotrading",
+    "name": "Cryptocurrency Trading"
+  },
+  {
+    "code": "popculture",
+    "name": "Pop Culture"
+  },
+  {
+    "code": "cultex",
+    "name": "Cultural Exchanges"
+  },
+  {
+    "code": "theater",
+    "name": "Theater"
+  },
+  {
+    "code": "netsec",
+    "name": "Network Security"
+  },
+  {
+    "code": "dataprivacy",
+    "name": "Data Privacy"
+  },
+  {
+    "code": "ethicalhacking",
+    "name": "Ethical Hacking"
+  },
+  {
+    "code": "bughunting",
+    "name": "Bug Hunting & Bug Bounty"
+  },
+  {
+    "code": "cybersecuritynews",
+    "name": "Cybersecurity News"
+  },
+  {
+    "code": "cryptography",
+    "name": "Cryptography"
+  },
+  {
+    "code": "uiux",
+    "name": "UI/UX"
+  },
+  {
+    "code": "graphicdesign",
+    "name": "Graphic Design"
+  },
+  {
+    "code": "productdesign",
+    "name": "Product Design"
+  },
+  {
+    "code": "industrialdesign",
+    "name": "Industrial Design"
+  },
+  {
+    "code": "fashiondesign",
+    "name": "Fashion Design"
+  },
+  {
+    "code": "designhistory",
+    "name": "Design History"
+  },
+  {
+    "code": "designnews",
+    "name": "Design News"
+  },
+  {
+    "code": "designawards",
+    "name": "Design Awards"
+  },
+  {
+    "code": "packagingdesign",
+    "name": "Packaging Design"
+  },
+  {
+    "code": "automotivedesign",
+    "name": "Automotive Design"
+  },
+  {
+    "code": "microeconomics",
+    "name": "Microeconomics"
+  },
+  {
+    "code": "macroeconomics",
+    "name": "Macroeconomics"
+  },
+  {
+    "code": "internationaleconomics",
+    "name": "International Economics"
+  },
+  {
+    "code": "economicsnews",
+    "name": "Economics News",
+    "sub_topics": ["financenews"]
+  },
+  {
+    "code": "startups",
+    "name": "Startups"
+  },
+  {
+    "code": "vcfunding",
+    "name": "VC & Funding"
+  },
+  {
+    "code": "businessmodels",
+    "name": "Business Models"
+  },
+  {
+    "code": "startupnews",
+    "name": "Startup News"
+  },
+  {
+    "code": "climatechange",
+    "name": "Climate Change & Action"
+  },
+  {
+    "code": "sustainability",
+    "name": "Sustainability"
+  },
+  {
+    "code": "renewableenergy",
+    "name": "Renewable Energy"
+  },
+  {
+    "code": "environmentnews",
+    "name": "Environment News"
+  },
+  {
+    "code": "luxuryfashion",
+    "name": "Luxury Fashion"
+  },
+  {
+    "code": "streeturban",
+    "name": "Street & Urban"
+  },
+  {
+    "code": "sustainablefashion",
+    "name": "Sustainable & Ethical Fashion"
+  },
+  {
+    "code": "fashionphotography",
+    "name": "Fashion Photography"
+  },
+  {
+    "code": "fashionstyling",
+    "name": "Fashion Styling"
+  },
+  {
+    "code": "fashionhistory",
+    "name": "Fashion History"
+  },
+  {
+    "code": "fashiontrends",
+    "name": "Fashion Trends"
+  },
+  {
+    "code": "investandpm",
+    "name": "Investment & Portfolio Management"
+  },
+  {
+    "code": "financialmarkets",
+    "name": "Financial Markets"
+  },
+  {
+    "code": "financenews",
+    "name": "Financial News",
+    "sub_topics": ["cryptonews"]
+  },
+  {
+    "code": "personalfinance",
+    "name": "Personal Finance"
+  },
+  {
+    "code": "trading",
+    "name": "Trading"
+  },
+  {
+    "code": "fintech",
+    "name": "Fintech"
+  },
+  {
+    "code": "riskmanagement",
+    "name": "Risk Management"
+  },
+  {
+    "code": "insurance",
+    "name": "Insurance"
+  },
+  {
+    "code": "cfandib",
+    "name": "Corp Finance & Investment Banking"
+  },
+  {
+    "code": "accountingandreporting",
+    "name": "Accounting & Reporting"
+  },
+  {
+    "code": "assetwealthmgmt",
+    "name": "Asset & Wealth Management"
+  },
+  {
+    "code": "culinaryarts",
+    "name": "Culinary Arts"
+  },
+  {
+    "code": "veganism",
+    "name": "Veganism"
+  },
+  {
+    "code": "worldcuisines",
+    "name": "World Cuisines"
+  },
+  {
+    "code": "celebritychefs",
+    "name": "Celebrity Chefs"
+  },
+  {
+    "code": "bakingpastry",
+    "name": "Baking & Pastry"
+  },
+  {
+    "code": "nutritiondiet",
+    "name": "Nutrition & Diet"
+  },
+  {
+    "code": "foodculthist",
+    "name": "Food Culture & History"
+  },
+  {
+    "code": "drinks",
+    "name": "Drinks"
+  },
+  {
+    "code": "foodphotography",
+    "name": "Food Photography"
+  },
+  {
+    "code": "recipes",
+    "name": "Recipes"
+  },
+  {
+    "code": "mobilegaming",
+    "name": "Mobile Gaming"
+  },
+  {
+    "code": "pcgaming",
+    "name": "PC Gaming"
+  },
+  {
+    "code": "consolegaming",
+    "name": "Console Gaming"
+  },
+  {
+    "code": "arvrxr",
+    "name": "AR/VR/XR"
+  },
+  {
+    "code": "gamestreaming",
+    "name": "Streaming"
+  },
+  {
+    "code": "gamedev",
+    "name": "Game Development"
+  },
+  {
+    "code": "indiegames",
+    "name": "Indie Games"
+  },
+  {
+    "code": "gamingsetups",
+    "name": "Gaming Hardware & Setups"
+  },
+  {
+    "code": "fitness",
+    "name": "Fitness & Exercise"
+  },
+  {
+    "code": "womenhealth",
+    "name": "Women's Health"
+  },
+  {
+    "code": "mentalhealth",
+    "name": "Mental Health & Wellbeing"
+  },
+  {
+    "code": "chronicdiseases",
+    "name": "Chronic Diseases & Management"
+  },
+  {
+    "code": "healthtech",
+    "name": "Health Technology"
+  },
+  {
+    "code": "ancienthistory",
+    "name": "Ancient History"
+  },
+  {
+    "code": "medievalhistory",
+    "name": "Medieval History"
+  },
+  {
+    "code": "modernhistory",
+    "name": "Modern History"
+  },
+  {
+    "code": "criminalcivillaw",
+    "name": "Criminal & Civil Law"
+  },
+  {
+    "code": "internationalhumanrights",
+    "name": "International & Human Rights"
+  },
+  {
+    "code": "commercialcorplaw",
+    "name": "Commercial & Corporate Law"
+  },
+  {
+    "code": "constitutionaladminlaw",
+    "name": "Constitutional & Administrative Law"
+  },
+  {
+    "code": "lgbtqnews",
+    "name": "LGBTQ+ News"
+  },
+  {
+    "code": "lgbtqhistory",
+    "name": "Movement, Activism & History"
+  },
+  {
+    "code": "lgbtqrights",
+    "name": "LGBTQ+ Rights"
+  },
+  {
+    "code": "queerculture",
+    "name": "Queer Culture & Media"
+  },
+
+  {
+    "code": "literarycriticism",
+    "name": "Literary Criticism"
+  },
+  {
+    "code": "literaryhistory",
+    "name": "Literary History"
+  },
+  {
+    "code": "poetry",
+    "name": "Poetry"
+  },
+  {
+    "code": "fiction",
+    "name": "Novels & Fiction"
+  },
+  {
+    "code": "nonfiction",
+    "name": "Non-fiction"
+  },
+  {
+    "code": "literarycriticism",
+    "name": "Literary Criticism"
+  },
+  {
+    "code": "historicallit",
+    "name": "Historical Literature"
+  },
+  {
+    "code": "mythandfolklore",
+    "name": "Mythology & Folklore"
+  },
+
+  {
+    "code": "personaldevelopment",
+    "name": "Personal Development"
+  },
+  {
+    "code": "relationships",
+    "name": "Relationships"
+  },
+  {
+    "code": "home",
+    "name": "Home & Lifestyle"
+  },
+
+  {
+    "code": "projectmanagement",
+    "name": "Project Management"
+  },
+  {
+    "code": "hrmanagement",
+    "name": "HR Management"
+  },
+  {
+    "code": "strategicmanagement",
+    "name": "Strategic Management"
+  },
+  {
+    "code": "opsmanagement",
+    "name": "Operations Management"
+  },
+  {
+    "code": "supplychain",
+    "name": "Supply Chain Management"
+  },
+  {
+    "code": "leadership",
+    "name": "Leadership & Team Management"
+  },
+  {
+    "code": "medicalscience",
+    "name": "Medical Science & Research"
+  },
+  {
+    "code": "clinicalmedicine",
+    "name": "Clinical Medicine"
+  },
+  {
+    "code": "publichealth",
+    "name": "Public Health & Preventive Medicine"
+  },
+  {
+    "code": "healthpolicy",
+    "name": "Health Policy & Administration"
+  },
+  {
+    "code": "tvseries",
+    "name": "TV Series & Streaming Shows"
+  },
+  {
+    "code": "cinema",
+    "name": "Cinema"
+  },
+  {
+    "code": "filmproduction",
+    "name": "Film Production"
+  },
+  {
+    "code": "screenwriting",
+    "name": "Screenwriting"
+  },
+  {
+    "code": "filmhistory",
+    "name": "Film History"
+  },
+  {
+    "code": "filmfestivals",
+    "name": "Film Festivals & Awards"
+  },
+  {
+    "code": "filmartists",
+    "name": "Artists & Filmmakers"
+  },
+  {
+    "code": "entertainmentnews",
+    "name": "Entertainment News"
+  },
+  {
+    "code": "musichistory",
+    "name": "Music History"
+  },
+  {
+    "code": "musictheory",
+    "name": "Music Theory"
+  },
+  {
+    "code": "musicproduction",
+    "name": "Music Production"
+  },
+  {
+    "code": "musicartists",
+    "name": "Artists"
+  },
+  {
+    "code": "instruments",
+    "name": "Instruments"
+  },
+  {
+    "code": "musicfestivals",
+    "name": "Festivals & Awards"
+  },
+  {
+    "code": "worldnews",
+    "name": "World News"
+  },
+  {
+    "code": "photographyhistory",
+    "name": "History"
+  },
+  {
+    "code": "photographyequipment",
+    "name": "Cameras & Accessories"
+  },
+  {
+    "code": "editing",
+    "name": "Editing"
+  },
+  {
+    "code": "mobiography",
+    "name": "Mobile Photography"
+  },
+  {
+    "code": "naturephotography",
+    "name": "Nature"
+  },
+  {
+    "code": "wildlifephotography",
+    "name": "Wildlife"
+  },
+  {
+    "code": "streetphotography",
+    "name": "Street"
+  },
+  {
+    "code": "portraitphotography",
+    "name": "Portrait"
+  },
+  {
+    "code": "landscapephotography",
+    "name": "Landscape"
+  },
+  {
+    "code": "sportsphotography",
+    "name": "Sports"
+  },
+  {
+    "code": "eventphotography",
+    "name": "Events"
+  },
+  {
+    "code": "weddingphotography",
+    "name": "Wedding"
+  },
+  {
+    "code": "productphotography",
+    "name": "Product"
+  },
+  {
+    "code": "photojournalism",
+    "name": "Photojournalism"
+  },
+  {
+    "code": "photographyawards",
+    "name": "Awards"
+  },
+  {
+    "code": "quantumphysics",
+    "name": "Quantum Physics"
+  },
+  {
+    "code": "nuclearphysics",
+    "name": "Nuclear Physics"
+  },
+  {
+    "code": "psychologyresearch",
+    "name": "Psychology Research"
+  },
+  {
+    "code": "biology",
+    "name": "Biology"
+  },
+  {
+    "code": "chemistry",
+    "name": "Chemistry"
+  },
+  {
+    "code": "earthscience",
+    "name": "Earth Science"
+  },
+  {
+    "code": "webdevelopment",
+    "name": "Web Development"
+  },
+  {
+    "code": "mobiledevelopment",
+    "name": "Mobile Development"
+  },
+  {
+    "code": "devops",
+    "name": "DevOps & CI"
+  },
+  {
+    "code": "cloudcomputing",
+    "name": "Cloud Computing"
+  },
+  {
+    "code": "systemdesign",
+    "name": "System Design"
+  },
+  {
+    "code": "engineeringblogs",
+    "name": "Engineering Blogs"
+  },
+  {
+    "code": "soccer",
+    "name": "Football (Soccer)"
+  },
+  {
+    "code": "cricket",
+    "name": "Cricket"
+  },
+  {
+    "code": "basketball",
+    "name": "Basketball"
+  },
+  {
+    "code": "tennis",
+    "name": "Tennis"
+  },
+  {
+    "code": "baseball",
+    "name": "Baseball"
+  },
+  {
+    "code": "rugby",
+    "name": "Rugby"
+  },
+  {
+    "code": "golf",
+    "name": "Golf"
+  },
+  {
+    "code": "hockey",
+    "name": "Hockey"
+  },
+  {
+    "code": "athletics",
+    "name": "Athletics"
+  },
+  {
+    "code": "motorsports",
+    "name": "Motorsports"
+  },
+  {
+    "code": "othersports",
+    "name": "Other Sports"
+  },
+  {
+    "code": "sportsnews",
+    "name": "Sports News"
+  },
+  {
+    "code": "technews",
+    "name": "Tech News"
+  },
+  {
+    "code": "productlaunches",
+    "name": "Product Launches"
+  },
+  {
+    "code": "futuretech",
+    "name": "Future Tech"
+  },
+  {
+    "code": "techreviews",
+    "name": "Tech Reviews"
+  },
+  {
+    "code": "techjobs",
+    "name": "Tech Jobs"
+  },
+
+  {
+    "code": "budgettravel",
+    "name": "Backpacking & Budget Travel"
+  },
+  {
+    "code": "solotravel",
+    "name": "Solo Travel"
+  },
+  {
+    "code": "travelblogs",
+    "name": "Travel Blogs"
+  },
+  {
+    "code": "travelphotography",
+    "name": "Travel Photography"
+  },
+  {
+    "code": "travelvideos",
+    "name": "Travel Vlogs"
+  },
+  {
+    "code": "travelguides",
+    "name": "Travel Guides"
+  },
+  {
+    "code": "adventuretravel",
+    "name": "Adventure Travel"
+  },
+  {
+    "code": "ecotravel",
+    "name": "Eco Travel"
+  },
+  {
+    "code": "foodtravel",
+    "name": "Food Travel"
+  }
+]

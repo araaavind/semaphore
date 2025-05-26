@@ -30,6 +30,7 @@ type Feed struct {
 	PubUpdated    time.Time          `json:"pub_updated,omitempty"`
 	FeedType      string             `json:"feed_type,omitempty"`
 	FeedVersion   string             `json:"feed_version,omitempty"`
+	TopicID       pgtype.Int8        `json:"topic_id,omitempty"`
 	Language      string             `json:"language,omitempty"`
 	Version       int32              `json:"version,omitempty"`
 	AddedBy       int64              `json:"added_by,omitempty"`
@@ -52,9 +53,9 @@ type FeedModel struct {
 func (m FeedModel) Insert(feed *Feed) error {
 	query := `
 		INSERT INTO feeds (title, description, link, feed_link, image_url, pub_date, pub_updated,
-			feed_type, feed_version, language, added_by, last_fetch_at, last_failure_at,
+			feed_type, feed_version, topic_id, language, added_by, last_fetch_at, last_failure_at,
 			last_failure)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		RETURNING id, created_at, updated_at, version`
 
 	args := []any{
@@ -67,6 +68,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.PubUpdated,
 		feed.FeedType,
 		feed.FeedVersion,
+		feed.TopicID,
 		feed.Language,
 		feed.AddedBy,
 		feed.LastFetchAt,
@@ -95,24 +97,36 @@ func (m FeedModel) Insert(feed *Feed) error {
 	return nil
 }
 
-func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*Feed, Metadata, error) {
+func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters Filters) ([]*Feed, Metadata, error) {
+	sortColMap := sortColumnMapping{
+		"id":          "feeds.id",
+		"title":       "feeds.title",
+		"pub_date":    "feeds.pub_date",
+		"pub_updated": "feeds.pub_updated",
+	}
+
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), id, title, description, link, feed_link, image_url, pub_date,
-		pub_updated, feed_type, feed_version, language, added_by, created_at, updated_at,
-		version, last_fetch_at, last_failure_at, last_failure
+		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.image_url, feeds.pub_date,
+		feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.topic_id, feeds.language, feeds.added_by, feeds.created_at, feeds.updated_at,
+		feeds.version, feeds.last_fetch_at, feeds.last_failure_at, feeds.last_failure
 		FROM feeds
+		LEFT JOIN subtopics ON subtopics.child_id = feeds.topic_id
 		WHERE (
-			to_tsvector('simple', title) @@ plainto_tsquery('simple', $1)
+			to_tsvector('simple', feeds.title) @@ plainto_tsquery('simple', $1)
 			OR $1 = ''
 		)
-		AND (feed_link = $2 OR $2 = '')
-		ORDER BY %s %s, id ASC
-		LIMIT $3 OFFSET $4`, filters.sortColumn(sortColumnMapping{}), filters.sortDirection())
+		AND (feeds.feed_link = $2 OR $2 = '')
+		AND (
+			(subtopics.parent_id = $3 OR feeds.topic_id = $3)
+			OR $3 = -1
+		)
+		ORDER BY %s %s, feeds.id ASC
+		LIMIT $4 OFFSET $5`, filters.sortColumn(sortColMap), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{title, feedLink, filters.limit(), filters.offset()}
+	args := []any{title, feedLink, topicID, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -134,6 +148,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 			&feed.PubUpdated,
 			&feed.FeedType,
 			&feed.FeedVersion,
+			&feed.TopicID,
 			&feed.Language,
 			&feed.AddedBy,
 			&feed.CreatedAt,
@@ -157,7 +172,7 @@ func (m FeedModel) FindAll(title string, feedLink string, filters Filters) ([]*F
 func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	query := `
 		SELECT id, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type,
-		feed_version, language, added_by, created_at, updated_at, version, last_fetch_at,
+		feed_version, topic_id, language, added_by, created_at, updated_at, version, last_fetch_at,
 		last_failure_at, last_failure
 		FROM feeds WHERE feed_link = ANY ($1)`
 
@@ -177,6 +192,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 		&feed.PubUpdated,
 		&feed.FeedType,
 		&feed.FeedVersion,
+		&feed.TopicID,
 		&feed.Language,
 		&feed.AddedBy,
 		&feed.CreatedAt,
@@ -205,7 +221,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 
 	query := `
 		SELECT id, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type,
-		feed_version, language, added_by, created_at, updated_at, version, last_fetch_at,
+		feed_version, topic_id, language, added_by, created_at, updated_at, version, last_fetch_at,
 		last_failure_at, last_failure
 		FROM feeds WHERE id = $1`
 
@@ -225,6 +241,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		&feed.PubUpdated,
 		&feed.FeedType,
 		&feed.FeedVersion,
+		&feed.TopicID,
 		&feed.Language,
 		&feed.AddedBy,
 		&feed.CreatedAt,
@@ -250,9 +267,9 @@ func (m FeedModel) Update(feed *Feed) error {
 	query := `
 		UPDATE feeds
 		SET title = $1, description = $2, link = $3, feed_link = $4, image_url = $5, pub_date = $6, pub_updated = $7,
-		feed_type = $8, feed_version = $9, language = $10, updated_at = NOW(), last_fetch_at = $11,
-		last_failure_at = $12, last_failure = $13, version = version + 1
-		WHERE id = $14 AND version = $15
+		feed_type = $8, feed_version = $9, topic_id = $10, language = $11, updated_at = NOW(), last_fetch_at = $12,
+		last_failure_at = $13, last_failure = $14, version = version + 1
+		WHERE id = $15 AND version = $16
 		RETURNING updated_at, version`
 
 	args := []any{
@@ -265,6 +282,7 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.PubUpdated,
 		feed.FeedType,
 		feed.FeedVersion,
+		feed.TopicID,
 		feed.Language,
 		feed.LastFetchAt,
 		feed.LastFailureAt,

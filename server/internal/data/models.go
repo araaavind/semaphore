@@ -24,6 +24,7 @@ type Models struct {
 	WallFeeds   WallFeedModel
 	SavedItems  SavedItemModel
 	LikedItems  LikedItemModel
+	Topics      TopicModel
 }
 
 func NewModels(db *pgxpool.Pool) Models {
@@ -39,5 +40,6 @@ func NewModels(db *pgxpool.Pool) Models {
 		WallFeedModel{DB: db},
 		SavedItemModel{DB: db},
 		LikedItemModel{DB: db},
+		TopicModel{DB: db},
 	}
 }
