@@ -204,7 +204,9 @@ class TopicTile extends StatelessWidget {
                     style: context.theme.textTheme.titleMedium?.copyWith(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: context.theme.colorScheme.onSurface,
+                      color: context.theme.brightness == Brightness.dark
+                          ? context.theme.colorScheme.onSurface.withAlpha(230)
+                          : context.theme.colorScheme.onSurface.withAlpha(210),
                     ),
                     wrapWords: false,
                     textAlign: TextAlign.start,

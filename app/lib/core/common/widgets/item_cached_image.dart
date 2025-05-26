@@ -195,7 +195,15 @@ Widget _buildNoImageWidget(
     width: width,
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(UIConstants.imageBorderRadius),
-      color: color,
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomCenter,
+        colors: [
+          color.withAlpha(65),
+          color,
+        ],
+        stops: const [0, 1],
+      ),
     ),
     child: Center(
       child: Text(
