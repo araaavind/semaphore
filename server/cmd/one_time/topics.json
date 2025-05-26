@@ -3,6 +3,7 @@
     "code": "advertising",
     "name": "Advertising",
     "featured": true,
+    "active": true,
     "keywords": [
       "Marketing",
       "Advertising",
@@ -12,12 +13,13 @@
       "Digital Advertising",
       "Digital Marketing"
     ],
-    "sub_topics": ["digimarketing", "branding", "marketresearch"]
+    "sub_topic_codes": ["digimarketing", "branding", "marketresearch"]
   },
   {
     "code": "aerospace",
     "name": "Aerospace",
     "featured": true,
+    "active": true,
     "keywords": [
       "Aviation",
       "Space",
@@ -31,12 +33,13 @@
       "Astrophysics",
       "Astronomy"
     ],
-    "sub_topics": ["aviation", "spacetravel"]
+    "sub_topic_codes": ["aviation", "spacetravel"]
   },
   {
     "code": "agriculture",
     "name": "Agriculture",
     "featured": true,
+    "active": true,
     "keywords": [
       "Agriculture",
       "Farming",
@@ -53,6 +56,7 @@
     "code": "ai",
     "name": "Artificial Intelligence",
     "featured": true,
+    "active": true,
     "keywords": [
       "Artificial Intelligence",
       "AI",
@@ -68,7 +72,7 @@
       "Agentic AI",
       "MCP Protocol"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "llms",
       "machinelearning",
       "deeplearning",
@@ -86,6 +90,7 @@
     "code": "architecture",
     "name": "Architecture",
     "featured": true,
+    "active": true,
     "keywords": [
       "Architecture",
       "Building",
@@ -99,7 +104,7 @@
       "Architect",
       "Architectural"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "interiordesign",
       "urbanplanning",
       "sustarch",
@@ -113,6 +118,7 @@
     "code": "art",
     "name": "Art",
     "featured": true,
+    "active": true,
     "keywords": [
       "Art",
       "Design",
@@ -126,7 +132,7 @@
       "AI art",
       "Digital Art"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "digitalart",
       "arthistory",
       "abstractart",
@@ -140,6 +146,7 @@
     "code": "astrophysics",
     "name": "Astrophysics",
     "featured": true,
+    "active": true,
     "keywords": [
       "Astrophysics",
       "Space",
@@ -151,12 +158,13 @@
       "Astronomy",
       "Telescopes"
     ],
-    "sub_topics": ["spacetravel"]
+    "sub_topic_codes": ["spacetravel"]
   },
   {
     "code": "automobiles",
     "name": "Automobiles",
     "featured": true,
+    "active": true,
     "keywords": [
       "Automobiles",
       "Cars",
@@ -175,7 +183,7 @@
       "Auto Show",
       "Auto Expo"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "cars",
       "bikes",
       "superhypercars",
@@ -191,6 +199,7 @@
     "code": "business",
     "name": "Business",
     "featured": true,
+    "active": true,
     "keywords": [
       "Business",
       "Entrepreneurship",
@@ -205,7 +214,7 @@
       "Leadership",
       "Entrepreneur"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "businessnews",
       "entrepreneurship",
       "startups",
@@ -223,6 +232,7 @@
     "code": "comics",
     "name": "Comics",
     "featured": true,
+    "active": true,
     "keywords": [
       "Comics",
       "Graphic Novels",
@@ -234,7 +244,7 @@
       "Anime",
       "Manga"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "superheroes",
       "marveldc",
       "animemanga",
@@ -249,6 +259,7 @@
     "code": "compsci",
     "name": "Computer Science",
     "featured": true,
+    "active": true,
     "keywords": [
       "Computer Science",
       "Programming",
@@ -261,7 +272,7 @@
       "Computer Networks",
       "Quantum Computing"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "algorithms",
       "blockchain",
       "internetofthings",
@@ -281,6 +292,7 @@
     "code": "cryptocurrency",
     "name": "Cryptocurrency",
     "featured": true,
+    "active": true,
     "keywords": [
       "Cryptocurrency",
       "Blockchain",
@@ -291,7 +303,7 @@
       "Smart Contracts",
       "NFTs"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "blockchain",
       "nfts",
       "defi",
@@ -305,6 +317,7 @@
     "code": "culture",
     "name": "Culture",
     "featured": true,
+    "active": true,
     "keywords": [
       "Culture",
       "Pop culture",
@@ -315,7 +328,7 @@
       "Traditions",
       "Heritage"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "popculture",
       "cultex",
       "theater",
@@ -329,6 +342,7 @@
     "code": "cybersecurity",
     "name": "Cybersecurity",
     "featured": true,
+    "active": true,
     "keywords": [
       "Cybersecurity",
       "Information Security",
@@ -339,7 +353,7 @@
       "Encryption",
       "Firewalls"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "netsec",
       "dataprivacy",
       "ethicalhacking",
@@ -352,6 +366,7 @@
     "code": "design",
     "name": "Design",
     "featured": true,
+    "active": true,
     "keywords": [
       "Design",
       "UI/UX",
@@ -366,7 +381,7 @@
       "Illustration",
       "Typography"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "uiux",
       "graphicdesign",
       "productdesign",
@@ -385,6 +400,7 @@
     "code": "economics",
     "name": "Economics",
     "featured": true,
+    "active": true,
     "keywords": [
       "Economics",
       "Finance",
@@ -395,7 +411,7 @@
       "GDP",
       "Markets"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "microeconomics",
       "macroeconomics",
       "internationaleconomics",
@@ -407,6 +423,7 @@
     "code": "education",
     "name": "Education",
     "featured": true,
+    "active": true,
     "keywords": [
       "Education",
       "Learning",
@@ -418,12 +435,13 @@
       "Pedagogy",
       "Curriculum"
     ],
-    "sub_topics": []
+    "sub_topic_codes": []
   },
   {
     "code": "entrepreneurship",
     "name": "Entrepreneurship",
     "featured": true,
+    "active": true,
     "keywords": [
       "Entrepreneurship",
       "Startups",
@@ -434,12 +452,18 @@
       "Risk Taking",
       "Incubators"
     ],
-    "sub_topics": ["startups", "vcfunding", "businessmodels", "startupnews"]
+    "sub_topic_codes": [
+      "startups",
+      "vcfunding",
+      "businessmodels",
+      "startupnews"
+    ]
   },
   {
     "code": "environment",
     "name": "Environment",
     "featured": true,
+    "active": true,
     "keywords": [
       "Environment",
       "Climate Change",
@@ -451,7 +475,7 @@
       "Ecology",
       "Forests"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "climatechange",
       "sustainability",
       "renewableenergy",
@@ -463,6 +487,7 @@
     "code": "fashion",
     "name": "Fashion",
     "featured": true,
+    "active": true,
     "keywords": [
       "Fashion",
       "Clothing",
@@ -475,7 +500,7 @@
       "Jewelry",
       "Watches"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "luxuryfashion",
       "streeturban",
       "sustainablefashion",
@@ -490,6 +515,7 @@
     "code": "finance",
     "name": "Finance",
     "featured": true,
+    "active": true,
     "keywords": [
       "Finance",
       "Economics",
@@ -502,7 +528,7 @@
       "Investment",
       "Financial Markets"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "investandpm",
       "financialmarkets",
       "financenews",
@@ -521,6 +547,7 @@
     "code": "food",
     "name": "Food and Drinks",
     "featured": true,
+    "active": true,
     "keywords": [
       "Food",
       "Cooking",
@@ -535,7 +562,7 @@
       "Nutrition",
       "Veganism"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "culinaryarts",
       "worldcuisines",
       "veganism",
@@ -553,6 +580,7 @@
     "code": "gaming",
     "name": "Gaming",
     "featured": true,
+    "active": true,
     "keywords": [
       "Gaming",
       "Video Games",
@@ -563,7 +591,7 @@
       "Game Development",
       "Streaming"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "mobilegaming",
       "pcgaming",
       "consolegaming",
@@ -578,6 +606,7 @@
     "code": "health",
     "name": "Health & Wellness",
     "featured": true,
+    "active": true,
     "keywords": [
       "Health",
       "Wellness",
@@ -589,7 +618,7 @@
       "Yoga",
       "Self-care"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "fitness",
       "nutritiondiet",
       "womenhealth",
@@ -604,6 +633,7 @@
     "code": "history",
     "name": "History",
     "featured": true,
+    "active": true,
     "keywords": [
       "History",
       "Ancient History",
@@ -612,7 +642,7 @@
       "Civilizations",
       "Archaeology"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "ancienthistory",
       "medievalhistory",
       "modernhistory",
@@ -629,6 +659,7 @@
     "code": "law",
     "name": "Law",
     "featured": true,
+    "active": true,
     "keywords": [
       "Law",
       "Legal",
@@ -639,7 +670,7 @@
       "Crime",
       "Lawyer"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "criminalcivillaw",
       "internationalhumanrights",
       "commercialcorplaw",
@@ -650,6 +681,7 @@
     "code": "lgbtqplus",
     "name": "LGBTQ+",
     "featured": true,
+    "active": true,
     "keywords": [
       "LGBTQ+",
       "Queer",
@@ -659,12 +691,18 @@
       "Equality",
       "Advocacy"
     ],
-    "sub_topics": ["lgbtqnews", "lgbtqhistory", "lgbtqrights", "queerculture"]
+    "sub_topic_codes": [
+      "lgbtqnews",
+      "lgbtqhistory",
+      "lgbtqrights",
+      "queerculture"
+    ]
   },
   {
     "code": "literature",
     "name": "Reading & Writing",
     "featured": true,
+    "active": true,
     "keywords": [
       "Literature",
       "Books",
@@ -676,7 +714,7 @@
       "Authors",
       "Writing"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "literarycriticism",
       "literaryhistory",
       "poetry",
@@ -694,6 +732,7 @@
     "code": "lifestyle",
     "name": "Lifestyle",
     "featured": true,
+    "active": true,
     "keywords": [
       "Lifestyle",
       "Hobbies",
@@ -704,7 +743,7 @@
       "Relationships",
       "Personal Development"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "travel",
       "fashion",
       "food",
@@ -717,6 +756,7 @@
     "code": "management",
     "name": "Management",
     "featured": true,
+    "active": true,
     "keywords": [
       "Management",
       "Leadership",
@@ -725,7 +765,7 @@
       "Team Management",
       "Strategy"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "projectmanagement",
       "hrmanagement",
       "strategicmanagement",
@@ -739,6 +779,7 @@
     "code": "marketing",
     "name": "Marketing",
     "featured": true,
+    "active": true,
     "keywords": [
       "Marketing",
       "Advertising",
@@ -748,12 +789,18 @@
       "Digital Advertising",
       "Digital Marketing"
     ],
-    "sub_topics": ["digimarketing", "branding", "marketresearch", "advertising"]
+    "sub_topic_codes": [
+      "digimarketing",
+      "branding",
+      "marketresearch",
+      "advertising"
+    ]
   },
   {
     "code": "mathematics",
     "name": "Mathematics",
     "featured": true,
+    "active": true,
     "keywords": [
       "Mathematics",
       "Math",
@@ -768,6 +815,7 @@
     "code": "medicine",
     "name": "Medicine",
     "featured": true,
+    "active": true,
     "keywords": [
       "Medicine",
       "Healthcare",
@@ -777,7 +825,7 @@
       "Pharmaceuticals",
       "Research"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "medicalscience",
       "clinicalmedicine",
       "publichealth",
@@ -789,6 +837,7 @@
     "code": "movietv",
     "name": "Movies & TV",
     "featured": true,
+    "active": true,
     "keywords": [
       "Movies",
       "TV",
@@ -799,7 +848,7 @@
       "Documentaries",
       "Podcasts"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "tvseries",
       "cinema",
       "filmproduction",
@@ -814,6 +863,7 @@
     "code": "music",
     "name": "Music",
     "featured": true,
+    "active": true,
     "keywords": [
       "Music",
       "Songs",
@@ -824,7 +874,7 @@
       "Streaming",
       "Instruments"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "musichistory",
       "musictheory",
       "musicproduction",
@@ -838,6 +888,7 @@
     "code": "news",
     "name": "News",
     "featured": true,
+    "active": true,
     "keywords": [
       "News",
       "Current Events",
@@ -848,7 +899,7 @@
       "Breaking News",
       "Journalism"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "worldnews",
       "ainews",
       "businessnews",
@@ -868,6 +919,7 @@
     "code": "photography",
     "name": "Photography",
     "featured": true,
+    "active": true,
     "keywords": [
       "Photography",
       "Photos",
@@ -877,7 +929,7 @@
       "Landscape",
       "Street Photography"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "photographyhistory",
       "photographyequipment",
       "editing",
@@ -900,6 +952,7 @@
     "code": "physics",
     "name": "Physics",
     "featured": true,
+    "active": true,
     "keywords": [
       "Physics",
       "Quantum Physics",
@@ -909,12 +962,13 @@
       "Relativity",
       "Particles"
     ],
-    "sub_topics": ["quantumphysics", "astrophysics", "nuclearphysics"]
+    "sub_topic_codes": ["quantumphysics", "astrophysics", "nuclearphysics"]
   },
   {
     "code": "productivity",
     "name": "Productivity",
     "featured": true,
+    "active": true,
     "keywords": [
       "Productivity",
       "Time Management",
@@ -929,6 +983,7 @@
     "code": "psychology",
     "name": "Psychology",
     "featured": true,
+    "active": true,
     "keywords": [
       "Psychology",
       "Mental Health",
@@ -938,12 +993,13 @@
       "Neuroscience",
       "Social Psychology"
     ],
-    "sub_topics": ["psychologyresearch", "mentalhealth"]
+    "sub_topic_codes": ["psychologyresearch", "mentalhealth"]
   },
   {
     "code": "science",
     "name": "Science",
     "featured": true,
+    "active": true,
     "keywords": [
       "Science",
       "Biology",
@@ -955,7 +1011,7 @@
       "Discovery",
       "Innovation"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "biology",
       "chemistry",
       "earthscience",
@@ -971,6 +1027,7 @@
     "code": "softdev",
     "name": "Software Development",
     "featured": true,
+    "active": true,
     "keywords": [
       "Software Development",
       "Programming",
@@ -981,7 +1038,7 @@
       "Agile",
       "Software Engineering"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "webdevelopment",
       "mobiledevelopment",
       "devops",
@@ -997,6 +1054,7 @@
     "code": "sports",
     "name": "Sports",
     "featured": true,
+    "active": true,
     "keywords": [
       "Sports",
       "Football",
@@ -1010,7 +1068,7 @@
       "Games",
       "Formula 1"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "soccer",
       "cricket",
       "basketball",
@@ -1029,6 +1087,7 @@
     "code": "technology",
     "name": "Technology",
     "featured": true,
+    "active": true,
     "keywords": [
       "Technology",
       "Tech",
@@ -1040,7 +1099,7 @@
       "Internet",
       "Future Tech"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "technews",
       "productlaunches",
       "futuretech",
@@ -1056,6 +1115,7 @@
     "code": "travel",
     "name": "Travel",
     "featured": true,
+    "active": true,
     "keywords": [
       "Travel",
       "Tourism",
@@ -1067,7 +1127,7 @@
       "Flights",
       "Hotels"
     ],
-    "sub_topics": [
+    "sub_topic_codes": [
       "budgettravel",
       "solotravel",
       "travelblogs",
@@ -1082,924 +1142,1153 @@
 
   {
     "code": "digimarketing",
-    "name": "Digital Marketing"
+    "name": "Digital Marketing",
+    "active": true
   },
   {
     "code": "branding",
-    "name": "Branding"
+    "name": "Branding",
+    "active": true
   },
   {
     "code": "marketresearch",
-    "name": "Market Research"
+    "name": "Market Research",
+    "active": true
   },
   {
     "code": "aviation",
-    "name": "Aviation"
+    "name": "Aviation",
+    "active": true
   },
   {
     "code": "spacetravel",
-    "name": "Space Travel"
+    "name": "Space Travel",
+    "active": true
   },
   {
     "code": "interiordesign",
-    "name": "Interior Design"
+    "name": "Interior Design",
+    "active": true
   },
   {
     "code": "urbanplanning",
-    "name": "Urban Planning"
+    "name": "Urban Planning",
+    "active": true
   },
   {
     "code": "sustarch",
-    "name": "Sustainable Architecture"
+    "name": "Sustainable Architecture",
+    "active": true
   },
   {
     "code": "landscapearch",
-    "name": "Landscape Architecture"
+    "name": "Landscape Architecture",
+    "active": true
   },
   {
     "code": "archhistory",
-    "name": "Architecture History"
+    "name": "Architecture History",
+    "active": true
   },
   {
     "code": "archmovements",
-    "name": "Architectural Movements"
+    "name": "Architectural Movements",
+    "active": true
   },
   {
     "code": "archlit",
-    "name": "Architectural Literature"
+    "name": "Architectural Literature",
+    "active": true
   },
   {
     "code": "digitalart",
-    "name": "Digital Art"
+    "name": "Digital Art",
+    "active": true
   },
   {
     "code": "arthistory",
-    "name": "Art History"
+    "name": "Art History",
+    "active": true
   },
   {
     "code": "abstractart",
-    "name": "Abstract Art"
+    "name": "Abstract Art",
+    "active": true
   },
   {
     "code": "modernart",
-    "name": "Modern Art"
+    "name": "Modern Art",
+    "active": true
   },
   {
     "code": "llms",
-    "name": "LLMs"
+    "name": "LLMs",
+    "active": true
   },
   {
     "code": "machinelearning",
-    "name": "Machine Learning"
+    "name": "Machine Learning",
+    "active": true
   },
   {
     "code": "deeplearning",
-    "name": "Deep Learning"
+    "name": "Deep Learning",
+    "active": true
   },
   {
     "code": "ainews",
-    "name": "AI News"
+    "name": "AI News",
+    "active": true
   },
   {
     "code": "datascience",
-    "name": "Data Science"
+    "name": "Data Science",
+    "active": true
   },
   {
     "code": "aiagents",
-    "name": "AI Agents"
+    "name": "AI Agents",
+    "active": true
   },
   {
     "code": "promptengineering",
-    "name": "Prompt Engineering"
+    "name": "Prompt Engineering",
+    "active": true
   },
   {
     "code": "aiethics",
-    "name": "AI Ethics"
+    "name": "AI Ethics",
+    "active": true
   },
   {
     "code": "aiart",
-    "name": "AI Art"
+    "name": "AI Art",
+    "active": true
   },
   {
     "code": "generativeai",
-    "name": "Generative AI"
+    "name": "Generative AI",
+    "active": true
   },
   {
     "code": "cars",
-    "name": "Cars"
+    "name": "Cars",
+    "active": true
   },
   {
     "code": "bikes",
-    "name": "Bikes"
+    "name": "Bikes",
+    "active": true
   },
   {
     "code": "superhypercars",
-    "name": "Super & Hyper cars"
+    "name": "Super & Hyper cars",
+    "active": true
   },
   {
     "code": "evs",
-    "name": "Electric Vehicles"
+    "name": "Electric Vehicles",
+    "active": true
   },
   {
     "code": "autonomousvehicles",
-    "name": "Autonomous Vehicles"
+    "name": "Autonomous Vehicles",
+    "active": true
   },
   {
     "code": "vintagevehicles",
-    "name": "Vintage Vehicles"
+    "name": "Vintage Vehicles",
+    "active": true
   },
   {
     "code": "automotivehistory",
-    "name": "Automotive History"
+    "name": "Automotive History",
+    "active": true
   },
   {
     "code": "businessnews",
-    "name": "Business News"
+    "name": "Business News",
+    "active": true
   },
   {
     "code": "superheroes",
-    "name": "Superheroes"
+    "name": "Superheroes",
+    "active": true
   },
   {
     "code": "marveldc",
-    "name": "Marvel & DC"
+    "name": "Marvel & DC",
+    "active": true
   },
   {
     "code": "animemanga",
-    "name": "Anime & Manga"
+    "name": "Anime & Manga",
+    "active": true
   },
   {
     "code": "comiccon",
-    "name": "Comic Con"
+    "name": "Comic Con",
+    "active": true
   },
   {
     "code": "comicbooks",
-    "name": "Comic Books"
+    "name": "Comic Books",
+    "active": true
   },
   {
     "code": "indiecomics",
-    "name": "Indie Comics"
+    "name": "Indie Comics",
+    "active": true
   },
   {
     "code": "webcomics",
-    "name": "Webcomics"
+    "name": "Webcomics",
+    "active": true
   },
   {
     "code": "comicart",
-    "name": "Comic Art"
+    "name": "Comic Art",
+    "active": true
   },
   {
     "code": "algorithms",
-    "name": "Algorithms"
+    "name": "Algorithms",
+    "active": true
   },
   {
     "code": "blockchain",
-    "name": "Blockchain"
+    "name": "Blockchain",
+    "active": true
   },
   {
     "code": "internetofthings",
-    "name": "Internet of Things"
+    "name": "Internet of Things",
+    "active": true
   },
   {
     "code": "computerhistory",
-    "name": "Computer History"
+    "name": "Computer History",
+    "active": true
   },
   {
     "code": "theoreticalcs",
-    "name": "Theoretical Computer Science"
+    "name": "Theoretical Computer Science",
+    "active": true
   },
   {
     "code": "computerarchitecture",
-    "name": "Computer Architecture"
+    "name": "Computer Architecture",
+    "active": true
   },
   {
     "code": "computernetworks",
-    "name": "Computer Networks"
+    "name": "Computer Networks",
+    "active": true
   },
   {
     "code": "quantumcomputing",
-    "name": "Quantum Computing"
+    "name": "Quantum Computing",
+    "active": true
   },
   {
     "code": "blockchain",
-    "name": "Blockchain"
+    "name": "Blockchain",
+    "active": true
   },
   {
     "code": "nfts",
-    "name": "NFTs"
+    "name": "NFTs",
+    "active": true
   },
   {
     "code": "defi",
-    "name": "DeFi"
+    "name": "DeFi",
+    "active": true
   },
   {
     "code": "bitandaltcoins",
-    "name": "Bitcoin & Altcoins"
+    "name": "Bitcoin & Altcoins",
+    "active": true
   },
   {
     "code": "cryptocurrencymining",
-    "name": "Cryptocurrency Mining"
+    "name": "Cryptocurrency Mining",
+    "active": true
   },
   {
     "code": "cryptonews",
-    "name": "Cryptocurrency News"
+    "name": "Cryptocurrency News",
+    "active": true
   },
   {
     "code": "cryptotrading",
-    "name": "Cryptocurrency Trading"
+    "name": "Cryptocurrency Trading",
+    "active": true
   },
   {
     "code": "popculture",
-    "name": "Pop Culture"
+    "name": "Pop Culture",
+    "active": true
   },
   {
     "code": "cultex",
-    "name": "Cultural Exchanges"
+    "name": "Cultural Exchanges",
+    "active": true
   },
   {
     "code": "theater",
-    "name": "Theater"
+    "name": "Theater",
+    "active": true
   },
   {
     "code": "netsec",
-    "name": "Network Security"
+    "name": "Network Security",
+    "active": true
   },
   {
     "code": "dataprivacy",
-    "name": "Data Privacy"
+    "name": "Data Privacy",
+    "active": true
   },
   {
     "code": "ethicalhacking",
-    "name": "Ethical Hacking"
+    "name": "Ethical Hacking",
+    "active": true
   },
   {
     "code": "bughunting",
-    "name": "Bug Hunting & Bug Bounty"
+    "name": "Bug Hunting & Bug Bounty",
+    "active": true
   },
   {
     "code": "cybersecuritynews",
-    "name": "Cybersecurity News"
+    "name": "Cybersecurity News",
+    "active": true
   },
   {
     "code": "cryptography",
-    "name": "Cryptography"
+    "name": "Cryptography",
+    "active": true
   },
   {
     "code": "uiux",
-    "name": "UI/UX"
+    "name": "UI/UX",
+    "active": true
   },
   {
     "code": "graphicdesign",
-    "name": "Graphic Design"
+    "name": "Graphic Design",
+    "active": true
   },
   {
     "code": "productdesign",
-    "name": "Product Design"
+    "name": "Product Design",
+    "active": true
   },
   {
     "code": "industrialdesign",
-    "name": "Industrial Design"
+    "name": "Industrial Design",
+    "active": true
   },
   {
     "code": "fashiondesign",
-    "name": "Fashion Design"
+    "name": "Fashion Design",
+    "active": true
   },
   {
     "code": "designhistory",
-    "name": "Design History"
+    "name": "Design History",
+    "active": true
   },
   {
     "code": "designnews",
-    "name": "Design News"
+    "name": "Design News",
+    "active": true
   },
   {
     "code": "designawards",
-    "name": "Design Awards"
+    "name": "Design Awards",
+    "active": true
   },
   {
     "code": "packagingdesign",
-    "name": "Packaging Design"
+    "name": "Packaging Design",
+    "active": true
   },
   {
     "code": "automotivedesign",
-    "name": "Automotive Design"
+    "name": "Automotive Design",
+    "active": true
   },
   {
     "code": "microeconomics",
-    "name": "Microeconomics"
+    "name": "Microeconomics",
+    "active": true
   },
   {
     "code": "macroeconomics",
-    "name": "Macroeconomics"
+    "name": "Macroeconomics",
+    "active": true
   },
   {
     "code": "internationaleconomics",
-    "name": "International Economics"
+    "name": "International Economics",
+    "active": true
   },
   {
     "code": "economicsnews",
     "name": "Economics News",
-    "sub_topics": ["financenews"]
+    "active": true,
+    "sub_topic_codes": ["financenews"]
   },
   {
     "code": "startups",
-    "name": "Startups"
+    "name": "Startups",
+    "active": true
   },
   {
     "code": "vcfunding",
-    "name": "VC & Funding"
+    "name": "VC & Funding",
+    "active": true
   },
   {
     "code": "businessmodels",
-    "name": "Business Models"
+    "name": "Business Models",
+    "active": true
   },
   {
     "code": "startupnews",
-    "name": "Startup News"
+    "name": "Startup News",
+    "active": true
   },
   {
     "code": "climatechange",
-    "name": "Climate Change & Action"
+    "name": "Climate Change & Action",
+    "active": true
   },
   {
     "code": "sustainability",
-    "name": "Sustainability"
+    "name": "Sustainability",
+    "active": true
   },
   {
     "code": "renewableenergy",
-    "name": "Renewable Energy"
+    "name": "Renewable Energy",
+    "active": true
   },
   {
     "code": "environmentnews",
-    "name": "Environment News"
+    "name": "Environment News",
+    "active": true
   },
   {
     "code": "luxuryfashion",
-    "name": "Luxury Fashion"
+    "name": "Luxury Fashion",
+    "active": true
   },
   {
     "code": "streeturban",
-    "name": "Street & Urban"
+    "name": "Street & Urban",
+    "active": true
   },
   {
     "code": "sustainablefashion",
-    "name": "Sustainable & Ethical Fashion"
+    "name": "Sustainable & Ethical Fashion",
+    "active": true
   },
   {
     "code": "fashionphotography",
-    "name": "Fashion Photography"
+    "name": "Fashion Photography",
+    "active": true
   },
   {
     "code": "fashionstyling",
-    "name": "Fashion Styling"
+    "name": "Fashion Styling",
+    "active": true
   },
   {
     "code": "fashionhistory",
-    "name": "Fashion History"
+    "name": "Fashion History",
+    "active": true
   },
   {
     "code": "fashiontrends",
-    "name": "Fashion Trends"
+    "name": "Fashion Trends",
+    "active": true
   },
   {
     "code": "investandpm",
-    "name": "Investment & Portfolio Management"
+    "name": "Investment & Portfolio Management",
+    "active": true
   },
   {
     "code": "financialmarkets",
-    "name": "Financial Markets"
+    "name": "Financial Markets",
+    "active": true
   },
   {
     "code": "financenews",
     "name": "Financial News",
-    "sub_topics": ["cryptonews"]
+    "active": true,
+    "sub_topic_codes": ["cryptonews"]
   },
   {
     "code": "personalfinance",
-    "name": "Personal Finance"
+    "name": "Personal Finance",
+    "active": true
   },
   {
     "code": "trading",
-    "name": "Trading"
+    "name": "Trading",
+    "active": true
   },
   {
     "code": "fintech",
-    "name": "Fintech"
+    "name": "Fintech",
+    "active": true
   },
   {
     "code": "riskmanagement",
-    "name": "Risk Management"
+    "name": "Risk Management",
+    "active": true
   },
   {
     "code": "insurance",
-    "name": "Insurance"
+    "name": "Insurance",
+    "active": true
   },
   {
     "code": "cfandib",
-    "name": "Corp Finance & Investment Banking"
+    "name": "Corp Finance & Investment Banking",
+    "active": true
   },
   {
     "code": "accountingandreporting",
-    "name": "Accounting & Reporting"
+    "name": "Accounting & Reporting",
+    "active": true
   },
   {
     "code": "assetwealthmgmt",
-    "name": "Asset & Wealth Management"
+    "name": "Asset & Wealth Management",
+    "active": true
   },
   {
     "code": "culinaryarts",
-    "name": "Culinary Arts"
+    "name": "Culinary Arts",
+    "active": true
   },
   {
     "code": "veganism",
-    "name": "Veganism"
+    "name": "Veganism",
+    "active": true
   },
   {
     "code": "worldcuisines",
-    "name": "World Cuisines"
+    "name": "World Cuisines",
+    "active": true
   },
   {
     "code": "celebritychefs",
-    "name": "Celebrity Chefs"
+    "name": "Celebrity Chefs",
+    "active": true
   },
   {
     "code": "bakingpastry",
-    "name": "Baking & Pastry"
+    "name": "Baking & Pastry",
+    "active": true
   },
   {
     "code": "nutritiondiet",
-    "name": "Nutrition & Diet"
+    "name": "Nutrition & Diet",
+    "active": true
   },
   {
     "code": "foodculthist",
-    "name": "Food Culture & History"
+    "name": "Food Culture & History",
+    "active": true
   },
   {
     "code": "drinks",
-    "name": "Drinks"
+    "name": "Drinks",
+    "active": true
   },
   {
     "code": "foodphotography",
-    "name": "Food Photography"
+    "name": "Food Photography",
+    "active": true
   },
   {
     "code": "recipes",
-    "name": "Recipes"
+    "name": "Recipes",
+    "active": true
   },
   {
     "code": "mobilegaming",
-    "name": "Mobile Gaming"
+    "name": "Mobile Gaming",
+    "active": true
   },
   {
     "code": "pcgaming",
-    "name": "PC Gaming"
+    "name": "PC Gaming",
+    "active": true
   },
   {
     "code": "consolegaming",
-    "name": "Console Gaming"
+    "name": "Console Gaming",
+    "active": true
   },
   {
     "code": "arvrxr",
-    "name": "AR/VR/XR"
+    "name": "AR/VR/XR",
+    "active": true
   },
   {
     "code": "gamestreaming",
-    "name": "Streaming"
+    "name": "Streaming",
+    "active": true
   },
   {
     "code": "gamedev",
-    "name": "Game Development"
+    "name": "Game Development",
+    "active": true
   },
   {
     "code": "indiegames",
-    "name": "Indie Games"
+    "name": "Indie Games",
+    "active": true
   },
   {
     "code": "gamingsetups",
-    "name": "Gaming Hardware & Setups"
+    "name": "Gaming Hardware & Setups",
+    "active": true
   },
   {
     "code": "fitness",
-    "name": "Fitness & Exercise"
+    "name": "Fitness & Exercise",
+    "active": true
   },
   {
     "code": "womenhealth",
-    "name": "Women's Health"
+    "name": "Women's Health",
+    "active": true
   },
   {
     "code": "mentalhealth",
-    "name": "Mental Health & Wellbeing"
+    "name": "Mental Health & Wellbeing",
+    "active": true
   },
   {
     "code": "chronicdiseases",
-    "name": "Chronic Diseases & Management"
+    "name": "Chronic Diseases & Management",
+    "active": true
   },
   {
     "code": "healthtech",
-    "name": "Health Technology"
+    "name": "Health Technology",
+    "active": true
   },
   {
     "code": "ancienthistory",
-    "name": "Ancient History"
+    "name": "Ancient History",
+    "active": true
   },
   {
     "code": "medievalhistory",
-    "name": "Medieval History"
+    "name": "Medieval History",
+    "active": true
   },
   {
     "code": "modernhistory",
-    "name": "Modern History"
+    "name": "Modern History",
+    "active": true
   },
   {
     "code": "criminalcivillaw",
-    "name": "Criminal & Civil Law"
+    "name": "Criminal & Civil Law",
+    "active": true
   },
   {
     "code": "internationalhumanrights",
-    "name": "International & Human Rights"
+    "name": "International & Human Rights",
+    "active": true
   },
   {
     "code": "commercialcorplaw",
-    "name": "Commercial & Corporate Law"
+    "name": "Commercial & Corporate Law",
+    "active": true
   },
   {
     "code": "constitutionaladminlaw",
-    "name": "Constitutional & Administrative Law"
+    "name": "Constitutional & Administrative Law",
+    "active": true
   },
   {
     "code": "lgbtqnews",
-    "name": "LGBTQ+ News"
+    "name": "LGBTQ+ News",
+    "active": true
   },
   {
     "code": "lgbtqhistory",
-    "name": "Movement, Activism & History"
+    "name": "Movement, Activism & History",
+    "active": true
   },
   {
     "code": "lgbtqrights",
-    "name": "LGBTQ+ Rights"
+    "name": "LGBTQ+ Rights",
+    "active": true
   },
   {
     "code": "queerculture",
-    "name": "Queer Culture & Media"
+    "name": "Queer Culture & Media",
+    "active": true
   },
 
   {
     "code": "literarycriticism",
-    "name": "Literary Criticism"
+    "name": "Literary Criticism",
+    "active": true
   },
   {
     "code": "literaryhistory",
-    "name": "Literary History"
+    "name": "Literary History",
+    "active": true
   },
   {
     "code": "poetry",
-    "name": "Poetry"
+    "name": "Poetry",
+    "active": true
   },
   {
     "code": "fiction",
-    "name": "Novels & Fiction"
+    "name": "Novels & Fiction",
+    "active": true
   },
   {
     "code": "nonfiction",
-    "name": "Non-fiction"
+    "name": "Non-fiction",
+    "active": true
   },
   {
     "code": "literarycriticism",
-    "name": "Literary Criticism"
+    "name": "Literary Criticism",
+    "active": true
   },
   {
     "code": "historicallit",
-    "name": "Historical Literature"
+    "name": "Historical Literature",
+    "active": true
   },
   {
     "code": "mythandfolklore",
-    "name": "Mythology & Folklore"
+    "name": "Mythology & Folklore",
+    "active": true
   },
 
   {
     "code": "personaldevelopment",
-    "name": "Personal Development"
+    "name": "Personal Development",
+    "active": true
   },
   {
     "code": "relationships",
-    "name": "Relationships"
+    "name": "Relationships",
+    "active": true
   },
   {
     "code": "home",
-    "name": "Home & Lifestyle"
+    "name": "Home & Lifestyle",
+    "active": true
   },
 
   {
     "code": "projectmanagement",
-    "name": "Project Management"
+    "name": "Project Management",
+    "active": true
   },
   {
     "code": "hrmanagement",
-    "name": "HR Management"
+    "name": "HR Management",
+    "active": true
   },
   {
     "code": "strategicmanagement",
-    "name": "Strategic Management"
+    "name": "Strategic Management",
+    "active": true
   },
   {
     "code": "opsmanagement",
-    "name": "Operations Management"
+    "name": "Operations Management",
+    "active": true
   },
   {
     "code": "supplychain",
-    "name": "Supply Chain Management"
+    "name": "Supply Chain Management",
+    "active": true
   },
   {
     "code": "leadership",
-    "name": "Leadership & Team Management"
+    "name": "Leadership & Team Management",
+    "active": true
   },
   {
     "code": "medicalscience",
-    "name": "Medical Science & Research"
+    "name": "Medical Science & Research",
+    "active": true
   },
   {
     "code": "clinicalmedicine",
-    "name": "Clinical Medicine"
+    "name": "Clinical Medicine",
+    "active": true
   },
   {
     "code": "publichealth",
-    "name": "Public Health & Preventive Medicine"
+    "name": "Public Health & Preventive Medicine",
+    "active": true
   },
   {
     "code": "healthpolicy",
-    "name": "Health Policy & Administration"
+    "name": "Health Policy & Administration",
+    "active": true
   },
   {
     "code": "tvseries",
-    "name": "TV Series & Streaming Shows"
+    "name": "TV Series & Streaming Shows",
+    "active": true
   },
   {
     "code": "cinema",
-    "name": "Cinema"
+    "name": "Cinema",
+    "active": true
   },
   {
     "code": "filmproduction",
-    "name": "Film Production"
+    "name": "Film Production",
+    "active": true
   },
   {
     "code": "screenwriting",
-    "name": "Screenwriting"
+    "name": "Screenwriting",
+    "active": true
   },
   {
     "code": "filmhistory",
-    "name": "Film History"
+    "name": "Film History",
+    "active": true
   },
   {
     "code": "filmfestivals",
-    "name": "Film Festivals & Awards"
+    "name": "Film Festivals & Awards",
+    "active": true
   },
   {
     "code": "filmartists",
-    "name": "Artists & Filmmakers"
+    "name": "Artists & Filmmakers",
+    "active": true
   },
   {
     "code": "entertainmentnews",
-    "name": "Entertainment News"
+    "name": "Entertainment News",
+    "active": true
   },
   {
     "code": "musichistory",
-    "name": "Music History"
+    "name": "Music History",
+    "active": true
   },
   {
     "code": "musictheory",
-    "name": "Music Theory"
+    "name": "Music Theory",
+    "active": true
   },
   {
     "code": "musicproduction",
-    "name": "Music Production"
+    "name": "Music Production",
+    "active": true
   },
   {
     "code": "musicartists",
-    "name": "Artists"
+    "name": "Artists",
+    "active": true
   },
   {
     "code": "instruments",
-    "name": "Instruments"
+    "name": "Instruments",
+    "active": true
   },
   {
     "code": "musicfestivals",
-    "name": "Festivals & Awards"
+    "name": "Festivals & Awards",
+    "active": true
   },
   {
     "code": "worldnews",
-    "name": "World News"
+    "name": "World News",
+    "active": true
   },
   {
     "code": "photographyhistory",
-    "name": "History"
+    "name": "History",
+    "active": true
   },
   {
     "code": "photographyequipment",
-    "name": "Cameras & Accessories"
+    "name": "Cameras & Accessories",
+    "active": true
   },
   {
     "code": "editing",
-    "name": "Editing"
+    "name": "Editing",
+    "active": true
   },
   {
     "code": "mobiography",
-    "name": "Mobile Photography"
+    "name": "Mobile Photography",
+    "active": true
   },
   {
     "code": "naturephotography",
-    "name": "Nature"
+    "name": "Nature",
+    "active": true
   },
   {
     "code": "wildlifephotography",
-    "name": "Wildlife"
+    "name": "Wildlife",
+    "active": true
   },
   {
     "code": "streetphotography",
-    "name": "Street"
+    "name": "Street",
+    "active": true
   },
   {
     "code": "portraitphotography",
-    "name": "Portrait"
+    "name": "Portrait",
+    "active": true
   },
   {
     "code": "landscapephotography",
-    "name": "Landscape"
+    "name": "Landscape",
+    "active": true
   },
   {
     "code": "sportsphotography",
-    "name": "Sports"
+    "name": "Sports",
+    "active": true
   },
   {
     "code": "eventphotography",
-    "name": "Events"
+    "name": "Events",
+    "active": true
   },
   {
     "code": "weddingphotography",
-    "name": "Wedding"
+    "name": "Wedding",
+    "active": true
   },
   {
     "code": "productphotography",
-    "name": "Product"
+    "name": "Product",
+    "active": true
   },
   {
     "code": "photojournalism",
-    "name": "Photojournalism"
+    "name": "Photojournalism",
+    "active": true
   },
   {
     "code": "photographyawards",
-    "name": "Awards"
+    "name": "Awards",
+    "active": true
   },
   {
     "code": "quantumphysics",
-    "name": "Quantum Physics"
+    "name": "Quantum Physics",
+    "active": true
   },
   {
     "code": "nuclearphysics",
-    "name": "Nuclear Physics"
+    "name": "Nuclear Physics",
+    "active": true
   },
   {
     "code": "psychologyresearch",
-    "name": "Psychology Research"
+    "name": "Psychology Research",
+    "active": true
   },
   {
     "code": "biology",
-    "name": "Biology"
+    "name": "Biology",
+    "active": true
   },
   {
     "code": "chemistry",
-    "name": "Chemistry"
+    "name": "Chemistry",
+    "active": true
   },
   {
     "code": "earthscience",
-    "name": "Earth Science"
+    "name": "Earth Science",
+    "active": true
   },
   {
     "code": "webdevelopment",
-    "name": "Web Development"
+    "name": "Web Development",
+    "active": true
   },
   {
     "code": "mobiledevelopment",
-    "name": "Mobile Development"
+    "name": "Mobile Development",
+    "active": true
   },
   {
     "code": "devops",
-    "name": "DevOps & CI"
+    "name": "DevOps & CI",
+    "active": true
   },
   {
     "code": "cloudcomputing",
-    "name": "Cloud Computing"
+    "name": "Cloud Computing",
+    "active": true
   },
   {
     "code": "systemdesign",
-    "name": "System Design"
+    "name": "System Design",
+    "active": true
   },
   {
     "code": "engineeringblogs",
-    "name": "Engineering Blogs"
+    "name": "Engineering Blogs",
+    "active": true
   },
   {
     "code": "soccer",
-    "name": "Football (Soccer)"
+    "name": "Football (Soccer)",
+    "active": true
   },
   {
     "code": "cricket",
-    "name": "Cricket"
+    "name": "Cricket",
+    "active": true
   },
   {
     "code": "basketball",
-    "name": "Basketball"
+    "name": "Basketball",
+    "active": true
   },
   {
     "code": "tennis",
-    "name": "Tennis"
+    "name": "Tennis",
+    "active": true
   },
   {
     "code": "baseball",
-    "name": "Baseball"
+    "name": "Baseball",
+    "active": true
   },
   {
     "code": "rugby",
-    "name": "Rugby"
+    "name": "Rugby",
+    "active": true
   },
   {
     "code": "golf",
-    "name": "Golf"
+    "name": "Golf",
+    "active": true
   },
   {
     "code": "hockey",
-    "name": "Hockey"
+    "name": "Hockey",
+    "active": true
   },
   {
     "code": "athletics",
-    "name": "Athletics"
+    "name": "Athletics",
+    "active": true
   },
   {
     "code": "motorsports",
-    "name": "Motorsports"
+    "name": "Motorsports",
+    "active": true
   },
   {
     "code": "othersports",
-    "name": "Other Sports"
+    "name": "Other Sports",
+    "active": true
   },
   {
     "code": "sportsnews",
-    "name": "Sports News"
+    "name": "Sports News",
+    "active": true
   },
   {
     "code": "technews",
-    "name": "Tech News"
+    "name": "Tech News",
+    "active": true
   },
   {
     "code": "productlaunches",
-    "name": "Product Launches"
+    "name": "Product Launches",
+    "active": true
   },
   {
     "code": "futuretech",
-    "name": "Future Tech"
+    "name": "Future Tech",
+    "active": true
   },
   {
     "code": "techreviews",
-    "name": "Tech Reviews"
+    "name": "Tech Reviews",
+    "active": true
   },
   {
     "code": "techjobs",
-    "name": "Tech Jobs"
+    "name": "Tech Jobs",
+    "active": true
   },
 
   {
     "code": "budgettravel",
-    "name": "Backpacking & Budget Travel"
+    "name": "Backpacking & Budget Travel",
+    "active": true
   },
   {
     "code": "solotravel",
-    "name": "Solo Travel"
+    "name": "Solo Travel",
+    "active": true
   },
   {
     "code": "travelblogs",
-    "name": "Travel Blogs"
+    "name": "Travel Blogs",
+    "active": true
   },
   {
     "code": "travelphotography",
-    "name": "Travel Photography"
+    "name": "Travel Photography",
+    "active": true
   },
   {
     "code": "travelvideos",
-    "name": "Travel Vlogs"
+    "name": "Travel Vlogs",
+    "active": true
   },
   {
     "code": "travelguides",
-    "name": "Travel Guides"
+    "name": "Travel Guides",
+    "active": true
   },
   {
     "code": "adventuretravel",
-    "name": "Adventure Travel"
+    "name": "Adventure Travel",
+    "active": true
   },
   {
     "code": "ecotravel",
-    "name": "Eco Travel"
+    "name": "Eco Travel",
+    "active": true
   },
   {
     "code": "foodtravel",
-    "name": "Food Travel"
+    "name": "Food Travel",
+    "active": true
   }
 ]

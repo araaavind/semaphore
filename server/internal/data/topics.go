@@ -11,8 +11,8 @@ type Topic struct {
 	ID        int64              `json:"id"`
 	Code      string             `json:"code"`
 	Name      string             `json:"name"`
-	Featured  bool               `json:"featured"`
-	Active    bool               `json:"active"`
+	Featured  bool               `json:"featured,omitempty"`
+	Active    bool               `json:"active,omitempty"`
 	ImageURL  pgtype.Text        `json:"image_url,omitempty"`
 	Color     pgtype.Text        `json:"color,omitempty"`
 	Keywords  []string           `json:"keywords,omitempty"`
@@ -21,7 +21,8 @@ type Topic struct {
 	Version   int32              `json:"-"`
 
 	// Not stored in DB
-	SubTopics []string `json:"sub_topics,omitempty"`
+	SubTopics     []*Topic `json:"sub_topics,omitempty"`
+	SubTopicCodes []string `json:"sub_topic_codes,omitempty"`
 }
 
 type Subtopic struct {
@@ -101,4 +102,68 @@ func (m *TopicModel) ReCreateSubtopics(ctx context.Context, subtopics []Subtopic
 	}
 
 	return tx.Commit(ctx)
+}
+
+func (m *TopicModel) GetTopics(ctx context.Context) ([]Topic, error) {
+	query := `
+		SELECT p.id, p.code, p.name, p.featured, p.image_url, p.color, p.keywords,
+			c.id, c.code, c.name
+		FROM topics p
+		LEFT JOIN subtopics st ON p.id = st.parent_id
+		LEFT JOIN topics c ON st.child_id = c.id AND c.active = true
+		WHERE p.active = true
+		ORDER BY p.featured DESC, p.name ASC
+	`
+
+	rows, err := m.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	topics := []Topic{}
+
+	for rows.Next() {
+		var parent Topic
+		var childID *int64
+		var childCode *string
+		var childName *string
+		err := rows.Scan(
+			&parent.ID,
+			&parent.Code,
+			&parent.Name,
+			&parent.Featured,
+			&parent.ImageURL,
+			&parent.Color,
+			&parent.Keywords,
+			&childID,
+			&childCode,
+			&childName,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(topics) != 0 && topics[len(topics)-1].ID == parent.ID && childID != nil {
+			topics[len(topics)-1].SubTopics = append(topics[len(topics)-1].SubTopics, &Topic{
+				ID:   *childID,
+				Code: *childCode,
+				Name: *childName,
+			})
+		} else {
+			topics = append(topics, parent)
+			if childID != nil {
+				topics[len(topics)-1].SubTopics = append(topics[len(topics)-1].SubTopics, &Topic{
+					ID:   *childID,
+					Code: *childCode,
+					Name: *childName,
+				})
+			}
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return topics, nil
 }

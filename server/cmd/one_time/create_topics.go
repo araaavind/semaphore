@@ -57,7 +57,7 @@ func main() {
 	// Create subtopic mappings
 	var subtopicsToUpsert []data.Subtopic
 	for _, topic := range topics {
-		for _, subTopicCode := range topic.SubTopics {
+		for _, subTopicCode := range topic.SubTopicCodes {
 			childID, ok := topicCodeToID[subTopicCode]
 			if !ok {
 				log.Fatalf("Error: Subtopic code '%s' (referenced as a subtopic of '%s' - ID: %d) does not exist as a main topic code. Please check topics.json.", subTopicCode, topic.Code, topic.ID)

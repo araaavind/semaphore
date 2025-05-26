@@ -9,49 +9,6 @@ import (
 	"github.com/justinas/alice"
 )
 
-/*
-
-Method		Route								Description								Permission						Response
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-POST		/users								signup									-								user with 201
-PUT			/users/activate						activate user							-								empty response with 200
-GET			/users/:username					get a user								-								user with 200
-HEAD		/users/:username					check if user exists(username taken)	-								empty response with 200 if user exists or 404 for error
-
-GET			/me									get logged in user						auth							user with 200
-GET			/me/feeds							get feeds followed by logged in user	auth							feeds list, metadata with 200
-GET			/me/feeds/contains					check if user follows feeds				auth							boolean list with 200
-GET			/me/walls							list walls of logged in user			auth							walls list with 200
-GET			/me/items/saved					    list saved items of logged in user		auth							saved items list with 200
-GET			/me/items/liked					    list liked items of logged in user		auth							liked items list with 200
-
-POST		/feeds								add and follow a feed					activation, feeds:write			empty response with 201
-GET			/feeds								list all feeds							-								feeds list, metadata with 200
-GET			/feeds/:feed_id						get a feed								-								feed with 200
-GET			/feeds/:feed_id/followers 			list followers for feed					auth							users list, metadata with 200
-PUT			/feeds/:feed_id/followers 			follow a feed							auth, feeds:follow				empty response with 200
-DELETE		/feeds/:feed_id/followers			unfollow a feed							auth, feeds:follow				empty response with 200
-GET			/feeds/:feed_id/items				get feeds for a wall
-
-POST		/walls								create wall
-GET			/walls/:wall_id						get a specific wall
-PUT			/walls/:wall_id						update a wall's details
-PUT			/walls/:wall_id/feeds/:feed_id		add feeds to a wall
-DELETE		/walls/:wall_id/feeds/:feed_id		remove feeds from a wall
-GET			/walls/:wall_id/feeds				get feeds for a wall
-GET			/walls/:wall_id/items				get items for a wall
-
-GET			/items								list all items (from primary wall)
-GET			/items/:item_id						get a specific item
-PUT			/items/:item_id/save				save an item							auth							empty response with 201
-PUT			/items/:item_id/unsave				unsave an item							auth							empty response with 200
-PUT			/items/:item_id/like				like an item							auth							empty response with 201
-PUT			/items/:item_id/unlike				unlike an item							auth							empty response with 200
-GET			/items/:item_id/like_count			get the like count for an item			auth							like count with 200
-
-*/
-
 func (app *application) routes() http.Handler {
 	router := httprouter.New()
 
@@ -77,6 +34,8 @@ func (app *application) routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
 	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
+
+	router.HandlerFunc(http.MethodGet, "/v1/topics", app.listTopicsWithCache)
 
 	router.HandlerFunc(http.MethodGet, "/v1/youtube/channel", app.getYouTubeChannelID)
 
