@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:math';
 
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
@@ -41,6 +41,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
 
   String _searchQuery = '';
   Topic? _selectedTopic;
+  Topic? _selectedSubtopic;
   Color? _selectedTopicColor;
 
   @override
@@ -52,7 +53,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
               FeedSearchRequested(
                 searchKey: 'title',
                 searchValue: _searchQuery,
-                topicId: _selectedTopic?.id,
+                topicId: _selectedSubtopic?.id ?? _selectedTopic?.id,
                 page: pageKey,
                 pageSize: ServerConstants.defaultPaginationPageSize,
               ),
@@ -70,6 +71,24 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     super.dispose();
   }
 
+  void _selectTopic(Topic topic, Color color) {
+    setState(() {
+      _selectedTopic = topic;
+      _selectedTopicColor = color;
+      _selectedSubtopic = null;
+    });
+    _pagingController.refresh();
+  }
+
+  void _clearTopic() {
+    setState(() {
+      _selectedTopic = null;
+      _selectedTopicColor = null;
+      _selectedSubtopic = null;
+    });
+    _pagingController.refresh();
+  }
+
   void _onSearchChanged() {
     _debouncer.run(
       () {
@@ -81,6 +100,19 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         }
       },
     );
+  }
+
+  void _onSubtopicSelectionChanged(Topic subtopic, bool selected) {
+    _debouncer.run(() {
+      setState(() {
+        if (selected) {
+          _selectedSubtopic = subtopic;
+        } else {
+          _selectedSubtopic = null;
+        }
+      });
+      _pagingController.refresh();
+    });
   }
 
   void _clearSearch() {
@@ -110,10 +142,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     return BackButtonListener(
       onBackButtonPressed: () async {
         if (_selectedTopic != null) {
-          setState(() {
-            _selectedTopic = null;
-            _selectedTopicColor = null;
-          });
+          _clearTopic();
           return true;
         }
         return false;
@@ -125,6 +154,10 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         backgroundColor: _selectedTopicColor?.withAlpha(10),
         body: Column(
           children: [
+            if (_selectedTopic != null &&
+                _selectedTopic!.subTopics != null &&
+                _selectedTopic!.subTopics!.isNotEmpty)
+              _buildSubtopicSelector(),
             _searchQuery.isEmpty && _selectedTopic == null
                 ? Expanded(
                     child: Padding(
@@ -132,12 +165,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                         horizontal: UIConstants.pagePadding,
                       ),
                       child: TopicsGrid(
-                        onTap: (topic, color) {
-                          setState(() {
-                            _selectedTopic = topic;
-                            _selectedTopicColor = color;
-                          });
-                        },
+                        onTap: _selectTopic,
                       ),
                     ),
                   )
@@ -177,7 +205,9 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                           pagingController: _pagingController,
                           index: index,
                         ),
-                        shimmerLoaderType: ShimmerLoaderType.feedmag,
+                        loaderType:
+                            PagedListLoaderType.circularProgressIndicator,
+                        // shimmerLoaderType: ShimmerLoaderType.feedmag,
                         firstPageErrorTitle:
                             TextConstants.feedListFetchErrorTitle,
                         newPageErrorTitle:
@@ -229,12 +259,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
               children: [
                 const SizedBox(width: 4.0),
                 GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedTopic = null;
-                      _selectedTopicColor = null;
-                    });
-                  },
+                  onTap: _clearTopic,
                   child: const Icon(Icons.close_outlined),
                 ),
                 const SizedBox(width: 12.0),
@@ -406,6 +431,86 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         statusBarIconBrightness: context.theme.brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
+      ),
+    );
+  }
+
+  Widget _buildSubtopicSelector() {
+    _selectedTopic!.subTopics!
+        .sort((a, b) => a.name.length.compareTo(b.name.length));
+
+    double totalChipWidth = 0;
+
+    // Create a TextPainter to measure text dimensions
+    final textStyle = context.theme.textTheme.bodySmall?.copyWith(
+      color: context.theme.colorScheme.onSurface.withAlpha(235),
+    );
+
+    // Add width for each subtopic chip
+    for (final subTopic in _selectedTopic!.subTopics!) {
+      // Create a TextPainter to measure this specific text
+      final textPainter = TextPainter(
+        text: TextSpan(text: subTopic.name, style: textStyle),
+        textDirection: TextDirection.ltr,
+        maxLines: 1,
+      )..layout();
+
+      // Add text width + chip padding + border
+      // 18 accounts for padding 16 + 2 border on both sides
+      double chipWidth = textPainter.width + 18;
+      // Add spacing between chips
+      totalChipWidth += chipWidth + 8;
+    }
+
+    totalChipWidth += 16; // accounting for checkmark
+    totalChipWidth += 16; // safe offset
+
+    // Calculate how much the content might exceed the screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+    double multiplier = max(
+      1.0,
+      totalChipWidth / (screenWidth - 16), // 16 for container padding
+    );
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        width: screenWidth * multiplier,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8.0,
+          vertical: 4.0,
+        ),
+        child: Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 8.0,
+          runSpacing: 0.0,
+          children: _selectedTopic!.subTopics!.map(
+            (subTopic) {
+              return ChoiceChip(
+                visualDensity: VisualDensity.compact,
+                showCheckmark: true,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 2),
+                side: BorderSide(
+                  color: _selectedTopicColor!.withAlpha(50),
+                ),
+                label: Text(
+                  subTopic.name,
+                  style: textStyle,
+                ),
+                color: WidgetStateColor.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return _selectedTopicColor!.withAlpha(50);
+                  }
+                  return Colors.transparent;
+                }),
+                selected: _selectedSubtopic?.id == subTopic.id,
+                onSelected: (selected) {
+                  _onSubtopicSelectionChanged(subTopic, selected);
+                },
+              );
+            },
+          ).toList(),
+        ),
       ),
     );
   }

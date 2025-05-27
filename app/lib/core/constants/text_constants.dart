@@ -27,7 +27,7 @@ class TextConstants {
   static const String feedListFetchErrorTitle = 'Failed to load feeds';
   static const String feedFollowersFetchErrorTitle = 'Failed to load followers';
   static const String feedFollowersEmptyMessageTitle = 'No followers';
-  static const String feedListEmptyMessageTitle = 'Nothing to see here';
+  static const String feedListEmptyMessageTitle = 'That\'s all for now';
   static const String feedListEmptyMessageMessage =
       'Cannot find the feeds that you are looking for?\nAdd them yourself!';
 

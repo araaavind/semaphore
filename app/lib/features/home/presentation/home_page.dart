@@ -1,6 +1,5 @@
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:flutter/material.dart';
@@ -68,17 +67,6 @@ class HomePage extends StatelessWidget {
         bottomNavigationBar: SafeArea(
           child: Container(
             height: 54,
-            decoration:
-                (context.theme.colorScheme.brightness == Brightness.dark)
-                    ? BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: context.theme.colorScheme.outline,
-                            width: UIConstants.borderWidth,
-                          ),
-                        ),
-                      )
-                    : null,
             child: Wrap(
               children: [
                 Theme(
