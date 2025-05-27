@@ -266,9 +266,22 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 func (m FeedModel) Update(feed *Feed) error {
 	query := `
 		UPDATE feeds
-		SET title = $1, description = $2, link = $3, feed_link = $4, image_url = $5, pub_date = $6, pub_updated = $7,
-		feed_type = $8, feed_version = $9, topic_id = $10, language = $11, updated_at = NOW(), last_fetch_at = $12,
-		last_failure_at = $13, last_failure = $14, version = version + 1
+		SET title = COALESCE($1, title), 
+			description = COALESCE($2, description), 
+			link = COALESCE($3, link), 
+			feed_link = COALESCE($4, feed_link), 
+			image_url = COALESCE($5, image_url), 
+			pub_date = COALESCE($6, pub_date), 
+			pub_updated = COALESCE($7, pub_updated),
+			feed_type = COALESCE($8, feed_type), 
+			feed_version = COALESCE($9, feed_version), 
+			topic_id = COALESCE($10, topic_id), 
+			language = COALESCE($11, language), 
+			updated_at = NOW(), 
+			last_fetch_at = COALESCE($12, last_fetch_at),
+			last_failure_at = COALESCE($13, last_failure_at), 
+			last_failure = COALESCE($14, last_failure), 
+			version = version + 1
 		WHERE id = $15 AND version = $16
 		RETURNING updated_at, version`
 
