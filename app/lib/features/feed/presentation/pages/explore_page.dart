@@ -39,15 +39,18 @@ class _ExplorePageState extends State<ExplorePage> {
       body: Padding(
         padding:
             const EdgeInsets.symmetric(horizontal: UIConstants.pagePadding),
-        child: TopicsGrid(),
+        child: TopicsGrid(onTap: (topic, color) {}),
       ),
     );
   }
 }
 
 class TopicsGrid extends StatelessWidget {
+  final Function(Topic, Color) onTap;
+
   const TopicsGrid({
     super.key,
+    required this.onTap,
   });
 
   @override
@@ -86,15 +89,23 @@ class TopicsGrid extends StatelessWidget {
           }
 
           return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
+              // Using tile bottom padding instead of mainAxisSpacing
+              // mainAxisSpacing: 16,
               childAspectRatio: 1.5,
+              mainAxisExtent: max(
+                MediaQuery.of(context).size.height * 0.14,
+                80,
+              ),
             ),
             itemCount: featuredTopics.length,
             itemBuilder: (context, index) {
-              return TopicTile(topic: featuredTopics[index]);
+              return TopicTile(
+                topic: featuredTopics[index],
+                onTap: onTap,
+              );
             },
           );
         }
@@ -107,118 +118,126 @@ class TopicsGrid extends StatelessWidget {
 
 class TopicTile extends StatelessWidget {
   final Topic topic;
+  final Function(Topic, Color) onTap;
 
   const TopicTile({
     super.key,
     required this.topic,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final Color tileColor = _getTopicColor(context, topic.color);
 
-    return InkWell(
-      onTap: () {
-        // Handle topic tap
-      },
-      splashFactory: NoSplash.splashFactory,
-      borderRadius: BorderRadius.circular(UIConstants.tileItemBorderRadius),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(UIConstants.tileItemBorderRadius),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(40),
-              blurRadius: 2,
-              spreadRadius: 0.5,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            if (topic.imageUrl != null)
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(UIConstants.tileItemBorderRadius),
-                  child: CachedNetworkImage(
-                    color: context.theme.brightness == Brightness.dark
-                        ? Colors.black.withAlpha(80)
-                        : Colors.white.withAlpha(80),
-                    colorBlendMode: context.theme.brightness == Brightness.dark
-                        ? BlendMode.darken
-                        : BlendMode.lighten,
-                    imageUrl: topic.imageUrl!,
-                    cacheKey: topic.code,
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) => Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                              UIConstants.tileItemBorderRadius),
-                          color: tileColor,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: InkWell(
+        onTap: () {
+          onTap(topic, tileColor);
+        },
+        splashFactory: NoSplash.splashFactory,
+        borderRadius: BorderRadius.circular(UIConstants.tileItemBorderRadius),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius:
+                BorderRadius.circular(UIConstants.tileItemBorderRadius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(40),
+                blurRadius: 2,
+                spreadRadius: 0.5,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              if (topic.imageUrl != null)
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius:
+                        BorderRadius.circular(UIConstants.tileItemBorderRadius),
+                    child: CachedNetworkImage(
+                      color: context.theme.brightness == Brightness.dark
+                          ? Colors.black.withAlpha(80)
+                          : Colors.white.withAlpha(80),
+                      colorBlendMode:
+                          context.theme.brightness == Brightness.dark
+                              ? BlendMode.darken
+                              : BlendMode.lighten,
+                      imageUrl: topic.imageUrl!,
+                      cacheKey: topic.code,
+                      fit: BoxFit.cover,
+                      errorWidget: (context, url, error) => Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                                UIConstants.tileItemBorderRadius),
+                            color: tileColor,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            if (topic.imageUrl == null)
+              if (topic.imageUrl == null)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          UIConstants.tileItemBorderRadius),
+                      color: tileColor,
+                    ),
+                  ),
+                ),
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius:
                         BorderRadius.circular(UIConstants.tileItemBorderRadius),
-                    color: tileColor,
-                  ),
-                ),
-              ),
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(UIConstants.tileItemBorderRadius),
-                  gradient: LinearGradient(
-                    stops: const [0.2, 1],
-                    colors: [
-                      context.theme.brightness == Brightness.dark
-                          ? Colors.black.withAlpha(50)
-                          : Colors.white.withAlpha(50),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoSizeText(
-                    topic.name,
-                    style: context.theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: context.theme.brightness == Brightness.dark
-                          ? context.theme.colorScheme.onSurface.withAlpha(230)
-                          : context.theme.colorScheme.onSurface.withAlpha(210),
+                    gradient: LinearGradient(
+                      stops: const [0.2, 1],
+                      colors: [
+                        context.theme.brightness == Brightness.dark
+                            ? Colors.black.withAlpha(50)
+                            : Colors.white.withAlpha(50),
+                        Colors.transparent,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomCenter,
                     ),
-                    wrapWords: false,
-                    textAlign: TextAlign.start,
-                    maxLines: 2,
-                    minFontSize: 15,
-                    maxFontSize: 17,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoSizeText(
+                      topic.name,
+                      style: context.theme.textTheme.titleMedium?.copyWith(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        color: context.theme.brightness == Brightness.dark
+                            ? context.theme.colorScheme.onSurface.withAlpha(230)
+                            : context.theme.colorScheme.onSurface
+                                .withAlpha(210),
+                      ),
+                      wrapWords: false,
+                      textAlign: TextAlign.start,
+                      maxLines: 2,
+                      minFontSize: 15,
+                      maxFontSize: 17,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

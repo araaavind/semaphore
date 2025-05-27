@@ -62,10 +62,16 @@ class AppTheme {
     ),
     textTheme: AppTextTheme.lightTextTheme,
     dialogTheme: DialogThemeData(
-      backgroundColor: AppColorScheme.lightColorScheme.surfaceContainerLow,
-      barrierColor:
-          AppColorScheme.lightColorScheme.surfaceContainerLow.withAlpha(160),
+      backgroundColor: AppColorScheme.lightColorScheme.surface,
+      barrierColor: AppColorScheme.lightColorScheme.surface.withAlpha(190),
       shadowColor: Colors.black.withAlpha(160),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: AppColorScheme.lightColorScheme.onSurface.withAlpha(60),
+          width: 0.8,
+        ),
+        borderRadius: BorderRadius.circular(UIConstants.dialogBorderRadius),
+      ),
     ),
     extensions: [
       AppSnackbarColorTheme(
@@ -121,10 +127,16 @@ class AppTheme {
     ),
     textTheme: AppTextTheme.darkTextTheme,
     dialogTheme: DialogThemeData(
-      backgroundColor: AppColorScheme.darkColorScheme.surfaceContainerLow,
-      barrierColor:
-          AppColorScheme.darkColorScheme.surfaceContainerLow.withAlpha(160),
+      backgroundColor: AppColorScheme.darkColorScheme.surfaceContainerLowest,
+      barrierColor: AppColorScheme.darkColorScheme.surface.withAlpha(190),
       shadowColor: Colors.black.withAlpha(160),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: AppColorScheme.darkColorScheme.onSurface.withAlpha(20),
+          width: 0.8,
+        ),
+        borderRadius: BorderRadius.circular(UIConstants.dialogBorderRadius),
+      ),
     ),
     extensions: [
       AppSnackbarColorTheme(

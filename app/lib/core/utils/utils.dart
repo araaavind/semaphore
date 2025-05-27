@@ -9,3 +9,4 @@ export 'string_casing_extension.dart';
 export 'rss/rss.dart';
 export 'validate_fields.dart';
 export 'url_launcher.dart';
+export 'show_closing_dialog.dart';

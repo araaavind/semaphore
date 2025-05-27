@@ -13,12 +13,21 @@ void showWallFilterModal(BuildContext context) {
   final userPrefs = serviceLocator<UserPreferencesService>();
   showModalBottomSheet(
     context: context,
-    backgroundColor: context.theme.colorScheme.surface,
+    backgroundColor: context.theme.brightness == Brightness.dark
+        ? context.theme.colorScheme.surfaceContainerLowest
+        : context.theme.colorScheme.surface,
     showDragHandle: false,
     isScrollControlled: true,
-    barrierColor: context.theme.colorScheme.surfaceContainer.withAlpha(180),
-    shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.zero)),
+    barrierColor: context.theme.colorScheme.surface.withAlpha(180),
+    shape: RoundedRectangleBorder(
+      side: BorderSide(
+        color: context.theme.brightness == Brightness.dark
+            ? context.theme.colorScheme.onSurface.withAlpha(20)
+            : context.theme.colorScheme.onSurface.withAlpha(60),
+        width: 0.8,
+      ),
+      borderRadius: BorderRadius.all(Radius.zero),
+    ),
     builder: (context) {
       return BlocBuilder<WallsBloc, WallsState>(
         buildWhen: (previous, current) {
@@ -31,7 +40,7 @@ void showWallFilterModal(BuildContext context) {
           final defaultSort = userPrefs.getDefaultWallSort();
           final defaultView = userPrefs.getDefaultWallView();
           return SizedBox(
-            height: 520,
+            height: 480,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
               child: Column(
@@ -167,14 +176,14 @@ Widget _buildOptionItem<T>({
       icon,
       color: isSelected
           ? context.theme.colorScheme.onPrimaryContainer
-          : context.theme.colorScheme.onSurface.withAlpha(153),
+          : context.theme.colorScheme.onSurface,
     ),
     title: Text(
       (option as dynamic).name,
       style: TextStyle(
           color: isSelected
               ? context.theme.colorScheme.onPrimaryContainer
-              : context.theme.colorScheme.onSurface.withAlpha(153)),
+              : context.theme.colorScheme.onSurface),
     ),
     trailing: isDefault
         ? Container(
@@ -220,7 +229,7 @@ Widget _buildOptionItem<T>({
             : null,
     tileColor: isSelected
         ? context.theme.colorScheme.primaryContainer
-        : context.theme.colorScheme.surface,
+        : Colors.transparent,
     visualDensity: VisualDensity.compact,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(UIConstants.tileItemBorderRadius),

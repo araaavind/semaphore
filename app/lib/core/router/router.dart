@@ -4,6 +4,7 @@ import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/router/transitions/fade_transition_page.dart';
 import 'package:app/core/router/transitions/slide_transition_page.dart';
+import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/pages/activation_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
 import 'package:app/features/auth/presentation/pages/login_page.dart';
@@ -101,10 +102,23 @@ List<RouteBase> _buildRoutes() {
             create: (_) => serviceLocator<LikedItemsBloc>(),
           ),
           BlocProvider(
-            create: (_) => serviceLocator<TopicsBloc>(),
+            create: (_) =>
+                serviceLocator<TopicsBloc>()..add(ListTopicsRequested()),
           ),
         ],
-        child: Scaffold(body: child),
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+
+            final shouldPop = await showClosingDialog(context) ?? false;
+
+            if (shouldPop) {
+              context.pop();
+            }
+          },
+          child: Scaffold(body: child),
+        ),
       ),
       routes: [
         ShellRoute(
@@ -113,8 +127,8 @@ List<RouteBase> _buildRoutes() {
           },
           routes: <RouteBase>[
             _buildWallRoute(),
-            // _buildSearchFeedsRoute(),
-            _buildExploreRoute(),
+            _buildSearchFeedsRoute(),
+            // _buildExploreRoute(),
             _buildProfileRoute(),
           ],
         ),

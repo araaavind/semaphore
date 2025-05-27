@@ -15,6 +15,7 @@ abstract interface class FeedRepository {
   Future<Either<Failure, FeedList>> listAllFeeds({
     String? searchKey,
     String? searchValue,
+    int? topicId,
     int page,
     int pageSize,
     String? sortKey,

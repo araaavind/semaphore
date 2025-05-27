@@ -32,6 +32,7 @@ class FeedRepositoryImpl implements FeedRepository {
   Future<Either<Failure, FeedListModel>> listAllFeeds({
     String? searchKey,
     String? searchValue,
+    int? topicId,
     int page = 1,
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortKey,
@@ -40,6 +41,7 @@ class FeedRepositoryImpl implements FeedRepository {
       final feedsList = await feedRemoteDatasource.listAllFeeds(
         searchKey: searchKey,
         searchValue: searchValue,
+        topicId: topicId,
         page: page,
         pageSize: pageSize,
         sortKey: sortKey,

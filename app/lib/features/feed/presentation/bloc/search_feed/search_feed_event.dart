@@ -9,6 +9,7 @@ sealed class SearchFeedEvent extends Equatable {
 class FeedSearchRequested extends SearchFeedEvent {
   final String? searchKey;
   final String? searchValue;
+  final int? topicId;
   final int page;
   final int pageSize;
   final String? sortKey;
@@ -17,6 +18,7 @@ class FeedSearchRequested extends SearchFeedEvent {
   FeedSearchRequested({
     this.searchKey,
     this.searchValue,
+    this.topicId,
     this.page = 1,
     this.pageSize = ServerConstants.defaultPaginationPageSize,
     this.sortKey,
@@ -28,6 +30,7 @@ class FeedSearchRequested extends SearchFeedEvent {
     ..addAll([
       searchKey,
       searchValue,
+      topicId,
       page,
       pageSize,
       sortKey,

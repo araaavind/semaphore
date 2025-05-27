@@ -17,6 +17,7 @@ abstract interface class FeedRemoteDatasource {
   Future<FeedListModel> listAllFeeds({
     String? searchKey,
     String? searchValue,
+    int? topicId,
     int page,
     int pageSize,
     String? sortKey,
@@ -134,6 +135,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   Future<FeedListModel> listAllFeeds({
     String? searchKey,
     String? searchValue,
+    int? topicId,
     int page = 1,
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortKey,
@@ -145,6 +147,9 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       }
       if (sortKey != null) {
         queryParams['sort'] = sortKey;
+      }
+      if (topicId != null) {
+        queryParams['topic_id'] = topicId;
       }
       final response = await semaphoreClient.dio.get(
         '/feeds',

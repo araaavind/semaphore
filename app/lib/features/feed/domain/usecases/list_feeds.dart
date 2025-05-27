@@ -9,9 +9,11 @@ enum ListFeedsType { all, followed, wall }
 class ListFeedsParams extends PaginationParams {
   final ListFeedsType type;
   final int? wallId;
+  final int? topicId;
 
   ListFeedsParams({
     this.wallId,
+    this.topicId,
     super.searchKey,
     super.searchValue,
     super.page,
@@ -52,6 +54,7 @@ class ListFeeds implements Usecase<FeedList, ListFeedsParams> {
     return await feedRepository.listAllFeeds(
       searchKey: params.searchKey,
       searchValue: params.searchValue,
+      topicId: params.topicId,
       page: params.page,
       pageSize: params.pageSize,
       sortKey: params.sortKey,
