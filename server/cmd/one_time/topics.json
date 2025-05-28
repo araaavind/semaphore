@@ -38,7 +38,7 @@
   {
     "code": "agriculture",
     "name": "Agriculture",
-    "featured": true,
+    "featured": false,
     "active": true,
     "keywords": [
       "Agriculture",
