@@ -17,7 +17,6 @@ import 'package:app/features/feed/presentation/bloc/blocs.dart';
 import 'package:app/features/feed/presentation/pages/add_feed_page.dart';
 import 'package:app/features/feed/presentation/pages/add_to_wall_page.dart';
 import 'package:app/features/feed/presentation/pages/create_wall_page.dart';
-import 'package:app/features/feed/presentation/pages/explore_page.dart';
 import 'package:app/features/feed/presentation/pages/feed_view_page.dart';
 import 'package:app/features/feed/presentation/pages/saved_items_page.dart';
 import 'package:app/features/feed/presentation/pages/search_feeds_page.dart';
@@ -350,13 +349,5 @@ GoRoute _buildAboutRoute() {
     path: RouteConstants.aboutPagePath,
     name: RouteConstants.aboutPageName,
     builder: (context, state) => const AboutPage(),
-  );
-}
-
-GoRoute _buildExploreRoute() {
-  return GoRoute(
-    path: RouteConstants.explorePagePath,
-    name: RouteConstants.explorePageName,
-    builder: (context, state) => const ExplorePage(),
   );
 }
