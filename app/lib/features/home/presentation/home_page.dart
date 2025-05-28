@@ -54,12 +54,16 @@ class HomePage extends StatelessWidget {
               TextConstants.networkConnectedMessage,
               type: SnackbarType.success,
             );
+            break;
           case NetworkStatus.disconnected:
             showSnackbar(
               context,
               TextConstants.networkDisconnectedMessage,
               type: SnackbarType.failure,
             );
+            break;
+          case NetworkStatus.unknown:
+            break;
         }
       },
       child: Scaffold(

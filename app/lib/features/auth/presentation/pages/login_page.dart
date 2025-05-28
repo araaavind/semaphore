@@ -44,12 +44,16 @@ class _LoginPageState extends State<LoginPage> {
                 TextConstants.networkConnectedMessage,
                 type: SnackbarType.success,
               );
+              break;
             case NetworkStatus.disconnected:
               showSnackbar(
                 context,
                 TextConstants.networkDisconnectedMessage,
                 type: SnackbarType.failure,
               );
+              break;
+            case NetworkStatus.unknown:
+              break;
           }
         },
         child: BlocConsumer<AuthBloc, AuthState>(

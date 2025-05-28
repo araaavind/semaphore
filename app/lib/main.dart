@@ -72,9 +72,23 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
     _networkStatusSubscription =
         serviceLocator<sp.SemaphoreClient>().networkStatus.listen(
       (status) {
-        context.read<NetworkCubit>().updateNetworkStatus(
-              status == sp.NetworkStatus.connected,
-            );
+        switch (status) {
+          case sp.NetworkStatus.unknown:
+            context.read<NetworkCubit>().updateNetworkStatus(
+                  NetworkStatus.unknown,
+                );
+            break;
+          case sp.NetworkStatus.connected:
+            context.read<NetworkCubit>().updateNetworkStatus(
+                  NetworkStatus.connected,
+                );
+            break;
+          case sp.NetworkStatus.disconnected:
+            context.read<NetworkCubit>().updateNetworkStatus(
+                  NetworkStatus.disconnected,
+                );
+            break;
+        }
       },
       onError: (error) {
         if (kDebugMode) {
