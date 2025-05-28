@@ -96,7 +96,13 @@ class AppPagedList<PageKeyType, ItemType> extends StatelessWidget {
                   type: shimmerLoaderType,
                 ),
               )
-          : null,
+          : (_) => Center(
+                child: const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Loader(),
+                ),
+              ),
       firstPageProgressIndicatorBuilder: this.loaderType ==
               PagedListLoaderType.shimmerIndicator
           ? (_) => Padding(
@@ -109,7 +115,13 @@ class AppPagedList<PageKeyType, ItemType> extends StatelessWidget {
                   type: shimmerLoaderType,
                 ),
               )
-          : null,
+          : (_) => Center(
+                child: const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Loader(),
+                ),
+              ),
       noMoreItemsIndicatorBuilder: this.showErrors
           ? (_) => NoMoreItemsIndicator(
                 title: this.noMoreItemsErrorTitle,

@@ -17,11 +17,13 @@ class FeedListTile extends StatefulWidget {
   final FeedFollowsMap feedIsFollowedMap;
   final PagingController<int, FeedFollowsMap> _pagingController;
   final int _pageIndex;
+  final Color? altPrimaryColor;
 
   const FeedListTile({
     required this.feedIsFollowedMap,
     required PagingController<int, FeedFollowsMap> pagingController,
     required int index,
+    this.altPrimaryColor,
     super.key,
   })  : _pagingController = pagingController,
         _pageIndex = index;
@@ -197,7 +199,8 @@ class _FeedListTileState extends State<FeedListTile> {
                         : SpinKitHourGlass(
                             size: 23.0,
                             duration: const Duration(milliseconds: 2400),
-                            color: context.theme.colorScheme.primary,
+                            color: widget.altPrimaryColor ??
+                                context.theme.colorScheme.primary,
                           ),
                   )
                 : Container(
@@ -212,7 +215,8 @@ class _FeedListTileState extends State<FeedListTile> {
                                 MingCute.check_circle_line,
                                 size: 28.0,
                                 weight: 0.4,
-                                color: context.theme.colorScheme.primary,
+                                color: widget.altPrimaryColor ??
+                                    context.theme.colorScheme.primary,
                               )
                             : Icon(
                                 MingCute.add_circle_line,

@@ -141,6 +141,10 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   Widget build(BuildContext context) {
     return BackButtonListener(
       onBackButtonPressed: () async {
+        if (GoRouterState.of(context).topRoute?.name !=
+            RouteConstants.searchFeedsPageName) {
+          return false;
+        }
         if (_selectedTopic != null) {
           _clearTopic();
           return true;
@@ -204,6 +208,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                           feedIsFollowedMap: item,
                           pagingController: _pagingController,
                           index: index,
+                          altPrimaryColor: _selectedTopicColor,
                         ),
                         loaderType:
                             PagedListLoaderType.circularProgressIndicator,
