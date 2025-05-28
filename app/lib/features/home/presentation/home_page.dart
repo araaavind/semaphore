@@ -2,13 +2,49 @@ import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
+import 'package:app/features/feed/presentation/bloc/topics/topics_bloc.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final Widget child;
   const HomePage({required this.child, super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Preload topic images when topics are available
+    Future.delayed(Duration.zero, () {
+      final topicsStateStream = context.read<TopicsBloc>().stream;
+
+      Map<String, ImageProvider> providers = {};
+      topicsStateStream.listen((topicsState) {
+        if (topicsState.status == TopicsStatus.loaded) {
+          for (final topic in topicsState.topics
+              .where((t) => t.featured && t.imageUrl != null)) {
+            final provider = CachedNetworkImageProvider(
+              topic.imageUrl!,
+              cacheKey: topic.code,
+              maxWidth: (MediaQuery.of(context).size.width / 2).toInt(),
+            );
+            precacheImage(provider, context);
+            providers[topic.code] = provider;
+          }
+          context
+              .read<TopicsBloc>()
+              .add(SetTopicImageProviders(imageProviders: providers));
+        }
+      });
+    });
+  }
 
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
@@ -67,7 +103,7 @@ class HomePage extends StatelessWidget {
         }
       },
       child: Scaffold(
-        body: child,
+        body: widget.child,
         bottomNavigationBar: SafeArea(
           child: Container(
             height: 54,

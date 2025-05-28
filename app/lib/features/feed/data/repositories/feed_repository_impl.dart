@@ -1,6 +1,7 @@
 import 'package:app/core/constants/server_constants.dart';
 import 'package:app/core/errors/exceptions.dart';
 import 'package:app/core/errors/failures.dart';
+import 'package:app/features/feed/data/datasources/feed_local_datasource.dart';
 import 'package:app/features/feed/data/datasources/feed_remote_datasource.dart';
 import 'package:app/features/feed/data/models/feed_list_model.dart';
 import 'package:app/features/feed/data/models/followers_list_model.dart';
@@ -15,13 +16,34 @@ import 'package:fpdart/fpdart.dart';
 
 class FeedRepositoryImpl implements FeedRepository {
   FeedRemoteDatasource feedRemoteDatasource;
+  FeedLocalDatasource feedLocalDatasource;
 
-  FeedRepositoryImpl(this.feedRemoteDatasource);
+  FeedRepositoryImpl(
+    this.feedRemoteDatasource,
+    this.feedLocalDatasource,
+  );
+
+  @override
+  Future<Either<Failure, List<TopicModel>>> listSavedTopics() async {
+    try {
+      final topicsList = feedLocalDatasource.loadTopics();
+      if (topicsList.isEmpty) {
+        return listTopics();
+      }
+      return right(topicsList);
+    } on ServerException catch (e) {
+      return left(Failure(message: e.message));
+    }
+  }
 
   @override
   Future<Either<Failure, List<TopicModel>>> listTopics() async {
     try {
       final topicsList = await feedRemoteDatasource.listTopics();
+      if (topicsList.isNotEmpty) {
+        // Update local topics
+        feedLocalDatasource.saveTopics(topicsList);
+      }
       return right(topicsList);
     } on ServerException catch (e) {
       return left(Failure(message: e.message));

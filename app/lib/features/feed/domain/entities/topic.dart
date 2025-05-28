@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 
 class Topic extends Equatable {
@@ -8,6 +10,7 @@ class Topic extends Equatable {
   final String? imageUrl;
   final String? color;
   final List<Topic>? subTopics;
+  final Color? dynamicColor;
 
   const Topic({
     required this.id,
@@ -17,7 +20,21 @@ class Topic extends Equatable {
     this.imageUrl,
     this.color,
     this.subTopics,
+    this.dynamicColor,
   });
+
+  Topic copyWithDynamicColor(Color? dynamicColor) {
+    return Topic(
+      id: id,
+      code: code,
+      name: name,
+      featured: featured,
+      imageUrl: imageUrl,
+      color: color,
+      subTopics: subTopics,
+      dynamicColor: dynamicColor,
+    );
+  }
 
   @override
   List<Object?> get props =>

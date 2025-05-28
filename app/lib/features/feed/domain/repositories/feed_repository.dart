@@ -10,6 +10,8 @@ import 'package:app/features/feed/presentation/bloc/list_items/list_items_bloc.d
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class FeedRepository {
+  Future<Either<Failure, List<Topic>>> listSavedTopics();
+
   Future<Either<Failure, List<Topic>>> listTopics();
 
   Future<Either<Failure, FeedList>> listAllFeeds({

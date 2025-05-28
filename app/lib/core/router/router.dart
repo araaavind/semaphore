@@ -102,8 +102,12 @@ List<RouteBase> _buildRoutes() {
             create: (_) => serviceLocator<LikedItemsBloc>(),
           ),
           BlocProvider(
-            create: (_) =>
-                serviceLocator<TopicsBloc>()..add(ListTopicsRequested()),
+            create: (_) => serviceLocator<TopicsBloc>()
+              // load saved topics for immediate use
+              ..add(ListTopicsRequested(fromLocal: true))
+              // load from remote and update local
+              ..add(ListTopicsRequested(fromLocal: false)),
+            lazy: false,
           ),
         ],
         child: PopScope(

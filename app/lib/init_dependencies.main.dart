@@ -9,6 +9,11 @@ Future<void> initDependencies() async {
   _initFeed();
   await _initSdk();
   await _initSharedPrefs();
+
+  // Initialize Hive
+  Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
+  serviceLocator.registerLazySingleton(() => Hive.box());
+
   // Core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => NetworkCubit());
@@ -164,9 +169,15 @@ void _initFeed() {
         serviceLocator(),
       ),
     )
+    ..registerFactory<FeedLocalDatasource>(
+      () => FeedLocalDatasourceImpl(
+        serviceLocator(),
+      ),
+    )
     // Register repository
     ..registerFactory<FeedRepository>(
       () => FeedRepositoryImpl(
+        serviceLocator(),
         serviceLocator(),
       ),
     )
