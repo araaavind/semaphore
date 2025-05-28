@@ -81,29 +81,31 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<NetworkCubit, NetworkState>(
-      listener: (context, state) {
-        switch (state.status) {
-          case NetworkStatus.connected:
-            showSnackbar(
-              context,
-              TextConstants.networkConnectedMessage,
-              type: SnackbarType.success,
-            );
-            break;
-          case NetworkStatus.disconnected:
-            showSnackbar(
-              context,
-              TextConstants.networkDisconnectedMessage,
-              type: SnackbarType.failure,
-            );
-            break;
-          case NetworkStatus.unknown:
-            break;
-        }
-      },
+    return NestedScaffoldMessenger(
       child: Scaffold(
-        body: widget.child,
+        body: BlocListener<NetworkCubit, NetworkState>(
+          listener: (context, state) {
+            switch (state.status) {
+              case NetworkStatus.connected:
+                showSnackbar(
+                  context,
+                  TextConstants.networkConnectedMessage,
+                  type: SnackbarType.success,
+                );
+                break;
+              case NetworkStatus.disconnected:
+                showSnackbar(
+                  context,
+                  TextConstants.networkDisconnectedMessage,
+                  type: SnackbarType.failure,
+                );
+                break;
+              case NetworkStatus.unknown:
+                break;
+            }
+          },
+          child: widget.child,
+        ),
         bottomNavigationBar: SafeArea(
           child: Container(
             height: 54,

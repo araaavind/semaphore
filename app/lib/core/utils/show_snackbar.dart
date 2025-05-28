@@ -12,7 +12,8 @@ void showSnackbar(
   required SnackbarType type,
   String? actionLabel,
   void Function()? onActionPressed,
-  double bottomOffset = kToolbarHeight + 8,
+  double bottomOffset = 0,
+  ScaffoldMessengerState? messengerState,
 }) {
   Color backgroundColor;
   Color textColor;
@@ -43,7 +44,10 @@ void showSnackbar(
       textColor =
           context.theme.extension<AppSnackbarColorTheme>()!.infoOnContainer!;
   }
-  ScaffoldMessenger.of(context)
+
+  final scaffoldMessenger = messengerState ?? ScaffoldMessenger.of(context);
+
+  scaffoldMessenger
     ..hideCurrentSnackBar()
     ..showSnackBar(
       SnackBar(
@@ -73,7 +77,7 @@ void showSnackbar(
                 ),
                 onPressed: () {
                   onActionPressed();
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  scaffoldMessenger.hideCurrentSnackBar();
                 },
                 child: Text(
                   actionLabel,
@@ -93,7 +97,7 @@ void showSnackbar(
         margin: EdgeInsets.only(
           left: 16,
           right: 16,
-          bottom: bottomOffset,
+          bottom: 16 + bottomOffset,
         ),
         padding: EdgeInsets.symmetric(
           horizontal: 24.0,
@@ -106,4 +110,47 @@ void showSnackbar(
         ),
       ),
     );
+}
+
+/// Helper function to create a new ScaffoldMessenger scope for nested Scaffolds
+///
+/// Usage:
+/// ```dart
+/// @override
+/// Widget build(BuildContext context) {
+///   return NestedScaffoldMessenger(
+///     child: Scaffold(
+///       // Your nested scaffold content
+///     ),
+///   );
+/// }
+/// ```
+class NestedScaffoldMessenger extends StatefulWidget {
+  final Widget child;
+
+  const NestedScaffoldMessenger({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  State<NestedScaffoldMessenger> createState() =>
+      _NestedScaffoldMessengerState();
+}
+
+class _NestedScaffoldMessengerState extends State<NestedScaffoldMessenger> {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: widget.child,
+    );
+  }
+
+  // Access the ScaffoldMessengerState from parent widgets
+  ScaffoldMessengerState? get messengerState =>
+      _scaffoldMessengerKey.currentState;
 }

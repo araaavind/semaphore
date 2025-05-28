@@ -151,6 +151,7 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                   context,
                   'Failed to share article',
                   type: SnackbarType.failure,
+                  bottomOffset: kBottomNavigationBarHeight,
                 );
               }
             } catch (e) {
@@ -159,6 +160,7 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                   context,
                   'Failed to share article',
                   type: SnackbarType.failure,
+                  bottomOffset: kBottomNavigationBarHeight,
                 );
               }
             }
@@ -179,12 +181,14 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
             isSaved = state.action == SavedItemsAction.unsave;
           });
           showSnackbar(
-              context,
-              state.message ??
-                  (state.action == SavedItemsAction.unsave
-                      ? 'Failed to unsave article'
-                      : 'Failed to save article'),
-              type: SnackbarType.failure);
+            context,
+            state.message ??
+                (state.action == SavedItemsAction.unsave
+                    ? 'Failed to unsave article'
+                    : 'Failed to save article'),
+            type: SnackbarType.failure,
+            bottomOffset: kBottomNavigationBarHeight,
+          );
         }
       },
       child: _buildActionButton(
