@@ -91,6 +91,10 @@ build/server:
 	cd server && go build -ldflags='-s -w' -o=./bin/local/tools/makeadmin ./cmd/tools/makeadmin
 	@echo 'Building cmd/tools/makeadmin for deployment in linux/amd64...'
 	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/tools/makeadmin ./cmd/tools/makeadmin
+	@echo 'Building cmd/tools/maketopics for local machine...'
+	cd server && go build -ldflags='-s -w' -o=./bin/local/tools/maketopics ./cmd/tools/maketopics
+	@echo 'Building cmd/tools/maketopics for deployment in linux/amd64...'
+	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/tools/maketopics ./cmd/tools/maketopics
 
 # ==================================================================================== #
 # PRODUCTION
@@ -107,9 +111,9 @@ production/connect:
 	fi
 	ssh smphr@${production_host_ip}
 
-## production/deploy/api: deploy the api to production
-.PHONY: production/deploy/api
-production/deploy/api:
+## production/deploy/server: deploy the server to production
+.PHONY: production/deploy/server
+production/deploy/server:
 	@if [ -z "${PROD_IP}" ]; then \
                 echo "ERROR: PROD_IP is not set! Pass it like 'make production/deploy/api PROD_IP=1.2.3.4' or set it as environment variable"; \
                 exit 1; \
