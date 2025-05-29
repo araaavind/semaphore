@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
+	"github.com/aravindmathradan/semaphore/public"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
 )
@@ -14,6 +15,10 @@ func (app *application) routes() http.Handler {
 
 	router.NotFound = http.HandlerFunc(app.notFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
+
+	fileServer := http.FileServer(http.FS(public.Static))
+
+	router.Handler(http.MethodGet, "/static/images/topics/*filepath", fileServer)
 
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
 	router.HandlerFunc(http.MethodGet, "/user-agreement", app.userAgreement)
