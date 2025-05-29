@@ -35,14 +35,6 @@ class _WebViewState extends State<WebView> {
     ".*.googlesyndication.com/.*",
     ".*.google-analytics.com/.*",
     ".*.adservice.google.*/.*",
-    ".*.adbrite.com/.*",
-    ".*.exponential.com/.*",
-    ".*.quantserve.com/.*",
-    ".*.scorecardresearch.com/.*",
-    ".*.zedo.com/.*",
-    ".*.adsafeprotected.com/.*",
-    ".*.teads.tv/.*",
-    ".*.outbrain.com/.*"
   ];
 
   final List<ContentBlocker> contentBlockers = [];
