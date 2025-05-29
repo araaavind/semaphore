@@ -1,11 +1,11 @@
 part of 'network_cubit.dart';
 
-enum NetworkStatus { unknown, connected, disconnected }
+enum NetworkStatus { connected, disconnected }
 
 class NetworkState extends Equatable {
   final NetworkStatus status;
 
-  const NetworkState({this.status = NetworkStatus.unknown});
+  const NetworkState({this.status = NetworkStatus.connected});
 
   NetworkState copyWith({
     NetworkStatus? status,

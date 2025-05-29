@@ -73,11 +73,6 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
         serviceLocator<sp.SemaphoreClient>().networkStatus.listen(
       (status) {
         switch (status) {
-          case sp.NetworkStatus.unknown:
-            context.read<NetworkCubit>().updateNetworkStatus(
-                  NetworkStatus.unknown,
-                );
-            break;
           case sp.NetworkStatus.connected:
             context.read<NetworkCubit>().updateNetworkStatus(
                   NetworkStatus.connected,

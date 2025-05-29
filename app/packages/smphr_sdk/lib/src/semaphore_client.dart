@@ -8,7 +8,7 @@ import 'auth_client.dart';
 import 'interceptors/auth_interceptor.dart';
 import 'local_storage.dart';
 
-enum NetworkStatus { unknown, connected, disconnected }
+enum NetworkStatus { connected, disconnected }
 
 class SemaphoreClient {
   late final AuthClient auth;
@@ -35,7 +35,6 @@ class SemaphoreClient {
   /// It initially yields [NetworkStatus.connected] and then emits updates
   /// based on the network connection changes detected by the listener.
   Stream<NetworkStatus> get networkStatus async* {
-    yield NetworkStatus.unknown;
     yield* _networkStreamController.stream;
   }
 

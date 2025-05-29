@@ -100,8 +100,6 @@ class _HomePageState extends State<HomePage> {
                   type: SnackbarType.failure,
                 );
                 break;
-              case NetworkStatus.unknown:
-                break;
             }
           },
           child: widget.child,

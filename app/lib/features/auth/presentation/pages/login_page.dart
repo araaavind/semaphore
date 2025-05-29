@@ -52,8 +52,6 @@ class _LoginPageState extends State<LoginPage> {
                 type: SnackbarType.failure,
               );
               break;
-            case NetworkStatus.unknown:
-              break;
           }
         },
         child: BlocConsumer<AuthBloc, AuthState>(
