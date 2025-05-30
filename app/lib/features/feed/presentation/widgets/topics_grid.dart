@@ -128,76 +128,44 @@ class TopicTile extends StatelessWidget {
           ),
           child: Stack(
             children: [
+              // If image is available, show it
               if (topic.imageUrl != null)
                 Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(UIConstants.tileItemBorderRadius),
-                    child: imageProvider != null
-                        ? Image(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          )
-                        : CachedNetworkImage(
-                            color: context.theme.brightness == Brightness.dark
-                                ? Colors.black.withAlpha(80)
-                                : Colors.white.withAlpha(80),
-                            colorBlendMode:
-                                context.theme.brightness == Brightness.dark
-                                    ? BlendMode.darken
-                                    : BlendMode.lighten,
-                            imageUrl: topic.imageUrl!,
-                            cacheKey: topic.code,
-                            fit: BoxFit.cover,
-                            fadeInDuration: Duration.zero,
-                            memCacheWidth:
-                                (MediaQuery.of(context).size.width / 2).toInt(),
-                            placeholder: (context, url) =>
-                                Container(color: tileColor),
-                            errorWidget: (context, url, error) =>
-                                Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      UIConstants.tileItemBorderRadius),
-                                  color: tileColor,
-                                ),
-                              ),
-                            ),
-                          ),
+                  child: _TileImage(
+                    imageProvider: imageProvider,
+                    tileColor: tileColor,
+                    topic: topic,
                   ),
                 ),
+              // If no image, show a solid color
               if (topic.imageUrl == null)
                 Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                          UIConstants.tileItemBorderRadius),
-                      color: tileColor,
-                    ),
-                  ),
+                  child: _buildColoredTile(tileColor),
                 ),
+              // Tile color gradient overlay
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(UIConstants.tileItemBorderRadius),
+                    borderRadius: BorderRadius.circular(
+                      UIConstants.tileItemBorderRadius,
+                    ),
                     gradient: LinearGradient(
-                      stops: const [0.2, 1],
+                      stops: const [0, 0.7],
                       colors: [
                         context.theme.brightness == Brightness.dark
                             ? HSLColor.fromColor(tileColor)
-                                .withLightness(0.3)
-                                .withAlpha(0.2)
+                                .withLightness(0.2)
+                                .withSaturation(0.4)
+                                .withAlpha(0.3)
                                 .toColor()
                             : HSLColor.fromColor(tileColor)
                                 .withLightness(0.9)
-                                .withAlpha(0.2)
+                                .withAlpha(0.4)
                                 .toColor(),
                         tileColor.withAlpha(50),
                       ],
                       begin: Alignment.topLeft,
-                      end: Alignment.bottomCenter,
+                      end: Alignment.bottomRight,
                     ),
                   ),
                 ),
@@ -208,23 +176,7 @@ class TopicTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AutoSizeText(
-                      topic.name,
-                      style: context.theme.textTheme.titleMedium?.copyWith(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
-                        color: context.theme.brightness == Brightness.dark
-                            ? context.theme.colorScheme.onSurface.withAlpha(230)
-                            : context.theme.colorScheme.onSurface
-                                .withAlpha(210),
-                      ),
-                      wrapWords: false,
-                      textAlign: TextAlign.start,
-                      maxLines: 2,
-                      minFontSize: 15,
-                      maxFontSize: 17,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    _buildTileText(context, tileColor),
                   ],
                 ),
               ),
@@ -234,4 +186,98 @@ class TopicTile extends StatelessWidget {
       ),
     );
   }
+
+  AutoSizeText _buildTileText(BuildContext context, Color tileColor) {
+    return AutoSizeText(
+      topic.name,
+      style: context.theme.textTheme.titleMedium?.copyWith(
+        fontSize: 18,
+        fontWeight: FontWeight.w900,
+        height: 1.2,
+        shadows: [
+          Shadow(
+            color: context.theme.brightness == Brightness.dark
+                ? Colors.black.withAlpha(140)
+                : HSLColor.fromColor(tileColor)
+                    .withLightness(0.95)
+                    .withAlpha(0.853)
+                    .toColor(),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+        color: HSLColor.fromColor(tileColor)
+            .withLightness(
+              context.theme.brightness == Brightness.dark ? 0.95 : 0.1,
+            )
+            .withAlpha(1)
+            .toColor(),
+      ),
+      wrapWords: false,
+      textAlign: TextAlign.start,
+      maxLines: 2,
+      minFontSize: 16,
+      maxFontSize: 18,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class _TileImage extends StatelessWidget {
+  const _TileImage({
+    required this.imageProvider,
+    required this.tileColor,
+    required this.topic,
+  });
+
+  final ImageProvider<Object>? imageProvider;
+  final Color tileColor;
+  final Topic topic;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(UIConstants.tileItemBorderRadius),
+      child: imageProvider != null
+          ? Image(
+              image: imageProvider!,
+              fit: BoxFit.cover,
+              color: context.theme.brightness == Brightness.dark
+                  ? Colors.black.withAlpha(80)
+                  : Colors.white.withAlpha(65),
+              colorBlendMode: context.theme.brightness == Brightness.dark
+                  ? BlendMode.darken
+                  : BlendMode.lighten,
+              errorBuilder: (context, error, stackTrace) =>
+                  _buildColoredTile(tileColor),
+            )
+          : CachedNetworkImage(
+              imageUrl: topic.imageUrl!,
+              cacheKey: topic.imageUrl!,
+              fit: BoxFit.cover,
+              color: context.theme.brightness == Brightness.dark
+                  ? Colors.black.withAlpha(80)
+                  : Colors.white.withAlpha(65),
+              colorBlendMode: context.theme.brightness == Brightness.dark
+                  ? BlendMode.darken
+                  : BlendMode.lighten,
+              fadeInDuration: Duration(milliseconds: 100),
+              memCacheWidth: (MediaQuery.of(context).size.width).toInt(),
+              placeholder: (context, url) => _buildColoredTile(tileColor),
+              errorWidget: (context, url, error) =>
+                  _buildColoredTile(tileColor),
+            ),
+    );
+  }
+}
+
+Widget _buildColoredTile(Color tileColor) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(
+        UIConstants.tileItemBorderRadius,
+      ),
+      color: tileColor,
+    ),
+  );
 }

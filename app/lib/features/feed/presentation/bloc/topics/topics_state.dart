@@ -5,6 +5,7 @@ enum TopicsStatus {
   loading,
   loaded,
   error,
+  preloaded,
 }
 
 class TopicsState extends Equatable {

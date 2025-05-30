@@ -22,20 +22,20 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     // Preload topic images when topics are available
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero, () async {
       final topicsStateStream = context.read<TopicsBloc>().stream;
 
       Map<String, ImageProvider> providers = {};
-      topicsStateStream.listen((topicsState) {
+      topicsStateStream.listen((topicsState) async {
         if (topicsState.status == TopicsStatus.loaded) {
           for (final topic in topicsState.topics
               .where((t) => t.featured && t.imageUrl != null)) {
             final provider = CachedNetworkImageProvider(
               topic.imageUrl!,
-              cacheKey: topic.code,
-              maxWidth: (MediaQuery.of(context).size.width / 2).toInt(),
+              cacheKey: topic.imageUrl!,
+              maxWidth: (MediaQuery.of(context).size.width).toInt(),
             );
-            precacheImage(provider, context);
+            await precacheImage(provider, context);
             providers[topic.code] = provider;
           }
           context

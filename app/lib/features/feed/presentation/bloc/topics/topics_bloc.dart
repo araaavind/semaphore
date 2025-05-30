@@ -24,7 +24,10 @@ class TopicsBloc extends Bloc<TopicsEvent, TopicsState> {
   void _onSetTopicImageProviders(
       SetTopicImageProviders event, Emitter<TopicsState> emit) {
     emit(
-      state.copyWith(imageProviders: event.imageProviders),
+      state.copyWith(
+        status: TopicsStatus.preloaded,
+        imageProviders: event.imageProviders,
+      ),
     );
   }
 
