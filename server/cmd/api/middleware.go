@@ -66,6 +66,13 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 	})
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// TODO: Avoid skipping rate limiter for static assets once CDN is setup
+		// Skip rate limiter for static assets
+		if isStaticAsset(r) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		if app.config.limiter.enabled {
 			ip := realip.FromRequest(r)
 
@@ -87,6 +94,12 @@ func (app *application) rateLimit(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+func isStaticAsset(r *http.Request) bool {
+	return r.Method == http.MethodGet &&
+		strings.HasPrefix(r.URL.Path, "/static/") &&
+		!strings.Contains(r.URL.Path, "..")
 }
 
 func (app *application) metrics(next http.Handler) http.Handler {

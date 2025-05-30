@@ -16,9 +16,9 @@ func (app *application) routes() http.Handler {
 	router.NotFound = http.HandlerFunc(app.notFoundResponse)
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowedResponse)
 
-	fileServer := http.FileServer(http.FS(public.Static))
+	staticFileServer := http.FileServer(http.FS(public.Static))
 
-	router.Handler(http.MethodGet, "/static/images/topics/*filepath", fileServer)
+	router.Handler(http.MethodGet, "/static/*filepath", staticFileServer)
 
 	router.Handler(http.MethodGet, "/debug/vars", expvar.Handler())
 	router.HandlerFunc(http.MethodGet, "/user-agreement", app.userAgreement)
