@@ -504,7 +504,7 @@ func (m ItemModel) FindByScore(itemScores []*ItemScore, userID int64, cursorFilt
 }
 
 func (m ItemModel) CalculateHotItemScoresForWall(wallID, userID int64, snapshotSize int) ([]*ItemScore, error) {
-	scoreCalculation := buildHotItemsScoreCalculationQuery("lc.like_count", "sc.save_count", "items.pub_date")
+	scoreCalculation := buildHotItemsScoreCalculationQuery("lc.like_count", "sc.save_count", "items.pub_date", "items.created_at")
 	query := fmt.Sprintf(`
 		WITH ranked_items AS (
 			SELECT items.id as item_id, %s as score

@@ -2,7 +2,7 @@ package data
 
 import "fmt"
 
-func buildHotItemsScoreCalculationQuery(likeCountColumn, saveCountColumn, pubDateColumn string) string {
+func buildHotItemsScoreCalculationQuery(likeCountColumn, saveCountColumn, pubDateColumn, alternateDateColumn string) string {
 	// Base score prevents the numerator from being 0 if there are no likes or saves
 	// Increasing the base score will boost score for recent items
 	baseScore := 1.0
@@ -32,11 +32,11 @@ func buildHotItemsScoreCalculationQuery(likeCountColumn, saveCountColumn, pubDat
 				COALESCE(%s, 0) * %f +
 				COALESCE(%s, 0) * %f
 			)::float /
-			POWER(EXTRACT(EPOCH FROM (now() - %s))/3600 + %f, %f)
+			POWER(EXTRACT(EPOCH FROM (now() - COALESCE(%s, %s)))/3600 + %f, %f)
 		)`,
 		baseScore,
 		likeCountColumn, likeWeight,
 		saveCountColumn, saveWeight,
-		pubDateColumn, smoothFactor, gravity,
+		pubDateColumn, alternateDateColumn, smoothFactor, gravity,
 	)
 }
