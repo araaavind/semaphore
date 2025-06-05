@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS topics (
 ALTER TABLE feeds ADD COLUMN topic_id bigint REFERENCES topics(id);
 
 CREATE TABLE IF NOT EXISTS subtopics (
-    parent_id bigint REFERENCES topics(id),
-    child_id bigint REFERENCES topics(id),
+    parent_id bigint REFERENCES topics(id) ON DELETE CASCADE,
+    child_id bigint REFERENCES topics(id) ON DELETE CASCADE,
     PRIMARY KEY (parent_id, child_id)
 );
 

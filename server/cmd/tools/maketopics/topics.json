@@ -4,6 +4,7 @@
     "name": "Advertising",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/advertising_2.jpg",
     "keywords": [
       "Marketing",
       "Advertising",
@@ -13,13 +14,19 @@
       "Digital Advertising",
       "Digital Marketing"
     ],
-    "sub_topic_codes": ["digimarketing", "branding", "marketresearch"]
+    "sub_topic_codes": [
+      "digimarketing",
+      "branding",
+      "marketresearch",
+      "marketing"
+    ]
   },
   {
     "code": "aerospace",
     "name": "Aerospace",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/aerospace.jpg",
     "keywords": [
       "Aviation",
       "Space",
@@ -33,7 +40,7 @@
       "Astrophysics",
       "Astronomy"
     ],
-    "sub_topic_codes": ["aviation", "spacetravel"]
+    "sub_topic_codes": ["aviation", "space", "aeromanufacturing", "nasa"]
   },
   {
     "code": "agriculture",
@@ -57,6 +64,7 @@
     "name": "Artificial Intelligence",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/ai.jpg",
     "keywords": [
       "Artificial Intelligence",
       "AI",
@@ -91,6 +99,7 @@
     "name": "Architecture",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/architecture.jpg",
     "keywords": [
       "Architecture",
       "Building",
@@ -111,7 +120,8 @@
       "landscapearch",
       "archhistory",
       "archmovements",
-      "archlit"
+      "archlit",
+      "archphotography"
     ]
   },
   {
@@ -119,6 +129,7 @@
     "name": "Art",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/art_2.jpg",
     "keywords": [
       "Art",
       "Design",
@@ -139,7 +150,8 @@
       "modernart",
       "comicart",
       "aiart",
-      "nfts"
+      "nfts",
+      "creativecoding"
     ]
   },
   {
@@ -147,6 +159,7 @@
     "name": "Astrophysics",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/astrophysics.jpg",
     "keywords": [
       "Astrophysics",
       "Space",
@@ -158,13 +171,14 @@
       "Astronomy",
       "Telescopes"
     ],
-    "sub_topic_codes": ["spacetravel"]
+    "sub_topic_codes": ["space", "astronomy"]
   },
   {
     "code": "automobiles",
     "name": "Automobiles",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/automobiles_2.jpg",
     "keywords": [
       "Automobiles",
       "Cars",
@@ -200,6 +214,7 @@
     "name": "Business",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/business.jpg",
     "keywords": [
       "Business",
       "Entrepreneurship",
@@ -225,7 +240,8 @@
       "economics",
       "marketing",
       "management",
-      "leadership"
+      "leadership",
+      "sales"
     ]
   },
   {
@@ -233,6 +249,7 @@
     "name": "Comics",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/comics_2.jpg",
     "keywords": [
       "Comics",
       "Graphic Novels",
@@ -248,7 +265,6 @@
       "superheroes",
       "marveldc",
       "animemanga",
-      "comiccon",
       "comicbooks",
       "indiecomics",
       "webcomics",
@@ -260,6 +276,7 @@
     "name": "Computer Science",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/computerscience_2.jpg",
     "keywords": [
       "Computer Science",
       "Programming",
@@ -285,7 +302,12 @@
       "llms",
       "machinelearning",
       "deeplearning",
-      "datascience"
+      "datascience",
+      "creativecoding",
+      "programming",
+      "opensource",
+      "mathsandcomputing",
+      "systemdesign"
     ]
   },
   {
@@ -293,6 +315,7 @@
     "name": "Cryptocurrency",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/cryptocurrency_2.jpg",
     "keywords": [
       "Cryptocurrency",
       "Blockchain",
@@ -318,6 +341,7 @@
     "name": "Culture",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/culture_2.jpg",
     "keywords": [
       "Culture",
       "Pop culture",
@@ -331,7 +355,7 @@
     "sub_topic_codes": [
       "popculture",
       "cultex",
-      "theater",
+      "theatre",
       "music",
       "art",
       "movietv",
@@ -343,6 +367,7 @@
     "name": "Cybersecurity",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/cybersecurity.jpg",
     "keywords": [
       "Cybersecurity",
       "Information Security",
@@ -367,6 +392,7 @@
     "name": "Design",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/design.jpg",
     "keywords": [
       "Design",
       "UI/UX",
@@ -383,6 +409,7 @@
     ],
     "sub_topic_codes": [
       "uiux",
+      "webdesign",
       "graphicdesign",
       "productdesign",
       "industrialdesign",
@@ -393,7 +420,10 @@
       "packagingdesign",
       "interiordesign",
       "architecture",
-      "automotivedesign"
+      "automotivedesign",
+      "dataviz",
+      "printdesign",
+      "branding"
     ]
   },
   {
@@ -401,6 +431,7 @@
     "name": "Economics",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/economics.jpg",
     "keywords": [
       "Economics",
       "Finance",
@@ -424,6 +455,7 @@
     "name": "Education",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/education.jpg",
     "keywords": [
       "Education",
       "Learning",
@@ -442,6 +474,7 @@
     "name": "Entrepreneurship",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/entrepreneurship.jpg",
     "keywords": [
       "Entrepreneurship",
       "Startups",
@@ -456,7 +489,9 @@
       "startups",
       "vcfunding",
       "businessmodels",
-      "startupnews"
+      "startupnews",
+      "womenentrepreneurs",
+      "productlaunches"
     ]
   },
   {
@@ -464,6 +499,7 @@
     "name": "Environment",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/environment.jpg",
     "keywords": [
       "Environment",
       "Climate Change",
@@ -480,7 +516,8 @@
       "sustainability",
       "renewableenergy",
       "environmentnews",
-      "earthscience"
+      "earthscience",
+      "oceanography"
     ]
   },
   {
@@ -488,6 +525,7 @@
     "name": "Fashion",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/fashion.jpg",
     "keywords": [
       "Fashion",
       "Clothing",
@@ -508,7 +546,8 @@
       "fashionstyling",
       "fashionhistory",
       "fashiontrends",
-      "fashiondesign"
+      "fashiondesign",
+      "beauty"
     ]
   },
   {
@@ -516,6 +555,7 @@
     "name": "Finance",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/finance.jpg",
     "keywords": [
       "Finance",
       "Economics",
@@ -548,6 +588,7 @@
     "name": "Food and Drinks",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/food.jpg",
     "keywords": [
       "Food",
       "Cooking",
@@ -565,6 +606,7 @@
     "sub_topic_codes": [
       "culinaryarts",
       "worldcuisines",
+      "vegetarian",
       "veganism",
       "celebritychefs",
       "bakingpastry",
@@ -573,7 +615,8 @@
       "drinks",
       "foodphotography",
       "recipes",
-      "foodtravel"
+      "foodtravel",
+      "foodscience"
     ]
   },
   {
@@ -581,6 +624,7 @@
     "name": "Gaming",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/gaming_2.jpg",
     "keywords": [
       "Gaming",
       "Video Games",
@@ -607,6 +651,7 @@
     "name": "Health & Wellness",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/health.jpg",
     "keywords": [
       "Health",
       "Wellness",
@@ -634,6 +679,7 @@
     "name": "History",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/history.jpg",
     "keywords": [
       "History",
       "Ancient History",
@@ -652,7 +698,9 @@
       "computerhistory",
       "literaryhistory",
       "filmhistory",
-      "musichistory"
+      "musichistory",
+      "naturalhistory",
+      "lgbtqhistory"
     ]
   },
   {
@@ -660,6 +708,7 @@
     "name": "Law",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/law.jpg",
     "keywords": [
       "Law",
       "Legal",
@@ -682,6 +731,7 @@
     "name": "LGBTQ+",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/lgbtq.jpg",
     "keywords": [
       "LGBTQ+",
       "Queer",
@@ -703,6 +753,7 @@
     "name": "Reading & Writing",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/readingwriting.jpg",
     "keywords": [
       "Literature",
       "Books",
@@ -725,7 +776,8 @@
       "comicbooks",
       "webcomics",
       "archlit",
-      "screenwriting"
+      "screenwriting",
+      "bookreviews"
     ]
   },
   {
@@ -733,6 +785,7 @@
     "name": "Lifestyle",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/lifestyle.jpg",
     "keywords": [
       "Lifestyle",
       "Hobbies",
@@ -757,6 +810,7 @@
     "name": "Management",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/management.jpg",
     "keywords": [
       "Management",
       "Leadership",
@@ -780,6 +834,7 @@
     "name": "Marketing",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/marketing.jpg",
     "keywords": [
       "Marketing",
       "Advertising",
@@ -790,10 +845,13 @@
       "Digital Marketing"
     ],
     "sub_topic_codes": [
+      "seo",
       "digimarketing",
       "branding",
       "marketresearch",
-      "advertising"
+      "advertising",
+      "copywriting",
+      "sales"
     ]
   },
   {
@@ -801,6 +859,7 @@
     "name": "Mathematics",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/mathematics.jpg",
     "keywords": [
       "Mathematics",
       "Math",
@@ -809,13 +868,15 @@
       "Geometry",
       "Statistics",
       "Logic"
-    ]
+    ],
+    "sub_topic_codes": ["mathsandcomputing"]
   },
   {
     "code": "medicine",
     "name": "Medicine",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/medicine.jpg",
     "keywords": [
       "Medicine",
       "Healthcare",
@@ -826,11 +887,15 @@
       "Research"
     ],
     "sub_topic_codes": [
+      "medicalnews",
       "medicalscience",
       "clinicalmedicine",
       "publichealth",
       "healthpolicy",
-      "psychologyresearch"
+      "psychologyresearch",
+      "pharmacology",
+      "medicalethicslaw",
+      "mindbrain"
     ]
   },
   {
@@ -838,6 +903,7 @@
     "name": "Movies & TV",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/movies.jpg",
     "keywords": [
       "Movies",
       "TV",
@@ -864,6 +930,7 @@
     "name": "Music",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/music.jpg",
     "keywords": [
       "Music",
       "Songs",
@@ -889,6 +956,7 @@
     "name": "News",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/news.jpg",
     "keywords": [
       "News",
       "Current Events",
@@ -912,7 +980,10 @@
       "lgbtqnews",
       "entertainmentnews",
       "sportsnews",
-      "technews"
+      "technews",
+      "sciencenews",
+      "legalnews",
+      "medicalnews"
     ]
   },
   {
@@ -920,6 +991,7 @@
     "name": "Photography",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/photography.jpg",
     "keywords": [
       "Photography",
       "Photos",
@@ -945,7 +1017,8 @@
       "productphotography",
       "foodphotography",
       "fashionphotography",
-      "travelphotography"
+      "travelphotography",
+      "archphotography"
     ]
   },
   {
@@ -953,6 +1026,7 @@
     "name": "Physics",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/physics.jpg",
     "keywords": [
       "Physics",
       "Quantum Physics",
@@ -962,13 +1036,19 @@
       "Relativity",
       "Particles"
     ],
-    "sub_topic_codes": ["quantumphysics", "astrophysics", "nuclearphysics"]
+    "sub_topic_codes": [
+      "quantumphysics",
+      "astrophysics",
+      "nuclearphysics",
+      "particlephysics"
+    ]
   },
   {
     "code": "productivity",
     "name": "Productivity",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/productivity.jpg",
     "keywords": [
       "Productivity",
       "Time Management",
@@ -984,6 +1064,7 @@
     "name": "Psychology",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/psychology.jpg",
     "keywords": [
       "Psychology",
       "Mental Health",
@@ -1000,6 +1081,7 @@
     "name": "Science",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/science.jpg",
     "keywords": [
       "Science",
       "Biology",
@@ -1020,7 +1102,10 @@
       "astrophysics",
       "compsci",
       "medicalscience",
-      "mathematics"
+      "mathematics",
+      "sciencenews",
+      "foodscience",
+      "mindbrain"
     ]
   },
   {
@@ -1028,6 +1113,7 @@
     "name": "Software Development",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/softwaredevelopment.jpg",
     "keywords": [
       "Software Development",
       "Programming",
@@ -1047,7 +1133,10 @@
       "engineeringblogs",
       "ai",
       "arvrxr",
-      "gamedev"
+      "gamedev",
+      "creativecoding",
+      "programming",
+      "opensource"
     ]
   },
   {
@@ -1055,6 +1144,7 @@
     "name": "Sports",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/sports.jpg",
     "keywords": [
       "Sports",
       "Football",
@@ -1074,8 +1164,6 @@
       "basketball",
       "tennis",
       "baseball",
-      "rugby",
-      "golf",
       "hockey",
       "athletics",
       "motorsports",
@@ -1088,6 +1176,7 @@
     "name": "Technology",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/technology.jpg",
     "keywords": [
       "Technology",
       "Tech",
@@ -1116,6 +1205,7 @@
     "name": "Travel",
     "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/travel.jpg",
     "keywords": [
       "Travel",
       "Tourism",
@@ -1130,13 +1220,13 @@
     "sub_topic_codes": [
       "budgettravel",
       "solotravel",
-      "travelblogs",
       "travelphotography",
-      "travelvideos",
       "travelguides",
       "adventuretravel",
       "ecotravel",
-      "foodtravel"
+      "foodtravel",
+      "hiking",
+      "nomadictravel"
     ]
   },
 
@@ -1161,9 +1251,10 @@
     "active": true
   },
   {
-    "code": "spacetravel",
-    "name": "Space Travel",
-    "active": true
+    "code": "space",
+    "name": "Space",
+    "active": true,
+    "sub_topic_codes": ["nasa", "astronomy"]
   },
   {
     "code": "interiordesign",
@@ -1326,11 +1417,6 @@
     "active": true
   },
   {
-    "code": "comiccon",
-    "name": "Comic Con",
-    "active": true
-  },
-  {
     "code": "comicbooks",
     "name": "Comic Books",
     "active": true
@@ -1436,8 +1522,8 @@
     "active": true
   },
   {
-    "code": "theater",
-    "name": "Theater",
+    "code": "theatre",
+    "name": "Theatre",
     "active": true
   },
   {
@@ -1472,18 +1558,26 @@
   },
   {
     "code": "uiux",
-    "name": "UI/UX",
+    "name": "UXUI",
+    "active": true,
+    "sub_topic_codes": ["webdesign"]
+  },
+  {
+    "code": "webdesign",
+    "name": "Web Design",
     "active": true
   },
   {
     "code": "graphicdesign",
     "name": "Graphic Design",
-    "active": true
+    "active": true,
+    "sub_topic_codes": ["printdesign"]
   },
   {
     "code": "productdesign",
     "name": "Product Design",
-    "active": true
+    "active": true,
+    "sub_topic_codes": ["uiux", "industrialdesign"]
   },
   {
     "code": "industrialdesign",
@@ -2048,7 +2142,8 @@
   {
     "code": "naturephotography",
     "name": "Nature",
-    "active": true
+    "active": true,
+    "sub_topic_codes": ["landscapephotography", "wildlifephotography"]
   },
   {
     "code": "wildlifephotography",
@@ -2128,7 +2223,8 @@
   {
     "code": "earthscience",
     "name": "Earth Science",
-    "active": true
+    "active": true,
+    "sub_topic_codes": ["naturalhistory"]
   },
   {
     "code": "webdevelopment",
@@ -2183,16 +2279,6 @@
   {
     "code": "baseball",
     "name": "Baseball",
-    "active": true
-  },
-  {
-    "code": "rugby",
-    "name": "Rugby",
-    "active": true
-  },
-  {
-    "code": "golf",
-    "name": "Golf",
     "active": true
   },
   {
@@ -2257,18 +2343,13 @@
     "active": true
   },
   {
-    "code": "travelblogs",
-    "name": "Travel Blogs",
-    "active": true
-  },
-  {
     "code": "travelphotography",
     "name": "Travel Photography",
     "active": true
   },
   {
-    "code": "travelvideos",
-    "name": "Travel Vlogs",
+    "code": "hiking",
+    "name": "Hiking",
     "active": true
   },
   {
@@ -2289,6 +2370,147 @@
   {
     "code": "foodtravel",
     "name": "Food Travel",
+    "active": true
+  },
+  {
+    "code": "nomadictravel",
+    "name": "Nomadic Travel",
+    "active": true
+  },
+  {
+    "code": "seo",
+    "name": "SEO",
+    "active": true
+  },
+  {
+    "code": "womenentrepreneurs",
+    "name": "Women Entrepreneurs",
+    "active": true
+  },
+  {
+    "code": "copywriting",
+    "name": "Copywriting",
+    "active": true
+  },
+  {
+    "code": "sales",
+    "name": "Sales",
+    "active": true
+  },
+  {
+    "code": "sciencenews",
+    "name": "Science News",
+    "active": true
+  },
+  {
+    "code": "legalnews",
+    "name": "Legal News",
+    "active": true
+  },
+  {
+    "code": "aeromanufacturing",
+    "name": "Engineering & Manufacturing",
+    "active": true
+  },
+  {
+    "code": "nasa",
+    "name": "NASA",
+    "active": true
+  },
+  {
+    "code": "astronomy",
+    "name": "Astronomy",
+    "active": true,
+    "sub_topic_codes": ["nasa", "space"]
+  },
+  {
+    "code": "archphotography",
+    "name": "Architectural Photography",
+    "active": true
+  },
+  {
+    "code": "creativecoding",
+    "name": "Creative Coding",
+    "active": true
+  },
+  {
+    "code": "programming",
+    "name": "Programming",
+    "active": true
+  },
+  {
+    "code": "opensource",
+    "name": "Open Source",
+    "active": true
+  },
+  {
+    "code": "mathsandcomputing",
+    "name": "Math & Computing",
+    "active": true
+  },
+  {
+    "code": "dataviz",
+    "name": "Data Visualization",
+    "active": true
+  },
+  {
+    "code": "printdesign",
+    "name": "Print & Signage",
+    "active": true
+  },
+  {
+    "code": "oceanography",
+    "name": "Oceanography",
+    "active": true
+  },
+  {
+    "code": "beauty",
+    "name": "Beauty",
+    "active": true
+  },
+  {
+    "code": "vegetarian",
+    "name": "Vegetarian",
+    "active": true
+  },
+  {
+    "code": "foodscience",
+    "name": "Food Science",
+    "active": true
+  },
+  {
+    "code": "naturalhistory",
+    "name": "Natural History",
+    "active": true
+  },
+  {
+    "code": "medicalnews",
+    "name": "Medical News",
+    "active": true
+  },
+  {
+    "code": "pharmacology",
+    "name": "Pharmacology",
+    "active": true
+  },
+  {
+    "code": "medicalethicslaw",
+    "name": "Medical Ethics & Law",
+    "active": true
+  },
+  {
+    "code": "particlephysics",
+    "name": "Particle Physics",
+    "active": true
+  },
+  {
+    "code": "bookreviews",
+    "name": "Book Reviews",
+    "active": true
+  },
+  {
+    "code": "mindbrain",
+    "name": "Mind & Brain",
     "active": true
   }
 ]

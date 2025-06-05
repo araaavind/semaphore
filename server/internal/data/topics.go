@@ -76,6 +76,20 @@ func (m *TopicModel) Upsert(ctx context.Context, topics []Topic) error {
 	return tx.Commit(ctx)
 }
 
+func (m *TopicModel) DeleteAllExcludingCodes(ctx context.Context, topicCodes []string) error {
+	query := `
+		DELETE FROM topics
+		WHERE code NOT IN (SELECT UNNEST($1::text[]))
+	`
+
+	_, err := m.DB.Exec(ctx, query, topicCodes)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *TopicModel) ReCreateSubtopics(ctx context.Context, subtopics []Subtopic) error {
 	query := `
 		INSERT INTO subtopics (parent_id, child_id)

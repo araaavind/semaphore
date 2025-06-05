@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -13,7 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// To update the topics, you can make the necessary changes in the topics.json file
+// To update the topics, make the necessary changes in the topics.json file
 // MAKE SURE TO NEVER MODIFY THE CODE OF THE TOPIC as it can create duplicates
 
 //go:embed topics.json
@@ -43,6 +44,13 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	// Delete topics not in JSON
+	err = deleteOrphanedTopics(ctx, &models, topics)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Upserting topics...")
 	// Upsert all topics
 	err = models.Topics.Upsert(ctx, topics)
 	if err != nil {
@@ -68,11 +76,27 @@ func main() {
 			})
 		}
 	}
-
+	fmt.Println("Creating subtopic mappings...")
 	err = models.Topics.ReCreateSubtopics(ctx, subtopicsToUpsert)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Done")
+}
+
+func deleteOrphanedTopics(ctx context.Context, models *data.Models, topics []data.Topic) error {
+	fmt.Println("Deleting orphaned topics...")
+	topicCodes := []string{}
+	for _, topic := range topics {
+		topicCodes = append(topicCodes, topic.Code)
+	}
+
+	err := models.Topics.DeleteAllExcludingCodes(ctx, topicCodes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func openDB(dsn string) (*pgxpool.Pool, error) {
