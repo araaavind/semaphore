@@ -9,7 +9,9 @@ class Feed extends Equatable {
   final String? imageUrl;
   final DateTime? pubDate;
   final DateTime? pubUpdated;
+  final FeedFormat? feedFormat;
   final FeedType? feedType;
+  final OwnerType? ownerType;
   final String? language;
   final int? followersCount;
 
@@ -22,7 +24,9 @@ class Feed extends Equatable {
     this.imageUrl,
     this.pubDate,
     this.pubUpdated,
+    this.feedFormat,
     this.feedType,
+    this.ownerType,
     this.language,
     this.followersCount,
   });
@@ -37,22 +41,54 @@ class Feed extends Equatable {
         imageUrl,
         pubDate,
         pubUpdated,
+        feedFormat,
         feedType,
+        ownerType,
         language,
         followersCount,
       ];
 }
 
-enum FeedType {
+enum FeedFormat {
   rss,
   atom,
   json,
-  unknown;
+  iota;
 
-  static FeedType fromString(String s) => switch (s) {
+  static FeedFormat fromString(String s) => switch (s) {
         'rss' => rss,
         'atom' => atom,
         'json' => json,
-        _ => unknown,
+        _ => iota,
+      };
+}
+
+enum FeedType {
+  website,
+  medium,
+  reddit,
+  youtube,
+  substack,
+  podcast;
+
+  static FeedType fromString(String s) => switch (s) {
+        'website' => website,
+        'medium' => medium,
+        'reddit' => reddit,
+        'youtube' => youtube,
+        'substack' => substack,
+        'podcast' => podcast,
+        _ => website,
+      };
+}
+
+enum OwnerType {
+  personal,
+  organization;
+
+  static OwnerType fromString(String s) => switch (s) {
+        'personal' => personal,
+        'organization' => organization,
+        _ => organization,
       };
 }

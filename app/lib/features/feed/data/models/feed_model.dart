@@ -12,7 +12,9 @@ class FeedModel extends Feed {
     super.imageUrl,
     super.pubDate,
     super.pubUpdated,
+    super.feedFormat,
     super.feedType,
+    super.ownerType,
     super.language,
     super.followersCount,
   });
@@ -26,7 +28,9 @@ class FeedModel extends Feed {
     String? imageUrl,
     DateTime? pubDate,
     DateTime? pubUpdated,
+    FeedFormat? feedFormat,
     FeedType? feedType,
+    OwnerType? ownerType,
     String? language,
     int? followersCount,
   }) {
@@ -39,7 +43,9 @@ class FeedModel extends Feed {
       imageUrl: imageUrl ?? this.imageUrl,
       pubDate: pubDate ?? this.pubDate,
       pubUpdated: pubUpdated ?? this.pubUpdated,
+      feedFormat: feedFormat ?? this.feedFormat,
       feedType: feedType ?? this.feedType,
+      ownerType: ownerType ?? this.ownerType,
       language: language ?? this.language,
       followersCount: followersCount ?? this.followersCount,
     );
@@ -55,7 +61,9 @@ class FeedModel extends Feed {
       'image_url': imageUrl,
       'pub_date': pubDate?.toIso8601String(),
       'pub_updated': pubUpdated?.toIso8601String(),
+      'feed_format': feedFormat?.name,
       'feed_type': feedType?.name,
+      'owner_type': ownerType?.name,
       'language': language,
       'followers_count': followersCount,
     };
@@ -76,8 +84,14 @@ class FeedModel extends Feed {
       pubUpdated: map['pub_updated'] != null
           ? DateTime.parse(map['pub_updated'] as String)
           : null,
+      feedFormat: map['feed_format'] != null
+          ? FeedFormat.fromString(map['feed_format'] as String)
+          : null,
       feedType: map['feed_type'] != null
           ? FeedType.fromString(map['feed_type'] as String)
+          : null,
+      ownerType: map['owner_type'] != null
+          ? OwnerType.fromString(map['owner_type'] as String)
           : null,
       language: map['language'] != null ? map['language'] as String : null,
       followersCount:
