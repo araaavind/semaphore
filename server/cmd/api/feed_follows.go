@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgtype"
+
 	"github.com/aravindmathradan/semaphore/internal/data"
 	"github.com/aravindmathradan/semaphore/internal/validator"
 )
@@ -156,7 +158,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 			// If the link provided by user or the 'self' link of parsed Feed is not present in DB,
 			// check if the 'self' link of the parsed feed is same as the link provided by the user.
 			feedToFolow = &data.Feed{
-				AddedBy: user.ID,
+				AddedBy: pgtype.Int8{Int64: user.ID, Valid: true},
 			}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.

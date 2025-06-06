@@ -20,8 +20,9 @@ var (
 type FeedFollow struct {
 	UserID    int64     `json:"user_id"`
 	FeedID    int64     `json:"feed_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Priority  int       `json:"priority,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 type FeedFollowModel struct {
@@ -82,8 +83,8 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 		"pub_updated": "feeds.pub_updated",
 	}
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
-			feeds.image_url, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
+		SELECT count(*) OVER(), feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.image_url, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.language
 		FROM feeds
 		INNER JOIN feed_follows ON feed_follows.feed_id = feeds.id
 		INNER JOIN users ON users.id = feed_follows.user_id
@@ -107,6 +108,7 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 		err := row.Scan(
 			&totalRecords,
 			&feed.ID,
+			&feed.DisplayTitle,
 			&feed.Title,
 			&feed.Description,
 			&feed.Link,
@@ -115,6 +117,8 @@ func (m FeedFollowModel) GetFeedsForUser(userID int64, filters Filters) ([]*Feed
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,
+			&feed.OwnerType,
+			&feed.FeedFormat,
 			&feed.FeedVersion,
 			&feed.Language,
 		)

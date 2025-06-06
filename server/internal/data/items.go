@@ -334,8 +334,8 @@ func (m ItemModel) FindAllForWallByNew(wallID, userID int64, cursorFilters Curso
 	query := `
 		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
-			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
-			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
+			items.version, items.created_at, items.updated_at, feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.language,
 			feeds.image_url as feed_image_url, (si.item_id IS NOT NULL) as is_saved, (li.item_id IS NOT NULL) as is_liked
 		FROM items
 		INNER JOIN feeds ON feeds.id = items.feed_id
@@ -394,6 +394,7 @@ func (m ItemModel) FindAllForWallByNew(wallID, userID int64, cursorFilters Curso
 			&item.CreatedAt,
 			&item.UpdatedAt,
 			&feed.ID,
+			&feed.DisplayTitle,
 			&feed.Title,
 			&feed.Description,
 			&feed.Link,
@@ -401,6 +402,8 @@ func (m ItemModel) FindAllForWallByNew(wallID, userID int64, cursorFilters Curso
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,
+			&feed.OwnerType,
+			&feed.FeedFormat,
 			&feed.Language,
 			&feed.ImageURL,
 			&item.IsSaved,
@@ -550,8 +553,8 @@ func (m ItemModel) GetByItemIDs(ids []int64, userID int64) ([]*Item, error) {
 	query := `
 		SELECT items.id, items.title, items.description, items.content, items.link, items.pub_date,
 			items.pub_updated, items.authors, items.guid, items.image_url, items.categories, items.enclosures, items.feed_id,
-			items.version, items.created_at, items.updated_at, feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
-			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.language,
+			items.version, items.created_at, items.updated_at, feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+			feeds.pub_date as feed_pub_date, feeds.pub_updated as feed_pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.language,
 			feeds.image_url as feed_image_url, (si.item_id IS NOT NULL) as is_saved, (li.item_id IS NOT NULL) as is_liked
 		FROM items
 		INNER JOIN feeds ON feeds.id = items.feed_id
@@ -590,6 +593,7 @@ func (m ItemModel) GetByItemIDs(ids []int64, userID int64) ([]*Item, error) {
 			&item.CreatedAt,
 			&item.UpdatedAt,
 			&feed.ID,
+			&feed.DisplayTitle,
 			&feed.Title,
 			&feed.Description,
 			&feed.Link,
@@ -597,6 +601,8 @@ func (m ItemModel) GetByItemIDs(ids []int64, userID int64) ([]*Item, error) {
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,
+			&feed.OwnerType,
+			&feed.FeedFormat,
 			&feed.Language,
 			&feed.ImageURL,
 			&item.IsSaved,

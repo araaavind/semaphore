@@ -122,9 +122,9 @@ func CopyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
 		feed.PubUpdated = time.Now()
 	}
 	if parsedFeed.FeedType != "" {
-		feed.FeedType = strings.ToLower(parsedFeed.FeedType)
+		feed.FeedFormat = strings.ToLower(parsedFeed.FeedType)
 	} else {
-		feed.FeedType = "rss"
+		feed.FeedFormat = "rss"
 	}
 	if parsedFeed.FeedVersion != "" {
 		feed.FeedVersion = parsedFeed.FeedVersion

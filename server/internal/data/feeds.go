@@ -21,6 +21,7 @@ var (
 
 type Feed struct {
 	ID            int64              `json:"id"`
+	DisplayTitle  pgtype.Text        `json:"display_title,omitempty"`
 	Title         string             `json:"title"`
 	Description   string             `json:"description"`
 	Link          string             `json:"link"`
@@ -29,11 +30,13 @@ type Feed struct {
 	PubDate       time.Time          `json:"pub_date,omitempty"`
 	PubUpdated    time.Time          `json:"pub_updated,omitempty"`
 	FeedType      string             `json:"feed_type,omitempty"`
+	OwnerType     string             `json:"owner_type,omitempty"`
+	FeedFormat    string             `json:"feed_format,omitempty"`
 	FeedVersion   string             `json:"feed_version,omitempty"`
 	TopicID       pgtype.Int8        `json:"topic_id,omitempty"`
 	Language      string             `json:"language,omitempty"`
 	Version       int32              `json:"version,omitempty"`
-	AddedBy       int64              `json:"added_by,omitempty"`
+	AddedBy       pgtype.Int8        `json:"added_by,omitempty"`
 	LastFetchAt   pgtype.Timestamptz `json:"last_fetch_at,omitempty"`
 	LastFailure   pgtype.Text        `json:"last_failure,omitempty"`
 	LastFailureAt pgtype.Timestamptz `json:"last_failure_at,omitempty"`
@@ -52,13 +55,22 @@ type FeedModel struct {
 
 func (m FeedModel) Insert(feed *Feed) error {
 	query := `
-		INSERT INTO feeds (title, description, link, feed_link, image_url, pub_date, pub_updated,
-			feed_type, feed_version, topic_id, language, added_by, last_fetch_at, last_failure_at,
-			last_failure)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+		INSERT INTO feeds (display_title, title, description, link, feed_link, image_url, pub_date, pub_updated,
+			feed_type, owner_type, feed_format, feed_version, topic_id, language, added_by,
+			last_fetch_at, last_failure_at, last_failure)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
 		RETURNING id, created_at, updated_at, version`
 
+	if feed.FeedType == "" {
+		feed.FeedType = "website"
+	}
+
+	if feed.OwnerType == "" {
+		feed.OwnerType = "organization"
+	}
+
 	args := []any{
+		feed.DisplayTitle,
 		feed.Title,
 		feed.Description,
 		feed.Link,
@@ -67,6 +79,8 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.PubDate,
 		feed.PubUpdated,
 		feed.FeedType,
+		feed.OwnerType,
+		feed.FeedFormat,
 		feed.FeedVersion,
 		feed.TopicID,
 		feed.Language,
@@ -106,8 +120,8 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 	}
 
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.image_url, feeds.pub_date,
-		feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.topic_id, feeds.language, feeds.added_by, feeds.created_at, feeds.updated_at,
+		SELECT count(*) OVER(), feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.image_url, feeds.pub_date,
+		feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.topic_id, feeds.language, feeds.added_by, feeds.created_at, feeds.updated_at,
 		feeds.version, feeds.last_fetch_at, feeds.last_failure_at, feeds.last_failure
 		FROM feeds
 		LEFT JOIN subtopics ON subtopics.child_id = feeds.topic_id
@@ -139,6 +153,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 		err := row.Scan(
 			&totalRecords,
 			&feed.ID,
+			&feed.DisplayTitle,
 			&feed.Title,
 			&feed.Description,
 			&feed.Link,
@@ -147,6 +162,8 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,
+			&feed.OwnerType,
+			&feed.FeedFormat,
 			&feed.FeedVersion,
 			&feed.TopicID,
 			&feed.Language,
@@ -171,7 +188,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 
 func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 	query := `
-		SELECT id, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type,
+		SELECT id, display_title, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type, owner_type, feed_format,
 		feed_version, topic_id, language, added_by, created_at, updated_at, version, last_fetch_at,
 		last_failure_at, last_failure
 		FROM feeds WHERE feed_link = ANY ($1)`
@@ -183,6 +200,7 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 
 	err := m.DB.QueryRow(ctx, query, feedLinks).Scan(
 		&feed.ID,
+		&feed.DisplayTitle,
 		&feed.Title,
 		&feed.Description,
 		&feed.Link,
@@ -191,6 +209,8 @@ func (m FeedModel) FindByFeedLinks(feedLinks []string) (*Feed, error) {
 		&feed.PubDate,
 		&feed.PubUpdated,
 		&feed.FeedType,
+		&feed.OwnerType,
+		&feed.FeedFormat,
 		&feed.FeedVersion,
 		&feed.TopicID,
 		&feed.Language,
@@ -220,7 +240,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	}
 
 	query := `
-		SELECT id, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type,
+		SELECT id, display_title, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type, owner_type, feed_format,
 		feed_version, topic_id, language, added_by, created_at, updated_at, version, last_fetch_at,
 		last_failure_at, last_failure
 		FROM feeds WHERE id = $1`
@@ -232,6 +252,7 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 
 	err := m.DB.QueryRow(ctx, query, id).Scan(
 		&feed.ID,
+		&feed.DisplayTitle,
 		&feed.Title,
 		&feed.Description,
 		&feed.Link,
@@ -240,6 +261,8 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		&feed.PubDate,
 		&feed.PubUpdated,
 		&feed.FeedType,
+		&feed.OwnerType,
+		&feed.FeedFormat,
 		&feed.FeedVersion,
 		&feed.TopicID,
 		&feed.Language,
@@ -266,26 +289,30 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 func (m FeedModel) Update(feed *Feed) error {
 	query := `
 		UPDATE feeds
-		SET title = COALESCE($1, title), 
-			description = COALESCE($2, description), 
-			link = COALESCE($3, link), 
-			feed_link = COALESCE($4, feed_link), 
-			image_url = COALESCE($5, image_url), 
-			pub_date = COALESCE($6, pub_date), 
-			pub_updated = COALESCE($7, pub_updated),
-			feed_type = COALESCE($8, feed_type), 
-			feed_version = COALESCE($9, feed_version), 
-			topic_id = COALESCE($10, topic_id), 
-			language = COALESCE($11, language), 
+		SET display_title = $1, 
+			title = $2, 
+			description = $3, 
+			link = $4, 
+			feed_link = $5, 
+			image_url = COALESCE($6, image_url), 
+			pub_date = COALESCE($7, pub_date), 
+			pub_updated = COALESCE($8, pub_updated),
+			feed_type = $9,
+			owner_type = $10,
+			feed_format = $11, 
+			feed_version = $12, 
+			topic_id = COALESCE($13, topic_id), 
+			language = $14, 
 			updated_at = NOW(), 
-			last_fetch_at = COALESCE($12, last_fetch_at),
-			last_failure_at = COALESCE($13, last_failure_at), 
-			last_failure = COALESCE($14, last_failure), 
+			last_fetch_at = COALESCE($15, last_fetch_at),
+			last_failure_at = COALESCE($16, last_failure_at), 
+			last_failure = COALESCE($17, last_failure), 
 			version = version + 1
-		WHERE id = $15 AND version = $16
+		WHERE id = $18 AND version = $19
 		RETURNING updated_at, version`
 
 	args := []any{
+		feed.DisplayTitle,
 		feed.Title,
 		feed.Description,
 		feed.Link,
@@ -294,6 +321,8 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.PubDate,
 		feed.PubUpdated,
 		feed.FeedType,
+		feed.OwnerType,
+		feed.FeedFormat,
 		feed.FeedVersion,
 		feed.TopicID,
 		feed.Language,

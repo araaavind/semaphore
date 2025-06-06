@@ -62,7 +62,7 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64, title string, filters Filt
 	}
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
-			feeds.image_url, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.feed_version, feeds.language
+			feeds.image_url, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.language
 		FROM feeds
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
 		WHERE wall_feeds.wall_id = $1 
@@ -97,6 +97,8 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64, title string, filters Filt
 			&feed.PubDate,
 			&feed.PubUpdated,
 			&feed.FeedType,
+			&feed.OwnerType,
+			&feed.FeedFormat,
 			&feed.FeedVersion,
 			&feed.Language,
 		)

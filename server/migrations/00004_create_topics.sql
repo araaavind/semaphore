@@ -14,8 +14,6 @@ CREATE TABLE IF NOT EXISTS topics (
     updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
 );
 
-ALTER TABLE feeds ADD COLUMN topic_id bigint REFERENCES topics(id);
-
 CREATE TABLE IF NOT EXISTS subtopics (
     parent_id bigint REFERENCES topics(id) ON DELETE CASCADE,
     child_id bigint REFERENCES topics(id) ON DELETE CASCADE,
@@ -32,8 +30,6 @@ DROP INDEX IF EXISTS subtopics_parent_id_idx;
 DROP INDEX IF EXISTS subtopics_child_id_idx;
 
 DROP TABLE IF EXISTS subtopics;
-
-ALTER TABLE feeds DROP COLUMN topic_id;
 
 DROP TABLE IF EXISTS topics;
 -- +goose StatementEnd

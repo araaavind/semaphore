@@ -115,13 +115,14 @@ func (m WallModel) FindAllForUser(userID int64) ([]*WallWithFeedDTO, error) {
 		COALESCE(
 			JSONB_AGG(JSONB_BUILD_OBJECT(
 				'id', f.id,
+				'display_title', f.display_title,
 				'title', f.title,
 				'description', f.description,
 				'link', f.link,
 				'feed_link', f.feed_link,
 				'pub_date', f.pub_date,
 				'pub_updated', f.pub_updated,
-				'feed_type', f.feed_type,
+				'feed_format', f.feed_format,
 				'feed_version', f.feed_version,
 				'language', f.language
 			))
