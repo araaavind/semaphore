@@ -37,11 +37,14 @@ var models data.Models
 func main() {
 	var (
 		dsn         = flag.String("dsn", os.Getenv("SEMAPHORE_DB_DSN"), "PostgreSQL connection string")
-		concurrency = *flag.Int("concurrency", 10, "Number of concurrent feed fetches")
-		userAgent   = *flag.String("user-agent", "SMPHR Feed Fetcher/1.0", "User agent for feed fetching")
+		concurrency = flag.Int("concurrency", 10, "Number of concurrent feed fetches")
+		userAgent   = flag.String("user-agent", "SMPHR Feed Fetcher/1.0", "User agent for feed fetching")
 	)
 
 	flag.Parse()
+
+	fmt.Println("concurrency", concurrency)
+	fmt.Println("user-agent", userAgent)
 
 	db, err := openDB(*dsn)
 	if err != nil {
@@ -104,7 +107,7 @@ func main() {
 		mutex        sync.Mutex
 	)
 
-	for i := range concurrency {
+	for i := range *concurrency {
 		fmt.Printf("Starting worker #%d\n", i+1)
 		wg.Add(1)
 		go func() {
@@ -114,7 +117,7 @@ func main() {
 			}()
 
 			parser := gofeed.NewParser()
-			parser.UserAgent = userAgent
+			parser.UserAgent = *userAgent
 
 			for fr := range feedChan {
 				err := processFeed(parser, fr, topics)
