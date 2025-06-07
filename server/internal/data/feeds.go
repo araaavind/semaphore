@@ -124,14 +124,18 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 		feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.topic_id, feeds.language, feeds.added_by, feeds.created_at, feeds.updated_at,
 		feeds.version, feeds.last_fetch_at, feeds.last_failure_at, feeds.last_failure
 		FROM feeds
-		LEFT JOIN subtopics ON subtopics.child_id = feeds.topic_id
 		WHERE (
 			to_tsvector('simple', feeds.title) @@ plainto_tsquery('simple', $1)
 			OR $1 = ''
 		)
 		AND (feeds.feed_link = $2 OR $2 = '')
 		AND (
-			(subtopics.parent_id = $3 OR feeds.topic_id = $3)
+			feeds.topic_id = $3
+			OR EXISTS (
+				SELECT 1 FROM subtopics 
+				WHERE subtopics.child_id = feeds.topic_id 
+				AND subtopics.parent_id = $3
+			)
 			OR $3 = -1
 		)
 		ORDER BY %s %s, feeds.id ASC
@@ -374,7 +378,7 @@ func (m FeedModel) DeleteByID(id int64) error {
 
 func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 	query := `
-		SELECT id, feed_link, version
+		SELECT id, feed_link, feed_type, owner_type, topic_id, version
 		FROM feeds
 		WHERE GREATEST(last_fetch_at, last_failure_at, '-Infinity'::timestamptz) < $1`
 
@@ -391,6 +395,9 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 		err := row.Scan(
 			&feed.ID,
 			&feed.FeedLink,
+			&feed.FeedType,
+			&feed.OwnerType,
+			&feed.TopicID,
 			&feed.Version,
 		)
 		return &feed, err

@@ -61,7 +61,7 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 
 	parsedFeed, err := app.parser.ParseURLWithContext(feed.FeedLink, ctx)
 	if err != nil {
-		app.logInternalError("ParseURLWithContext failed", err)
+		app.logInternalError("ParseURLWithContext failed for feed: "+feed.FeedLink, err)
 		feed.LastFailure.String = err.Error()
 		feed.LastFailure.Valid = true
 		feed.LastFailureAt.Time = time.Now()
