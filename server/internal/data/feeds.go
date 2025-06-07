@@ -378,7 +378,7 @@ func (m FeedModel) DeleteByID(id int64) error {
 
 func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 	query := `
-		SELECT id, feed_link, feed_type, owner_type, topic_id, version
+		SELECT id, feed_link, display_title, feed_type, owner_type, topic_id, version
 		FROM feeds
 		WHERE GREATEST(last_fetch_at, last_failure_at, '-Infinity'::timestamptz) < $1`
 
