@@ -395,6 +395,7 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 		err := row.Scan(
 			&feed.ID,
 			&feed.FeedLink,
+			&feed.DisplayTitle,
 			&feed.FeedType,
 			&feed.OwnerType,
 			&feed.TopicID,
