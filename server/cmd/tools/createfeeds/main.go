@@ -7,7 +7,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -17,6 +19,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/mmcdole/gofeed"
+	"github.com/mmcdole/gofeed/atom"
+	"github.com/mmcdole/gofeed/json"
+	"github.com/mmcdole/gofeed/rss"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -42,9 +47,6 @@ func main() {
 	)
 
 	flag.Parse()
-
-	fmt.Println("concurrency", concurrency)
-	fmt.Println("user-agent", userAgent)
 
 	db, err := openDB(*dsn)
 	if err != nil {
@@ -194,6 +196,10 @@ func processFeed(parser *gofeed.Parser, fr feedRow, topics map[string]data.Topic
 
 	parsedFeed, err := parser.ParseURLWithContext(fr.feedLink, ctx)
 	if err != nil {
+		if errors.Is(err, gofeed.ErrFeedTypeNotDetected) {
+			fmt.Printf("Feed type not detected for %s\n", fr.feedLink)
+			parsedFeed, err = parseWithSpecificParser(ctx, fr.feedLink)
+		}
 		return fmt.Errorf("failed to parse feed: %w", err)
 	}
 
@@ -278,6 +284,53 @@ func processFeed(parser *gofeed.Parser, fr feedRow, topics map[string]data.Topic
 	}
 
 	return nil
+}
+
+func parseWithSpecificParser(ctx context.Context, feedLink string) (*gofeed.Feed, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", feedLink, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("Attempting to parse with RSS parser...")
+	rssParser := rss.Parser{}
+	rssFeed, err := rssParser.Parse(bytes.NewReader(body))
+	if err == nil {
+		rssTranslator := gofeed.DefaultRSSTranslator{}
+		return rssTranslator.Translate(rssFeed)
+	}
+	fmt.Println("Failed to parse with RSS parser: ", err)
+
+	fmt.Println("Attempting to parse with Atom parser...")
+	atomParser := atom.Parser{}
+	atomFeed, err := atomParser.Parse(bytes.NewReader(body))
+	if err == nil {
+		atomTranslator := gofeed.DefaultAtomTranslator{}
+		return atomTranslator.Translate(atomFeed)
+	}
+	fmt.Println("Failed to parse with Atom parser: ", err)
+
+	fmt.Println("Attempting to parse with JSON parser...")
+	jsonParser := json.Parser{}
+	jsonFeed, err := jsonParser.Parse(bytes.NewReader(body))
+	if err == nil {
+		jsonTranslator := gofeed.DefaultJSONTranslator{}
+		return jsonTranslator.Translate(jsonFeed)
+	}
+	fmt.Println("Failed to parse with JSON parser: ", err)
+
+	return nil, fmt.Errorf("failed to parse feed using specific parsers: %w", err)
 }
 
 func openDB(dsn string) (*pgxpool.Pool, error) {
