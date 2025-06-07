@@ -80,13 +80,17 @@ vendor:
 # BUILD
 # ==================================================================================== #
 
-## build/server: build the cmd/server application for local machine and linux/amd64
-.PHONY: build/server
-build/server:
+## build/api: build the cmd/api application for local machine and linux/amd64
+.PHONY: build/api
+build/api:
 	@echo 'Building cmd/api for local machine...'
 	cd server && go build -ldflags='-s -w' -o=./bin/local/api ./cmd/api
 	@echo 'Building cmd/api for deployment in linux/amd64...'
 	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/api ./cmd/api
+
+## build/tools: build the cmd/tools applications for local machine and linux/amd64
+.PHONY: build/tools
+build/tools:
 	@echo 'Building cmd/tools/makeadmin for local machine...'
 	cd server && go build -ldflags='-s -w' -o=./bin/local/tools/makeadmin ./cmd/tools/makeadmin
 	@echo 'Building cmd/tools/makeadmin for deployment in linux/amd64...'
@@ -95,6 +99,10 @@ build/server:
 	cd server && go build -ldflags='-s -w' -o=./bin/local/tools/maketopics ./cmd/tools/maketopics
 	@echo 'Building cmd/tools/maketopics for deployment in linux/amd64...'
 	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/tools/maketopics ./cmd/tools/maketopics
+	@echo 'Building cmd/tools/createfeeds for local machine...'
+	cd server && go build -ldflags='-s -w' -o=./bin/local/tools/createfeeds ./cmd/tools/createfeeds
+	@echo 'Building cmd/tools/createfeeds for deployment in linux/amd64...'
+	cd server && GOOS=linux GOARCH=amd64 go build -ldflags='-s -w' -o=./bin/linux_amd64/tools/createfeeds ./cmd/tools/createfeeds
 
 # ==================================================================================== #
 # PRODUCTION
@@ -115,9 +123,9 @@ production/connect:
 .PHONY: production/deploy/server
 production/deploy/server:
 	@if [ -z "${PROD_IP}" ]; then \
-                echo "ERROR: PROD_IP is not set! Pass it like 'make production/deploy/api PROD_IP=1.2.3.4' or set it as environment variable"; \
-                exit 1; \
-        fi
+		echo "ERROR: PROD_IP is not set! Pass it like 'make production/deploy/api PROD_IP=1.2.3.4' or set it as environment variable"; \
+		exit 1; \
+	fi
 	@echo 'Deploying api server on production...'
 	rsync -P ./server/bin/linux_amd64/api smphr@${production_host_ip}:~
 	rsync -rP --delete ./server/bin/linux_amd64/tools smphr@${production_host_ip}:~
