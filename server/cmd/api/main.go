@@ -52,6 +52,7 @@ type config struct {
 		enabled bool
 	}
 	refresher struct {
+		userAgent              string
 		maxConcurrentRefreshes int
 		refreshStaleFeedsSince time.Duration
 		refreshPeriod          time.Duration
@@ -106,6 +107,7 @@ func main() {
 	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 8, "Rate limiter maximum burst")
 	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
 
+	flag.StringVar(&cfg.refresher.userAgent, "user-agent", "SMPHR Feed Fetcher/1.0", "User agent for feed fetching")
 	flag.IntVar(&cfg.refresher.maxConcurrentRefreshes, "max-concurrent-refreshes", 5, "Maximum concurrent refreshes")
 	flag.DurationVar(&cfg.refresher.refreshStaleFeedsSince, "refresh-since", 5*time.Minute, "Refresh stale feeds since (default: 5m)")
 	flag.DurationVar(&cfg.refresher.refreshPeriod, "refresh-period", time.Minute, "Refresh feed period (default: 1m)")
@@ -171,12 +173,15 @@ func main() {
 		return time.Now().Unix()
 	}))
 
+	feedParser := gofeed.NewParser()
+	feedParser.UserAgent = cfg.refresher.userAgent
+
 	app := &application{
 		config: cfg,
 		logger: logger,
 		models: data.NewModels(db),
 		cache:  cache.NewRedisCache(rdb),
-		parser: gofeed.NewParser(),
+		parser: feedParser,
 		mailer: mailer.New(
 			cfg.smtp.host,
 			cfg.smtp.port,
