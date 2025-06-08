@@ -45,6 +45,14 @@ class _FeedListTileState extends State<FeedListTile> {
 
   @override
   Widget build(BuildContext context) {
+    String title = 'Feed';
+    if (feed.displayTitle != null && feed.displayTitle!.isNotEmpty) {
+      title = feed.displayTitle!;
+    } else if (feed.title.isNotEmpty) {
+      title = feed.title;
+    }
+    // Convert HTML to plain text
+    final plainTextDescription = HtmlUtils.htmlToPlainText(feed.description);
     return ListTile(
       visualDensity: VisualDensity.standard,
       onTap: () {
@@ -68,7 +76,7 @@ class _FeedListTileState extends State<FeedListTile> {
         spacing: 6.0,
         children: [
           AutoSizeText(
-            feed.title.isNotEmpty ? feed.title.toTitleCase() : 'Feed',
+            title,
             style: context.theme.textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -78,9 +86,9 @@ class _FeedListTileState extends State<FeedListTile> {
           ),
         ],
       ),
-      subtitle: feed.description != null && feed.description!.isNotEmpty
+      subtitle: plainTextDescription.isNotEmpty
           ? AutoSizeText(
-              feed.description!,
+              plainTextDescription,
               style: context.theme.textTheme.bodySmall!.copyWith(
                 fontWeight: FontWeight.w300,
               ),

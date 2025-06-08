@@ -5,6 +5,7 @@ import 'package:app/features/feed/domain/entities/feed.dart';
 class FeedModel extends Feed {
   const FeedModel({
     required super.id,
+    super.displayTitle,
     required super.title,
     required super.link,
     required super.feedLink,
@@ -21,6 +22,7 @@ class FeedModel extends Feed {
 
   FeedModel copyWith({
     int? id,
+    String? displayTitle,
     String? title,
     String? description,
     String? link,
@@ -36,6 +38,7 @@ class FeedModel extends Feed {
   }) {
     return FeedModel(
       id: id ?? this.id,
+      displayTitle: displayTitle ?? this.displayTitle,
       title: title ?? this.title,
       description: description ?? this.description,
       link: link ?? this.link,
@@ -54,6 +57,7 @@ class FeedModel extends Feed {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
+      'display_title': displayTitle,
       'title': title,
       'description': description,
       'link': link,
@@ -72,6 +76,8 @@ class FeedModel extends Feed {
   factory FeedModel.fromMap(Map<String, dynamic> map) {
     return FeedModel(
       id: map['id'] as int,
+      displayTitle:
+          map['display_title'] != null ? map['display_title'] as String : null,
       title: map['title'] as String,
       description:
           map['description'] != null ? map['description'] as String : null,

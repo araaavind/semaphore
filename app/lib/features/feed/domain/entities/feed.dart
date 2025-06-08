@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class Feed extends Equatable {
   final int id;
+  final String? displayTitle;
   final String title;
   final String? description;
   final String link;
@@ -17,6 +18,7 @@ class Feed extends Equatable {
 
   const Feed({
     required this.id,
+    this.displayTitle,
     required this.title,
     this.description,
     required this.link,
@@ -34,6 +36,7 @@ class Feed extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        displayTitle,
         title,
         description,
         link,

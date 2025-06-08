@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'dart:ui' as ui;
 
 class FeedViewPage extends StatefulWidget {
   final Feed feed;
@@ -46,6 +47,13 @@ class _FeedViewPageState extends State<FeedViewPage> {
 
   @override
   Widget build(BuildContext context) {
+    String title = 'Feed';
+    if (widget.feed.displayTitle != null &&
+        widget.feed.displayTitle!.isNotEmpty) {
+      title = widget.feed.displayTitle!;
+    } else if (widget.feed.title.isNotEmpty) {
+      title = widget.feed.title;
+    }
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -72,8 +80,8 @@ class _FeedViewPageState extends State<FeedViewPage> {
                             children: [
                               if (feed.imageUrl != null)
                                 Container(
-                                  width: 64.0,
-                                  height: 64.0,
+                                  width: 36.0,
+                                  height: 36.0,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4),
                                     boxShadow: [
@@ -84,8 +92,11 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                         offset: const Offset(0.2, 0.2),
                                       ),
                                     ],
+                                    color: context.theme.colorScheme.onSurface,
                                   ),
                                   child: CachedNetworkImage(
+                                    height: 36.0,
+                                    width: 36.0,
                                     imageUrl: feed.imageUrl ?? '',
                                     fit: BoxFit.contain,
                                     cacheKey: feed.imageUrl,
@@ -104,15 +115,13 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                   ),
                                 ),
                               if (feed.imageUrl != null)
-                                const SizedBox(width: 18.0),
+                                const SizedBox(width: 16.0),
                               Expanded(
                                 child: AutoSizeText(
-                                  widget.feed.title.isNotEmpty
-                                      ? widget.feed.title.toTitleCase()
-                                      : 'Feed',
+                                  title,
                                   style: context.theme.textTheme.displaySmall
                                       ?.copyWith(
-                                    fontSize: 28,
+                                    fontSize: 26,
                                     fontWeight: FontWeight.w700,
                                   ),
                                   maxLines: 4,
@@ -126,8 +135,8 @@ class _FeedViewPageState extends State<FeedViewPage> {
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Text(
-                                widget.feed.description ?? '',
+                              child: ExpandableDescription(
+                                description: widget.feed.description ?? '',
                                 style: context.theme.textTheme.titleMedium
                                     ?.copyWith(
                                   fontWeight: FontWeight.w400,
@@ -135,7 +144,7 @@ class _FeedViewPageState extends State<FeedViewPage> {
                               ),
                             ),
                           SelectableText(
-                            widget.feed.feedLink,
+                            widget.feed.link,
                             style:
                                 context.theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w300,
@@ -389,6 +398,129 @@ class _FeedViewItemsState extends State<FeedViewItems> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ExpandableDescription extends StatefulWidget {
+  final String description;
+  final TextStyle? style;
+  final int maxLines;
+
+  const ExpandableDescription({
+    super.key,
+    required this.description,
+    this.style,
+    this.maxLines = 5,
+  });
+
+  @override
+  State<ExpandableDescription> createState() => _ExpandableDescriptionState();
+}
+
+class _ExpandableDescriptionState extends State<ExpandableDescription> {
+  bool isExpanded = false;
+  bool isOverflowing = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // Convert HTML to plain text
+    final plainTextDescription = HtmlUtils.htmlToPlainText(widget.description);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Create a TextPainter to measure if text overflows
+        final textPainter = TextPainter(
+          text: TextSpan(
+            text: plainTextDescription,
+            style: widget.style,
+          ),
+          maxLines: widget.maxLines,
+          textDirection: ui.TextDirection.ltr,
+        );
+        textPainter.layout(maxWidth: constraints.maxWidth);
+
+        final textOverflows = textPainter.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Text(
+                  plainTextDescription,
+                  style: widget.style,
+                  maxLines: isExpanded ? null : widget.maxLines,
+                  overflow: isExpanded ? null : TextOverflow.clip,
+                  textDirection: ui.TextDirection.ltr,
+                ),
+                if (textOverflows && !isExpanded)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      height: (widget.style?.fontSize ?? 16) * 1.5,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          stops: const [0.0, 0.5],
+                          colors: [
+                            context.theme.colorScheme.surface.withAlpha(0),
+                            context.theme.colorScheme.surface,
+                          ],
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isExpanded = !isExpanded;
+                              });
+                            },
+                            child: Text(
+                              isExpanded ? 'Show less' : 'Show more',
+                              style:
+                                  context.theme.textTheme.bodyMedium?.copyWith(
+                                color: context.theme.colorScheme.tertiary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            if (textOverflows && isExpanded)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isExpanded = !isExpanded;
+                      });
+                    },
+                    child: Text(
+                      'Show less',
+                      style: context.theme.textTheme.bodyMedium?.copyWith(
+                        color: context.theme.colorScheme.tertiary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                ],
+              ),
+          ],
+        );
+      },
     );
   }
 }

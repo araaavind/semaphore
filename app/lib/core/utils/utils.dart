@@ -1,5 +1,6 @@
 export 'debouncer.dart';
 export 'format_published_date.dart';
+export 'html_utils.dart';
 export 'icons/mingcute.dart';
 export 'icons/simpleicons.dart';
 export 'print_navigation_stack.dart';

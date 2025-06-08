@@ -178,7 +178,7 @@ class ItemModel extends Item {
   factory ItemModel.fromMap(Map<String, dynamic> map) {
     return ItemModel(
       id: map['id'] as int,
-      title: map['title'] as String,
+      title: map['title'] != null ? map['title'] as String : 'Article',
       description:
           map['description'] != null ? map['description'] as String : null,
       link: map['link'] as String,
