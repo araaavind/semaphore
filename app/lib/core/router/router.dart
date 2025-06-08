@@ -28,6 +28,7 @@ import 'package:app/features/feed/presentation/pages/wall_page.dart';
 import 'package:app/features/feed/presentation/pages/wall_edit_page.dart';
 import 'package:app/init_dependencies.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -117,7 +118,7 @@ List<RouteBase> _buildRoutes() {
             final shouldPop = await showClosingDialog(context) ?? false;
 
             if (shouldPop) {
-              context.pop();
+              SystemNavigator.pop();
             }
           },
           child: Scaffold(body: child),

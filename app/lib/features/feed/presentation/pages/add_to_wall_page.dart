@@ -27,7 +27,13 @@ class _AddToWallPageState extends State<AddToWallPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        title: Text(
+          'Add to wall',
+          style: context.theme.textTheme.titleMedium?.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         actions: [
           Padding(
             padding: UIConstants.defaultAppBarTextButtonPadding,

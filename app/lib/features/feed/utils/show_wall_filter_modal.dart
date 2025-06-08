@@ -138,6 +138,8 @@ void showWallFilterModal(BuildContext context) {
                   Button(
                     text: 'Done',
                     height: 40,
+                    backgroundColor: context.theme.colorScheme.primary,
+                    textColor: context.theme.colorScheme.onPrimary,
                     onPressed: () {
                       context.pop();
                     },
@@ -176,20 +178,23 @@ Widget _buildOptionItem<T>({
       icon,
       color: isSelected
           ? context.theme.colorScheme.onPrimaryContainer
-          : context.theme.colorScheme.onSurface,
+          : context.theme.colorScheme.onSurface.withAlpha(200),
     ),
     title: Text(
       (option as dynamic).name,
       style: TextStyle(
           color: isSelected
               ? context.theme.colorScheme.onPrimaryContainer
-              : context.theme.colorScheme.onSurface),
+              : context.theme.colorScheme.onSurface.withAlpha(200)),
     ),
     trailing: isDefault
         ? Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: context.theme.colorScheme.primary.withAlpha(38),
+              border: Border.all(
+                color: context.theme.colorScheme.primary.withAlpha(40),
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(

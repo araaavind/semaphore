@@ -302,6 +302,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             TextField(
               controller: _searchController,
               cursorColor: _selectedTopicColor,
+              onTapOutside: (_) => FocusScope.of(context).unfocus(),
               decoration: InputDecoration(
                 border: _topicPageSearchBorder(_selectedTopicColor!),
                 focusedBorder: _topicPageSearchBorder(_selectedTopicColor!),
