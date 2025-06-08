@@ -186,6 +186,10 @@ func buildUpsertItemsQuery(items []*Item) (query string, args []any) {
 }
 
 func (m ItemModel) UpsertMany(items []*Item) error {
+	if len(items) == 0 {
+		return nil
+	}
+
 	query, args := buildUpsertItemsQuery(items)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -490,6 +494,10 @@ func (m ItemModel) FindByScore(itemScores []*ItemScore, userID int64, cursorFilt
 	for i, itemScore := range slice {
 		items[i] = itemMap[itemScore.ItemID]
 		items[i].Score = itemScore.Score
+	}
+
+	if len(slice) == 0 {
+		return items, getEmptyCursorMetadata(cursorFilters.PageSize), nil
 	}
 
 	// Provide the next cursor to the client
