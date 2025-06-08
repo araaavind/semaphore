@@ -193,7 +193,7 @@ func (m ItemModel) UpsertMany(items []*Item) error {
 
 	_, err := m.DB.Exec(ctx, query, args...)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to upsert items:\n%w\nquery:\n%s\nargs:\n%v", err, query, args)
 	}
 
 	return nil

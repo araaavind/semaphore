@@ -28,17 +28,22 @@ CREATE TABLE IF NOT EXISTS feeds (
     last_failure_at timestamp(0) with time zone,
     failure_count integer NOT NULL DEFAULT 0,
     created_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
-    updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW()
+    updated_at timestamp(0) with time zone NOT NULL DEFAULT NOW(),
+    search_vector tsvector GENERATED ALWAYS AS (
+      setweight(to_tsvector('english', coalesce(display_title, '')), 'A') || ' ' ||
+      setweight(to_tsvector('english', coalesce(title, '')), 'B') || ' ' ||
+      setweight(to_tsvector('english', coalesce(description, '')), 'C') :: tsvector
+    ) STORED
 );
 
-CREATE INDEX IF NOT EXISTS feeds_title_idx ON feeds USING GIN (to_tsvector('simple', title));
+CREATE INDEX IF NOT EXISTS feeds_search_vector_idx ON feeds USING GIN (search_vector);
 CREATE INDEX IF NOT EXISTS feeds_id_idx ON feeds(id);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 DROP INDEX IF EXISTS feeds_id_idx;
-DROP INDEX IF EXISTS feeds_title_idx;
+DROP INDEX IF EXISTS feeds_search_vector_idx;
 
 DROP TABLE IF EXISTS feeds;
 

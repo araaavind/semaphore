@@ -125,8 +125,10 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 		feeds.version, feeds.last_fetch_at, feeds.last_failure_at, feeds.last_failure
 		FROM feeds
 		WHERE (
-			to_tsvector('simple', feeds.title) @@ plainto_tsquery('simple', $1)
-			OR $1 = ''
+			CASE 
+				WHEN $1::text IS NULL OR $1::text = '' THEN TRUE
+				ELSE feeds.search_vector @@ to_tsquery('english', $1 || ':*')
+			END
 		)
 		AND (feeds.feed_link = $2 OR $2 = '')
 		AND (
@@ -138,7 +140,13 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 			)
 			OR $3 = -1
 		)
-		ORDER BY %s %s, feeds.id ASC
+		ORDER BY
+			CASE 
+				WHEN $1::text IS NULL OR $1::text = '' THEN 0
+				ELSE ts_rank(feeds.search_vector, to_tsquery('english', $1 || ':*'))
+			END DESC,
+			%s %s,
+			feeds.id ASC
 		LIMIT $4 OFFSET $5`, filters.sortColumn(sortColMap), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
