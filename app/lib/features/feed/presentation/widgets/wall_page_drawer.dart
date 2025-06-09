@@ -206,35 +206,43 @@ class WallPageDrawer extends StatelessWidget {
     }
     return [
       ...feeds.map(
-        (e) => ListTile(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              UIConstants.inputBorderRadius,
+        (e) {
+          String title = 'Feed';
+          if (e.displayTitle != null && e.displayTitle!.isNotEmpty) {
+            title = e.displayTitle!;
+          } else if (e.title.isNotEmpty) {
+            title = e.title.toTitleCase();
+          }
+          return ListTile(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                UIConstants.inputBorderRadius,
+              ),
             ),
-          ),
-          visualDensity: VisualDensity.compact,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-          title: Text(
-            e.title.isNotEmpty ? e.title.toTitleCase() : 'Feed',
-            style: context.theme.textTheme.titleMedium!
-                .copyWith(fontWeight: FontWeight.w300),
-          ),
-          onTap: () async {
-            final Map<String, Object> extra = {
-              'feed': e,
-              'isFollowed': true,
-            };
-            final unfollowed = await context.pushNamed(
-                RouteConstants.feedViewPageName,
-                pathParameters: {'feedId': e.id.toString()},
-                extra: extra);
-            if ((unfollowed as bool) == true && context.mounted) {
-              context
-                  .read<WallsBloc>()
-                  .add(ListWallsRequested(refreshItems: true));
-            }
-          },
-        ),
+            visualDensity: VisualDensity.compact,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+            title: Text(
+              title,
+              style: context.theme.textTheme.titleMedium!
+                  .copyWith(fontWeight: FontWeight.w300),
+            ),
+            onTap: () async {
+              final Map<String, Object> extra = {
+                'feed': e,
+                'isFollowed': true,
+              };
+              final unfollowed = await context.pushNamed(
+                  RouteConstants.feedViewPageName,
+                  pathParameters: {'feedId': e.id.toString()},
+                  extra: extra);
+              if ((unfollowed as bool) == true && context.mounted) {
+                context
+                    .read<WallsBloc>()
+                    .add(ListWallsRequested(refreshItems: true));
+              }
+            },
+          );
+        },
       ),
     ];
   }
