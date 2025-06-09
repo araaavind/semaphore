@@ -446,6 +446,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         .sort((a, b) => a.name.length.compareTo(b.name.length));
 
     double totalChipWidth = 0;
+    List<double> chipWidths = [];
 
     // Create a TextPainter to measure text dimensions
     final textStyle = context.theme.textTheme.bodySmall?.copyWith(
@@ -463,19 +464,33 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
 
       // Add text width + chip padding + border
       // 18 accounts for padding 16 + 2 border on both sides
-      double chipWidth = textPainter.width + 18;
-      // Add spacing between chips
-      totalChipWidth += chipWidth + 8;
+      // 8 accounts for spacing between chips
+      double chipWidth = textPainter.width + 18 + 8;
+      chipWidths.add(chipWidth);
+      totalChipWidth += chipWidth;
     }
-
-    totalChipWidth += 16; // accounting for checkmark
-    totalChipWidth += 16; // safe offset
 
     // Calculate how much the content might exceed the screen width
     double screenWidth = MediaQuery.of(context).size.width;
+    double maxRowWidth = 0;
+    if (totalChipWidth > 2 * screenWidth) {
+      for (final chipWidth in chipWidths) {
+        maxRowWidth += chipWidth;
+        if (maxRowWidth > totalChipWidth / 2) {
+          break;
+        }
+      }
+    } else {
+      maxRowWidth = totalChipWidth;
+    }
+
+    // Calculate how much the content should exceed the screen width
+    maxRowWidth += 16; // accounting for checkmark
+    maxRowWidth += 16; // safe offset
+
     double multiplier = max(
       1.0,
-      totalChipWidth / (screenWidth - 16), // 16 for container padding
+      maxRowWidth / (screenWidth - 16), // 16 for container padding
     );
 
     return SingleChildScrollView(

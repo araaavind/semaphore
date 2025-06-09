@@ -148,11 +148,17 @@ class _FeedViewPageState extends State<FeedViewPage> {
                             style:
                                 context.theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w300,
-                              color: context.theme.colorScheme.onSurface
+                              color: context.theme.colorScheme.tertiary
                                   .withAlpha(204),
+                              decoration: TextDecoration.underline,
                             ),
                             enableInteractiveSelection: true,
-                            maxLines: 1,
+                            maxLines: 2,
+                            onSelectionChanged: (selection, cause) {
+                              if (cause == SelectionChangedCause.tap) {
+                                launchUrlInBrowser(widget.feed.link);
+                              }
+                            },
                           ),
                           const SizedBox(height: 12.0),
                           BlocProvider(
@@ -485,7 +491,8 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
                               isExpanded ? 'Show less' : 'Show more',
                               style:
                                   context.theme.textTheme.bodyMedium?.copyWith(
-                                color: context.theme.colorScheme.tertiary,
+                                color: context.theme.colorScheme.onSurface
+                                    .withAlpha(200),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -510,7 +517,8 @@ class _ExpandableDescriptionState extends State<ExpandableDescription> {
                     child: Text(
                       'Show less',
                       style: context.theme.textTheme.bodyMedium?.copyWith(
-                        color: context.theme.colorScheme.tertiary,
+                        color:
+                            context.theme.colorScheme.onSurface.withAlpha(200),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
