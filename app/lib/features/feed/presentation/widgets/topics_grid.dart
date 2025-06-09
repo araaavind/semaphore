@@ -59,6 +59,7 @@ class TopicsGrid extends StatelessWidget {
           }
 
           return GridView.builder(
+            key: const PageStorageKey('topics_grid'),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 16,
