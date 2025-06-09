@@ -152,17 +152,17 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		linksToSearch = append(linksToSearch, parsedFeed.FeedLink)
 	}
 	// Check if the link provided by the user OR the 'self' link of parsedFeed exists in the DB.
-	feedToFolow, err := app.models.Feeds.FindByFeedLinks(linksToSearch)
+	feedToFollow, err := app.models.Feeds.FindByFeedLinks(linksToSearch)
 	if err != nil {
 		if errors.Is(err, data.ErrRecordNotFound) {
 			// If the link provided by user or the 'self' link of parsed Feed is not present in DB,
 			// check if the 'self' link of the parsed feed is same as the link provided by the user.
-			feedToFolow = &data.Feed{
+			feedToFollow = &data.Feed{
 				AddedBy: pgtype.Int8{Int64: user.ID, Valid: true},
 			}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.
-				CopyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
+				CopyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
 			} else {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 				defer cancel()
@@ -170,20 +170,20 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 				parsedSelfFeed, err := app.parser.ParseURLWithContext(parsedFeed.FeedLink, ctx)
 				if err != nil {
 					// if the 'self' link of parsed feed is invalid, insert the parsed feed of input link to DB
-					CopyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
+					CopyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
 				} else {
 					if parsedSelfFeed.UpdatedParsed != nil &&
 						parsedFeed.UpdatedParsed != nil &&
 						parsedSelfFeed.UpdatedParsed.Before(*parsedFeed.UpdatedParsed) {
 						// if the 'self' link of parsed feed is valid but not latest, insert the parsed feed of input link to DB
-						CopyFeedFields(feedToFolow, parsedFeed, input.FeedLink)
+						CopyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
 					} else {
 						// if the 'self' link of parsed feed is valid and latest, insert the parsed feed of 'self' link to DB
-						CopyFeedFields(feedToFolow, parsedSelfFeed, parsedSelfFeed.FeedLink)
+						CopyFeedFields(feedToFollow, parsedSelfFeed, parsedSelfFeed.FeedLink)
 					}
 				}
 			}
-			err = app.models.Feeds.Insert(feedToFolow)
+			err = app.models.Feeds.Insert(feedToFollow)
 			if err != nil {
 				app.serverErrorResponse(w, r, err)
 				return
@@ -195,7 +195,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 	}
 
 	feedFollow := &data.FeedFollow{
-		FeedID: feedToFolow.ID,
+		FeedID: feedToFollow.ID,
 		UserID: user.ID,
 	}
 	err = app.models.FeedFollows.Insert(feedFollow)
@@ -226,9 +226,20 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	app.background(func() {
-		app.RefreshFeed(feedToFolow)
-	})
+	refreshBeforeTime := time.Now().Add(-1 * app.config.refresher.refreshStaleFeedsSince)
+	lastRefreshTime := time.Time{}
+
+	if feedToFollow.LastFetchAt.Valid {
+		lastRefreshTime = feedToFollow.LastFetchAt.Time
+	} else if feedToFollow.LastFailureAt.Valid && feedToFollow.LastFailureAt.Time.After(lastRefreshTime) {
+		lastRefreshTime = feedToFollow.LastFailureAt.Time
+	}
+
+	if lastRefreshTime.Before(refreshBeforeTime) {
+		app.background(func() {
+			app.RefreshFeed(feedToFollow)
+		})
+	}
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"feed_id": feedFollow.FeedID}, http.Header{
 		"Location": []string{fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID)},
@@ -285,9 +296,20 @@ func (app *application) followFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.background(func() {
-		app.RefreshFeed(feed)
-	})
+	refreshBeforeTime := time.Now().Add(-1 * app.config.refresher.refreshStaleFeedsSince)
+	lastRefreshTime := time.Time{}
+
+	if feed.LastFetchAt.Valid {
+		lastRefreshTime = feed.LastFetchAt.Time
+	} else if feed.LastFailureAt.Valid && feed.LastFailureAt.Time.After(lastRefreshTime) {
+		lastRefreshTime = feed.LastFailureAt.Time
+	}
+
+	if lastRefreshTime.Before(refreshBeforeTime) {
+		app.background(func() {
+			app.RefreshFeed(feed)
+		})
+	}
 
 	w.WriteHeader(http.StatusOK)
 }
