@@ -41,6 +41,9 @@ func main() {
 		userAgent   = flag.String("user-agent", "SMPHR Feed Fetcher/1.0", "User agent for feed fetching")
 	)
 
+	fmt.Println("userAgent: ", *userAgent)
+	fmt.Println("concurrency: ", *concurrency)
+
 	flag.Parse()
 
 	db, err := openDB(*dsn)

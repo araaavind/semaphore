@@ -129,6 +129,11 @@ func main() {
 
 	flag.Parse()
 
+	fmt.Println("cfg.refresher.userAgent: ", cfg.refresher.userAgent)
+	fmt.Println("cfg.refresher.maxConcurrentRefreshes: ", cfg.refresher.maxConcurrentRefreshes)
+	fmt.Println("cfg.refresher.refreshStaleFeedsSince: ", cfg.refresher.refreshStaleFeedsSince)
+	fmt.Println("cfg.refresher.refreshPeriod: ", cfg.refresher.refreshPeriod)
+
 	// If the version flag value is true, then print out the version number and
 	// immediately exit.
 	if *displayVersion {
