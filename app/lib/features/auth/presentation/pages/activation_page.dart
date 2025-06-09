@@ -48,7 +48,12 @@ class _ActivationPageState extends State<ActivationPage> {
           TextButton(
             onPressed: () {
               if (widget.isOnboarding) {
-                context.goNamed(RouteConstants.wallPageName);
+                context.goNamed(
+                  RouteConstants.searchFeedsPageName,
+                  queryParameters: {
+                    'isOnboarding': 'true',
+                  },
+                );
               } else {
                 context.pop(false);
               }
@@ -94,7 +99,12 @@ class _ActivationPageState extends State<ActivationPage> {
                           type: SnackbarType.info,
                         );
                         if (widget.isOnboarding) {
-                          context.goNamed(RouteConstants.wallPageName);
+                          context.goNamed(
+                            RouteConstants.searchFeedsPageName,
+                            queryParameters: {
+                              'isOnboarding': 'true',
+                            },
+                          );
                         } else {
                           context.pop(true);
                         }

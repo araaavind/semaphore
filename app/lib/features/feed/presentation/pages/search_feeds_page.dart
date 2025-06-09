@@ -61,6 +61,13 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
       },
     );
     _searchController.addListener(_onSearchChanged);
+
+    // Show onboarding popup if this is onboarding flow
+    if (widget.isOnboarding) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showOnboardingGuide();
+      });
+    }
   }
 
   @override
@@ -136,6 +143,108 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           UIConstants.searchInputBorderRadius,
         ),
       );
+
+  void _showOnboardingGuide() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.0),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  context.theme.colorScheme.primaryContainer.withAlpha(180),
+                  context.theme.colorScheme.surfaceContainer,
+                ],
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: context.theme.colorScheme.primary.withAlpha(30),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Icon(
+                        Icons.lightbulb_outline,
+                        color: context.theme.colorScheme.primary,
+                        size: 24.0,
+                      ),
+                    ),
+                    const SizedBox(width: 18.0),
+                    Expanded(
+                      child: Text(
+                        'Welcome to Semaphore!',
+                        style: context.theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: HSLColor.fromColor(
+                                  context.theme.colorScheme.primary)
+                              .withLightness(
+                                context.theme.brightness == Brightness.dark
+                                    ? 0.9
+                                    : 0.1,
+                              )
+                              .toColor(),
+                        ),
+                      ),
+                    ),
+                    // IconButton(
+                    //   onPressed: () => Navigator.of(context).pop(),
+                    //   icon: const Icon(Icons.close),
+                    //   iconSize: 20.0,
+                    // ),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                Text(
+                  'Get started by following feeds that interest you',
+                  style: context.theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  'Browse through different topics or search for specific feeds. If you can\'t find what you\'re looking for, there is an option on top to add them yourself!',
+                  style: context.theme.textTheme.bodyMedium?.copyWith(
+                    color: context.theme.colorScheme.onSurface.withAlpha(200),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Got it!',
+                        style: TextStyle(
+                          color: context.theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

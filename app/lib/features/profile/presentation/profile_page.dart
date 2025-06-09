@@ -341,7 +341,8 @@ class _ProfilePageState extends State<ProfilePage>
                                 width: double.infinity,
                                 backgroundColor:
                                     context.theme.colorScheme.primaryContainer,
-                                textColor: context.theme.colorScheme.primary,
+                                textColor: context
+                                    .theme.colorScheme.onPrimaryContainer,
                                 onPressed: () async {
                                   final routeSuccess = await context.push(
                                           RouteConstants.activationPagePath)

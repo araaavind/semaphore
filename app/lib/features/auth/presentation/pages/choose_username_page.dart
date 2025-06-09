@@ -61,9 +61,15 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
               });
               formKey.currentState!.validate();
             } else if (state is AuthUpdateUsernameSuccess) {
-              // For OAuth users, navigate to the wall page after username update
+              // For OAuth users, navigate to the search page with onboarding flow
+              // after username update
               if (widget.isOAuthUser) {
-                context.goNamed(RouteConstants.wallPageName);
+                context.goNamed(
+                  RouteConstants.searchFeedsPageName,
+                  queryParameters: {
+                    'isOnboarding': 'true',
+                  },
+                );
               }
             } else if (state is AuthUpdateUsernameFailure) {
               if (state.fieldErrors != null) {
