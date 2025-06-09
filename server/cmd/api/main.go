@@ -129,8 +129,6 @@ func main() {
 
 	flag.Parse()
 
-	fmt.Println("cfg.refresher.userAgent: ", cfg.refresher.userAgent)
-
 	// If the version flag value is true, then print out the version number and
 	// immediately exit.
 	if *displayVersion {

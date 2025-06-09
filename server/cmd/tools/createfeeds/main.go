@@ -43,8 +43,6 @@ func main() {
 
 	flag.Parse()
 
-	fmt.Println("userAgent: ", *userAgent)
-
 	db, err := openDB(*dsn)
 	if err != nil {
 		log.Fatal(err)
