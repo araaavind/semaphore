@@ -107,7 +107,7 @@ func main() {
 	flag.IntVar(&cfg.limiter.burst, "limiter-burst", 8, "Rate limiter maximum burst")
 	flag.BoolVar(&cfg.limiter.enabled, "limiter-enabled", true, "Enable rate limiter")
 
-	flag.StringVar(&cfg.refresher.userAgent, "user-agent", "SMPHR Feed Fetcher/1.0", "User agent for feed fetching")
+	flag.StringVar(&cfg.refresher.userAgent, "user-agent", os.Getenv("FETCHER_USER_AGENT"), "User agent for feed fetching")
 	flag.IntVar(&cfg.refresher.maxConcurrentRefreshes, "max-concurrent-refreshes", 5, "Maximum concurrent refreshes")
 	flag.DurationVar(&cfg.refresher.refreshStaleFeedsSince, "refresh-since", 5*time.Minute, "Refresh stale feeds since (default: 5m)")
 	flag.DurationVar(&cfg.refresher.refreshPeriod, "refresh-period", time.Minute, "Refresh feed period (default: 1m)")
@@ -130,9 +130,6 @@ func main() {
 	flag.Parse()
 
 	fmt.Println("cfg.refresher.userAgent: ", cfg.refresher.userAgent)
-	fmt.Println("cfg.refresher.maxConcurrentRefreshes: ", cfg.refresher.maxConcurrentRefreshes)
-	fmt.Println("cfg.refresher.refreshStaleFeedsSince: ", cfg.refresher.refreshStaleFeedsSince)
-	fmt.Println("cfg.refresher.refreshPeriod: ", cfg.refresher.refreshPeriod)
 
 	// If the version flag value is true, then print out the version number and
 	// immediately exit.

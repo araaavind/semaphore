@@ -38,13 +38,12 @@ func main() {
 	var (
 		dsn         = flag.String("dsn", os.Getenv("SEMAPHORE_DB_DSN"), "PostgreSQL connection string")
 		concurrency = flag.Int("concurrency", 10, "Number of concurrent feed fetches")
-		userAgent   = flag.String("user-agent", "SMPHR Feed Fetcher/1.0", "User agent for feed fetching")
+		userAgent   = flag.String("user-agent", os.Getenv("FETCHER_USER_AGENT"), "User agent for feed fetching")
 	)
 
 	flag.Parse()
 
 	fmt.Println("userAgent: ", *userAgent)
-	fmt.Println("concurrency: ", *concurrency)
 
 	db, err := openDB(*dsn)
 	if err != nil {
