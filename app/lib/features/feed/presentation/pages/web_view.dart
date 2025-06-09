@@ -150,6 +150,7 @@ class _WebViewState extends State<WebView> {
                       },
                     ),
                   ),
+                  const SizedBox(height: kBottomNavigationBarHeight),
                 ],
               ),
             ),
