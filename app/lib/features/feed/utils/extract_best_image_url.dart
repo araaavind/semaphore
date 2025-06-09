@@ -15,7 +15,13 @@ Future<List<String>> getItemImageUrls(
   bool scrapeFromLink = true,
 }) async {
   final imageUrls = <String>[];
-  if (item.imageUrl != null) imageUrls.add(item.imageUrl!);
+  if (item.imageUrl != null) {
+    final uri = Uri.tryParse(item.imageUrl!);
+    if (uri != null && uri.hasAbsolutePath) {
+      imageUrls.add(item.imageUrl!);
+      return imageUrls;
+    }
+  }
   if (item.enclosures != null) {
     for (var e in item.enclosures!) {
       if (e.type != null && e.type == '/image' && e.url != null) {

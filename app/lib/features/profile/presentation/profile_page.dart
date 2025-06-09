@@ -228,8 +228,16 @@ class _ProfilePageState extends State<ProfilePage>
                       end: Alignment.bottomCenter,
                       stops: const [0.0, 0.9],
                       colors: [
-                        context.theme.colorScheme.surfaceContainer,
-                        context.theme.colorScheme.surface,
+                        AppPalette.appBarGradientColor
+                            .withLightness(
+                              context.theme.brightness == Brightness.dark
+                                  ? 0.75
+                                  : 0.3,
+                            )
+                            .toColor(),
+                        context.theme.brightness == Brightness.dark
+                            ? context.theme.colorScheme.surface.withAlpha(0)
+                            : context.theme.colorScheme.surface.withAlpha(0),
                       ],
                     ),
                   ),

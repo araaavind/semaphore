@@ -24,7 +24,11 @@ class WallPageSliverAppBar extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              context.theme.colorScheme.surfaceContainer,
+              AppPalette.appBarGradientColor
+                  .withLightness(
+                    context.theme.brightness == Brightness.dark ? 0.7 : 0.3,
+                  )
+                  .toColor(),
               context.theme.brightness == Brightness.dark
                   ? context.theme.colorScheme.surface.withAlpha(0)
                   : context.theme.colorScheme.surface.withAlpha(0),

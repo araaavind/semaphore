@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed_follows_map.dart';
 import 'package:app/features/feed/domain/entities/topic.dart';
@@ -456,7 +456,11 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              context.theme.colorScheme.surfaceContainer,
+              AppPalette.appBarGradientColor
+                  .withLightness(
+                    context.theme.brightness == Brightness.dark ? 0.75 : 0.3,
+                  )
+                  .toColor(),
               context.theme.brightness == Brightness.dark
                   ? context.theme.colorScheme.surface.withAlpha(0)
                   : context.theme.colorScheme.surface.withAlpha(0),

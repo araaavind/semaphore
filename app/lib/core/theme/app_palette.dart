@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // Color Scheme Colors
 abstract class AppPalette {
+  static HSLColor appBarGradientColor = HSLColor.fromAHSL(0.15, 6, 0.9, 0.5);
+
   /*
   * Lights
   */
