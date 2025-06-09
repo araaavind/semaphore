@@ -49,6 +49,8 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     super.initState();
     _pagingController.addPageRequestListener(
       (pageKey) {
+        print(
+            'selected topic or subtopic: ${_selectedSubtopic?.code ?? _selectedTopic?.code}');
         context.read<SearchFeedBloc>().add(
               FeedSearchRequested(
                 searchKey: 'title',
@@ -93,7 +95,8 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
       _selectedTopicColor = null;
       _selectedSubtopic = null;
     });
-    _pagingController.refresh();
+    // commenting this to avoid unnecessary refresh
+    // _pagingController.refresh();
   }
 
   void _onSearchChanged() {
