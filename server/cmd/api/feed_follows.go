@@ -226,20 +226,9 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	refreshBeforeTime := time.Now().Add(-1 * app.config.refresher.refreshStaleFeedsSince)
-	lastRefreshTime := time.Time{}
-
-	if feedToFollow.LastFetchAt.Valid {
-		lastRefreshTime = feedToFollow.LastFetchAt.Time
-	} else if feedToFollow.LastFailureAt.Valid && feedToFollow.LastFailureAt.Time.After(lastRefreshTime) {
-		lastRefreshTime = feedToFollow.LastFailureAt.Time
-	}
-
-	if lastRefreshTime.Before(refreshBeforeTime) {
-		app.background(func() {
-			app.RefreshFeed(feedToFollow)
-		})
-	}
+	app.background(func() {
+		app.RefreshFeed(feedToFollow)
+	})
 
 	err = app.writeJSON(w, http.StatusCreated, envelope{"feed_id": feedFollow.FeedID}, http.Header{
 		"Location": []string{fmt.Sprintf("/v1/feeds/%d", feedFollow.FeedID)},
