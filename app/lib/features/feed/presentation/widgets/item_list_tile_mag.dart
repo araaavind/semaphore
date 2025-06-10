@@ -12,10 +12,8 @@ import 'package:go_router/go_router.dart';
 
 class ItemListTileMag extends StatefulWidget {
   final Item item;
-  final bool isTextOnly;
   const ItemListTileMag({
     required this.item,
-    this.isTextOnly = false,
     super.key,
   });
 
@@ -82,9 +80,7 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!widget.isTextOnly)
-                ItemCachedImage(item: _item, height: 90, width: 100),
-              if (!widget.isTextOnly)
+                    ItemCachedImage(item: _item, height: 80, width: 100),
                 const SizedBox(width: UIConstants.tileHorizontalTitleGap),
               Expanded(
                 child: SizedBox(

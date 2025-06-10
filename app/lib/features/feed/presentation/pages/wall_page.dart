@@ -335,7 +335,6 @@ class __WallPageItemsState extends State<_WallPageItems> {
                   case WallViewOption.magazine:
                     return ItemListTileMag(
                       item: item,
-                      isTextOnly: wallView == WallViewOption.text,
                     );
                   case WallViewOption.text:
                     return ItemListTileText(
