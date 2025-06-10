@@ -127,8 +127,9 @@ class _WebViewState extends State<WebView> {
                       key: webViewKey,
                       initialUrlRequest: URLRequest(url: WebUri(widget.url)),
                       initialSettings: InAppWebViewSettings(
-                        contentBlockers: contentBlockers,
+                        // contentBlockers: contentBlockers,
                         algorithmicDarkeningAllowed: true,
+                        useHybridComposition: true,
                       ),
                       pullToRefreshController: pullToRefreshController,
                       onWebViewCreated: (controller) {
