@@ -204,8 +204,6 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16.0),
                               ),
-                              backgroundColor:
-                                  context.theme.colorScheme.surface,
                               content: Text.rich(
                                 TextSpan(
                                   style: context.theme.textTheme.bodyLarge,
