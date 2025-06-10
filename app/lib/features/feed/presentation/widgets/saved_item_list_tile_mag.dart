@@ -103,7 +103,7 @@ class SavedItemListTileMag extends StatelessWidget {
             ),
           ),
         Text(
-          formatPublishedDate(
+          formatPublishedDateAlt(
             savedItem.item.pubUpdated ??
                 savedItem.item.pubDate ??
                 savedItem.item.createdAt,

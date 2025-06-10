@@ -123,7 +123,7 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
                                 .withAlpha(178)),
                       ),
                     Text(
-                      formatPublishedDate(
+                      formatPublishedDateAlt(
                         _item.pubUpdated ?? _item.pubDate ?? _item.createdAt,
                       ),
                       style: context.theme.textTheme.bodySmall!.copyWith(

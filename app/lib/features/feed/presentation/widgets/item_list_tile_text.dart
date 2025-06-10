@@ -137,7 +137,7 @@ class _ItemListTileTextState extends State<ItemListTileText> {
                 color: context.theme.colorScheme.onSurface.withAlpha(178)),
           ),
         Text(
-          formatPublishedDate(
+          formatPublishedDateAlt(
             _item.pubUpdated ?? _item.pubDate ?? _item.createdAt,
           ),
           style: context.theme.textTheme.bodySmall!.copyWith(
