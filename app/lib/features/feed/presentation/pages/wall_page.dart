@@ -331,18 +331,15 @@ class __WallPageItemsState extends State<_WallPageItems> {
                   case WallViewOption.card:
                     return ItemListTileCard(
                       item: item,
-                      pagingController: _pagingController,
                     );
                   case WallViewOption.magazine:
                     return ItemListTileMag(
                       item: item,
-                      pagingController: _pagingController,
                       isTextOnly: wallView == WallViewOption.text,
                     );
                   case WallViewOption.text:
                     return ItemListTileText(
                       item: item,
-                      pagingController: _pagingController,
                     );
                 }
               },

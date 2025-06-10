@@ -390,7 +390,6 @@ class _FeedViewItemsState extends State<FeedViewItems> {
               shimmerLoaderType: ShimmerLoaderType.magazine,
               itemBuilder: (context, item, index) => ItemListTileMag(
                 item: item,
-                pagingController: _pagingController,
               ),
               firstPageErrorTitle: TextConstants.itemListFetchErrorTitle,
               newPageErrorTitle: TextConstants.itemListFetchErrorTitle,

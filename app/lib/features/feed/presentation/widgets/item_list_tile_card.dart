@@ -9,16 +9,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 class ItemListTileCard extends StatefulWidget {
   final Item item;
-  final PagingController<String, Item> _pagingController;
   const ItemListTileCard({
     required this.item,
-    required PagingController<String, Item> pagingController,
     super.key,
-  }) : _pagingController = pagingController;
+  });
 
   @override
   State<ItemListTileCard> createState() => _ItemListTileCardState();
@@ -35,6 +32,15 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
 
   @override
   Widget build(BuildContext context) {
+    String? title;
+    if (_item.feed != null) {
+      final feed = _item.feed!;
+      if (feed.displayTitle != null && feed.displayTitle!.isNotEmpty) {
+        title = feed.displayTitle!;
+      } else if (feed.title.isNotEmpty) {
+        title = feed.title;
+      }
+    }
     return MultiBlocListener(
       listeners: [
         BlocListener<SavedItemsBloc, SavedItemsState>(
@@ -95,40 +101,20 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    if (_item.feed?.title != null &&
-                        _item.feed!.title.isNotEmpty)
+                    if (title != null)
                       Flexible(
-                        child: InkWell(
-                          onTap: () async {
-                            final Map<String, Object> extra = {
-                              'feed': _item.feed!,
-                              'isFollowed': true,
-                            };
-                            final unfollowed = await context.pushNamed(
-                              RouteConstants.feedViewPageName,
-                              pathParameters: {
-                                'feedId': _item.feed!.id.toString(),
-                              },
-                              extra: extra,
-                            );
-                            if ((unfollowed as bool) == true) {
-                              widget._pagingController.refresh();
-                            }
-                          },
-                          child: AutoSizeText(
-                            _item.feed!.title,
-                            style: context.theme.textTheme.bodySmall!.copyWith(
-                                fontWeight: FontWeight.w300,
-                                color: context.theme.colorScheme.onSurface
-                                    .withAlpha(178)),
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                          ),
+                        child: AutoSizeText(
+                          title,
+                          style: context.theme.textTheme.bodySmall!.copyWith(
+                              fontWeight: FontWeight.w300,
+                              color: context.theme.colorScheme.onSurface
+                                  .withAlpha(178)),
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
                         ),
                       ),
-                    if (_item.feed?.title != null &&
-                        _item.feed!.title.isNotEmpty)
+                    if (title != null)
                       Text(
                         '   •   ',
                         style: context.theme.textTheme.bodySmall!.copyWith(

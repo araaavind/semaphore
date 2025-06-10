@@ -3,7 +3,6 @@ import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
