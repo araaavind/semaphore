@@ -36,11 +36,11 @@ func buildHotItemsScoreCalculationQuery(likeCountColumn, saveCountColumn, pubDat
 				LOG(COALESCE(%s, 0) + 1) * %f +
 				LOG(COALESCE(%s, 0) + 1) * %f
 			)::float /
-			POWER(EXTRACT(EPOCH FROM (now() - COALESCE(%s, %s)))/3600 + %f, %f)
+			POWER(EXTRACT(EPOCH FROM (now() - LEAST(COALESCE(%s, %s), %s)))/3600 + %f, %f)
 		)`,
 		baseScore,
 		likeCountColumn, likeWeight,
 		saveCountColumn, saveWeight,
-		pubDateColumn, alternateDateColumn, smoothFactor, gravity,
+		pubDateColumn, alternateDateColumn, alternateDateColumn, smoothFactor, gravity,
 	)
 }
