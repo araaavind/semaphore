@@ -80,8 +80,8 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                    ItemCachedImage(item: _item, height: 80, width: 100),
-                const SizedBox(width: UIConstants.tileHorizontalTitleGap),
+              ItemCachedImage(item: _item, height: 90, width: 100),
+              const SizedBox(width: UIConstants.tileHorizontalTitleGap),
               Expanded(
                 child: SizedBox(
                   height: 90,
