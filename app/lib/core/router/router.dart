@@ -182,7 +182,13 @@ GoRoute _buildCreateWallRoute() {
   return GoRoute(
     path: RouteConstants.createWallPagePath,
     name: RouteConstants.createWallPageName,
-    builder: (context, state) => const CreateWallPage(),
+    builder: (context, state) {
+      int? feedId;
+      if (state.uri.queryParameters['feedId'] != null) {
+        feedId = int.parse(state.uri.queryParameters['feedId']!);
+      }
+      return CreateWallPage(feedId: feedId);
+    },
   );
 }
 

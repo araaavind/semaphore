@@ -38,8 +38,10 @@ class _AddToWallPageState extends State<AddToWallPage> {
           Padding(
             padding: UIConstants.defaultAppBarTextButtonPadding,
             child: TextButton(
-              onPressed: () =>
-                  context.pushNamed(RouteConstants.createWallPageName),
+              onPressed: () => context.pushNamed(
+                RouteConstants.createWallPageName,
+                queryParameters: {"feedId": widget.feedId.toString()},
+              ),
               style: const ButtonStyle(
                 splashFactory: NoSplash.splashFactory,
               ),

@@ -2,13 +2,15 @@ import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
+import 'package:app/features/feed/presentation/bloc/wall_feed/wall_feed_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CreateWallPage extends StatefulWidget {
-  const CreateWallPage({super.key});
+  final int? feedId;
+  const CreateWallPage({super.key, this.feedId});
 
   @override
   State<CreateWallPage> createState() => _CreateWallPageState();
@@ -50,6 +52,25 @@ class _CreateWallPageState extends State<CreateWallPage> {
                 Center(
                   child: BlocConsumer<WallsBloc, WallsState>(
                     listener: (context, state) {
+                      if (state.status == WallStatus.success &&
+                          state.action == WallAction.list) {
+                        if (widget.feedId != null) {
+                          final createdWall = state.walls
+                              .where((wall) =>
+                                  wall.name == wallNameController.text.trim())
+                              .toList();
+                          if (createdWall.isNotEmpty &&
+                              createdWall.length == 1) {
+                            context.read<WallFeedBloc>().add(
+                                  AddFeedToWallRequested(
+                                    feedId: widget.feedId!,
+                                    wallId: createdWall.first.id,
+                                  ),
+                                );
+                          }
+                        }
+                        context.pop(true);
+                      }
                       if (state.status == WallStatus.failure &&
                           state.action == WallAction.create) {
                         if (state.fieldErrors != null &&
@@ -77,7 +98,6 @@ class _CreateWallPageState extends State<CreateWallPage> {
                         context.read<WallsBloc>().add(
                               ListWallsRequested(refreshItems: false),
                             );
-                        context.pop(true);
                       }
                     },
                     builder: (context, state) {
