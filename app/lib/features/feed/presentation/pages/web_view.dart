@@ -1,3 +1,4 @@
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/features/feed/presentation/widgets/web_view_draggable_bottom.dart';
 import 'package:flutter/foundation.dart';
@@ -42,6 +43,9 @@ class _WebViewState extends State<WebView> {
   @override
   void initState() {
     super.initState();
+
+    // Track item opened event
+    AnalyticsService.logItemOpened('${widget.itemId}');
 
     // for each Ad URL filter, add a Content Blocker to block its loading.
     for (final adUrlFilter in adUrlFilters) {

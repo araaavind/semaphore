@@ -1,5 +1,6 @@
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
@@ -134,6 +135,9 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
       extraPaddingBottom: 1,
       () async {
         if (widget.webViewController != null) {
+          // Track article shared event
+          AnalyticsService.logItemShared('${widget.itemId}');
+
           final url = await widget.webViewController!.getUrl();
           if (url != null) {
             try {
@@ -203,6 +207,12 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                     ? UnsaveItemRequested(itemId: widget.itemId, refresh: true)
                     : SaveItemRequested(widget.itemId),
               );
+
+          // Track item saved event
+          if (!isSaved) {
+            AnalyticsService.logItemSaved('${widget.itemId}');
+          }
+
           setState(() {
             isSaved = !isSaved;
           });
@@ -235,6 +245,12 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
                       )
                     : LikeItemRequested(widget.itemId),
               );
+
+          // Track item liked event
+          if (!isLiked) {
+            AnalyticsService.logItemLiked('${widget.itemId}');
+          }
+
           setState(() {
             isLiked = !isLiked;
           });

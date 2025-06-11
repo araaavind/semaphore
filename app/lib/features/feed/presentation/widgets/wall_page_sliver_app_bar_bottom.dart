@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
@@ -111,6 +112,8 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                   IconButton(
                     padding: const EdgeInsets.only(right: 12.0),
                     onPressed: () {
+                      // Track filter drawer opened event
+                      AnalyticsService.logFilterDrawerOpened();
                       showWallFilterModal(context);
                     },
                     icon: const Icon(Icons.filter_list),

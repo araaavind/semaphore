@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/router/router.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/features/auth/presentation/cubit/activate_user/activate_user_cubit.dart';
 import 'package:app/features/auth/presentation/cubit/reset_password/reset_password_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,6 +28,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize Analytics
+  await AnalyticsService.initialize();
 
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
@@ -69,6 +73,10 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
   @override
   void initState() {
     super.initState();
+
+    // Start analytics session
+    AnalyticsService.startSession();
+
     _networkStatusSubscription =
         serviceLocator<sp.SemaphoreClient>().networkStatus.listen(
       (status) {
@@ -95,9 +103,11 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
     _appLifecycleListener = AppLifecycleListener(
       onResume: () {
         serviceLocator<sp.SemaphoreClient>().resumeNetworkListener();
+        AnalyticsService.startSession();
       },
       onPause: () {
         serviceLocator<sp.SemaphoreClient>().pauseNetworkListener();
+        AnalyticsService.endSession();
       },
     );
 
@@ -110,6 +120,7 @@ class _SemaphoreAppState extends State<SemaphoreApp> {
 
   @override
   void dispose() {
+    AnalyticsService.endSession();
     _networkStatusSubscription.cancel();
     _appLifecycleListener.dispose();
     super.dispose();

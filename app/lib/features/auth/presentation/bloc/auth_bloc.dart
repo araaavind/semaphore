@@ -4,6 +4,7 @@ import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/entities/logout_scope.dart';
 import 'package:app/core/common/entities/user.dart';
 import 'package:app/core/constants/text_constants.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/features/auth/domain/usecases/check_username.dart';
 import 'package:app/features/auth/domain/usecases/get_current_user.dart';
@@ -160,6 +161,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       case Left(value: final l):
         emit(AuthLoginFailure(l.message, fieldErrors: l.fieldErrors));
       case Right(value: final r):
+        // Track login event
+        AnalyticsService.logLogin('email');
         _emitAuthSuccess(r, false, emit);
     }
   }
@@ -176,6 +179,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(l.message));
       case Right(value: final _):
         if (event.scope != LogoutScope.others) {
+          // Track logout event
+          AnalyticsService.logLogout();
           _appUserCubit.clearUser();
           emit(AuthInitial());
         } else {
@@ -195,6 +200,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       case Left(value: final l):
         emit(AuthLoginFailure(l.message));
       case Right(value: final r):
+        // Track Google login event
+        AnalyticsService.logLogin('google');
         _emitAuthSuccess(r.user, r.isNewUser, emit);
     }
   }

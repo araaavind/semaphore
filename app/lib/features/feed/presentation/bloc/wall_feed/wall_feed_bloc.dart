@@ -1,4 +1,5 @@
 import 'package:app/core/constants/server_constants.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,6 +53,8 @@ class WallFeedBloc extends Bloc<WallFeedEvent, WallFeedState> {
           action: WallFeedAction.add,
         ));
       case Right(value: _):
+        AnalyticsService.logFeedAddedToWall(
+            '${event.wallId}', '${event.feedId}');
         emit(WallFeedSuccess(
           wallId: event.wallId,
           feedId: event.feedId,

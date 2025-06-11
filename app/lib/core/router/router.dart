@@ -4,6 +4,7 @@ import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
 import 'package:app/core/router/transitions/fade_transition_page.dart';
 import 'package:app/core/router/transitions/slide_transition_page.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/pages/activation_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
@@ -34,6 +35,7 @@ import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
   initialLocation: RouteConstants.loginPagePath,
+  observers: [AnalyticsService.observer],
   errorBuilder: (context, state) => const ErrorPage(),
   redirect: (context, state) => _redirectLogic(context, state),
   routes: _buildRoutes(),

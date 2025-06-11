@@ -1,3 +1,4 @@
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/features/feed/domain/usecases/add_follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/follow_feed.dart';
 import 'package:app/features/feed/domain/usecases/unfollow_feed.dart';
@@ -40,6 +41,7 @@ class FollowFeedBloc extends Bloc<FollowFeedEvent, FollowFeedState> {
             message: l.message,
           ));
         case Right():
+          AnalyticsService.logFeedFollowed('${event.feedId}', 'follow');
           emit(state.copyWith(
             status: FollowFeedStatus.followed,
             feedId: event.feedId,
@@ -59,6 +61,7 @@ class FollowFeedBloc extends Bloc<FollowFeedEvent, FollowFeedState> {
             message: l.message,
           ));
         case Right():
+          AnalyticsService.logFeedRemoved('${event.feedId}');
           emit(state.copyWith(
             status: FollowFeedStatus.unfollowed,
             feedId: event.feedId,
@@ -92,6 +95,7 @@ class AddFollowFeedBloc extends Bloc<FollowFeedEvent, AddFollowFeedState> {
           fieldErrors: failure.fieldErrors,
         ));
       case Right(value: final feedId):
+        AnalyticsService.logFeedFollowed(event.feedUrl, 'add_follow');
         emit(state.copyWith(
           status: FollowFeedStatus.followed,
           feedId: feedId,

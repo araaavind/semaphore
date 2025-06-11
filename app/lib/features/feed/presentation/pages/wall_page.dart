@@ -1,6 +1,7 @@
 import 'package:app/core/common/cubits/network/network_cubit.dart';
 import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
@@ -88,6 +89,11 @@ class _WallPageState extends State<WallPage> {
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.60,
       drawerScrimColor:
           context.theme.colorScheme.surfaceContainer.withAlpha(180),
+      onDrawerChanged: (isOpened) {
+        if (isOpened) {
+          AnalyticsService.logWallDrawerOpened();
+        }
+      },
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) => [

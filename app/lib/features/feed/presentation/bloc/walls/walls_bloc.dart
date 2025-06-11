@@ -1,3 +1,4 @@
+import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/usecase/usecase.dart';
 import 'package:app/core/utils/user_preferences_service.dart';
 import 'package:app/features/feed/domain/entities/wall.dart';
@@ -118,6 +119,8 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           fieldErrors: l.fieldErrors,
         ));
       case Right():
+        // Track wall created event
+        AnalyticsService.logWallCreated(event.wallName);
         emit(state.copyWith(
           status: WallStatus.success,
           action: WallAction.create,
@@ -146,6 +149,8 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           fieldErrors: l.fieldErrors,
         ));
       case Right():
+        // Track wall updated event
+        AnalyticsService.logWallUpdated('${event.wallId}');
         emit(state.copyWith(
           status: WallStatus.success,
           action: WallAction.update,
@@ -170,6 +175,8 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
           message: l.message,
         ));
       case Right():
+        // Track wall removed event
+        AnalyticsService.logWallRemoved('${event.wallId}');
         emit(state.copyWith(
           status: WallStatus.success,
           action: WallAction.delete,
@@ -181,6 +188,8 @@ class WallsBloc extends Bloc<WallsEvent, WallsState> {
     SelectWallRequested event,
     Emitter<WallsState> emit,
   ) {
+    // Track wall selected event
+    AnalyticsService.logWallSelected('${event.selectedWall.id}');
     emit(state.copyWith(
       status: WallStatus.success,
       currentWall: event.selectedWall,
