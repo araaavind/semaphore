@@ -59,7 +59,7 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                           color: context.theme.colorScheme.onPrimaryContainer,
                         ),
                       ),
-                      const SizedBox(width: 8.0),
+                      const SizedBox(width: 10.0),
                       Flexible(
                         child: Text(
                           state.currentWall?.name ?? '',
@@ -76,29 +76,47 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                     ],
                   ),
                 ),
+                actionsIconTheme: context.theme.iconTheme.copyWith(
+                  size: 22,
+                  color: context.theme.colorScheme.onSurface.withAlpha(217),
+                ),
                 actions: [
                   if (state.currentWall != null &&
                       !state.currentWall!.isPrimary)
                     if (state.pinnedWallId == state.currentWall!.id)
-                      IconButton(
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           context.read<WallsBloc>().add(UnpinWallRequested(
                               wallId: state.currentWall!.id));
                         },
-                        icon: const Icon(MingCute.pin_2_fill),
+                        behavior: HitTestBehavior.translucent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 6.0,
+                          ),
+                          child: const Icon(MingCute.pin_2_fill),
+                        ),
                       )
                     else
-                      IconButton(
-                        onPressed: () {
+                      GestureDetector(
+                        onTap: () {
                           context.read<WallsBloc>().add(
                               PinWallRequested(wallId: state.currentWall!.id));
                         },
-                        icon: const Icon(MingCute.pin_2_line),
+                        behavior: HitTestBehavior.translucent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 6.0,
+                          ),
+                          child: const Icon(MingCute.pin_2_line),
+                        ),
                       ),
                   if (state.currentWall != null &&
                       !state.currentWall!.isPrimary)
-                    IconButton(
-                      onPressed: () {
+                    GestureDetector(
+                      onTap: () {
                         context.pushNamed(
                           RouteConstants.wallEditPageName,
                           pathParameters: {
@@ -107,18 +125,27 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                           extra: state.currentWall,
                         );
                       },
-                      icon: const Icon(MingCute.pencil_line),
-                      color: context.theme.colorScheme.onSurface.withAlpha(217),
+                      behavior: HitTestBehavior.translucent,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 6.0,
+                        ),
+                        child: const Icon(MingCute.pencil_line),
+                      ),
                     ),
-                  IconButton(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       // Track filter drawer opened event
                       AnalyticsService.logFilterDrawerOpened();
                       showWallFilterModal(context);
                     },
-                    icon: const Icon(Icons.filter_list),
-                    color: context.theme.colorScheme.onSurface.withAlpha(217),
+                    behavior: HitTestBehavior.translucent,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 8.0, right: 16.0, top: 6, bottom: 6),
+                      child: const Icon(Icons.filter_list),
+                    ),
                   ),
                 ],
                 elevation: 0,
