@@ -75,7 +75,6 @@ class _WallEditPageState extends State<WallEditPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),
-            backgroundColor: context.theme.colorScheme.surface,
             content: Text.rich(
               TextSpan(
                 style: context.theme.textTheme.bodyLarge,
