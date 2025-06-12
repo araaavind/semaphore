@@ -180,6 +180,7 @@ class _ProfilePageState extends State<ProfilePage>
 
     return Scaffold(
       key: _scaffoldKey,
+      endDrawerEnableOpenDragGesture: false,
       endDrawer: _buildEndDrawer(context, user),
       drawerScrimColor:
           context.theme.colorScheme.surfaceContainer.withAlpha(180),
