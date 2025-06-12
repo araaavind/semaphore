@@ -121,6 +121,19 @@ class AnalyticsService {
     await _logEvent('filter_drawer_opened');
   }
 
+  // Log screen view events
+  static Future<void> logScreenView(String screenName,
+      [String? screenClass]) async {
+    await _analytics.logScreenView(
+      screenName: screenName,
+      screenClass: screenClass,
+    );
+    if (kDebugMode) {
+      print(
+          'Analytics Screen View: $screenName${screenClass != null ? ' ($screenClass)' : ''}');
+    }
+  }
+
   // Helper method to log events with debug info
   static Future<void> _logEvent(String name,
       [Map<String, Object>? parameters]) async {

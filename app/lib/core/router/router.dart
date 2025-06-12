@@ -2,9 +2,9 @@ import 'package:app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/core/common/pages/error_page.dart';
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/router/analytics_route_wrapper.dart';
 import 'package:app/core/router/transitions/fade_transition_page.dart';
 import 'package:app/core/router/transitions/slide_transition_page.dart';
-import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/auth/presentation/pages/activation_page.dart';
 import 'package:app/features/auth/presentation/pages/choose_username_page.dart';
@@ -35,7 +35,6 @@ import 'package:go_router/go_router.dart';
 
 GoRouter router = GoRouter(
   initialLocation: RouteConstants.loginPagePath,
-  observers: [AnalyticsService.observer],
   errorBuilder: (context, state) => const ErrorPage(),
   redirect: (context, state) => _redirectLogic(context, state),
   routes: _buildRoutes(),
@@ -168,13 +167,17 @@ GoRoute _buildFeedWebViewRoute() {
           state.uri.queryParameters['isLiked'] == 'true';
       return SlideTransitionPage(
         key: const ValueKey('webview'),
-        child: WebView(
-          url: url,
-          itemId: int.parse(itemId),
-          isSaved: isSaved,
-          isLiked: isLiked,
-        ),
         direction: SlideDirection.rightToLeft,
+        child: AnalyticsRouteWrapper(
+          routeName: RouteConstants.webViewPageName,
+          routeClass: 'WebView',
+          child: WebView(
+            url: url,
+            itemId: int.parse(itemId),
+            isSaved: isSaved,
+            isLiked: isLiked,
+          ),
+        ),
       );
     },
   );
@@ -189,7 +192,11 @@ GoRoute _buildCreateWallRoute() {
       if (state.uri.queryParameters['feedId'] != null) {
         feedId = int.parse(state.uri.queryParameters['feedId']!);
       }
-      return CreateWallPage(feedId: feedId);
+      return AnalyticsRouteWrapper(
+        routeName: RouteConstants.createWallPageName,
+        routeClass: 'CreateWallPage',
+        child: CreateWallPage(feedId: feedId),
+      );
     },
   );
 }
@@ -201,7 +208,11 @@ GoRoute _buildAddToWallRoute() {
     builder: (context, state) {
       final feedId = int.parse(state.pathParameters['feedId'] ?? '0');
 
-      return AddToWallPage(feedId: feedId);
+      return AnalyticsRouteWrapper(
+        routeName: RouteConstants.addToWallPageName,
+        routeClass: 'AddToWallPage',
+        child: AddToWallPage(feedId: feedId),
+      );
     },
   );
 }
@@ -210,7 +221,11 @@ GoRoute _buildAddFeedRoute() {
   return GoRoute(
     path: RouteConstants.addFeedPagePath,
     name: RouteConstants.addFeedPageName,
-    builder: (context, state) => const AddFeedPage(),
+    builder: (context, state) => AnalyticsRouteWrapper(
+      routeName: RouteConstants.addFeedPageName,
+      routeClass: 'AddFeedPage',
+      child: const AddFeedPage(),
+    ),
   );
 }
 
@@ -221,7 +236,11 @@ GoRoute _buildActivationRoute() {
     builder: (context, state) {
       final isOnboarding = state.uri.queryParameters['isOnboarding'] != null &&
           state.uri.queryParameters['isOnboarding'] == 'true';
-      return ActivationPage(isOnboarding: isOnboarding);
+      return AnalyticsRouteWrapper(
+        routeName: RouteConstants.activationPageName,
+        routeClass: 'ActivationPage',
+        child: ActivationPage(isOnboarding: isOnboarding),
+      );
     },
   );
 }
@@ -231,7 +250,11 @@ GoRoute _buildResetPasswordRoute() {
     path: RouteConstants.resetPasswordPagePath,
     name: RouteConstants.resetPasswordPageName,
     builder: (context, state) {
-      return const ResetPasswordPage();
+      return AnalyticsRouteWrapper(
+        routeName: RouteConstants.resetPasswordPageName,
+        routeClass: 'ResetPasswordPage',
+        child: const ResetPasswordPage(),
+      );
     },
   );
 }
@@ -240,7 +263,11 @@ GoRoute _buildSendResetTokenRoute() {
   return GoRoute(
     path: RouteConstants.sendResetTokenPagePath,
     name: RouteConstants.sendResetTokenPageName,
-    builder: (context, state) => const SendResetTokenPage(),
+    builder: (context, state) => AnalyticsRouteWrapper(
+      routeName: RouteConstants.sendResetTokenPageName,
+      routeClass: 'SendResetTokenPage',
+      child: const SendResetTokenPage(),
+    ),
   );
 }
 
@@ -251,7 +278,11 @@ GoRoute _buildLoginRoute() {
     builder: (context, state) {
       final isOnboarding = state.uri.queryParameters['isOnboarding'] != null &&
           state.uri.queryParameters['isOnboarding'] == 'true';
-      return LoginPage(isOnboarding: isOnboarding);
+      return AnalyticsRouteWrapper(
+        routeName: RouteConstants.loginPageName,
+        routeClass: 'LoginPage',
+        child: LoginPage(isOnboarding: isOnboarding),
+      );
     },
     routes: [
       GoRoute(
@@ -260,14 +291,22 @@ GoRoute _buildLoginRoute() {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           final isOAuthUser = extra != null && extra['isOAuthUser'] == true;
-          return ChooseUsernamePage(isOAuthUser: isOAuthUser);
+          return AnalyticsRouteWrapper(
+            routeName: RouteConstants.usernamePageName,
+            routeClass: 'ChooseUsernamePage',
+            child: ChooseUsernamePage(isOAuthUser: isOAuthUser),
+          );
         },
         routes: [
           GoRoute(
             path: RouteConstants.signupPagePath,
             name: RouteConstants.signupPageName,
-            builder: (context, state) => SignupPage(
-              username: state.pathParameters['username']!,
+            builder: (context, state) => AnalyticsRouteWrapper(
+              routeName: RouteConstants.signupPageName,
+              routeClass: 'SignupPage',
+              child: SignupPage(
+                username: state.pathParameters['username']!,
+              ),
             ),
           ),
         ],
@@ -282,7 +321,11 @@ GoRoute _buildProfileRoute() {
     name: RouteConstants.profilePageName,
     pageBuilder: (context, state) => FadeTransitionPage(
       key: const ValueKey('profile'),
-      child: const ProfilePage(),
+      child: AnalyticsRouteWrapper(
+        routeName: RouteConstants.profilePageName,
+        routeClass: 'ProfilePage',
+        child: const ProfilePage(),
+      ),
     ),
   );
 }
@@ -296,7 +339,11 @@ GoRoute _buildSearchFeedsRoute() {
           state.uri.queryParameters['isOnboarding'] == 'true';
       return FadeTransitionPage(
         key: const ValueKey('feeds'),
-        child: SearchFeedsPage(isOnboarding: isOnboarding),
+        child: AnalyticsRouteWrapper(
+          routeName: RouteConstants.searchFeedsPageName,
+          routeClass: 'SearchFeedsPage',
+          child: SearchFeedsPage(isOnboarding: isOnboarding),
+        ),
       );
     },
   );
@@ -313,9 +360,13 @@ GoRoute _buildFeedViewRoute() {
       return SlideTransitionPage(
         key: const ValueKey(RouteConstants.feedViewPageName),
         direction: SlideDirection.rightToLeft,
-        child: FeedViewPage(
-          feed: feed,
-          isFollowed: isFollowed,
+        child: AnalyticsRouteWrapper(
+          routeName: RouteConstants.feedViewPageName,
+          routeClass: 'FeedViewPage',
+          child: FeedViewPage(
+            feed: feed,
+            isFollowed: isFollowed,
+          ),
         ),
       );
     },
@@ -328,7 +379,11 @@ GoRoute _buildWallRoute() {
     name: RouteConstants.wallPageName,
     pageBuilder: (context, state) => FadeTransitionPage(
       key: const ValueKey('wall'),
-      child: const WallPage(),
+      child: AnalyticsRouteWrapper(
+        routeName: RouteConstants.wallPageName,
+        routeClass: 'WallPage',
+        child: const WallPage(),
+      ),
     ),
   );
 }
@@ -338,8 +393,12 @@ GoRoute _buildWallEditRoute() {
     path: RouteConstants.wallEditPagePath,
     name: RouteConstants.wallEditPageName,
     builder: (context, state) {
-      return WallEditPage(
-        wall: state.extra as Wall,
+      return AnalyticsRouteWrapper(
+        routeName: RouteConstants.wallEditPageName,
+        routeClass: 'WallEditPage',
+        child: WallEditPage(
+          wall: state.extra as Wall,
+        ),
       );
     },
   );
@@ -349,7 +408,11 @@ GoRoute _buildSavedItemsRoute() {
   return GoRoute(
     path: RouteConstants.savedItemsPagePath,
     name: RouteConstants.savedItemsPageName,
-    builder: (context, state) => const SavedItemsPage(),
+    builder: (context, state) => AnalyticsRouteWrapper(
+      routeName: RouteConstants.savedItemsPageName,
+      routeClass: 'SavedItemsPage',
+      child: const SavedItemsPage(),
+    ),
   );
 }
 
@@ -357,6 +420,10 @@ GoRoute _buildAboutRoute() {
   return GoRoute(
     path: RouteConstants.aboutPagePath,
     name: RouteConstants.aboutPageName,
-    builder: (context, state) => const AboutPage(),
+    builder: (context, state) => AnalyticsRouteWrapper(
+      routeName: RouteConstants.aboutPageName,
+      routeClass: 'AboutPage',
+      child: const AboutPage(),
+    ),
   );
 }
