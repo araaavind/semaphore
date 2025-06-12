@@ -7,6 +7,7 @@ import 'package:app/features/feed/presentation/bloc/follow_feed/follow_feed_bloc
 import 'package:app/features/feed/presentation/bloc/walls/walls_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -119,6 +120,13 @@ class _FeedListTileState extends State<FeedListTile> {
                 imageUrl: feed.imageUrl ?? '',
                 fit: BoxFit.contain,
                 cacheKey: feed.imageUrl,
+                memCacheWidth: 36,
+                maxWidthDiskCache: 36,
+                errorListener: (e) {
+                  if (kDebugMode) {
+                    print('Error loading image: $e');
+                  }
+                },
                 placeholder: (context, url) => Icon(
                   Icons.public,
                   size: 24,

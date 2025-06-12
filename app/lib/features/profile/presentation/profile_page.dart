@@ -10,6 +10,7 @@ import 'package:app/features/feed/presentation/widgets/profile_feed_list.dart';
 import 'package:app/features/feed/presentation/widgets/profile_wall_list.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -265,6 +266,12 @@ class _ProfilePageState extends State<ProfilePage>
                                       user.profileImageURL ?? '',
                                       cacheKey: user.email,
                                     ),
+                                    onBackgroundImageError:
+                                        (exception, stackTrace) {
+                                      if (kDebugMode) {
+                                        print(exception);
+                                      }
+                                    },
                                   ),
                                 ),
                               Expanded(
