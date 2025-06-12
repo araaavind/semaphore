@@ -180,6 +180,14 @@ class _FeedViewPageState extends State<FeedViewPage> {
                                   (state.status == FollowFeedStatus.followed ||
                                       state.status ==
                                           FollowFeedStatus.unfollowed)) {
+                                if (state.status ==
+                                    FollowFeedStatus.unfollowed) {
+                                  context.read<WallsBloc>().add(
+                                        ListWallsRequested(
+                                          refreshItems: true,
+                                        ),
+                                      );
+                                }
                                 setState(() {
                                   isFollowed = !isFollowed;
                                 });

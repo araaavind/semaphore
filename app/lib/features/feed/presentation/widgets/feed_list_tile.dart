@@ -156,6 +156,13 @@ class _FeedListTileState extends State<FeedListTile> {
           if (state.feedId == feed.id &&
               (state.status == FollowFeedStatus.followed ||
                   state.status == FollowFeedStatus.unfollowed)) {
+            if (state.status == FollowFeedStatus.unfollowed) {
+              context.read<WallsBloc>().add(
+                    ListWallsRequested(
+                      refreshItems: true,
+                    ),
+                  );
+            }
             setState(() {
               isFollowed = !isFollowed;
             });
