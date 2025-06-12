@@ -54,11 +54,12 @@ class WallPageSliverAppBarBottom extends StatelessWidget
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2.0),
                         child: Icon(
-                          MingCute.right_small_fill,
+                          MingCute.menu_line,
+                          size: 18,
                           color: context.theme.colorScheme.onPrimaryContainer,
                         ),
                       ),
-                      const SizedBox(width: 4.0),
+                      const SizedBox(width: 8.0),
                       Flexible(
                         child: Text(
                           state.currentWall?.name ?? '',
