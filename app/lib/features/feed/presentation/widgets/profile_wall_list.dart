@@ -7,11 +7,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ProfileWallList extends StatelessWidget {
+class ProfileWallList extends StatefulWidget {
   const ProfileWallList({super.key});
 
   @override
+  State<ProfileWallList> createState() => _ProfileWallListState();
+}
+
+class _ProfileWallListState extends State<ProfileWallList>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocConsumer<WallsBloc, WallsState>(
       listener: (context, state) {
         if (state.status == WallStatus.success &&
@@ -62,7 +73,15 @@ class ProfileWallList extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.status == WallStatus.initial) {
-          return const SizedBox.shrink();
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'No walls found',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
         } else if (state.status == WallStatus.failure) {
           return const Center(
             child: Padding(

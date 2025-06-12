@@ -406,8 +406,8 @@ class _ProfilePageState extends State<ProfilePage>
         body: TabBarView(
           controller: _tabController,
           children: const [
-            ProfileFeedList(),
-            ProfileWallList(),
+            _KeepAliveTabView(child: ProfileFeedList()),
+            _KeepAliveTabView(child: ProfileWallList()),
           ],
         ),
       ),
@@ -582,5 +582,27 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_SliverTabBarDelegate oldDelegate) {
     return backgroundColor != oldDelegate.backgroundColor ||
         _tabBar != oldDelegate._tabBar;
+  }
+}
+
+// Add this new widget at the end of the file, before the _SliverTabBarDelegate class
+class _KeepAliveTabView extends StatefulWidget {
+  final Widget child;
+
+  const _KeepAliveTabView({required this.child});
+
+  @override
+  State<_KeepAliveTabView> createState() => _KeepAliveTabViewState();
+}
+
+class _KeepAliveTabViewState extends State<_KeepAliveTabView>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
   }
 }
