@@ -30,21 +30,23 @@ String? _subredditValidator(value) {
 /// - example.com/feed
 ///
 String? _feedUrlValidator(String? value) {
-  const urlPattern = r'^(https?:\/\/)?' // Optional protocol
-      r'((([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,})' // Domain name and extension
-      r'|'
-      r'((\d{1,3}\.){3}\d{1,3}))' // OR IPv4
-      r'(:\d+)?' // Optional port
-      r'(\/[-a-zA-Z0-9%_.~+]*)*' // Path
-      r'(\?[;&a-zA-Z0-9%_.~+=-]*)?' // Query string
-      r'(#[-a-zA-Z0-9_]*)?$'; // Fragment locator
-  final RegExp validCharsRegex = RegExp(urlPattern);
-  if (value!.isEmpty) {
+  if (value == null || value.isEmpty) {
     return TextConstants.feedUrlBlankErrorMessage;
-  } else if (!validCharsRegex.hasMatch(value)) {
+  }
+
+  try {
+    // Use Uri.parse to validate instead of regex
+    final uri = Uri.parse(value.startsWith('http') ? value : 'https://$value');
+
+    // Basic validation that we have at least a host
+    if (uri.host.isEmpty) {
+      return TextConstants.feedUrlNotUrlErrorMessage;
+    }
+
+    return null;
+  } catch (e) {
     return TextConstants.feedUrlNotUrlErrorMessage;
   }
-  return null;
 }
 
 /// Validates a Medium URL
@@ -189,6 +191,7 @@ String? _youtubeValidator(String? value) {
   // Check if it's a youtube.com domain or youtu.be (shortened URLs)
   if (uri.host != 'youtube.com' &&
       uri.host != 'www.youtube.com' &&
+      uri.host != 'm.youtube.com' &&
       uri.host != 'youtu.be') {
     return 'Not a valid YouTube URL or channel handle';
   }

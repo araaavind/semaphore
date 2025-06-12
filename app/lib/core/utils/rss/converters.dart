@@ -218,6 +218,7 @@ Future<String> _convertYoutubeToRssUrl(String input) async {
     // Make sure it's a YouTube domain
     if (uri.host != 'youtube.com' &&
         uri.host != 'www.youtube.com' &&
+        uri.host != 'm.youtube.com' &&
         uri.host != 'youtu.be') {
       throw ConverterException('Not a valid YouTube URL');
     }
