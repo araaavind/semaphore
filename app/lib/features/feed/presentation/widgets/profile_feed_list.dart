@@ -16,7 +16,8 @@ class ProfileFeedList extends StatefulWidget {
   State<ProfileFeedList> createState() => _ProfileFeedListState();
 }
 
-class _ProfileFeedListState extends State<ProfileFeedList> {
+class _ProfileFeedListState extends State<ProfileFeedList>
+    with AutomaticKeepAliveClientMixin {
   final PagingController<int, FeedFollowsMap> _pagingController =
       PagingController(
     firstPageKey: 1,
@@ -42,6 +43,9 @@ class _ProfileFeedListState extends State<ProfileFeedList> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   void dispose() {
     _pagingController.dispose();
     _refreshController.dispose();
@@ -50,6 +54,8 @@ class _ProfileFeedListState extends State<ProfileFeedList> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return BlocListener<SearchFeedBloc, SearchFeedState>(
       listener: (context, state) {
         if (state.status != SearchFeedStatus.loading) {
