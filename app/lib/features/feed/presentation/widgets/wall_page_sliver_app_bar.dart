@@ -23,12 +23,15 @@ class WallPageSliverAppBar extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
+            stops: isCollapsed ? [0.28, 1] : null,
             colors: [
-              AppPalette.appBarGradientColor
-                  .withLightness(
-                    context.theme.brightness == Brightness.dark ? 0.7 : 0.3,
-                  )
-                  .toColor(),
+              isCollapsed
+                  ? context.theme.colorScheme.surface
+                  : AppPalette.appBarGradientColor
+                      .withLightness(
+                        context.theme.brightness == Brightness.dark ? 0.7 : 0.3,
+                      )
+                      .toColor(),
               context.theme.brightness == Brightness.dark
                   ? context.theme.colorScheme.surface.withAlpha(0)
                   : context.theme.colorScheme.surface.withAlpha(0),
@@ -66,7 +69,6 @@ class WallPageSliverAppBar extends StatelessWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: context.theme.colorScheme.surfaceContainer.withAlpha(0),
         statusBarIconBrightness: context.theme.brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
