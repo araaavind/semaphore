@@ -181,7 +181,8 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
             (state.action == SavedItemsAction.unsave ||
                 state.action == SavedItemsAction.save)) {
           setState(() {
-            // if the failed action is unsave, then set isSaved to true
+            // if the failed action is save, then set isSaved to false
+            // by comparing with unsave
             isSaved = state.action == SavedItemsAction.unsave;
           });
           showSnackbar(
@@ -228,7 +229,8 @@ class _WebViewDraggableBottomState extends State<WebViewDraggableBottom> {
             (state.action == LikedItemsAction.unlike ||
                 state.action == LikedItemsAction.like)) {
           setState(() {
-            // if the failed action is unlike, then set isLiked to true
+            // if the failed action is like, then set isLiked to false
+            // by comparing with unlike
             isLiked = state.action == LikedItemsAction.unlike;
           });
         }

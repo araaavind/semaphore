@@ -1,5 +1,7 @@
+import 'package:app/core/common/widgets/widgets.dart';
 import 'package:app/core/constants/constants.dart';
-import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/services/analytics_service.dart';
+import 'package:app/core/theme/theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
@@ -8,6 +10,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ItemListTileText extends StatefulWidget {
   final Item item;
@@ -58,48 +61,174 @@ class _ItemListTileTextState extends State<ItemListTileText> {
           },
         ),
       ],
-      child: InkWell(
-        onTap: () {
-          context.pushNamed(
-            RouteConstants.webViewPageName,
-            queryParameters: {
-              'url': _item.link,
-              'itemId': _item.id.toString(),
-              'isSaved': _item.isSaved.toString(),
-              'isLiked': _item.isLiked.toString(),
-            },
-          );
-        },
-        splashColor: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 14.0,
-            horizontal: UIConstants.pagePadding,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: UIConstants.pagePadding,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: 0.5,
+                      color: context.theme.colorScheme.onSurface.withAlpha(50),
+                    ),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AutoSizeText(
-                      _item.title[0].toUpperCase() + _item.title.substring(1),
-                      style: context.theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      minFontSize: 17,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    _buildSubtitle(context),
+                    _buildTitle(context),
+                    _buildActionStrip(context),
                   ],
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.pushNamed(
+          RouteConstants.webViewPageName,
+          queryParameters: {
+            'url': _item.link,
+            'itemId': _item.id.toString(),
+            'isSaved': _item.isSaved.toString(),
+            'isLiked': _item.isLiked.toString(),
+          },
+        );
+      },
+      splashColor: Colors.transparent,
+      child: AutoSizeText(
+        _item.title[0].trimLeft().toUpperCase() + _item.title.substring(1),
+        style: context.theme.textTheme.bodyLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
+        minFontSize: 17,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  Widget _buildActionStrip(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(child: _buildSubtitle(context)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(width: 10.0),
+              _buildActionButton(
+                context,
+                _item.isLiked ? Icons.favorite : Icons.favorite_border,
+                iconSize: 20,
+                extraPaddingBottom: 0,
+                iconColor: _item.isLiked ? Colors.red : null,
+                () {
+                  context.read<LikedItemsBloc>().add(
+                        _item.isLiked
+                            ? UnlikeItemRequested(
+                                itemId: _item.id,
+                                refresh: true,
+                              )
+                            : LikeItemRequested(_item.id),
+                      );
+
+                  // Track item liked event
+                  if (!_item.isLiked) {
+                    AnalyticsService.logItemLiked('${_item.id}');
+                  }
+
+                  setState(() {
+                    _item = _item.copyWith(
+                      isLiked: !_item.isLiked,
+                    );
+                  });
+                },
+              ),
+              _buildActionButton(
+                context,
+                _item.isSaved ? MingCute.bookmark_fill : MingCute.bookmark_line,
+                iconSize: 19,
+                extraPaddingBottom: 1,
+                iconColor: _item.isSaved ? AppPalette.savedAmber : null,
+                () {
+                  context.read<SavedItemsBloc>().add(
+                        _item.isSaved
+                            ? UnsaveItemRequested(
+                                itemId: _item.id, refresh: true)
+                            : SaveItemRequested(_item.id),
+                      );
+
+                  // Track item saved event
+                  if (!_item.isSaved) {
+                    AnalyticsService.logItemSaved('${_item.id}');
+                  }
+
+                  setState(() {
+                    _item = _item.copyWith(
+                      isSaved: !_item.isSaved,
+                    );
+                  });
+                },
+              ),
+              _buildActionButton(
+                context,
+                MingCute.share_2_line,
+                iconSize: 19,
+                extraPaddingBottom: 1,
+                () async {
+                  // Track article shared event
+                  AnalyticsService.logItemShared('${_item.id}');
+
+                  try {
+                    final result = await SharePlus.instance.share(
+                      ShareParams(
+                        text:
+                            'Hey, check this out!\n\n${_item.link}\n\n_shared via *Semaphore* app_',
+                      ),
+                    );
+
+                    if (result.status != ShareResultStatus.success &&
+                        result.status != ShareResultStatus.dismissed &&
+                        context.mounted) {
+                      showSnackbar(
+                        context,
+                        'Failed to share article',
+                        type: SnackbarType.failure,
+                        bottomOffset: kBottomNavigationBarHeight,
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      showSnackbar(
+                        context,
+                        'Failed to share article',
+                        type: SnackbarType.failure,
+                        bottomOffset: kBottomNavigationBarHeight,
+                      );
+                    }
+                  }
+                },
+              ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
@@ -145,6 +274,32 @@ class _ItemListTileTextState extends State<ItemListTileText> {
               color: context.theme.colorScheme.onSurface.withAlpha(178)),
         ),
       ],
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context,
+    IconData icon,
+    VoidCallback onPressed, {
+    Color? iconColor,
+    double? iconSize,
+    bool animateOnTap = true,
+    double? extraPaddingBottom,
+  }) {
+    return AnimatedIconButton(
+      icon: Icon(
+        icon,
+        size: iconSize ?? 20,
+        color: iconColor?.withAlpha(200) ??
+            context.theme.colorScheme.onSurface.withAlpha(200),
+      ),
+      padding: EdgeInsets.only(
+        bottom: extraPaddingBottom ?? 0,
+        left: 8,
+        right: 8,
+      ),
+      onPressed: onPressed,
+      animateOnTap: animateOnTap,
     );
   }
 }

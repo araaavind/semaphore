@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/icons/mingcute.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -66,59 +67,126 @@ class ShimmerLoader extends StatelessWidget {
       children: [
         const SizedBox(height: 18.0),
         const TitlePlaceholder(lineType: ContentLineType.twoLines),
-        const SizedBox(height: 8.0),
-        Container(
-          width: double.infinity,
-          height: 8.0,
-          color: Colors.white,
-          margin: const EdgeInsets.only(bottom: 8.0),
-        ),
         const SizedBox(height: 12.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              height: 12.0,
+              width: 150.0,
+              color: Colors.white,
+            ),
+            _buildActionButtonsRound()
+          ],
+        ),
       ],
     );
   }
 
   Widget _buildMagazineShimmer(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(vertical: 11.0),
+      child: Column(
         children: [
-          Container(
-            width: 100.0,
-            height: 90.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              color: Colors.white,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 105.0,
+                height: 90.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 16.0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 4.0),
+                    Container(
+                      height: 16.0,
+                      width: double.infinity,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(height: 8.0),
+                    Container(
+                      height: 14.0,
+                      width: 150.0,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(height: 14.0),
+                    Container(
+                      width: double.infinity,
+                      height: 8.0,
+                      color: Colors.white,
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 16.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 4.0),
-                Container(
-                  height: 16.0,
-                  width: double.infinity,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 8.0),
-                Container(
-                  height: 14.0,
-                  width: 150.0,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 14.0),
-                Container(
-                  width: double.infinity,
-                  height: 8.0,
-                  color: Colors.white,
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                ),
-              ],
-            ),
+          const SizedBox(height: 6.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: 12.0,
+                width: 150.0,
+                color: Colors.white,
+              ),
+              _buildActionButtonsRound()
+            ],
           ),
+        ],
+      ),
+    );
+  }
+
+  // ignore: unused_element
+  Wrap _buildActionButtonIcons() {
+    return Wrap(
+      spacing: 14.0,
+      children: [
+        Icon(
+          Icons.favorite,
+          size: 20.0,
+          color: Colors.white,
+        ),
+        Icon(
+          MingCute.bookmark_fill,
+          size: 20.0,
+          color: Colors.white,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10.0),
+          child: Icon(
+            MingCute.share_2_fill,
+            size: 20.0,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtonsRound() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 4.0),
+      child: Wrap(
+        spacing: 14.0,
+        children: [
+          for (int i = 0; i < 3; i++)
+            Container(
+              width: 22.0,
+              height: 22.0,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+            ),
         ],
       ),
     );
@@ -232,16 +300,8 @@ class ShimmerLoader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 4.0),
-          Container(
-            width: double.infinity,
-            height: 8.0,
-            color: Colors.white,
-            margin: const EdgeInsets.only(bottom: 8.0),
-          ),
-          const SizedBox(height: 6.0),
-          const TitlePlaceholder(),
-          const SizedBox(height: 12.0),
+          const TitlePlaceholder(lineType: ContentLineType.twoLines),
+          const SizedBox(height: 10.0),
           Container(
             height: 180.0,
             decoration: BoxDecoration(
@@ -249,6 +309,18 @@ class ShimmerLoader extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+          const SizedBox(height: 12.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: 12.0,
+                width: 150.0,
+                color: Colors.white,
+              ),
+              _buildActionButtonsRound(),
+            ],
+          )
         ],
       ),
     );
