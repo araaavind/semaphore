@@ -15,8 +15,11 @@ import 'package:share_plus/share_plus.dart';
 
 class ItemListTileCard extends StatefulWidget {
   final Item item;
+  final Function(Item)? onItemUpdated;
+
   const ItemListTileCard({
     required this.item,
+    this.onItemUpdated,
     super.key,
   });
 
@@ -33,31 +36,81 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
     _item = widget.item;
   }
 
+  void _updateItem(Item updatedItem) {
+    setState(() {
+      _item = updatedItem;
+    });
+    widget.onItemUpdated?.call(updatedItem);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
         BlocListener<SavedItemsBloc, SavedItemsState>(
           listener: (context, state) {
+            if (state.status == SavedItemsStatus.failure &&
+                state.currentItemId == _item.id &&
+                (state.action == SavedItemsAction.unsave ||
+                    state.action == SavedItemsAction.save)) {
+              _updateItem(
+                // if the failed action is save, then set isSaved to false
+                // by comparing with unsave
+                _item.copyWith(
+                  isSaved: state.action == SavedItemsAction.unsave,
+                ),
+              );
+              showSnackbar(
+                context,
+                state.message ??
+                    (state.action == SavedItemsAction.unsave
+                        ? 'Failed to unsave article'
+                        : 'Failed to save article'),
+                type: SnackbarType.failure,
+                bottomOffset: kBottomNavigationBarHeight,
+              );
+            }
+
+            // when user clicks on save button from list tile, the state
+            // is optimistically updated. This condition is only to update
+            // the state if user clicks on save from web view
             if (state.status == SavedItemsStatus.success &&
-                state.currentItemId == _item.id) {
-              setState(() {
-                _item = _item.copyWith(
+                state.currentItemId == _item.id &&
+                _item.isSaved != (state.action == SavedItemsAction.save)) {
+              _updateItem(
+                _item.copyWith(
                   isSaved: state.action == SavedItemsAction.save,
-                );
-              });
+                ),
+              );
             }
           },
         ),
         BlocListener<LikedItemsBloc, LikedItemsState>(
           listener: (context, state) {
+            if (state.status == LikedItemsStatus.failure &&
+                state.currentItemId == _item.id &&
+                (state.action == LikedItemsAction.unlike ||
+                    state.action == LikedItemsAction.like)) {
+              _updateItem(
+                // if the failed action is like, then set isLiked to false
+                // by comparing with unlike
+                _item.copyWith(
+                  isLiked: state.action == LikedItemsAction.unlike,
+                ),
+              );
+            }
+
+            // when user clicks on like button from list tile, the state
+            // is optimistically updated. This condition is only to update
+            // the state if user clicks on like from web view
             if (state.status == LikedItemsStatus.success &&
-                state.currentItemId == _item.id) {
-              setState(() {
-                _item = _item.copyWith(
+                state.currentItemId == _item.id &&
+                _item.isLiked != (state.action == LikedItemsAction.like)) {
+              _updateItem(
+                _item.copyWith(
                   isLiked: state.action == LikedItemsAction.like,
-                );
-              });
+                ),
+              );
             }
           },
         ),
@@ -103,12 +156,14 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
         );
       },
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoSizeText(
             _item.title[0].trimLeft().toUpperCase() + _item.title.substring(1),
             style: context.theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
+            textAlign: TextAlign.start,
             minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
@@ -155,11 +210,11 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
                     AnalyticsService.logItemLiked('${_item.id}');
                   }
 
-                  setState(() {
-                    _item = _item.copyWith(
+                  _updateItem(
+                    _item.copyWith(
                       isLiked: !_item.isLiked,
-                    );
-                  });
+                    ),
+                  );
                 },
               ),
               _buildActionButton(
@@ -181,11 +236,11 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
                     AnalyticsService.logItemSaved('${_item.id}');
                   }
 
-                  setState(() {
-                    _item = _item.copyWith(
+                  _updateItem(
+                    _item.copyWith(
                       isSaved: !_item.isSaved,
-                    );
-                  });
+                    ),
+                  );
                 },
               ),
               _buildActionButton(

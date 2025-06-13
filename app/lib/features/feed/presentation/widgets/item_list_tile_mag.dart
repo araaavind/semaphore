@@ -16,8 +16,11 @@ import 'package:share_plus/share_plus.dart';
 
 class ItemListTileMag extends StatefulWidget {
   final Item item;
+  final Function(Item)? onItemUpdated;
+
   const ItemListTileMag({
     required this.item,
+    this.onItemUpdated,
     super.key,
   });
 
@@ -34,6 +37,13 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
     _item = widget.item;
   }
 
+  void _updateItem(Item updatedItem) {
+    setState(() {
+      _item = updatedItem;
+    });
+    widget.onItemUpdated?.call(updatedItem);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
@@ -44,13 +54,13 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                 state.currentItemId == _item.id &&
                 (state.action == SavedItemsAction.unsave ||
                     state.action == SavedItemsAction.save)) {
-              setState(() {
+              _updateItem(
                 // if the failed action is save, then set isSaved to false
                 // by comparing with unsave
-                _item = _item.copyWith(
+                _item.copyWith(
                   isSaved: state.action == SavedItemsAction.unsave,
-                );
-              });
+                ),
+              );
               showSnackbar(
                 context,
                 state.message ??
@@ -68,11 +78,11 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
             if (state.status == SavedItemsStatus.success &&
                 state.currentItemId == _item.id &&
                 _item.isSaved != (state.action == SavedItemsAction.save)) {
-              setState(() {
-                _item = _item.copyWith(
+              _updateItem(
+                _item.copyWith(
                   isSaved: state.action == SavedItemsAction.save,
-                );
-              });
+                ),
+              );
             }
           },
         ),
@@ -82,13 +92,13 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                 state.currentItemId == _item.id &&
                 (state.action == LikedItemsAction.unlike ||
                     state.action == LikedItemsAction.like)) {
-              setState(() {
+              _updateItem(
                 // if the failed action is like, then set isLiked to false
                 // by comparing with unlike
-                _item = _item.copyWith(
+                _item.copyWith(
                   isLiked: state.action == LikedItemsAction.unlike,
-                );
-              });
+                ),
+              );
             }
 
             // when user clicks on like button from list tile, the state
@@ -97,11 +107,11 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
             if (state.status == LikedItemsStatus.success &&
                 state.currentItemId == _item.id &&
                 _item.isLiked != (state.action == LikedItemsAction.like)) {
-              setState(() {
-                _item = _item.copyWith(
+              _updateItem(
+                _item.copyWith(
                   isLiked: state.action == LikedItemsAction.like,
-                );
-              });
+                ),
+              );
             }
           },
         ),
@@ -165,11 +175,11 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                     AnalyticsService.logItemLiked('${_item.id}');
                   }
 
-                  setState(() {
-                    _item = _item.copyWith(
+                  _updateItem(
+                    _item.copyWith(
                       isLiked: !_item.isLiked,
-                    );
-                  });
+                    ),
+                  );
                 },
               ),
               _buildActionButton(
@@ -191,11 +201,11 @@ class _ItemListTileMagState extends State<ItemListTileMag> {
                     AnalyticsService.logItemSaved('${_item.id}');
                   }
 
-                  setState(() {
-                    _item = _item.copyWith(
+                  _updateItem(
+                    _item.copyWith(
                       isSaved: !_item.isSaved,
-                    );
-                  });
+                    ),
+                  );
                 },
               ),
               _buildActionButton(

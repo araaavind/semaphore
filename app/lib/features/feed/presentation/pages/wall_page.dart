@@ -244,6 +244,26 @@ class __WallPageItemsState extends State<_WallPageItems> {
 
   ShimmerLoaderType _shimmerLoaderType = ShimmerLoaderType.text;
 
+  // Method to efficiently update a single item in the paging controller
+  void _updateItemInController(Item updatedItem) {
+    final itemList = _pagingController.itemList;
+    if (itemList != null) {
+      final index = itemList.indexWhere((item) => item.id == updatedItem.id);
+      if (index != -1) {
+        // Create a new list with the updated item
+        final updatedList = List<Item>.from(itemList);
+        updatedList[index] = updatedItem;
+
+        // Update the controller with the new list
+        // This is more efficient than refreshing the entire list
+        _pagingController.itemList = updatedList;
+
+        // Force a rebuild of the specific item
+        setState(() {});
+      }
+    }
+  }
+
   void _setShimmerLoaderType(WallViewOption wallView) {
     setState(() {
       switch (wallView) {
@@ -337,14 +357,17 @@ class __WallPageItemsState extends State<_WallPageItems> {
                   case WallViewOption.card:
                     return ItemListTileCard(
                       item: item,
+                      onItemUpdated: _updateItemInController,
                     );
                   case WallViewOption.magazine:
                     return ItemListTileMag(
                       item: item,
+                      onItemUpdated: _updateItemInController,
                     );
                   case WallViewOption.text:
                     return ItemListTileText(
                       item: item,
+                      onItemUpdated: _updateItemInController,
                     );
                 }
               },
