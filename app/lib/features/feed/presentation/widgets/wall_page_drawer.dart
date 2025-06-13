@@ -164,7 +164,7 @@ class WallPageDrawer extends StatelessWidget {
                 color: context.theme.colorScheme.onSurface,
                 fontWeight: e.id == state.currentWall!.id
                     ? FontWeight.w600
-                    : FontWeight.w300,
+                    : FontWeight.w400,
               ),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 24),
@@ -224,7 +224,7 @@ class WallPageDrawer extends StatelessWidget {
             title: Text(
               title,
               style: context.theme.textTheme.titleMedium!
-                  .copyWith(fontWeight: FontWeight.w300),
+                  .copyWith(fontWeight: FontWeight.w400),
             ),
             onTap: () async {
               final Map<String, Object> extra = {
