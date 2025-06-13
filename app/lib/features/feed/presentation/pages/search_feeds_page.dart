@@ -458,6 +458,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
+            stops: [0, 0.8],
             colors: [
               AppPalette.appBarGradientColor
                   .withLightness(

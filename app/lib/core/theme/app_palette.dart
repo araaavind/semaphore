@@ -60,7 +60,7 @@ abstract class AppPalette {
   */
 
   // brand
-  static const brandDark = Color.fromARGB(255, 255, 148, 155);
+  static const brandDark = Color.fromARGB(255, 255, 177, 182);
 
   // surface
   static const surfaceDark = Color.fromARGB(255, 6, 0, 1);
