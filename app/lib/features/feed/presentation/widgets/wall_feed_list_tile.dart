@@ -152,20 +152,13 @@ class _WallFeedListTileState extends State<WallFeedListTile> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.0),
                             ),
-                            backgroundColor: context.theme.colorScheme.surface,
                             content: Text.rich(
                               TextSpan(
                                 style: context.theme.textTheme.bodyLarge,
                                 children: [
                                   const TextSpan(
-                                      text:
-                                          'Are you sure you want to remove this feed from the wall?'),
-                                  TextSpan(
-                                    text: '\n\n(This action cannot be undone.)',
-                                    style: context.theme.textTheme.bodySmall!
-                                        .copyWith(
-                                      fontWeight: FontWeight.w100,
-                                    ),
+                                    text:
+                                        'Are you sure you want to remove this feed from the wall?',
                                   ),
                                 ],
                               ),
