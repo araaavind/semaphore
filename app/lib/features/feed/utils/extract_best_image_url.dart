@@ -51,7 +51,7 @@ Future<List<String>> getItemImageUrls(
   ]);
 
   if (imageUrls.isNotEmpty) {
-    return imageUrls;
+    return _convertRelativeUrlsToAbsolute(imageUrls, item.link);
   } else if (scrapeFromLink) {
     imageUrls.addAll(await _scrapeCachedImageUrlsFromLink(
       item.link,
@@ -59,7 +59,37 @@ Future<List<String>> getItemImageUrls(
     ));
   }
 
-  return imageUrls.isNotEmpty ? imageUrls : [''];
+  return imageUrls.isNotEmpty
+      ? _convertRelativeUrlsToAbsolute(imageUrls, item.link)
+      : [''];
+}
+
+/// Converts relative URLs to absolute URLs using the base URL from the item link
+List<String> _convertRelativeUrlsToAbsolute(
+    List<String> imageUrls, String? itemLink) {
+  if (itemLink == null || itemLink.isEmpty) return imageUrls;
+
+  final baseUri = Uri.tryParse(itemLink);
+  if (baseUri == null) return imageUrls;
+
+  return imageUrls.map((url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return url;
+
+    // If URL is already absolute, return as is
+    if (uri.hasScheme && uri.hasAuthority) {
+      return url;
+    }
+
+    // If URL is relative, resolve it against the base URI
+    try {
+      final absoluteUri = baseUri.resolve(url);
+      return absoluteUri.toString();
+    } catch (e) {
+      // If resolution fails, return original URL
+      return url;
+    }
+  }).toList();
 }
 
 /// Extracts the largest image URL if width and height attributes are available.
