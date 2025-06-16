@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class FeedListTile extends StatefulWidget {
   final FeedFollowsMap feedIsFollowedMap;
@@ -235,11 +236,15 @@ class _FeedListTileState extends State<FeedListTile> {
                         duration: const Duration(milliseconds: 300),
                         child: isFollowed
                             ? Icon(
-                                MingCute.check_circle_line,
-                                size: 28.0,
+                                MdiIcons.checkboxMarkedCirclePlusOutline,
+                                size: 27.0,
                                 weight: 0.4,
-                                color: widget.altPrimaryColor ??
-                                    context.theme.colorScheme.primary,
+                                color: widget.altPrimaryColor != null
+                                    ? HSLColor.fromColor(
+                                            widget.altPrimaryColor!)
+                                        .withAlpha(0.6)
+                                        .toColor()
+                                    : context.theme.colorScheme.primary,
                               )
                             : Icon(
                                 MingCute.add_circle_line,

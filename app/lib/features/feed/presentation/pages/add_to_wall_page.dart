@@ -267,7 +267,7 @@ class _WallListTileState extends State<WallListTile> {
                         },
                         child: Icon(
                           isFeedInWall
-                              ? MingCute.check_circle_fill
+                              ? MingCute.check_circle_line
                               : MingCute.add_circle_line,
                           color: isFeedInWall
                               ? context.theme.colorScheme.primary
