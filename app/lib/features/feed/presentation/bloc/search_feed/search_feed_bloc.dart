@@ -1,5 +1,4 @@
 import 'package:app/core/constants/server_constants.dart';
-import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed_list.dart';
 import 'package:app/features/feed/domain/usecases/check_user_follows_feeds.dart';
 import 'package:app/features/feed/domain/usecases/list_feeds.dart';
@@ -23,7 +22,7 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
         super(const SearchFeedState()) {
     on<FeedSearchRequested>(
       _onFeedListFeeds,
-      transformer: throttleDroppable(ServerConstants.throttleDuration),
+      // transformer: throttleDroppable(ServerConstants.throttleDuration),
     );
   }
 

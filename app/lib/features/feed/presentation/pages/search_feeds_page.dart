@@ -102,9 +102,9 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   void _onSearchChanged() {
     _debouncer.run(
       () {
-        if (_searchQuery != _searchController.text) {
+        if (_searchQuery != _searchController.text.trim()) {
           setState(() {
-            _searchQuery = _searchController.text;
+            _searchQuery = _searchController.text.trim();
           });
           _pagingController.refresh();
         }
@@ -429,7 +429,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 hintText: 'Search...',
                 hintStyle: context.theme.textTheme.bodyMedium,
                 prefixIcon: const Icon(MingCute.search_line),
-                suffixIcon: _searchController.text.isNotEmpty
+                suffixIcon: _searchController.text.trim().isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: _clearSearch,
@@ -488,7 +488,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
               hintText: 'Search...',
               hintStyle: context.theme.textTheme.bodyMedium,
               prefixIcon: const Icon(MingCute.search_line),
-              suffixIcon: _searchController.text.isNotEmpty
+              suffixIcon: _searchController.text.trim().isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: _clearSearch,
