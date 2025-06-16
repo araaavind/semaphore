@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -47,6 +48,37 @@ type Feed struct {
 
 func ValidateFeedLink(v *validator.Validator, feedLink string) {
 	v.Check(validator.NotBlank(feedLink), "feed_link", "Feed link must not be empty")
+}
+
+// convertToTsQuery converts a search term to PostgreSQL tsquery format with prefix matching
+// Example: "life of" -> "life:* & of:*"
+func convertToTsQuery(searchTerm string) string {
+	if searchTerm == "" {
+		return ""
+	}
+
+	// Remove all non-word/number characters (keep only letters, numbers, and spaces)
+	reg := regexp.MustCompile(`[^\w\s]`)
+	cleaned := reg.ReplaceAllString(searchTerm, " ")
+
+	// Trim whitespace and split by spaces
+	trimmed := strings.TrimSpace(cleaned)
+	if trimmed == "" {
+		return ""
+	}
+
+	// Split by spaces and filter out empty strings
+	words := strings.Fields(trimmed)
+	if len(words) == 0 {
+		return ""
+	}
+
+	// Add :* to each word and join with " & "
+	for i, word := range words {
+		words[i] = word + ":*"
+	}
+
+	return strings.Join(words, " & ")
 }
 
 type FeedModel struct {
@@ -119,6 +151,9 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 		"pub_updated": "feeds.pub_updated",
 	}
 
+	// Convert the search title to tsquery format in Go
+	tsQueryTitle := convertToTsQuery(title)
+
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.image_url, feeds.pub_date,
 		feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.topic_id, feeds.language, feeds.added_by, feeds.created_at, feeds.updated_at,
@@ -127,7 +162,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 		WHERE (
 			CASE 
 				WHEN $1::text IS NULL OR $1::text = '' THEN TRUE
-				ELSE feeds.search_vector @@ to_tsquery('english', $1 || ':*')
+				ELSE feeds.search_vector @@ to_tsquery('english', $1)
 			END
 		)
 		AND (feeds.feed_link = $2 OR $2 = '')
@@ -143,7 +178,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 		ORDER BY
 			CASE 
 				WHEN $1::text IS NULL OR $1::text = '' THEN 0
-				ELSE ts_rank(feeds.search_vector, to_tsquery('english', $1 || ':*'))
+				ELSE ts_rank(feeds.search_vector, to_tsquery('english', $1))
 			END DESC,
 			%s %s,
 			feeds.id ASC
@@ -152,7 +187,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{title, feedLink, topicID, filters.limit(), filters.offset()}
+	args := []any{tsQueryTitle, feedLink, topicID, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
