@@ -1,5 +1,6 @@
 import 'package:app/core/services/analytics_service.dart';
 import 'package:app/core/theme/app_theme.dart';
+import 'package:app/core/utils/url_launcher.dart';
 import 'package:app/features/feed/presentation/widgets/web_view_draggable_bottom.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -135,6 +136,11 @@ class _WebViewState extends State<WebView> {
                         algorithmicDarkeningAllowed: true,
                         useHybridComposition: true,
                       ),
+                      shouldOverrideUrlLoading: (controller, request) async {
+                        await launchUrlInBrowser(
+                            request.request.url.toString());
+                        return NavigationActionPolicy.CANCEL;
+                      },
                       pullToRefreshController: pullToRefreshController,
                       onWebViewCreated: (controller) {
                         webViewController = controller;
