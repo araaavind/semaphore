@@ -61,7 +61,7 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64, title string, filters Filt
 		"pub_updated": "feeds.pub_updated",
 	}
 	query := fmt.Sprintf(`
-		SELECT count(*) OVER(), feeds.id, feeds.title, feeds.description, feeds.link, feeds.feed_link,
+		SELECT count(*) OVER(), feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link,
 			feeds.image_url, feeds.pub_date, feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.language
 		FROM feeds
 		INNER JOIN wall_feeds ON wall_feeds.feed_id = feeds.id
@@ -89,6 +89,7 @@ func (m WallFeedModel) FindFeedsForWall(wallID int64, title string, filters Filt
 		err := row.Scan(
 			&totalRecords,
 			&feed.ID,
+			&feed.DisplayTitle,
 			&feed.Title,
 			&feed.Description,
 			&feed.Link,
