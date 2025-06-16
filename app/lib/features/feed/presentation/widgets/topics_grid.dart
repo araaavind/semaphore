@@ -7,6 +7,7 @@ import 'package:app/features/feed/domain/entities/topic.dart';
 import 'package:app/features/feed/presentation/bloc/topics/topics_bloc.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -265,6 +266,11 @@ class _TileImage extends StatelessWidget {
               fadeInDuration: Duration(milliseconds: 100),
               memCacheWidth: (MediaQuery.of(context).size.width).toInt(),
               placeholder: (context, url) => _buildColoredTile(tileColor),
+              errorListener: (e) {
+                if (kDebugMode) {
+                  print('Error loading image: $e');
+                }
+              },
               errorWidget: (context, url, error) =>
                   _buildColoredTile(tileColor),
             ),

@@ -4,6 +4,7 @@ import 'package:app/core/utils/utils.dart';
 import 'package:app/core/common/cubits/scroll_to_top/scroll_to_top_cubit.dart';
 import 'package:app/features/feed/presentation/bloc/topics/topics_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +36,12 @@ class _HomePageState extends State<HomePage> {
               cacheKey: topic.imageUrl!,
               maxWidth: (MediaQuery.of(context).size.width).toInt(),
             );
-            await precacheImage(provider, context);
+            await precacheImage(provider, context,
+                onError: (error, stackTrace) {
+              if (kDebugMode) {
+                print(error);
+              }
+            });
             providers[topic.code] = provider;
           }
           context
