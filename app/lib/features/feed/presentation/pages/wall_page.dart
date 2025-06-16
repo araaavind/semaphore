@@ -195,12 +195,27 @@ class _WallPageState extends State<WallPage> {
               }
               if (state.status == WallStatus.failure &&
                   state.action == WallAction.list) {
-                return const Padding(
+                return Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Center(
-                    child: Text(
-                      'Unable to load posts.\nCheck your internet connection or try again later.',
-                      textAlign: TextAlign.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Unable to load posts.\nCheck your internet connection or try again later.',
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        TextButton.icon(
+                          onPressed: () {
+                            context
+                                .read<WallsBloc>()
+                                .add(ListWallsRequested(refreshItems: true));
+                          },
+                          label: const Text('Try again'),
+                          icon: Icon(MingCute.refresh_anticlockwise_line),
+                        ),
+                      ],
                     ),
                   ),
                 );
