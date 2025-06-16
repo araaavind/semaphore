@@ -19,111 +19,113 @@ class WallPageDrawer extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
       shadowColor: Colors.black.withAlpha(160),
-      child: BlocBuilder<WallsBloc, WallsState>(
-        builder: (context, state) {
-          if (state.status == WallStatus.initial) {
-            return const SizedBox.shrink();
-          } else if (state.action == WallAction.list &&
-              state.status == WallStatus.failure) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: Text('Unable to load walls'),
-              ),
+      child: SafeArea(
+        child: BlocBuilder<WallsBloc, WallsState>(
+          builder: (context, state) {
+            if (state.status == WallStatus.initial) {
+              return const SizedBox.shrink();
+            } else if (state.action == WallAction.list &&
+                state.status == WallStatus.failure) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text('Unable to load walls'),
+                ),
+              );
+            }
+            return ListView(
+              children: [
+                ExpansionTile(
+                  childrenPadding: const EdgeInsets.all(8.0),
+                  trailing: GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: context.theme.colorScheme.surfaceContainer
+                            .withAlpha(0),
+                      ),
+                      padding: const EdgeInsets.only(
+                        left: 12.0,
+                        right: 2.0,
+                        top: 12.0,
+                        bottom: 14.0,
+                      ),
+                      child: const Icon(
+                        MingCute.add_fill,
+                        size: 22,
+                      ),
+                    ),
+                    onTap: () async {
+                      context.pushNamed(
+                        RouteConstants.createWallPageName,
+                      );
+                    },
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  expansionAnimationStyle: AnimationStyle(
+                    curve: Curves.easeOut,
+                    duration: Durations.short3,
+                  ),
+                  shape: Border(
+                    bottom: BorderSide(
+                      width: 0,
+                      color: context.theme.colorScheme.outline.withAlpha(0),
+                    ),
+                  ),
+                  collapsedShape: Border(
+                    bottom: BorderSide(
+                      width: 0,
+                      color: context.theme.colorScheme.outline.withAlpha(0),
+                    ),
+                  ),
+                  initiallyExpanded: true,
+                  title: Text(
+                    'Your walls',
+                    style: context.theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  children: _buildWallTiles(state, context),
+                ),
+                ExpansionTile(
+                  trailing: GestureDetector(
+                    child: const Padding(
+                      padding: EdgeInsets.only(bottom: 2.0),
+                      child: Icon(
+                        MingCute.add_fill,
+                        size: 20,
+                      ),
+                    ),
+                    onTap: () {
+                      context.goNamed('feeds');
+                    },
+                  ),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  childrenPadding: const EdgeInsets.all(8.0),
+                  shape: Border.all(
+                    width: 0,
+                    color: context.theme.colorScheme.outline.withAlpha(0),
+                  ),
+                  collapsedShape: Border.all(
+                    width: 0,
+                    color: context.theme.colorScheme.outline.withAlpha(0),
+                  ),
+                  initiallyExpanded: true,
+                  title: Text(
+                    'Your feeds',
+                    style: context.theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  expansionAnimationStyle: AnimationStyle(
+                    curve: Curves.easeOut,
+                    duration: Durations.short3,
+                  ),
+                  children: _buildFeedTiles(state, context),
+                ),
+              ],
             );
-          }
-          return ListView(
-            children: [
-              ExpansionTile(
-                childrenPadding: const EdgeInsets.all(8.0),
-                trailing: GestureDetector(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: context.theme.colorScheme.surfaceContainer
-                          .withAlpha(0),
-                    ),
-                    padding: const EdgeInsets.only(
-                      left: 12.0,
-                      right: 2.0,
-                      top: 12.0,
-                      bottom: 14.0,
-                    ),
-                    child: const Icon(
-                      MingCute.add_fill,
-                      size: 22,
-                    ),
-                  ),
-                  onTap: () async {
-                    context.pushNamed(
-                      RouteConstants.createWallPageName,
-                    );
-                  },
-                ),
-                controlAffinity: ListTileControlAffinity.leading,
-                expansionAnimationStyle: AnimationStyle(
-                  curve: Curves.easeOut,
-                  duration: Durations.short3,
-                ),
-                shape: Border(
-                  bottom: BorderSide(
-                    width: 0,
-                    color: context.theme.colorScheme.outline.withAlpha(0),
-                  ),
-                ),
-                collapsedShape: Border(
-                  bottom: BorderSide(
-                    width: 0,
-                    color: context.theme.colorScheme.outline.withAlpha(0),
-                  ),
-                ),
-                initiallyExpanded: true,
-                title: Text(
-                  'Your walls',
-                  style: context.theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                children: _buildWallTiles(state, context),
-              ),
-              ExpansionTile(
-                trailing: GestureDetector(
-                  child: const Padding(
-                    padding: EdgeInsets.only(bottom: 2.0),
-                    child: Icon(
-                      MingCute.add_fill,
-                      size: 20,
-                    ),
-                  ),
-                  onTap: () {
-                    context.goNamed('feeds');
-                  },
-                ),
-                controlAffinity: ListTileControlAffinity.leading,
-                childrenPadding: const EdgeInsets.all(8.0),
-                shape: Border.all(
-                  width: 0,
-                  color: context.theme.colorScheme.outline.withAlpha(0),
-                ),
-                collapsedShape: Border.all(
-                  width: 0,
-                  color: context.theme.colorScheme.outline.withAlpha(0),
-                ),
-                initiallyExpanded: true,
-                title: Text(
-                  'Your feeds',
-                  style: context.theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                expansionAnimationStyle: AnimationStyle(
-                  curve: Curves.easeOut,
-                  duration: Durations.short3,
-                ),
-                children: _buildFeedTiles(state, context),
-              ),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
