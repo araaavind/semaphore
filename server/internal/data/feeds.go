@@ -156,8 +156,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 
 	query := fmt.Sprintf(`
 		SELECT count(*) OVER(), feeds.id, feeds.display_title, feeds.title, feeds.description, feeds.link, feeds.feed_link, feeds.image_url, feeds.pub_date,
-		feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.feed_format, feeds.feed_version, feeds.topic_id, feeds.language, feeds.added_by, feeds.created_at, feeds.updated_at,
-		feeds.version, feeds.last_fetch_at, feeds.last_failure_at, feeds.last_failure
+		feeds.pub_updated, feeds.feed_type, feeds.owner_type, feeds.topic_id
 		FROM feeds
 		WHERE (
 			CASE 
@@ -210,17 +209,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 			&feed.PubUpdated,
 			&feed.FeedType,
 			&feed.OwnerType,
-			&feed.FeedFormat,
-			&feed.FeedVersion,
 			&feed.TopicID,
-			&feed.Language,
-			&feed.AddedBy,
-			&feed.CreatedAt,
-			&feed.UpdatedAt,
-			&feed.Version,
-			&feed.LastFetchAt,
-			&feed.LastFailureAt,
-			&feed.LastFailure,
 		)
 		return &feed, err
 	})
