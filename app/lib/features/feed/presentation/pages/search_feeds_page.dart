@@ -36,7 +36,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   );
   final TextEditingController _searchController = TextEditingController();
   final Debouncer _debouncer = Debouncer(
-    duration: ServerConstants.debounceDuration,
+    duration: Duration(milliseconds: 500),
   );
 
   String _searchQuery = '';
@@ -49,8 +49,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
     super.initState();
     _pagingController.addPageRequestListener(
       (pageKey) {
-        print(
-            'selected topic or subtopic: ${_selectedSubtopic?.code ?? _selectedTopic?.code}');
         context.read<SearchFeedBloc>().add(
               FeedSearchRequested(
                 searchKey: 'title',
@@ -127,7 +125,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
 
   void _clearSearch() {
     _searchController.clear();
-    _onSearchChanged();
   }
 
   _searchBorder() => OutlineInputBorder(
