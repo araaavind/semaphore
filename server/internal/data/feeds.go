@@ -179,6 +179,15 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 				WHEN $1::text IS NULL OR $1::text = '' THEN 0
 				ELSE ts_rank(feeds.search_vector, to_tsquery('english', $1))
 			END DESC,
+			CASE feeds.feed_type
+				WHEN 'website' THEN 1
+				WHEN 'medium' THEN 2
+				WHEN 'substack' THEN 3
+				WHEN 'reddit' THEN 4
+				WHEN 'youtube' THEN 5
+				WHEN 'podcast' THEN 6
+				ELSE 7
+			END ASC,
 			%s %s,
 			feeds.id ASC
 		LIMIT $4 OFFSET $5`, filters.sortColumn(sortColMap), filters.sortDirection())
