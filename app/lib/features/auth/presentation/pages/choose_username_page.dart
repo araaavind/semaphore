@@ -96,7 +96,7 @@ class _ChooseUsernamePageState extends State<ChooseUsernamePage> {
                   const _TitleTextSpan(),
                   const SizedBox(height: 20),
                   AppTextField(
-                    hintText: 'Username',
+                    hintText: 'username',
                     controller: usernameController,
                     keyboardType: TextInputType.name,
                     errorMaxLines: 2,
