@@ -37,14 +37,9 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/activation", app.createActivationToken)
 	router.HandlerFunc(http.MethodPost, "/v1/tokens/password-reset", app.createPasswordResetToken)
 
-	router.HandlerFunc(http.MethodGet, "/v1/feeds", app.listFeeds)
-	router.HandlerFunc(http.MethodGet, "/v1/feeds/:feed_id", app.getFeed)
-
-	router.HandlerFunc(http.MethodGet, "/v1/topics", app.listTopicsWithCache)
-
-	router.HandlerFunc(http.MethodGet, "/v1/youtube/channel", app.getYouTubeChannelID)
-
 	authenticated := alice.New(app.requireAuthentication)
+
+	router.Handler(http.MethodGet, "/v1/topics", authenticated.ThenFunc(app.listTopicsWithCache))
 
 	router.Handler(http.MethodPut, "/v1/users/username", authenticated.ThenFunc(app.updateUsername))
 
@@ -59,6 +54,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/me/items/saved", authenticated.ThenFunc(app.listSavedItemsHandler))
 	router.Handler(http.MethodGet, "/v1/me/items/liked", authenticated.ThenFunc(app.listLikedItemsHandler))
 
+	router.Handler(http.MethodGet, "/v1/feeds", authenticated.ThenFunc(app.listFeeds))
+	router.Handler(http.MethodGet, "/v1/feeds/:feed_id", authenticated.ThenFunc(app.getFeed))
 	router.Handler(http.MethodGet, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.listFollowersForFeed))
 	router.Handler(http.MethodPut, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission(data.PermissionFeedsFollow, app.followFeed)))
 	router.Handler(http.MethodDelete, "/v1/feeds/:feed_id/followers", authenticated.ThenFunc(app.requirePermission(data.PermissionFeedsFollow, app.unfollowFeed)))
@@ -76,6 +73,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/v1/items/:id/like_count", authenticated.ThenFunc(app.getLikeCountHandler))
 
 	activated := authenticated.Append(app.requireActivation)
+
+	router.Handler(http.MethodGet, "/v1/youtube/channel", activated.ThenFunc(app.getYouTubeChannelID))
 
 	router.Handler(http.MethodPost, "/v1/walls", activated.ThenFunc(app.createWall))
 	router.Handler(http.MethodPut, "/v1/walls/:wall_id", activated.ThenFunc(app.updateWall))
