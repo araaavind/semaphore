@@ -188,6 +188,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 				WHEN 'podcast' THEN 6
 				ELSE 7
 			END ASC,
+			feeds.followers_count DESC,
 			%s %s,
 			feeds.id ASC
 		LIMIT $4 OFFSET $5`, filters.sortColumn(sortColMap), filters.sortDirection())
