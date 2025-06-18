@@ -148,7 +148,7 @@ class _TitleTextSpan extends StatelessWidget {
       text: TextSpan(
         text: 'create a new ',
         style: context.theme.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w100,
+          fontWeight: FontWeight.w200,
         ),
         children: [
           TextSpan(

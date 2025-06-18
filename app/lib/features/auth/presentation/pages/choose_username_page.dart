@@ -219,7 +219,7 @@ class _TitleTextSpan extends StatelessWidget {
       text: TextSpan(
         text: 'Pick a ',
         style: context.theme.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w100,
+          fontWeight: FontWeight.w200,
         ),
         children: [
           TextSpan(
@@ -231,7 +231,7 @@ class _TitleTextSpan extends StatelessWidget {
           TextSpan(
             text: 'username',
             style: context.theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w100,
+              fontWeight: FontWeight.w200,
             ),
           ),
         ],

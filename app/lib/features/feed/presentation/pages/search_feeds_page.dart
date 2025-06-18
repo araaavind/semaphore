@@ -664,7 +664,7 @@ class TitleTextSpan extends StatelessWidget {
         Text(
           'Follow the feeds that interest you',
           style: context.theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w100,
+            fontWeight: FontWeight.w200,
             color: context.theme.colorScheme.primary,
           ),
         ),

@@ -184,7 +184,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
       text: TextSpan(
         text: 'Add a new',
         style: context.theme.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w100,
+          fontWeight: FontWeight.w200,
         ),
         children: [
           TextSpan(
@@ -199,7 +199,7 @@ class _AddFeedPageState extends State<AddFeedPage> {
           TextSpan(
             text: ' feed',
             style: context.theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w100,
+              fontWeight: FontWeight.w200,
             ),
           ),
         ],

@@ -91,7 +91,7 @@ class _WallEditPageState extends State<WallEditPage> {
                   TextSpan(
                     text: '\n\n(This action cannot be undone.)',
                     style: context.theme.textTheme.bodySmall!.copyWith(
-                      fontWeight: FontWeight.w100,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ],

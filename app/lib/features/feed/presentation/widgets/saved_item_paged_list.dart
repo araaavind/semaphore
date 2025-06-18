@@ -216,7 +216,7 @@ class _SavedItemPagedListState extends State<SavedItemPagedList> {
                                           '\n\n(This action cannot be undone.)',
                                       style: context.theme.textTheme.bodySmall!
                                           .copyWith(
-                                        fontWeight: FontWeight.w100,
+                                        fontWeight: FontWeight.w300,
                                       ),
                                     ),
                                   ],

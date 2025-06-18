@@ -367,7 +367,7 @@ class TitleTextSpan extends StatelessWidget {
             text: TextSpan(
               text: 'dive in to ',
               style: context.theme.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.w100,
+                fontWeight: FontWeight.w200,
               ),
               children: [
                 TextSpan(
@@ -385,7 +385,7 @@ class TitleTextSpan extends StatelessWidget {
               Text(
                 TextConstants.onboardingLoginPageMessage1,
                 style: context.theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w100,
+                  fontWeight: FontWeight.w200,
                   color: context.theme.colorScheme.primary,
                 ),
               ),

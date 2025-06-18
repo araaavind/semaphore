@@ -55,7 +55,7 @@ class _SignupPageState extends State<SignupPage> {
                       text: TextSpan(
                         text: 'join ',
                         style: context.theme.textTheme.displaySmall?.copyWith(
-                          fontWeight: FontWeight.w100,
+                          fontWeight: FontWeight.w200,
                         ),
                         children: [
                           TextSpan(
