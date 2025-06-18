@@ -1,4 +1,5 @@
 import 'package:app/core/constants/constants.dart';
+import 'package:app/core/theme/app_palette.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/core/utils/utils.dart';
 import 'package:app/features/feed/domain/entities/feed.dart';
@@ -55,6 +56,59 @@ class _FeedListTileState extends State<FeedListTile> {
     }
     // Convert HTML to plain text
     final plainTextDescription = HtmlUtils.htmlToPlainText(feed.description);
+
+    Icon feedTypeIcon;
+    Color feedTypeIconColor;
+    switch (feed.feedType) {
+      case FeedType.website:
+        feedTypeIcon = Icon(
+          Icons.public,
+          size: 14,
+          color: context.theme.colorScheme.onSurface,
+        );
+        feedTypeIconColor = context.theme.colorScheme.surface;
+        break;
+      case FeedType.youtube:
+        feedTypeIcon = Icon(
+          MingCute.youtube_line,
+          size: 14,
+          color: Colors.white,
+        );
+        feedTypeIconColor = AppPalette.youtubeRed;
+        break;
+      case FeedType.medium:
+        feedTypeIcon = Icon(
+          MingCute.medium_line,
+          size: 14,
+          color: Colors.black,
+        );
+        feedTypeIconColor = AppPalette.surface;
+        break;
+      case FeedType.reddit:
+        feedTypeIcon = Icon(
+          MingCute.reddit_fill,
+          size: 14,
+          color: Colors.white,
+        );
+        feedTypeIconColor = AppPalette.redditOrange;
+        break;
+      case FeedType.substack:
+        feedTypeIcon = Icon(
+          SimpleIcons.substack,
+          size: 12,
+          color: Colors.white,
+        );
+        feedTypeIconColor = AppPalette.substackOrange;
+        break;
+      default:
+        feedTypeIcon = Icon(
+          Icons.public,
+          size: 14,
+          color: Colors.white,
+        );
+        feedTypeIconColor = context.theme.colorScheme.surface;
+    }
+
     return ListTile(
       visualDensity: VisualDensity.standard,
       onTap: () {
@@ -100,50 +154,72 @@ class _FeedListTileState extends State<FeedListTile> {
             )
           : null,
       horizontalTitleGap: UIConstants.tileHorizontalTitleGap,
-      leading: Container(
-        width: 36.0,
-        height: 36.0,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(25),
-              blurRadius: 1,
-              spreadRadius: 0,
-              offset: const Offset(0.2, 0.2),
+      leading: SizedBox(
+        width: feed.feedType != FeedType.website ? 38.0 : 36.0,
+        height: feed.feedType != FeedType.website ? 38.0 : 36.0,
+        child: Stack(
+          children: [
+            Container(
+              width: 36.0,
+              height: 36.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(25),
+                    blurRadius: 1,
+                    spreadRadius: 0,
+                    offset: const Offset(0.2, 0.2),
+                  ),
+                ],
+              ),
+              child: feed.imageUrl != null
+                  ? CachedNetworkImage(
+                      imageUrl: feed.imageUrl ?? '',
+                      fit: BoxFit.contain,
+                      cacheKey: feed.imageUrl,
+                      memCacheWidth: 36,
+                      maxWidthDiskCache: 36,
+                      errorListener: (e) {
+                        if (kDebugMode) {
+                          print('Error loading image: $e');
+                        }
+                      },
+                      placeholder: (context, url) => Icon(
+                        Icons.public,
+                        size: 24,
+                        color: context.theme.colorScheme.primaryContainer,
+                      ),
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.public,
+                        size: 24,
+                        color: context.theme.colorScheme.primaryContainer,
+                      ),
+                    )
+                  : Icon(
+                      MingCute.rss_2_line,
+                      size: 24,
+                      color: context.theme.colorScheme.primaryContainer,
+                    ),
             ),
+            if (feed.feedType != FeedType.website)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: feedTypeIconColor,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: feedTypeIcon,
+                ),
+              ),
           ],
         ),
-        child: feed.imageUrl != null
-            ? CachedNetworkImage(
-                imageUrl: feed.imageUrl ?? '',
-                fit: BoxFit.contain,
-                cacheKey: feed.imageUrl,
-                memCacheWidth: 36,
-                maxWidthDiskCache: 36,
-                errorListener: (e) {
-                  if (kDebugMode) {
-                    print('Error loading image: $e');
-                  }
-                },
-                placeholder: (context, url) => Icon(
-                  Icons.public,
-                  size: 24,
-                  color: context.theme.colorScheme.primaryContainer,
-                ),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.public,
-                  size: 24,
-                  color: context.theme.colorScheme.primaryContainer,
-                ),
-              )
-            : Icon(
-                MingCute.rss_2_line,
-                size: 24,
-                color: context.theme.colorScheme.primaryContainer,
-              ),
       ),
       trailing: BlocConsumer<FollowFeedBloc, FollowFeedState>(
         listener: (context, state) {
