@@ -199,6 +199,11 @@ func main() {
 		app.KeepFeedsFresh()
 	})
 
+	// Start the feed followers count updater in the background
+	app.background(func() {
+		app.UpdateFollowersCount()
+	})
+
 	// Start the tokens cleanup in the background
 	app.background(func() {
 		app.CleanupTokens()

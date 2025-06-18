@@ -8,7 +8,7 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-func CopyItemsFields(parsedFeed *gofeed.Feed, feedID int64) (items []*data.Item) {
+func copyItemsFields(parsedFeed *gofeed.Feed, feedID int64) (items []*data.Item) {
 	for _, parsedItem := range parsedFeed.Items {
 		item := &data.Item{}
 		item.Title = parsedItem.Title

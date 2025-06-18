@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/aravindmathradan/semaphore/internal/data"
@@ -11,6 +12,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/mmcdole/gofeed"
 )
+
+var feedUpdateMutex sync.Mutex
 
 func (app *application) getFeed(w http.ResponseWriter, r *http.Request) {
 	id, err := app.readIDParam(r, "feed_id")
@@ -98,7 +101,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CopyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
+func copyFeedFields(feed *data.Feed, parsedFeed *gofeed.Feed, feedLink string) {
 	feed.Title = parsedFeed.Title
 	feed.Description = parsedFeed.Description
 	feed.Link = parsedFeed.Link
@@ -193,5 +196,28 @@ func (app *application) listItemsForFeed(w http.ResponseWriter, r *http.Request)
 	err = app.writeJSON(w, http.StatusOK, envelope{"items": items, "metadata": metadata}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
+	}
+}
+
+func (app *application) UpdateFollowersCount() {
+	for {
+		select {
+		case <-app.ctx.Done():
+			return
+		default:
+			timer := time.NewTimer(24 * time.Hour)
+			select {
+			case <-app.ctx.Done():
+				timer.Stop()
+				return
+			case <-timer.C:
+				feedUpdateMutex.Lock()
+				err := app.models.Feeds.UpdateFollowersCount()
+				feedUpdateMutex.Unlock()
+				if err != nil {
+					app.logInternalError("app.models.Feeds.UpdateFollowersCount failed", err)
+				}
+			}
+		}
 	}
 }

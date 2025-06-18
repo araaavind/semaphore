@@ -13,43 +13,46 @@ func (app *application) KeepFeedsFresh() {
 		case <-app.ctx.Done():
 			return
 		default:
-			startTime := time.Now()
-			staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(startTime.Add(-1 * app.config.refresher.refreshStaleFeedsSince))
-			if err != nil {
-				app.logInternalError("app.models.Feeds.GetUncheckedFeedsSince failed", err)
-				return
-			}
+			timer := time.NewTimer(app.config.refresher.refreshPeriod)
 
-			staleFeedsChan := make(chan *data.Feed)
-			finishChan := make(chan bool)
-
-			refreshWorker := func() {
-				for feed := range staleFeedsChan {
-					app.RefreshFeed(feed)
-				}
-				finishChan <- true
-			}
-
-			for range app.config.refresher.maxConcurrentRefreshes {
-				app.background(refreshWorker)
-			}
-
-			for _, feed := range staleFeeds {
-				staleFeedsChan <- feed
-			}
-			close(staleFeedsChan)
-
-			for range app.config.refresher.maxConcurrentRefreshes {
-				<-finishChan
-			}
-
-			timer := time.NewTimer(time.Until(startTime.Add(app.config.refresher.refreshPeriod)))
 			select {
 			case <-app.ctx.Done():
 				timer.Stop()
 				return
 			case <-timer.C:
-				// Continure with the next iteration
+				// Lock or wait for the lock to be available if it's locked by feed followers count updater
+				feedUpdateMutex.Lock()
+
+				staleFeeds, err := app.models.Feeds.GetUncheckedFeedsSince(time.Now().Add(-1 * app.config.refresher.refreshStaleFeedsSince))
+				if err != nil {
+					app.logInternalError("app.models.Feeds.GetUncheckedFeedsSince failed", err)
+					return
+				}
+
+				staleFeedsChan := make(chan *data.Feed)
+				finishChan := make(chan bool)
+
+				refreshWorker := func() {
+					for feed := range staleFeedsChan {
+						app.RefreshFeed(feed)
+					}
+					finishChan <- true
+				}
+
+				for range app.config.refresher.maxConcurrentRefreshes {
+					app.background(refreshWorker)
+				}
+
+				for _, feed := range staleFeeds {
+					staleFeedsChan <- feed
+				}
+				close(staleFeedsChan)
+
+				for range app.config.refresher.maxConcurrentRefreshes {
+					<-finishChan
+				}
+
+				feedUpdateMutex.Unlock()
 			}
 		}
 	}
@@ -73,7 +76,7 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		return
 	}
 
-	items := CopyItemsFields(parsedFeed, feed.ID)
+	items := copyItemsFields(parsedFeed, feed.ID)
 	err = app.models.Items.UpsertMany(items)
 	if err != nil {
 		app.logInternalError("app.models.Items.UpsertMany failed", err)
@@ -88,7 +91,7 @@ func (app *application) RefreshFeed(feed *data.Feed) {
 		return
 	}
 
-	CopyFeedFields(feed, parsedFeed, feed.FeedLink)
+	copyFeedFields(feed, parsedFeed, feed.FeedLink)
 	err = app.models.Feeds.Update(feed)
 	if err != nil {
 		app.logInternalError("app.models.Feeds.Update() failed", err)

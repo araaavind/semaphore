@@ -162,7 +162,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 			}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.
-				CopyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
+				copyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
 			} else {
 				ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 				defer cancel()
@@ -170,16 +170,16 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 				parsedSelfFeed, err := app.parser.ParseURLWithContext(parsedFeed.FeedLink, ctx)
 				if err != nil {
 					// if the 'self' link of parsed feed is invalid, insert the parsed feed of input link to DB
-					CopyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
+					copyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
 				} else {
 					if parsedSelfFeed.UpdatedParsed != nil &&
 						parsedFeed.UpdatedParsed != nil &&
 						parsedSelfFeed.UpdatedParsed.Before(*parsedFeed.UpdatedParsed) {
 						// if the 'self' link of parsed feed is valid but not latest, insert the parsed feed of input link to DB
-						CopyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
+						copyFeedFields(feedToFollow, parsedFeed, input.FeedLink)
 					} else {
 						// if the 'self' link of parsed feed is valid and latest, insert the parsed feed of 'self' link to DB
-						CopyFeedFields(feedToFollow, parsedSelfFeed, parsedSelfFeed.FeedLink)
+						copyFeedFields(feedToFollow, parsedSelfFeed, parsedSelfFeed.FeedLink)
 					}
 				}
 			}

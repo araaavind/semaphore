@@ -479,3 +479,28 @@ func (m FeedModel) UpdateFailureStatus(feed *Feed) error {
 	}
 	return nil
 }
+
+func (m FeedModel) UpdateFollowersCount() error {
+	query := `
+		UPDATE feeds
+		SET followers_count = COALESCE(subquery.count, 0),
+			version = version + 1,
+			updated_at = NOW()
+		FROM (
+			SELECT feeds.id, COUNT(feed_follows.user_id) AS count
+			FROM feeds
+			LEFT JOIN feed_follows ON feeds.id = feed_follows.feed_id
+			GROUP BY feeds.id
+		) AS subquery
+		WHERE feeds.id = subquery.id`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	_, err := m.DB.Exec(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
