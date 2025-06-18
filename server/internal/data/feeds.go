@@ -21,29 +21,31 @@ var (
 )
 
 type Feed struct {
-	ID            int64              `json:"id"`
-	DisplayTitle  pgtype.Text        `json:"display_title,omitempty"`
-	Title         string             `json:"title"`
-	Description   string             `json:"description"`
-	Link          string             `json:"link"`
-	FeedLink      string             `json:"feed_link"`
-	ImageURL      pgtype.Text        `json:"image_url,omitempty"`
-	PubDate       time.Time          `json:"pub_date,omitempty"`
-	PubUpdated    time.Time          `json:"pub_updated,omitempty"`
-	FeedType      string             `json:"feed_type,omitempty"`
-	OwnerType     string             `json:"owner_type,omitempty"`
-	FeedFormat    string             `json:"feed_format,omitempty"`
-	FeedVersion   string             `json:"feed_version,omitempty"`
-	TopicID       pgtype.Int8        `json:"topic_id,omitempty"`
-	Language      string             `json:"language,omitempty"`
-	Version       int32              `json:"version,omitempty"`
-	AddedBy       pgtype.Int8        `json:"added_by,omitempty"`
-	LastFetchAt   pgtype.Timestamptz `json:"last_fetch_at,omitempty"`
-	LastFailure   pgtype.Text        `json:"last_failure,omitempty"`
-	LastFailureAt pgtype.Timestamptz `json:"last_failure_at,omitempty"`
-	FailureCount  int32              `json:"failure_count,omitempty"`
-	CreatedAt     *time.Time         `json:"created_at,omitempty"`
-	UpdatedAt     *time.Time         `json:"updated_at,omitempty"`
+	ID             int64              `json:"id"`
+	DisplayTitle   pgtype.Text        `json:"display_title,omitempty"`
+	Title          string             `json:"title"`
+	Description    string             `json:"description"`
+	Link           string             `json:"link"`
+	FeedLink       string             `json:"feed_link"`
+	ImageURL       pgtype.Text        `json:"image_url,omitempty"`
+	PubDate        time.Time          `json:"pub_date,omitempty"`
+	PubUpdated     time.Time          `json:"pub_updated,omitempty"`
+	FeedType       string             `json:"feed_type,omitempty"`
+	OwnerType      string             `json:"owner_type,omitempty"`
+	FeedFormat     string             `json:"feed_format,omitempty"`
+	FeedVersion    string             `json:"feed_version,omitempty"`
+	TopicID        pgtype.Int8        `json:"topic_id,omitempty"`
+	Language       string             `json:"language,omitempty"`
+	Version        int32              `json:"version,omitempty"`
+	AddedBy        pgtype.Int8        `json:"added_by,omitempty"`
+	LastFetchAt    pgtype.Timestamptz `json:"last_fetch_at,omitempty"`
+	LastFailure    pgtype.Text        `json:"last_failure,omitempty"`
+	LastFailureAt  pgtype.Timestamptz `json:"last_failure_at,omitempty"`
+	FailureCount   int32              `json:"failure_count,omitempty"`
+	CreatedAt      *time.Time         `json:"created_at,omitempty"`
+	UpdatedAt      *time.Time         `json:"updated_at,omitempty"`
+	FollowersCount int                `json:"followers_count,omitempty"`
+	IsVerified     bool               `json:"is_verified,omitempty"`
 }
 
 func ValidateFeedLink(v *validator.Validator, feedLink string) {
@@ -89,8 +91,8 @@ func (m FeedModel) Insert(feed *Feed) error {
 	query := `
 		INSERT INTO feeds (display_title, title, description, link, feed_link, image_url, pub_date, pub_updated,
 			feed_type, owner_type, feed_format, feed_version, topic_id, language, added_by,
-			last_fetch_at, last_failure_at, last_failure)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+			last_fetch_at, last_failure_at, last_failure, is_verified)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 		RETURNING id, created_at, updated_at, version`
 
 	if feed.FeedType == "" {
@@ -120,6 +122,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 		feed.LastFetchAt,
 		feed.LastFailureAt,
 		feed.LastFailure,
+		feed.IsVerified,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -143,7 +146,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 	return nil
 }
 
-func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters Filters) ([]*Feed, Metadata, error) {
+func (m FeedModel) FindAll(title, feedLink string, topicID int64, addedBy pgtype.Int8, filters Filters) ([]*Feed, Metadata, error) {
 	sortColMap := sortColumnMapping{
 		"id":          "feeds.id",
 		"title":       "feeds.title",
@@ -174,6 +177,7 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 			)
 			OR $3 = -1
 		)
+		AND (feeds.is_verified = TRUE OR feeds.added_by = $4)
 		ORDER BY
 			CASE 
 				WHEN $1::text IS NULL OR $1::text = '' THEN 0
@@ -191,12 +195,12 @@ func (m FeedModel) FindAll(title string, feedLink string, topicID int64, filters
 			feeds.followers_count DESC,
 			%s %s,
 			feeds.id ASC
-		LIMIT $4 OFFSET $5`, filters.sortColumn(sortColMap), filters.sortDirection())
+		LIMIT $5 OFFSET $6`, filters.sortColumn(sortColMap), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{tsQueryTitle, feedLink, topicID, filters.limit(), filters.offset()}
+	args := []any{tsQueryTitle, feedLink, topicID, addedBy, filters.limit(), filters.offset()}
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -286,9 +290,8 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 	}
 
 	query := `
-		SELECT id, display_title, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type, owner_type, feed_format,
-		feed_version, topic_id, language, added_by, created_at, updated_at, version, last_fetch_at,
-		last_failure_at, last_failure
+		SELECT id, display_title, title, description, link, feed_link, image_url, pub_date, pub_updated, feed_type, owner_type,
+		topic_id, version, last_fetch_at, last_failure_at
 		FROM feeds WHERE id = $1`
 
 	var feed Feed
@@ -308,17 +311,10 @@ func (m FeedModel) FindByID(id int64) (*Feed, error) {
 		&feed.PubUpdated,
 		&feed.FeedType,
 		&feed.OwnerType,
-		&feed.FeedFormat,
-		&feed.FeedVersion,
 		&feed.TopicID,
-		&feed.Language,
-		&feed.AddedBy,
-		&feed.CreatedAt,
-		&feed.UpdatedAt,
 		&feed.Version,
 		&feed.LastFetchAt,
 		&feed.LastFailureAt,
-		&feed.LastFailure,
 	)
 	if err != nil {
 		switch {
@@ -353,8 +349,9 @@ func (m FeedModel) Update(feed *Feed) error {
 			last_fetch_at = COALESCE($15, last_fetch_at),
 			last_failure_at = COALESCE($16, last_failure_at), 
 			last_failure = COALESCE($17, last_failure), 
+			is_verified = $18,
 			version = version + 1
-		WHERE id = $18 AND version = $19
+		WHERE id = $19 AND version = $20
 		RETURNING updated_at, version`
 
 	args := []any{
@@ -375,6 +372,7 @@ func (m FeedModel) Update(feed *Feed) error {
 		feed.LastFetchAt,
 		feed.LastFailureAt,
 		feed.LastFailure,
+		feed.IsVerified,
 		feed.ID,
 		feed.Version,
 	}
@@ -420,7 +418,7 @@ func (m FeedModel) DeleteByID(id int64) error {
 
 func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 	query := `
-		SELECT id, feed_link, display_title, feed_type, owner_type, topic_id, version
+		SELECT id, feed_link, display_title, feed_type, owner_type, topic_id, version, is_verified
 		FROM feeds
 		WHERE GREATEST(last_fetch_at, last_failure_at, '-Infinity'::timestamptz) < $1`
 
@@ -442,6 +440,7 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 			&feed.OwnerType,
 			&feed.TopicID,
 			&feed.Version,
+			&feed.IsVerified,
 		)
 		return &feed, err
 	})

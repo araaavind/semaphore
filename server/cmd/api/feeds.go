@@ -65,7 +65,14 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	feeds, metadata, err := app.models.Feeds.FindAll(input.Title, input.FeedLink, input.TopicID, input.Filters)
+	user := app.contextGetSession(r).User
+	addedBy := pgtype.Int8{}
+	if !user.IsAnonymous() {
+		addedBy.Int64 = user.ID
+		addedBy.Valid = true
+	}
+
+	feeds, metadata, err := app.models.Feeds.FindAll(input.Title, input.FeedLink, input.TopicID, addedBy, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

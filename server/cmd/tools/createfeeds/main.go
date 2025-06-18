@@ -173,6 +173,7 @@ func processFeed(parser *gofeed.Parser, fr feedRow, topics map[string]data.Topic
 		existingFeed.OwnerType = fr.ownerType
 		existingFeed.TopicID = topicID
 		existingFeed.Link = fr.websiteLink
+		existingFeed.IsVerified = true
 
 		err = models.Feeds.Update(existingFeed)
 		if err != nil {
@@ -224,6 +225,7 @@ func processFeed(parser *gofeed.Parser, fr feedRow, topics map[string]data.Topic
 		OwnerType:    fr.ownerType,
 		TopicID:      topicID,
 		LastFetchAt:  pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		IsVerified:   true,
 	}
 
 	if parsedFeed.Image != nil && parsedFeed.Image.URL != "" {
