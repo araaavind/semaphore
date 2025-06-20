@@ -547,7 +547,6 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
         ),
       ],
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: context.theme.colorScheme.surfaceContainer.withAlpha(0),
         statusBarIconBrightness: context.theme.brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,

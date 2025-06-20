@@ -229,7 +229,7 @@ class _WallEditPageState extends State<WallEditPage> {
                             ),
                           ),
                           padding:
-                              const EdgeInsets.only(bottom: 40.0, top: 20.0),
+                              const EdgeInsets.only(bottom: 80.0, top: 20.0),
                           child: Button(
                             text: 'Done',
                             width: 120,
@@ -323,7 +323,7 @@ class _WallEditPageState extends State<WallEditPage> {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20.0),
+        padding: const EdgeInsets.only(bottom: 40.0),
         child: AppPagedList(
           pagingController: _pagingController,
           listType: PagedListType.list,
