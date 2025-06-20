@@ -96,7 +96,7 @@ class WallPageDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      context.goNamed('feeds');
+                      context.goNamed(RouteConstants.searchFeedsPageName);
                     },
                   ),
                   controlAffinity: ListTileControlAffinity.leading,

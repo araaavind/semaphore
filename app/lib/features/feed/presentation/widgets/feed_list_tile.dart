@@ -100,6 +100,14 @@ class _FeedListTileState extends State<FeedListTile> {
         );
         feedTypeIconColor = AppPalette.substackOrange;
         break;
+      case FeedType.podcast:
+        feedTypeIcon = Icon(
+          MdiIcons.podcast,
+          size: 14,
+          color: Colors.white,
+        );
+        feedTypeIconColor = AppPalette.surface;
+        break;
       default:
         feedTypeIcon = Icon(
           Icons.public,
