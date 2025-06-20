@@ -36,7 +36,7 @@ java {
 android {
     namespace = "io.smphr.app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.0.12916984"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
