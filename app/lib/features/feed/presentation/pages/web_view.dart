@@ -41,6 +41,23 @@ class _WebViewState extends State<WebView> {
 
   final List<ContentBlocker> contentBlockers = [];
 
+  String _upgradeUrlToHttpsIfNeeded(String url) {
+    final uri = Uri.parse(url);
+    if (uri.scheme == 'http') {
+      // CHORE: Add a whitelist of domains that you know support HTTPS
+      // For now, we'll just try HTTPS for most domains except localhost/IP addresses
+      final isLocalhost = uri.host == 'localhost' ||
+          uri.host.startsWith('192.168.') ||
+          uri.host.startsWith('10.') ||
+          uri.host.startsWith('127.');
+
+      if (!isLocalhost) {
+        return url.replaceFirst('http://', 'https://');
+      }
+    }
+    return url;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -130,11 +147,15 @@ class _WebViewState extends State<WebView> {
                   Expanded(
                     child: InAppWebView(
                       key: webViewKey,
-                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                      initialUrlRequest: URLRequest(
+                        url: WebUri(_upgradeUrlToHttpsIfNeeded(widget.url)),
+                      ),
                       initialSettings: InAppWebViewSettings(
                         // contentBlockers: contentBlockers,
                         algorithmicDarkeningAllowed: true,
                         useHybridComposition: true,
+                        mixedContentMode:
+                            MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
                       ),
                       shouldOverrideUrlLoading: (controller, request) async {
                         await launchUrlInBrowser(
