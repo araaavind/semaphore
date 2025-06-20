@@ -118,7 +118,7 @@ func (app *application) checkIfUserFollowsFeeds(w http.ResponseWriter, r *http.R
 }
 
 func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request) {
-	user := app.contextGetSession(r).User
+	session := app.contextGetSession(r)
 
 	var input struct {
 		FeedLink string `json:"feed_link"`
@@ -158,7 +158,10 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 			// If the link provided by user or the 'self' link of parsed Feed is not present in DB,
 			// check if the 'self' link of the parsed feed is same as the link provided by the user.
 			feedToFollow = &data.Feed{
-				AddedBy: pgtype.Int8{Int64: user.ID, Valid: true},
+				AddedBy: pgtype.Int8{Int64: session.User.ID, Valid: true},
+			}
+			if session.IsAdmin {
+				feedToFollow.IsVerified = true
 			}
 			if parsedFeed.FeedLink == input.FeedLink {
 				//If they are same, insert the parsed feed into DB.
@@ -196,7 +199,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 
 	feedFollow := &data.FeedFollow{
 		FeedID: feedToFollow.ID,
-		UserID: user.ID,
+		UserID: session.User.ID,
 	}
 	err = app.models.FeedFollows.Insert(feedFollow)
 	if err != nil {
@@ -210,7 +213,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
-	wall, err := app.models.Walls.FindPrimaryWallForUser(user.ID)
+	wall, err := app.models.Walls.FindPrimaryWallForUser(session.User.ID)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
