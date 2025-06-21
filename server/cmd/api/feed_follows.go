@@ -122,6 +122,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 
 	var input struct {
 		FeedLink string `json:"feed_link"`
+		FeedType string `json:"feed_type"`
 	}
 
 	err := app.readJSON(w, r, &input)
@@ -131,6 +132,17 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 	}
 
 	v := validator.New()
+
+	if input.FeedType != "" {
+		data.ValidateFeedType(v, input.FeedType)
+		if !v.Valid() {
+			app.failedValidationResponse(w, r, v.Errors)
+			return
+		}
+	}
+	if input.FeedType == "" {
+		input.FeedType = "website"
+	}
 
 	if data.ValidateFeedLink(v, input.FeedLink); !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
@@ -186,6 +198,7 @@ func (app *application) addAndFollowFeed(w http.ResponseWriter, r *http.Request)
 					}
 				}
 			}
+			feedToFollow.FeedType = input.FeedType
 			err = app.models.Feeds.Insert(feedToFollow)
 			if err != nil {
 				app.serverErrorResponse(w, r, err)

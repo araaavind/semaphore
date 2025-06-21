@@ -96,7 +96,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 		INSERT INTO feeds (display_title, title, description, link, feed_link, image_url, pub_date, pub_updated,
 			feed_type, owner_type, feed_format, feed_version, topic_id, language, added_by,
 			last_fetch_at, last_failure_at, last_failure, is_verified)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, )
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 		RETURNING id, created_at, updated_at, version`
 
 	if feed.FeedType == "" {
