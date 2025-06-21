@@ -17,9 +17,10 @@ class FollowUnfollowRequested extends FollowFeedEvent {
 
 class AddFollowRequested extends FollowFeedEvent {
   final String feedUrl;
+  final String? feedType;
 
-  AddFollowRequested(this.feedUrl);
+  AddFollowRequested(this.feedUrl, {this.feedType});
 
   @override
-  List<Object?> get props => [feedUrl];
+  List<Object?> get props => [feedUrl, feedType];
 }

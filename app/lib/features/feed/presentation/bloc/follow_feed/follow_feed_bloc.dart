@@ -86,7 +86,10 @@ class AddFollowFeedBloc extends Bloc<FollowFeedEvent, AddFollowFeedState> {
     Emitter<AddFollowFeedState> emit,
   ) async {
     emit(state.copyWith(status: FollowFeedStatus.loading));
-    final result = await _addFollowFeed(event.feedUrl);
+    final result = await _addFollowFeed(AddFollowFeedParams(
+      feedUrl: event.feedUrl,
+      feedType: event.feedType,
+    ));
     switch (result) {
       case Left(value: final failure):
         emit(state.copyWith(

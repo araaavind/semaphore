@@ -24,7 +24,7 @@ abstract interface class FeedRemoteDatasource {
     String? sortKey,
   });
 
-  Future<int> addAndFollowFeed(String feedUrl);
+  Future<int> addAndFollowFeed(String feedUrl, String? feedType);
 
   Future<void> followFeed(int feedId);
 
@@ -174,12 +174,13 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
   }
 
   @override
-  Future<int> addAndFollowFeed(String feedUrl) async {
+  Future<int> addAndFollowFeed(String feedUrl, String? feedType) async {
     try {
       final response = await semaphoreClient.dio.post(
         '/feeds',
         data: {
           'feed_link': feedUrl,
+          'feed_type': feedType != null ? feedType : '',
         },
       );
       return response.data['feed_id'] as int;

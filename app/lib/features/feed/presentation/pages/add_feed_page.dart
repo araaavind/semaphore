@@ -151,7 +151,10 @@ class _AddFeedPageState extends State<AddFeedPage> {
                                                 .read<AddFollowFeedBloc>()
                                                 .add(
                                                   AddFollowRequested(
-                                                      formattedURL),
+                                                    formattedURL,
+                                                    feedType: selectedFeedType
+                                                        .feedType,
+                                                  ),
                                                 );
                                           }
                                         } catch (e) {

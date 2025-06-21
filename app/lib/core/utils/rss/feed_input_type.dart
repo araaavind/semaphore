@@ -24,6 +24,21 @@ extension FeedTypeExtension on FeedInputType {
     }
   }
 
+  String get feedType {
+    switch (this) {
+      case FeedInputType.url:
+        return 'website';
+      case FeedInputType.subreddit:
+        return 'reddit';
+      case FeedInputType.medium:
+        return 'medium';
+      case FeedInputType.substack:
+        return 'substack';
+      case FeedInputType.youtube:
+        return 'youtube';
+    }
+  }
+
   String get hintText {
     switch (this) {
       case FeedInputType.url:
