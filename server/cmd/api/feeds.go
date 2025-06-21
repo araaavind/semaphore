@@ -45,6 +45,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 		Title    string
 		FeedLink string
 		TopicID  int64
+		FeedType string
 		data.Filters
 	}
 
@@ -55,6 +56,7 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 	input.Title = app.readString(qs, "title", "")
 	input.FeedLink = app.readString(qs, "feed_link", "")
 	input.TopicID = int64(app.readInt(qs, "topic_id", -1, v))
+	input.FeedType = app.readString(qs, "feed_type", "")
 	input.Page = app.readInt(qs, "page", 1, v)
 	input.PageSize = app.readInt(qs, "page_size", 16, v)
 	input.Sort = app.readString(qs, "sort", "pub_date")
@@ -72,7 +74,15 @@ func (app *application) listFeeds(w http.ResponseWriter, r *http.Request) {
 		addedBy.Valid = true
 	}
 
-	feeds, metadata, err := app.models.Feeds.FindAll(input.Title, input.FeedLink, input.TopicID, addedBy, input.Filters)
+	if input.FeedType != "" {
+		data.ValidateFeedType(v, input.FeedType)
+		if !v.Valid() {
+			app.failedValidationResponse(w, r, v.Errors)
+			return
+		}
+	}
+
+	feeds, metadata, err := app.models.Feeds.FindAll(input.Title, input.FeedLink, input.TopicID, input.FeedType, addedBy, input.Filters)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return

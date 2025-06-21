@@ -52,6 +52,10 @@ func ValidateFeedLink(v *validator.Validator, feedLink string) {
 	v.Check(validator.NotBlank(feedLink), "feed_link", "Feed link must not be empty")
 }
 
+func ValidateFeedType(v *validator.Validator, feedType string) {
+	v.Check(validator.PermittedValue(feedType, "website", "medium", "substack", "reddit", "youtube", "podcast"), "feed_type", "Feed type must be one of website, medium, substack, reddit, youtube, or podcast")
+}
+
 // convertToTsQuery converts a search term to PostgreSQL tsquery format with prefix matching
 // Example: "life of" -> "life:* & of:*"
 func convertToTsQuery(searchTerm string) string {
@@ -146,7 +150,7 @@ func (m FeedModel) Insert(feed *Feed) error {
 	return nil
 }
 
-func (m FeedModel) FindAll(title, feedLink string, topicID int64, addedBy pgtype.Int8, filters Filters) ([]*Feed, Metadata, error) {
+func (m FeedModel) FindAll(title, feedLink string, topicID int64, feedType string, addedBy pgtype.Int8, filters Filters) ([]*Feed, Metadata, error) {
 	sortColMap := sortColumnMapping{
 		"id":          "feeds.id",
 		"title":       "feeds.title",
@@ -177,7 +181,13 @@ func (m FeedModel) FindAll(title, feedLink string, topicID int64, addedBy pgtype
 			)
 			OR $3 = -1
 		)
-		AND (feeds.is_verified = TRUE OR feeds.added_by = $4)
+		AND (
+			CASE 
+				WHEN $4::text = '' THEN TRUE
+				ELSE feeds.feed_type = $4::feed_type_enum
+			END
+		)
+		AND (feeds.is_verified = TRUE OR feeds.added_by = $5)
 		ORDER BY
 			CASE 
 				WHEN $1::text IS NULL OR $1::text = '' THEN 0
@@ -195,12 +205,20 @@ func (m FeedModel) FindAll(title, feedLink string, topicID int64, addedBy pgtype
 			feeds.followers_count DESC,
 			%s %s,
 			feeds.id ASC
-		LIMIT $5 OFFSET $6`, filters.sortColumn(sortColMap), filters.sortDirection())
+		LIMIT $6 OFFSET $7`, filters.sortColumn(sortColMap), filters.sortDirection())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	args := []any{tsQueryTitle, feedLink, topicID, addedBy, filters.limit(), filters.offset()}
+	args := []any{
+		tsQueryTitle,
+		feedLink,
+		topicID,
+		feedType,
+		addedBy,
+		filters.limit(),
+		filters.offset(),
+	}
 
 	rows, err := m.DB.Query(ctx, query, args...)
 	if err != nil {
