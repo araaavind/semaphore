@@ -18,6 +18,7 @@ abstract interface class FeedRepository {
     String? searchKey,
     String? searchValue,
     int? topicId,
+    String? feedType,
     int page,
     int pageSize,
     String? sortKey,

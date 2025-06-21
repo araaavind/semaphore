@@ -18,6 +18,7 @@ abstract interface class FeedRemoteDatasource {
     String? searchKey,
     String? searchValue,
     int? topicId,
+    String? feedType,
     int page,
     int pageSize,
     String? sortKey,
@@ -136,6 +137,7 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
     String? searchKey,
     String? searchValue,
     int? topicId,
+    String? feedType,
     int page = 1,
     int pageSize = ServerConstants.defaultPaginationPageSize,
     String? sortKey,
@@ -150,6 +152,9 @@ class FeedRemoteDatasourceImpl implements FeedRemoteDatasource {
       }
       if (topicId != null) {
         queryParams['topic_id'] = topicId;
+      }
+      if (feedType != null) {
+        queryParams['feed_type'] = feedType;
       }
       final response = await semaphoreClient.dio.get(
         '/feeds',

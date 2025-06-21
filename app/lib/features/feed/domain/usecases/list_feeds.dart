@@ -10,10 +10,12 @@ class ListFeedsParams extends PaginationParams {
   final ListFeedsType type;
   final int? wallId;
   final int? topicId;
+  final String? feedType;
 
   ListFeedsParams({
     this.wallId,
     this.topicId,
+    this.feedType,
     super.searchKey,
     super.searchValue,
     super.page,
@@ -55,6 +57,7 @@ class ListFeeds implements Usecase<FeedList, ListFeedsParams> {
       searchKey: params.searchKey,
       searchValue: params.searchValue,
       topicId: params.topicId,
+      feedType: params.feedType,
       page: params.page,
       pageSize: params.pageSize,
       sortKey: params.sortKey,

@@ -106,7 +106,7 @@ class _FeedListTileState extends State<FeedListTile> {
           size: 14,
           color: Colors.white,
         );
-        feedTypeIconColor = AppPalette.surface;
+        feedTypeIconColor = AppPalette.green;
         break;
       default:
         feedTypeIcon = Icon(

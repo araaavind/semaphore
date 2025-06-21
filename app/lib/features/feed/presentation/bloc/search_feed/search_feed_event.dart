@@ -10,6 +10,7 @@ class FeedSearchRequested extends SearchFeedEvent {
   final String? searchKey;
   final String? searchValue;
   final int? topicId;
+  final String? feedType;
   final int page;
   final int pageSize;
   final String? sortKey;
@@ -19,6 +20,7 @@ class FeedSearchRequested extends SearchFeedEvent {
     this.searchKey,
     this.searchValue,
     this.topicId,
+    this.feedType,
     this.page = 1,
     this.pageSize = ServerConstants.defaultPaginationPageSize,
     this.sortKey,
@@ -31,6 +33,7 @@ class FeedSearchRequested extends SearchFeedEvent {
       searchKey,
       searchValue,
       topicId,
+      feedType,
       page,
       pageSize,
       sortKey,

@@ -14,6 +14,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
+enum SearchFeedType {
+  all,
+  website,
+  youtube,
+  substack,
+  reddit,
+  medium,
+  podcast,
+}
 
 class SearchFeedsPage extends StatefulWidget {
   final bool isOnboarding;
@@ -43,6 +54,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
   Topic? _selectedTopic;
   Topic? _selectedSubtopic;
   Color? _selectedTopicColor;
+  SearchFeedType _selectedFeedType = SearchFeedType.all;
 
   @override
   void initState() {
@@ -54,6 +66,9 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 searchKey: 'title',
                 searchValue: _searchQuery,
                 topicId: _selectedSubtopic?.id ?? _selectedTopic?.id,
+                feedType: _selectedFeedType == SearchFeedType.all
+                    ? null
+                    : _selectedFeedType.name,
                 page: pageKey,
                 pageSize: ServerConstants.defaultPaginationPageSize,
               ),
@@ -405,6 +420,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 32, child: _buildFeedTypeSelector(context)),
               ],
             ),
             const SizedBox(height: 18.0),
@@ -427,14 +443,173 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 hintStyle: context.theme.textTheme.bodyMedium,
                 prefixIcon: const Icon(MingCute.search_line),
                 suffixIcon: _searchController.text.trim().isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _clearSearch,
+                    ? GestureDetector(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: const Icon(Icons.clear),
+                        ),
+                        onTap: _clearSearch,
                       )
                     : null,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeedTypeSelector(BuildContext context) {
+    Map<String, dynamic> getFeedTypeMetadata(SearchFeedType feedType) {
+      switch (feedType) {
+        case SearchFeedType.website:
+          return {
+            'text': 'Website',
+            'color': context.theme.colorScheme.secondary,
+            'icon': Icons.public,
+          };
+        case SearchFeedType.youtube:
+          return {
+            'text': 'Youtube',
+            'color': AppPalette.youtubeRed,
+            'icon': MingCute.youtube_line,
+          };
+        case SearchFeedType.substack:
+          return {
+            'text': 'Substack',
+            'color': AppPalette.substackOrange,
+            'icon': SimpleIcons.substack,
+          };
+        case SearchFeedType.reddit:
+          return {
+            'text': 'Reddit',
+            'color': AppPalette.redditOrange,
+            'icon': MingCute.reddit_fill,
+          };
+        case SearchFeedType.medium:
+          return {
+            'text': 'Medium',
+            'color': context.theme.colorScheme.onSurface,
+            'icon': MingCute.medium_line,
+          };
+        case SearchFeedType.podcast:
+          return {
+            'text': 'Podcast',
+            'color': AppPalette.green,
+            'icon': MdiIcons.podcast,
+          };
+        case SearchFeedType.all:
+          return {
+            'text': 'All',
+            'color': context.theme.colorScheme.onSurface,
+            'icon': Icons.public,
+          };
+      }
+    }
+
+    final selectorText = getFeedTypeMetadata(_selectedFeedType)['text'];
+    final selectorColor = getFeedTypeMetadata(_selectedFeedType)['color'];
+    final selectorIcon = getFeedTypeMetadata(_selectedFeedType)['icon'];
+
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashFactory: NoSplash.splashFactory,
+      ),
+      child: PopupMenuButton(
+        initialValue: _selectedFeedType,
+        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+        menuPadding: EdgeInsets.zero,
+        color: context.theme.colorScheme.surface.withAlpha(230),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          side: BorderSide(
+            color: context.theme.colorScheme.onSurface.withAlpha(40),
+            width: 0.3,
+          ),
+        ),
+        itemBuilder: (context) => [
+          for (var feedType in SearchFeedType.values)
+            PopupMenuItem(
+              height: 42.0,
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 0.0),
+              onTap: () {
+                setState(() {
+                  _selectedFeedType = feedType;
+                  _pagingController.refresh();
+                });
+              },
+              child: Wrap(
+                spacing: 8.0,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Icon(
+                    feedType == SearchFeedType.all
+                        ? MingCute.right_small_fill
+                        : getFeedTypeMetadata(feedType)['icon'],
+                    size: 15.0,
+                    color: getFeedTypeMetadata(feedType)['color'],
+                  ),
+                  Text(feedType.name.toCapitalized()),
+                ],
+              ),
+            ),
+        ],
+        offset: const Offset(0, 48),
+        icon: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0,
+            vertical: 4.0,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.0),
+            color: context.theme.brightness == Brightness.dark
+                ? selectorColor!.withAlpha(50)
+                : Colors.grey.shade50,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(30),
+                blurRadius: 1,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Wrap(
+            spacing: 2.0,
+            runSpacing: 2.0,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              _selectedFeedType == SearchFeedType.all
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 1.0),
+                      child: Text(
+                        selectorText,
+                        style: context.theme.textTheme.labelSmall?.copyWith(
+                          fontSize: 12.5,
+                          color: selectorColor,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.all(
+                        _selectedFeedType == SearchFeedType.substack
+                            ? 2.0
+                            : 0.0,
+                      ),
+                      child: Icon(
+                        selectorIcon,
+                        size: _selectedFeedType == SearchFeedType.substack
+                            ? 14.0
+                            : 18.0,
+                        color: selectorColor,
+                      ),
+                    ),
+              Icon(
+                MingCute.down_line,
+                size: 14.0,
+                color: selectorColor,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -486,9 +661,18 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
               hintStyle: context.theme.textTheme.bodyMedium,
               prefixIcon: const Icon(MingCute.search_line),
               suffixIcon: _searchController.text.trim().isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: _clearSearch,
+                  ? Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        _buildFeedTypeSelector(context),
+                        GestureDetector(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 12.0),
+                            child: const Icon(Icons.clear),
+                          ),
+                          onTap: _clearSearch,
+                        ),
+                      ],
                     )
                   : null,
             ),
@@ -563,6 +747,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
 
     // Create a TextPainter to measure text dimensions
     final textStyle = context.theme.textTheme.bodySmall?.copyWith(
+      fontSize: 11.0,
       color: context.theme.colorScheme.onSurface.withAlpha(235),
     );
 
@@ -621,7 +806,10 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           children: _selectedTopic!.subTopics!.map(
             (subTopic) {
               return ChoiceChip(
-                visualDensity: VisualDensity.compact,
+                visualDensity: const VisualDensity(
+                  vertical: -4,
+                  horizontal: -2,
+                ),
                 showCheckmark: true,
                 labelPadding: const EdgeInsets.symmetric(horizontal: 2),
                 side: BorderSide(

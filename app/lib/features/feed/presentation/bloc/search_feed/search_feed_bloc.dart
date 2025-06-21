@@ -36,6 +36,7 @@ class SearchFeedBloc extends Bloc<SearchFeedEvent, SearchFeedState> {
         searchKey: event.searchKey,
         searchValue: event.searchValue,
         topicId: event.topicId,
+        feedType: event.feedType,
         sortKey: event.sortKey,
         page: event.page,
         pageSize: event.pageSize,
