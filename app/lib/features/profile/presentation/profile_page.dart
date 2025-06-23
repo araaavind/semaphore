@@ -145,8 +145,16 @@ class _ProfilePageState extends State<ProfilePage>
                     horizontalTitleGap: 12,
                     visualDensity: VisualDensity.compact,
                     onTap: () {
-                      Navigator.of(context).pop(); // Close drawer
-                      _handleLogout(context, user);
+                      showConfirmationDialog(
+                        context,
+                        title: 'Logout',
+                        message: 'Are you sure you want to logout?',
+                      ).then((value) {
+                        if (value == true) {
+                          Navigator.of(context).pop(); // Close drawer
+                          _handleLogout(context, user);
+                        }
+                      });
                     },
                   );
                 },

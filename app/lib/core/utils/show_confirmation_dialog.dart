@@ -2,17 +2,23 @@ import 'package:app/core/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-Future<bool?> showClosingDialog(BuildContext context) {
+Future<bool?> showConfirmationDialog(
+  BuildContext context, {
+  required String title,
+  required String message,
+  String noButtonText = 'No',
+  String yesButtonText = 'Yes',
+}) {
   return showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Exit App'),
-      content: const Text('Are you sure you want to exit the app?'),
+      title: Text(title),
+      content: Text(message),
       actions: [
         TextButton(
           onPressed: () => context.pop(false),
           child: Text(
-            'No',
+            noButtonText,
             style: TextStyle(
               color: context.theme.colorScheme.onSurface,
             ),
@@ -21,7 +27,7 @@ Future<bool?> showClosingDialog(BuildContext context) {
         TextButton(
           onPressed: () => context.pop(true),
           child: Text(
-            'Yes',
+            yesButtonText,
             style: TextStyle(
               color: context.theme.colorScheme.primary,
             ),

@@ -116,7 +116,12 @@ List<RouteBase> _buildRoutes() {
           onPopInvokedWithResult: (didPop, result) async {
             if (didPop) return;
 
-            final shouldPop = await showClosingDialog(context) ?? false;
+            final shouldPop = await showConfirmationDialog(
+                  context,
+                  title: 'Exit App',
+                  message: 'Are you sure you want to exit the app?',
+                ) ??
+                false;
 
             if (shouldPop) {
               SystemNavigator.pop();
