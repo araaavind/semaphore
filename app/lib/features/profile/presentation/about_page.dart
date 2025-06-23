@@ -348,22 +348,25 @@ class _AboutPageState extends State<AboutPage> {
               const SizedBox(height: 28),
 
               // Version info
-              Center(
-                child: packageInfo != null
-                    ? Text(
-                        'Version ${packageInfo!.version}',
-                        style: context.theme.textTheme.bodySmall?.copyWith(
-                          color: context.theme.colorScheme.onSurface
-                              .withAlpha(160),
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              _buildVersionInfo(context),
               const SizedBox(height: 36),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildVersionInfo(BuildContext context) {
+    return Center(
+      child: packageInfo != null
+          ? Text(
+              'Version ${packageInfo!.version}',
+              style: context.theme.textTheme.bodySmall?.copyWith(
+                color: context.theme.colorScheme.onSurface.withAlpha(160),
+              ),
+            )
+          : const SizedBox.shrink(),
     );
   }
 

@@ -9,12 +9,14 @@ import 'package:app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/profile_feed_list.dart';
 import 'package:app/features/feed/presentation/widgets/profile_wall_list.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:app/init_dependencies.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage>
   final ScrollController _scrollController = ScrollController();
   bool _isCollapsed = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  PackageInfo? packageInfo;
 
   @override
   void initState() {
@@ -40,6 +43,17 @@ class _ProfilePageState extends State<ProfilePage>
     isActivated = user.isActivated;
     _tabController = TabController(length: 2, vsync: this);
     _scrollController.addListener(_onScroll);
+    _loadPackageInfo();
+  }
+
+  Future<void> _loadPackageInfo() async {
+    await serviceLocator.isReady<PackageInfo>();
+
+    if (mounted) {
+      setState(() {
+        packageInfo = serviceLocator<PackageInfo>();
+      });
+    }
   }
 
   void _onScroll() {
@@ -106,63 +120,81 @@ class _ProfilePageState extends State<ProfilePage>
                     color: context.theme.colorScheme.outline.withAlpha(180),
                   ),
                   _buildAboutTile(context),
+                  _buildLogoutTile(user),
                 ],
               ),
-              BlocConsumer<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthFailure) {
-                    showSnackbar(
-                      context,
-                      state.message,
-                      type: SnackbarType.failure,
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  if (state is AuthLoading) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.0),
-                        child: Loader(strokeWidth: 2),
-                      ),
-                    );
-                  }
-                  return ListTile(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        UIConstants.inputBorderRadius,
-                      ),
-                    ),
-                    leading: const Icon(
-                      MingCute.exit_line,
-                      color: Colors.red,
-                    ),
-                    title: Text(
-                      'Logout',
-                      style: context.theme.textTheme.titleMedium,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                    horizontalTitleGap: 12,
-                    visualDensity: VisualDensity.compact,
-                    onTap: () {
-                      showConfirmationDialog(
-                        context,
-                        title: 'Logout',
-                        message: 'Are you sure you want to logout?',
-                      ).then((value) {
-                        if (value == true) {
-                          Navigator.of(context).pop(); // Close drawer
-                          _handleLogout(context, user);
-                        }
-                      });
-                    },
-                  );
-                },
-              ),
+              _buildVersionInfo(context),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildVersionInfo(BuildContext context) {
+    return Center(
+      child: packageInfo != null
+          ? Text(
+              'v${packageInfo!.version}',
+              style: context.theme.textTheme.bodySmall?.copyWith(
+                color: context.theme.colorScheme.onSurface.withAlpha(160),
+              ),
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildLogoutTile(User user) {
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthFailure) {
+          showSnackbar(
+            context,
+            state.message,
+            type: SnackbarType.failure,
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is AuthLoading) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Loader(strokeWidth: 2),
+            ),
+          );
+        }
+        return ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              UIConstants.inputBorderRadius,
+            ),
+          ),
+          leading: const Icon(
+            MingCute.exit_line,
+            color: Colors.red,
+          ),
+          title: Text(
+            'Logout',
+            style: context.theme.textTheme.titleMedium,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+          horizontalTitleGap: 12,
+          visualDensity: VisualDensity.compact,
+          onTap: () {
+            showConfirmationDialog(
+              context,
+              title: 'Logout',
+              message: 'Are you sure you want to logout?',
+            ).then((value) {
+              if (value == true) {
+                Navigator.of(context).pop(); // Close drawer
+                _handleLogout(context, user);
+              }
+            });
+          },
+        );
+      },
     );
   }
 
