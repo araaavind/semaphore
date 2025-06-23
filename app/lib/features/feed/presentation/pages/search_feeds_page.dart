@@ -9,6 +9,7 @@ import 'package:app/features/feed/domain/entities/topic.dart';
 import 'package:app/features/feed/presentation/bloc/search_feed/search_feed_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/feed_list_tile.dart';
 import 'package:app/features/feed/presentation/widgets/topics_grid.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -360,7 +361,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
 
   PreferredSizeWidget _buildTopicPageAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight * 2 + 12),
+      preferredSize: const Size.fromHeight(kToolbarHeight * 2 + 4),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -389,35 +390,20 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
                 const SizedBox(width: 4.0),
                 GestureDetector(
                   onTap: _clearTopic,
-                  child: const Icon(Icons.close_outlined),
+                  child: const Icon(Icons.arrow_back),
                 ),
                 const SizedBox(width: 12.0),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      _selectedTopic!.name,
-                      style: context.theme.textTheme.titleMedium!.copyWith(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.underline,
-                        decorationStyle: TextDecorationStyle.wavy,
-                        decorationThickness: 4,
-                        decorationColor: _selectedTopicColor,
-                        color: Colors.transparent,
-                        shadows: [
-                          Shadow(
-                            color: context.theme.textTheme.titleMedium!.color ??
-                                Colors.black,
-                            offset:
-                                const Offset(0, -8), // Negative y moves text up
-                          ),
-                        ],
-                      ),
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.fade,
+                  child: AutoSizeText(
+                    _selectedTopic!.name,
+                    style: context.theme.textTheme.titleMedium!.copyWith(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w700,
                     ),
+                    minFontSize: 18.0,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
                   ),
                 ),
                 SizedBox(height: 32, child: _buildFeedTypeSelector(context)),
