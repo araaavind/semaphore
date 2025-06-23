@@ -158,9 +158,12 @@ class _WebViewState extends State<WebView> {
                             MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
                       ),
                       shouldOverrideUrlLoading: (controller, request) async {
-                        await launchUrlInBrowser(
-                            request.request.url.toString());
-                        return NavigationActionPolicy.CANCEL;
+                        if (request.request.url?.scheme == 'http') {
+                          await launchUrlInBrowser(
+                              request.request.url!.toString());
+                          return NavigationActionPolicy.CANCEL;
+                        }
+                        return NavigationActionPolicy.ALLOW;
                       },
                       pullToRefreshController: pullToRefreshController,
                       onWebViewCreated: (controller) {
