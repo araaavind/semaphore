@@ -127,7 +127,10 @@ List<RouteBase> _buildRoutes() {
               SystemNavigator.pop();
             }
           },
-          child: Scaffold(body: child),
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: child,
+          ),
         ),
       ),
       routes: [

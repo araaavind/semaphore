@@ -636,6 +636,7 @@ class _SearchFeedsPageState extends State<SearchFeedsPage> {
           padding: const EdgeInsets.only(bottom: 12.0),
           child: TextField(
             controller: _searchController,
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(
               border: _searchBorder(),
               focusedBorder: _searchBorder(),
