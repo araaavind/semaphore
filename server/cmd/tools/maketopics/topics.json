@@ -2526,12 +2526,12 @@
   },
   {
     "code": "artphil",
-    "name": "Art & Philosophy",
+    "name": "Philosophy x Art",
     "active": true
   },
   {
     "code": "philhistory",
-    "name": "Philosophy History",
+    "name": "Philosophy x History",
     "active": true
   }
 ]

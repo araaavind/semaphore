@@ -93,7 +93,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer rdb.Close()
-	fmt.Println("redis connection pool established")
+	fmt.Println("Redis connection pool established")
 
 	redisCache := cache.NewRedisCache(rdb)
 	topicsKey := cache.GenerateTopicsKey()
