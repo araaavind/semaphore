@@ -45,8 +45,9 @@
   {
     "code": "agriculture",
     "name": "Agriculture",
-    "featured": false,
+    "featured": true,
     "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/agriculture.jpg",
     "keywords": [
       "Agriculture",
       "Farming",
@@ -151,7 +152,8 @@
       "comicart",
       "aiart",
       "nfts",
-      "creativecoding"
+      "creativecoding",
+      "artphil"
     ]
   },
   {
@@ -699,7 +701,8 @@
       "filmhistory",
       "musichistory",
       "naturalhistory",
-      "lgbtqhistory"
+      "lgbtqhistory",
+      "philhistory"
     ]
   },
   {
@@ -984,6 +987,15 @@
       "legalnews",
       "medicalnews"
     ]
+  },
+  {
+    "code": "philosophy",
+    "name": "Philosophy",
+    "featured": true,
+    "active": true,
+    "image_url": "https://smphr.aravindunnikrishnan.in/static/images/topics/sm/philosophy.jpg",
+    "keywords": ["Philosophy", "Ideas", "Thoughts"],
+    "sub_topic_codes": ["philhistory", "artphil"]
   },
   {
     "code": "photography",
@@ -2510,6 +2522,16 @@
   {
     "code": "mindbrain",
     "name": "Mind & Brain",
+    "active": true
+  },
+  {
+    "code": "artphil",
+    "name": "Art & Philosophy",
+    "active": true
+  },
+  {
+    "code": "philhistory",
+    "name": "Philosophy History",
     "active": true
   }
 ]
