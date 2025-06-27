@@ -95,9 +95,10 @@ func main() {
 	defer rdb.Close()
 	fmt.Println("redis connection pool established")
 
-	cache := cache.NewRedisCache(rdb)
+	redisCache := cache.NewRedisCache(rdb)
+	topicsKey := cache.GenerateTopicsKey()
 
-	err = cache.Delete(ctx, "topics:*")
+	err = redisCache.Delete(ctx, topicsKey)
 	if err != nil {
 		log.Fatal(err)
 	}
