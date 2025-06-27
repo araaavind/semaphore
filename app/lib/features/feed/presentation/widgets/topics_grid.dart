@@ -155,18 +155,13 @@ class TopicTile extends StatelessWidget {
                       stops: const [0, 0.7],
                       colors: [
                         context.theme.brightness == Brightness.dark
-                            ? HSLColor.fromColor(tileColor)
-                                .withLightness(0.2)
-                                .withSaturation(0.4)
-                                .withAlpha(0.3)
-                                .toColor()
-                            : HSLColor.fromColor(tileColor)
-                                .withLightness(0.9)
-                                .withAlpha(0.4)
-                                .toColor(),
-                        tileColor.withAlpha(50),
+                            ? Colors.black.withAlpha(80)
+                            : Colors.white.withAlpha(100),
+                        context.theme.brightness == Brightness.dark
+                            ? Colors.black.withAlpha(10)
+                            : Colors.white.withAlpha(10),
                       ],
-                      begin: Alignment.topLeft,
+                      begin: Alignment.topCenter,
                       end: Alignment.bottomRight,
                     ),
                   ),
@@ -198,22 +193,17 @@ class TopicTile extends StatelessWidget {
         height: 1.2,
         shadows: [
           Shadow(
-            color: context.theme.brightness == Brightness.dark
-                ? Colors.black.withAlpha(140)
-                : HSLColor.fromColor(tileColor)
-                    .withLightness(0.95)
-                    .withAlpha(0.853)
-                    .toColor(),
+            color: Colors.black.withAlpha(10),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
         ],
-        color: HSLColor.fromColor(tileColor)
-            .withLightness(
-              context.theme.brightness == Brightness.dark ? 0.95 : 0.1,
-            )
-            .withAlpha(1)
-            .toColor(),
+        // color: HSLColor.fromColor(tileColor)
+        //     .withLightness(
+        //       context.theme.brightness == Brightness.dark ? 0.95 : 0.1,
+        //     )
+        //     .withAlpha(1)
+        //     .toColor(),
       ),
       wrapWords: false,
       textAlign: TextAlign.start,
