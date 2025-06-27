@@ -119,16 +119,15 @@ production/connect:
 	fi
 	ssh smphr@${production_host_ip}
 
-## production/deploy/server: deploy the server to production
-.PHONY: production/deploy/server
-production/deploy/server:
+## production/deploy/api: deploy the api server to production
+.PHONY: production/deploy/api
+production/deploy/api:
 	@if [ -z "${PROD_IP}" ]; then \
 		echo "ERROR: PROD_IP is not set! Pass it like 'make production/deploy/api PROD_IP=1.2.3.4' or set it as environment variable"; \
 		exit 1; \
 	fi
 	@echo 'Deploying api server on production...'
 	rsync -P ./server/bin/linux_amd64/api smphr@${production_host_ip}:~
-	rsync -rP --delete ./server/bin/linux_amd64/tools smphr@${production_host_ip}:~
 	rsync -rP --delete ./server/migrations smphr@${production_host_ip}:~
 	rsync -P ./server/remote/production/api.service smphr@${production_host_ip}:~
 	rsync -P ./server/remote/production/Caddyfile smphr@${production_host_ip}:~
@@ -140,3 +139,13 @@ production/deploy/server:
 		&& sudo mv ~/Caddyfile /etc/caddy/ \
 		&& sudo systemctl reload caddy \
 	'
+
+## production/deploy/tools: deploy the tools to production
+.PHONY: production/deploy/tools
+production/deploy/tools:
+	@if [ -z "${PROD_IP}" ]; then \
+		echo "ERROR: PROD_IP is not set! Pass it like 'make production/deploy/api PROD_IP=1.2.3.4' or set it as environment variable"; \
+		exit 1; \
+	fi
+	@echo 'Deploying server tools on production...'
+	rsync -rP --delete ./server/bin/linux_amd64/tools smphr@${production_host_ip}:~
