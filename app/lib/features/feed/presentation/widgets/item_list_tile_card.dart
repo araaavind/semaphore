@@ -6,6 +6,7 @@ import 'package:app/features/feed/domain/entities/item.dart';
 import 'package:app/features/feed/presentation/bloc/liked_items/liked_items_bloc.dart';
 import 'package:app/features/feed/presentation/bloc/saved_items/saved_items_bloc.dart';
 import 'package:app/features/feed/presentation/widgets/item_list_tile_action_strip.dart';
+import 'package:app/features/feed/presentation/widgets/item_tldr.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -160,15 +161,24 @@ class _ItemListTileCardState extends State<ItemListTileCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoSizeText(
-            _item.title[0].trimLeft().toUpperCase() + _item.title.substring(1),
-            style: context.theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.start,
-            minFontSize: context.theme.textTheme.bodyLarge!.fontSize!,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: AutoSizeText(
+                  _item.title[0].trimLeft().toUpperCase() +
+                      _item.title.substring(1),
+                  style: context.theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.start,
+                  minFontSize: 16,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              ItemTLDR(item: _item),
+            ],
           ),
           const SizedBox(height: 6.0),
           ItemCachedImage(

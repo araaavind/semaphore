@@ -10,7 +10,7 @@ abstract class UIConstants {
   static const dialogBorderRadius = 16.0;
   static const contentPadding = 12.0;
   static const elementGap = 16.0;
-  static const pagePadding = 18.0;
+  static const pagePadding = 14.0;
   static const defaultAppBarTextButtonPadding = EdgeInsets.only(
     top: 4.0,
     right: 4.0,
@@ -21,4 +21,6 @@ abstract class UIConstants {
   static const borderWidth = 0.3;
 
   static const imageBorderRadius = 6.0;
+
+  static const tldrEnabled = false;
 }

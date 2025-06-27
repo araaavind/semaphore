@@ -121,6 +121,10 @@ class AnalyticsService {
     await _logEvent('filter_drawer_opened');
   }
 
+  static Future<void> logTLDROpened(String itemLink) async {
+    await _logEvent('tldr_opened', {'item_link': itemLink});
+  }
+
   // Log screen view events
   static Future<void> logScreenView(String screenName,
       [String? screenClass]) async {

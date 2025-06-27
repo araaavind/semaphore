@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AnimatedIconButton extends StatefulWidget {
-  final Icon icon;
+  final Widget icon;
   final EdgeInsets padding;
   final VoidCallback onPressed;
   final Duration duration;

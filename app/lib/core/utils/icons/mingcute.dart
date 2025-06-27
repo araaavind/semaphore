@@ -19,6 +19,12 @@ class MingCute {
   /// add line Icon
   static const add_line = MingCuteIconData(0xe90d);
 
+  /// ai fill Icon
+  static const ai_fill = MingCuteIconData(0xe912);
+
+  /// ai line Icon
+  static const ai_line = MingCuteIconData(0xe913);
+
   /// align justify fill Icon
   static const align_justify_fill = MingCuteIconData(0xe946);
 
@@ -108,6 +114,12 @@ class MingCute {
 
   /// check circle line
   static const check_circle_line = MingCuteIconData(0xeb53);
+
+  /// content ai fill
+  static const content_ai_fill = MingCuteIconData(0xebd4);
+
+  /// content ai line
+  static const content_ai_line = MingCuteIconData(0xebd5);
 
   /// delete fill Icon
   static const delete_fill = MingCuteIconData(0xec58);
@@ -473,6 +485,24 @@ class MingCute {
 
   /// share forward line
   static const share_forward_line = MingCuteIconData(0xf293);
+
+  /// sparkles fill
+  static const sparkles_fill = MingCuteIconData(0xf304);
+
+  /// sparkles line
+  static const sparkles_line = MingCuteIconData(0xf305);
+
+  /// sparkles 2 fill
+  static const sparkles_2_fill = MingCuteIconData(0xf300);
+
+  /// sparkles 2 line
+  static const sparkles_2_line = MingCuteIconData(0xf301);
+
+  /// sparkles 3 fill
+  static const sparkles_3_fill = MingCuteIconData(0xf302);
+
+  /// sparkles 3 line
+  static const sparkles_3_line = MingCuteIconData(0xf303);
 
   /// up fill Icon
   static const up_fill = MingCuteIconData(0xf442);

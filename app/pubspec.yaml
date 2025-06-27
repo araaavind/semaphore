@@ -69,6 +69,7 @@ dependencies:
   isar_flutter_libs: ^4.0.0-dev.13
   path_provider: ^2.1.5
   material_design_icons_flutter: ^7.0.7296
+  flutter_html: ^3.0.0
 
 dev_dependencies:
   flutter_test:
