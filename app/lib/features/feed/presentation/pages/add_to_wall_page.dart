@@ -27,13 +27,13 @@ class _AddToWallPageState extends State<AddToWallPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Add to wall',
-          style: context.theme.textTheme.titleMedium?.copyWith(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        // title: Text(
+        //   'Add to wall',
+        //   style: context.theme.textTheme.titleMedium?.copyWith(
+        //     fontSize: 18,
+        //     fontWeight: FontWeight.w600,
+        //   ),
+        // ),
         actions: [
           Padding(
             padding: UIConstants.defaultAppBarTextButtonPadding,
@@ -110,11 +110,33 @@ class _AddToWallPageState extends State<AddToWallPage> {
                       return SizedBox(
                         width: 300,
                         child: Center(
-                            child:
-                                Text(state.message ?? 'Failed to load walls')),
+                          child: Text(state.message ?? 'Failed to load walls'),
+                        ),
                       );
-                    } else if (state.walls.isEmpty) {
-                      return const Center(child: Text('No walls found'));
+                    } else if (state.walls.length == 1) {
+                      return Center(
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'No walls found.\n',
+                                style: context.theme.textTheme.bodyMedium
+                                    ?.copyWith(
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Create a new wall to add this feed to.',
+                                style: context.theme.textTheme.bodyMedium
+                                    ?.copyWith(
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     }
                     return ListView.builder(
                       itemCount: state.walls.length,
