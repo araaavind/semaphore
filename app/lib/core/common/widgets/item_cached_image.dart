@@ -121,6 +121,8 @@ class _ItemCachedImageState extends State<ItemCachedImage> {
           : null,
       width: widget.width,
       height: widget.height,
+      cacheKey:
+          '${_url}_h${widget.height != null ? widget.height : ''}_w${widget.width != null ? widget.width : ''}',
       imageUrl: _url,
       imageBuilder: (context, imageProvider) => Container(
         width: widget.width,
