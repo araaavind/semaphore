@@ -1,7 +1,7 @@
 # Semaphore
 
 <div align="center">
-  <img src="app/assets/icons/launcher_icon_dual.png" alt="Semaphore Logo" width="120" height="120">
+  <img src="app/assets/icons/launcher_icon_bg_white.png" alt="Semaphore Logo" width="120" height="120">
   
   **A modern, feature-rich RSS reader with cross-platform support**
   
@@ -28,6 +28,21 @@ Semaphore is a full-featured RSS reader application designed for modern content 
 - **📊 Analytics integration** - Firebase Analytics and Crashlytics support
 - **🎨 Adaptive theming** - Light and dark mode support
 - **📰 Popular sources** - Easily follow subreddits, medium publications, substacks, youtube channels etc.
+
+## 📸 Screenshots
+
+<div align="center">
+  <img src="screenshots/1.jpg" alt="Home Screen" width="150">
+  <img src="screenshots/2.jpg" alt="Feed View" width="150">
+  <img src="screenshots/3.jpg" alt="Article Reader" width="150">
+  <img src="screenshots/4.jpg" alt="User Profile" width="150">
+</div>
+
+<div align="center">
+  <img src="screenshots/5.jpg" alt="Settings" width="150">
+  <img src="screenshots/6.jpg" alt="Walls" width="150">
+  <img src="screenshots/7.jpg" alt="Search" width="150">
+</div>
 
 ## 🏗️ Architecture
 
