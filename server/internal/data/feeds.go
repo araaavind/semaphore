@@ -440,7 +440,7 @@ func (m FeedModel) GetUncheckedFeedsSince(since time.Time) ([]*Feed, error) {
 		FROM feeds
 		WHERE GREATEST(last_fetch_at, last_failure_at, '-Infinity'::timestamptz) < $1`
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	rows, err := m.DB.Query(ctx, query, since)

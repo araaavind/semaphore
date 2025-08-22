@@ -674,7 +674,7 @@ func (m ItemModel) CleanupItems(before time.Time) error {
 		)
 	`
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	_, err := m.DB.Exec(ctx, query, before)
